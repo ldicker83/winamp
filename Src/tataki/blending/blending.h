@@ -60,7 +60,7 @@ unsigned int inline Blenders::BLEND_AVG(unsigned int a, unsigned int b)
 // multiplies 32 bit color A by scalar V (0-255)
 unsigned int inline Blenders::BLEND_MUL(unsigned int a, int v)
 {
-	register int t;
+	int t;
 	t = Blenders::alphatable[a & 0xFF][v];
 	t |= Blenders::alphatable[(a & 0xFF00) >> 8][v] << 8;
 	t |= Blenders::alphatable[(a & 0xFF0000) >> 16][v] << 16;
@@ -72,7 +72,7 @@ unsigned int inline Blenders::BLEND_MUL(unsigned int a, int v)
 // V is scalar (0-255), (1.0-V)*b + V*a
 unsigned int inline Blenders::BLEND_ADJ1(unsigned int a, unsigned int b, int v)
 {
-	register int t;
+	int t;
 	t = Blenders::alphatable[b & 0xFF][0xFF - v] + Blenders::alphatable[a & 0xFF][v];
 	t |= (Blenders::alphatable[(b & 0xFF00) >> 8][0xFF - v] + Blenders::alphatable[(a & 0xFF00) >> 8][v]) << 8;
 	t |= (Blenders::alphatable[(b & 0xFF0000) >> 16][0xFF - v] + Blenders::alphatable[(a & 0xFF0000) >> 16][v]) << 16;
@@ -83,7 +83,7 @@ unsigned int inline Blenders::BLEND_ADJ1(unsigned int a, unsigned int b, int v)
 // returns a*(1.0-Alpha(b)) + b
 unsigned int inline Blenders::BLEND_ADJ2(unsigned int a, unsigned int b)
 {
-	register int t, z;
+	int t, z;
 	int v = 0xff - ((b >> 24) & 0xff);
 	t = Blenders::alphatable[a & 0xFF][v] + (b & 0xFF);
 	if (t > 0xFF) t = 0xff;
@@ -101,7 +101,7 @@ unsigned int inline Blenders::BLEND_ADJ2(unsigned int a, unsigned int b)
 // returns a*(1-Alpha(b)*W) + b*W, clamped (W is scalar 0-0xff).
 unsigned int inline Blenders::BLEND_ADJ3(unsigned int a, unsigned int b, int w)
 {
-	register int t, z;
+	int t, z;
 	int v = 0xff - Blenders::alphatable[(b >> 24) & 0xff][w];
 
 	t = Blenders::alphatable[a & 0xFF][v] + Blenders::alphatable[b & 0xFF][w];
@@ -119,7 +119,7 @@ unsigned int inline Blenders::BLEND_ADJ3(unsigned int a, unsigned int b, int w)
 
 unsigned int __inline Blenders::BLEND4(unsigned int *p1, unsigned int w, int xp, int yp)
 {
-	register int t;
+	int t;
 	uint8_t a1, a2, a3, a4;
 	xp = (xp >> 8) & 0xff;
 	yp = (yp >> 8) & 0xff;

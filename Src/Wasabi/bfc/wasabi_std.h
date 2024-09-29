@@ -315,8 +315,8 @@ namespace Wasabi
 		bool isValidMatchPattern(const wchar_t* p, int* error_type);
 
 		// return MATCH_VALID if pattern matches, or an errorcode otherwise
-		int matche(register const wchar_t* p, register const wchar_t* t);
-		int matche_after_star(register const wchar_t* p, register const wchar_t* t);
+		int matche(const wchar_t* p, const wchar_t* t);
+		int matche_after_star(const wchar_t* p, const wchar_t* t);
 
 		// return TRUE if pattern matches, FALSE otherwise.
 		bool match(const wchar_t* p, const wchar_t* t);
