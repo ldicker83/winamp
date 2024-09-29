@@ -19,9 +19,6 @@
     <ClCompile Include="..\..\General\gen_ml\ml_lib.cpp">
       <Filter>Source Files\gen_ml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\nu\PtrList.cpp">
-      <Filter>Source Files\nu</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tagger.h">
@@ -37,9 +34,6 @@
       <Filter>Header Files\nu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\nu\MediaLibraryInterface.h">
-      <Filter>Header Files\nu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\nu\PtrList.h">
       <Filter>Header Files\nu</Filter>
     </ClInclude>
   </ItemGroup>

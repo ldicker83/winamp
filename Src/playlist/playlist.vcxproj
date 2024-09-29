@@ -21,27 +21,27 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B2C0F048-C7FA-4864-B5B3-75E69458BA9E}</ProjectGuid>
     <RootNamespace>playlist</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -329,8 +329,8 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ResourceCompile Include="playlist.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Wasabi\Wasabi.vcxproj">
-      <Project>{3e0bfa8a-b86a-42e9-a33f-ec294f823f7f}</Project>
+    <ProjectReference Include="..\Wasabi\bfc\bfc.vcxproj">
+      <Project>{d0ec862e-dddd-4f4f-934f-b75dc9062dc1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\WAT\WAT.vcxproj">
       <Project>{c5714908-a71f-4644-bd95-aad8ee7914da}</Project>

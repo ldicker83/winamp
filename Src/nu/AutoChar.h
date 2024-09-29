@@ -1,6 +1,6 @@
 #ifndef NULLSOFT_AUTOCHARH
 #define NULLSOFT_AUTOCHARH
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <windows.h>
 
 

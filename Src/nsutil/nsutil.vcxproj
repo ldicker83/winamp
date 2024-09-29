@@ -21,29 +21,29 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DABE6307-F8DD-416D-9DAC-673E2DECB73F}</ProjectGuid>
     <RootNamespace>nsutil</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -175,7 +175,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ippcorel.lib;ippsemerged.lib;ippsmerged.lib;ippiemerged.lib;ippimerged.lib;ippccmerged.lib;ippccemerged.lib;ws2_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ippcoreem64tl.lib;ippsemergedem64t.lib;ippsmergedem64t.lib;ippiemergedem64t.lib;ippimergedem64t.lib;ippccmergedem64t.lib;ippccemergedem64t.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -285,11 +285,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="nsutil.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Wasabi\Wasabi.vcxproj">
-      <Project>{3e0bfa8a-b86a-42e9-a33f-ec294f823f7f}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

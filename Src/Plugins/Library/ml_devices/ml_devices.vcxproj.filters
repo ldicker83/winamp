@@ -103,9 +103,6 @@
     <ClCompile Include="..\..\General\gen_ml\menu.cpp">
       <Filter>Source Files\gen_ml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\nu\PtrList.cpp">
-      <Filter>Source Files\nu</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\nu\trace.cpp">
       <Filter>Source Files\nu</Filter>
     </ClCompile>

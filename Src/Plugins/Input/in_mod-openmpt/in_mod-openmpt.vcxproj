@@ -21,30 +21,30 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C4CF3B23-75B1-410D-83B9-0C74C02BE13F}</ProjectGuid>
     <RootNamespace>in_modopenmpt</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <TargetName>in_mod</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <TargetName>in_mod</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <TargetName>in_mod</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <TargetName>in_mod</TargetName>
   </PropertyGroup>
@@ -89,7 +89,7 @@
     <IntDir>$(PlatformShortName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
-    <VcpkgEnableManifest>false</VcpkgEnableManifest>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <VcpkgInstalledDir>
@@ -107,9 +107,6 @@
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgInstalledDir>
     </VcpkgInstalledDir>
-    <VcpkgUseStatic>false</VcpkgUseStatic>
-    <VcpkgTriplet>x86-windows-static-md</VcpkgTriplet>
-    <VcpkgConfiguration>Debug</VcpkgConfiguration>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgInstalledDir>

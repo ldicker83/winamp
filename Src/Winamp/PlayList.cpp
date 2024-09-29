@@ -10,11 +10,15 @@
 #include "../nu/ns_wc.h"
 #include "WinampPlaylist.h"
 #include <algorithm>
+#include <random>
 #include "api.h"
 
 #include "../WAT/WAT.h"
 
 using namespace Nullsoft::Utility;
+
+std::random_device rd;
+std::mt19937 g(rd());
 
 LockGuard playlistGuard(512);
 
@@ -1859,7 +1863,7 @@ extern "C"
 					rnd_rtable[0] = list_pos;
 					x = 1; // (don't re-randomize this entry)
 				}
-				std::random_shuffle(&rnd_rtable[x], &rnd_rtable[ls], Rand);
+				std::shuffle(&rnd_rtable[x], &rnd_rtable[ls], g);
 				rnd_i = 0;
 			}
 			else rnd_i += x;
@@ -1876,7 +1880,7 @@ extern "C"
 						int window_size = max(MulDiv(ls, config_shuffle_morph_rate, 100), 2);
 						for (x = 0; x < ls - 1; x ++)
 						{
-							std::random_shuffle(&rnd_rtable[x], &rnd_rtable[min(x + window_size, ls)], Rand);
+							std::shuffle(&rnd_rtable[x], &rnd_rtable[min(x + window_size, ls)], g);
 						}
 					}
 				}
@@ -1996,7 +2000,7 @@ extern "C"
 		if (!list || list_size <= 1)
 			return ;
 		PlayList_mark();
-		std::random_shuffle(list, &list[list_size], Rand);
+		std::shuffle(list, &list[list_size], g);
 		PlayList_restore();
 		Playlist_notifyModified();
 	}

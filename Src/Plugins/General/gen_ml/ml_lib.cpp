@@ -1,4 +1,4 @@
-/*
+/**
 ** Copyright © 2003-2014 Winamp SA
 **
 ** This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held 
@@ -14,7 +14,7 @@
 **
 **   3. This notice may not be removed or altered from any source distribution.
 **
-*/
+**/
 
 #include <windows.h>
 #include "ml.h"

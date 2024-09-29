@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29424.173
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winampv6", "winampv6.vcxproj", "{7DE5C6C7-DAF2-42F9-9324-C8CF4E7E8AC5}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -11,8 +11,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winampv6", "winampv6.vcxpro
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bfc", "..\Wasabi\bfc\bfc.vcxproj", "{D0EC862E-DDDD-4F4F-934F-B75DC9062DC1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\replicant\zlib\zlib.vcxproj", "{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "albumart", "..\albumart\albumart.vcxproj", "{388476B7-C0A1-4853-B6F4-9A64CA346BA9}"
 EndProject
@@ -31,6 +29,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tataki", "..\tataki\tataki.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nsutil", "..\nsutil\nsutil.vcxproj", "{DABE6307-F8DD-416D-9DAC-673E2DECB73F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WAT", "..\WAT\WAT.vcxproj", "{C5714908-A71F-4644-BD95-AAD8EE7914DA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wasabi", "..\Wasabi\Wasabi.vcxproj", "{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,14 +58,6 @@ Global
 		{D0EC862E-DDDD-4F4F-934F-B75DC9062DC1}.Release|Win32.Build.0 = Release|Win32
 		{D0EC862E-DDDD-4F4F-934F-B75DC9062DC1}.Release|x64.ActiveCfg = Release|x64
 		{D0EC862E-DDDD-4F4F-934F-B75DC9062DC1}.Release|x64.Build.0 = Release|x64
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Debug|Win32.Build.0 = Debug|Win32
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Debug|x64.ActiveCfg = Debug|x64
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Debug|x64.Build.0 = Debug|x64
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Release|Win32.ActiveCfg = Release|Win32
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Release|Win32.Build.0 = Release|Win32
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Release|x64.ActiveCfg = Release|x64
-		{0F9730E4-45DA-4BD2-A50A-403A4BC9751A}.Release|x64.Build.0 = Release|x64
 		{388476B7-C0A1-4853-B6F4-9A64CA346BA9}.Debug|Win32.ActiveCfg = Debug|Win32
 		{388476B7-C0A1-4853-B6F4-9A64CA346BA9}.Debug|Win32.Build.0 = Debug|Win32
 		{388476B7-C0A1-4853-B6F4-9A64CA346BA9}.Debug|x64.ActiveCfg = Debug|x64
@@ -112,6 +106,22 @@ Global
 		{DABE6307-F8DD-416D-9DAC-673E2DECB73F}.Release|Win32.Build.0 = Release|Win32
 		{DABE6307-F8DD-416D-9DAC-673E2DECB73F}.Release|x64.ActiveCfg = Release|x64
 		{DABE6307-F8DD-416D-9DAC-673E2DECB73F}.Release|x64.Build.0 = Release|x64
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Debug|Win32.Build.0 = Debug|Win32
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Debug|x64.ActiveCfg = Debug|x64
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Debug|x64.Build.0 = Debug|x64
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Release|Win32.ActiveCfg = Release|Win32
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Release|Win32.Build.0 = Release|Win32
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Release|x64.ActiveCfg = Release|x64
+		{C5714908-A71F-4644-BD95-AAD8EE7914DA}.Release|x64.Build.0 = Release|x64
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Debug|Win32.Build.0 = Debug|Win32
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Debug|x64.ActiveCfg = Debug|x64
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Debug|x64.Build.0 = Debug|x64
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Release|Win32.ActiveCfg = Release|Win32
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Release|Win32.Build.0 = Release|Win32
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Release|x64.ActiveCfg = Release|x64
+		{3E0BFA8A-B86A-42E9-A33F-EC294F823F7F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

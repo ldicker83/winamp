@@ -1,10 +1,3 @@
-/** (c) Nullsoft, Inc.         C O N F I D E N T I A L
- ** Filename: 
- ** Project:
- ** Description:
- ** Author:
- ** Created:
- **/
 #include "Main.h"
 #include <stdio.h>
 #include "resource.h"
@@ -628,11 +621,13 @@ void update_area(int x1, int y1, int w, int h)
 
 void getXYfromChar(wchar_t ic, int *x, int *y)
 {
+	/*
 	int c,c2=0;
 	switch (ic)
 	{
+		
 		case L'°': ic = L'0'; break;
-		case L'Ç': ic = L'C'; break;
+		case L'C': ic = L'C'; break;
 		case L'ü': ic = L'u'; break;
 		case L'è': case L'ë': case L'ê': case L'é': ic = L'e'; break;
 		case L'á': case L'à': case L'â': ic = L'a'; break;
@@ -648,6 +643,7 @@ void getXYfromChar(wchar_t ic, int *x, int *y)
 		case L'ƒ': ic = L'f'; break;
 		case L'Ñ': case L'ñ': ic = L'n'; break;
 		default: break;
+		
 	} // quick relocations
 	if (ic <= L'Z' && ic >= L'A') c = (ic-'A');
 	else if (ic <= L'z' && ic >= L'a') c = (ic-'a');
@@ -693,7 +689,11 @@ void getXYfromChar(wchar_t ic, int *x, int *y)
 			}
 		}
 	}
+	*/
+
+	/*
 	c*=5;
 	*x=c;
 	*y=c2;
+	*/
 }
