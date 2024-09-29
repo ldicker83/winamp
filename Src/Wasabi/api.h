@@ -47,7 +47,7 @@ extern api_memmgr *memmgrApi;
 extern api_palette *paletteManagerApi;
 #define WASABI_API_PALETTE paletteManagerApi
 
-#include "../nu/threadpool/api_threadpool.h"
+#include "nu/threadpool/api_threadpool.h"
 extern api_threadpool *threadPoolApi;
 #define WASABI_API_THREADPOOL threadPoolApi
 
