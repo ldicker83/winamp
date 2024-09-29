@@ -20,15 +20,7 @@ __inline int MultiByteToWideCharSZ(
 		return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 	converted = MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar-1);
 	if (!converted)
-	{
-		if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-		{
-			lpWideCharStr[cchWideChar-1]=0;
-			return cchWideChar;
-		}
-		else
-			return 0;
-	} 
+		return 0;
 	lpWideCharStr[converted]=0;
 	return converted+1;
 }
@@ -49,15 +41,7 @@ __inline int WideCharToMultiByteSZ(
 		return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
 	converted= WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte-1, lpDefaultChar, lpUsedDefaultChar);
 	if (!converted)
-	{
-		if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-		{
-			lpMultiByteStr[cbMultiByte-1]=0;
-			return cbMultiByte;
-		}
-		else
-			return 0;
-	} 
+		return converted;
 	lpMultiByteStr[converted]=0;
 	return converted+1;
 }

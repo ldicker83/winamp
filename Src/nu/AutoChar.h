@@ -1,8 +1,8 @@
 #ifndef NULLSOFT_AUTOCHARH
 #define NULLSOFT_AUTOCHARH
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 #include <windows.h>
-
+#include <stdlib.h>
 
 inline char *AutoCharDupN(const wchar_t *convert, size_t len, UINT codePage = CP_ACP, UINT flags=0)
 {
@@ -77,54 +77,6 @@ protected:
 	char *narrow;
 };
 
-class AutoCharGrow
-{
-public:
-	AutoCharGrow()
-	{
-		narrow=0;
-		size=0;
-	}
-
-	~AutoCharGrow()
-	{
-		free(narrow);
-	}
-
-	const char *Convert(const wchar_t *convert, UINT codePage = CP_ACP, UINT flags=0, size_t *cch=0)
-	{
-		size_t new_size = WideCharToMultiByte(codePage, flags, convert, -1, 0, 0, NULL, NULL);
-
-		if (!new_size)
-			return 0;
-
-		if ((size_t)new_size > size)
-		{
-			free(narrow);
-			narrow = (char *)malloc(new_size * sizeof(char));
-			if (!narrow)
-			{
-				size=0;
-				return 0;
-			}
-			size=(size_t)new_size;
-		}
-
-		if (!WideCharToMultiByte(codePage, flags, convert, -1, narrow, (int)new_size, NULL, NULL))
-		{
-			return 0;
-		}
-
-		if (cch)
-			*cch=new_size-1;
-
-		return narrow;
-	}
-
-protected:
-	char *narrow;
-	size_t size;
-};
 class AutoCharN : public AutoChar
 {
 public:

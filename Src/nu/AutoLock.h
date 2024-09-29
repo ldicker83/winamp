@@ -1,11 +1,13 @@
-#pragma warning (disable:4786)
 #ifndef AUTOLOCKH
 #define AUTOLOCKH
 
 #ifdef _WIN32
+#pragma warning (disable:4786)
 #include <windows.h>
+#elif defined(__linux__) || defined(__APPLE__)
+#include <pthread.h>
 #else
-#include <CoreServices/CoreServices.h>
+#error port me!!
 #endif
 
 /*
@@ -95,15 +97,9 @@ namespace Nullsoft
 		class LockGuard
 		{
 		public:
-			inline LockGuard(char *name = "Unnamed Guard") : lockName(name), owner(0)
+			inline LockGuard(const char *name = "Unnamed Guard")
 			{
-				InitializeCriticalSection(&cerr_cs);
-				InitializeCriticalSection(&map_cs);
-				InitializeCriticalSection(&m_cs);
-			}
-
-			inline LockGuard(DWORD spin_count,char *name = "Unnamed Guard") : lockName(name), owner(0)
-			{
+				lockName = name;
 				InitializeCriticalSection(&cerr_cs);
 				InitializeCriticalSection(&map_cs);
 				InitializeCriticalSection(&m_cs);
@@ -147,25 +143,21 @@ namespace Nullsoft
 
 				if (ThreadCount() > 1 && owner)
 				{
-					wchar_t disp[256];
-					wsprintfW(disp, L"Guard: %S\r\n", lockName.c_str());
-					OutputDebugStringW(disp);
+					std::cerr << "Guard: " << lockName << std::endl;
 					for (ThreadMap::iterator itr = threads.begin(); itr != threads.end(); itr++)
 					{
 						if (itr->second.empty())
 							continue;
 
-
-						wsprintfW(disp, L"  Thread ID: %x", itr->first);
+						std::cerr << "  Thread ID: " << std::hex << itr->first << std::dec;
 						if (owner == itr->first)
-							wcscat(disp, L" [holding the mutex] *****\r\n");
+							std::cerr << " [holding the mutex] *****";
 						else
-							wcscat(disp, L" [blocked]\r\n");
-						OutputDebugStringW(disp);
+							std::cerr << " [blocked]";
+						std::cerr << std::endl;
 						for (FunctionStack::iterator fitr = itr->second.begin(); fitr != itr->second.end(); fitr++)
 						{
-							wsprintfW(disp, L"    %S();\r\n", fitr->c_str());
-							OutputDebugStringW(disp);
+							std::cerr << "    " << *fitr << "();" << std::endl;
 						}
 					}
 				}
@@ -173,7 +165,7 @@ namespace Nullsoft
 				LeaveCriticalSection(&map_cs);
 			}
 
-			void In(DWORD thread, char *functionName)
+			void In(DWORD thread, const char *functionName)
 			{
 				EnterCriticalSection(&map_cs);
 				threads[thread].push_back(functionName);
@@ -207,7 +199,7 @@ namespace Nullsoft
 				we pass it in as a char * even though it'll be converted to a std::string
 				to reduce overhead when OUTPUT_STATS is off
 			 */
-			inline AutoLock(LockGuard &_guard, char *functionName = "function name not passed") : guard(&_guard)
+			inline AutoLock(LockGuard &_guard, const char *functionName = "function name not passed") : guard(&_guard)
 			{
 				ManualLock(functionName);
 			}
@@ -252,45 +244,50 @@ namespace Nullsoft
 #define MANUALLOCKNAME(x)
 #define LOCKNAME(x)
 #define GUARDNAME(x)
-namespace Nullsoft
+namespace nu
 {
-	namespace Utility
-	{
 		/* the token which represents a resource to be locked */
 		class LockGuard
 		{
 		public:
-			inline LockGuard(char *guardName = "")
+			inline LockGuard(const char *guardName = "")
 			{
       #ifdef _WIN32
 					InitializeCriticalSection(&m_cs);
-          #else
-           MPCreateCriticalRegion(&cr);
+#elif defined(__linux__)
+           pthread_mutexattr_t mtxattr;
+           pthread_mutexattr_init(&mtxattr);
+           pthread_mutexattr_settype(&mtxattr,  PTHREAD_MUTEX_RECURSIVE_NP );           
+           pthread_mutex_init(&mtx, &mtxattr);
+           pthread_mutexattr_destroy(&mtxattr);
+#elif defined(__APPLE__)
+                pthread_mutexattr_t mtxattr;
+                pthread_mutexattr_init(&mtxattr);
+                pthread_mutexattr_settype(&mtxattr,  PTHREAD_MUTEX_RECURSIVE);           
+                pthread_mutex_init(&mtx, &mtxattr);
+                pthread_mutexattr_destroy(&mtxattr);
+           #else
+           #error port me
           #endif
 			}
-#if _WIN32_WINNT >= 0x403
-			inline LockGuard(DWORD spin_count, char *guardName = "")
-			{
-				if (spin_count)
-					InitializeCriticalSectionAndSpinCount(&m_cs, spin_count);
-				else
-					InitializeCriticalSection(&m_cs);
-			}
-#endif
 			inline ~LockGuard()
 			{
       #ifdef _WIN32
 				DeleteCriticalSection(&m_cs);
-			#else
-      MPDeleteCriticalRegion(cr);
+      #elif defined(__linux__) || defined(__APPLE__)
+      pthread_mutex_destroy(&mtx);
+      #else
+      #error port me!
       #endif
       }
 			inline void Lock()
 			{
       #ifdef _WIN32
 				EnterCriticalSection(&m_cs);
-			#else
-        MPEnterCriticalRegion(cr, kDurationForever);
+      #elif defined(__linux__) || defined(__APPLE__)
+        pthread_mutex_lock(&mtx);
+        #else
+        #error por tme!
       #endif
       }
 
@@ -298,18 +295,20 @@ namespace Nullsoft
 			{
       #ifdef _WIN32
 				LeaveCriticalSection(&m_cs);
-			#else
-        MPExitCriticalRegion(cr);
+      #elif defined(__linux__) || defined(__APPLE__)
+        pthread_mutex_unlock(&mtx);
+        #else
+        #error port me!
       #endif
       }
 		private:
     #ifdef _WIN32
 			CRITICAL_SECTION m_cs;
-		#else
-			MPCriticalRegionID cr;
+      #elif defined(__linux__) || defined(__APPLE__)
+			pthread_mutex_t mtx;
+			        #else
+        #error port me!
     #endif
-			LockGuard(const LockGuard &copy) { } // make copy constructor private so it can't be used
-			LockGuard &operator =(const LockGuard &copy) {} // same with operator=
     };
 
 		/* an AutoLock locks a resource (represented by a LockGuard) for the duration of its lifetime */
@@ -372,7 +371,6 @@ namespace Nullsoft
 			}
 			LockGuard_t *guard;
 		};
-	}
 }
 #endif
 

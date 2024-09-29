@@ -1,21 +1,6 @@
 /*
- *  RingBuffer.h
- *  simple_mp3_playback
- *
- *  Created by Ben Allison on 11/10/07.
- *  Copyright 2007 Nullsoft, Inc. All rights reserved.
- *
- *  Ring Buffer class
- *  Thread safety:
- *   This class can be used from exactly two simultaneous threads without locking
- *   as long as one thread only writes and the other thread only reads
- *   the writer thread may call empty(), avail(), size(), write(), fill(
- *   the reader thread my call empty(), avail(), size(), read(), peek(), advance()
- *
- *   two (or more) readers or two (or more) writers requires external locking
- *
- *   Reset(), reserve(), clear(), LockBuffer(), UnlockBuffer() are not thread-safe
- */
+* Not Thread Safe !
+*/
 
 #pragma once
 #include <stddef.h>
@@ -35,7 +20,7 @@ public:
 class RingBuffer
 {
 public:
-	RingBuffer()                                                      {}
+	RingBuffer();
 	~RingBuffer();
 
 	void Reset();
@@ -58,20 +43,19 @@ public:
 
 	void get_read_buffer( size_t bytes, const void **buffer, size_t *bytes_available ) const; /* returns a pointer that you can read data from, call advance() when you are done */
 	/* DO NOT USING THIS UNLESS YOU KNOW WHAT YOU'RE DOING
-	  you should only use it when the ring buffer is empty
-		1) call clear() beforehand - very important!
-		2) call LockBuffer(), it'll give you a buffer
-		3) call UnlockBufer() with how much you've written
-		4) you catch the man
+	you should only use it when the ring buffer is empty
+	1) call clear() beforehand - very important!
+	2) call LockBuffer(), it'll give you a buffer
+	3) call UnlockBufer() with how much you've written
+	4) you catch the man
 	*/
 	void *LockBuffer();
 	void UnlockBuffer( size_t written );
 
 private:
-	volatile size_t ringBufferUsed = 0;
-
-	size_t ringBufferSize   = 0;
-	char *ringBuffer        = 0;
-	char *ringWritePosition = 0;
-	char *ringReadPosition  = 0;
+	volatile size_t ringBufferUsed;
+	size_t ringBufferSize;
+	char *ringBuffer;
+	char *ringWritePosition;
+	char *ringReadPosition;
 };

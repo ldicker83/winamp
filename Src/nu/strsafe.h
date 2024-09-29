@@ -9,8 +9,10 @@
 *  Ported to Unix by Ben Allison - Nullsoft, Inc.                 *
 *                                                                 *
 ******************************************************************/
-#ifndef _STRSAFE_H_INCLUDED_
-#define _STRSAFE_H_INCLUDED_
+#pragma once
+#ifdef _WIN32
+#include <strsafe.h>
+#else
 #pragma once
 
 #include <stdio.h>      // for _vsnprintf, _vsnwprintf, getc, getwc
@@ -18,29 +20,8 @@
 #include <stdarg.h>     // for va_start, etc.
 #include <wchar.h>
 
-#ifndef _WIN32
-#define STRSAFE_NO_DEPRECATE
-#endif
 
-#ifdef _WIN32
-#define vsnprintf _vsnprintf
-#endif
-
-#ifndef _SIZE_T_DEFINED
-#ifdef  _WIN64
-typedef unsigned __int64    size_t;
-#elif defined(_WIN32)
-typedef __w64 unsigned int  size_t;
-#else
 #include <stdint.h>
-#endif  // !_WIN64
-#define _SIZE_T_DEFINED
-#endif  // !_SIZE_T_DEFINED
-
-#if defined(_WIN32) && !defined(_WCHAR_T_DEFINED) && !defined(_NATIVE_WCHAR_T_DEFINED)
-typedef unsigned short wchar_t;
-#define _WCHAR_T_DEFINED
-#endif
 
 #ifndef _HRESULT_DEFINED
 #define _HRESULT_DEFINED
@@ -130,33 +111,21 @@ typedef long HRESULT;
 // prototypes for the worker functions
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCopyWorkerA(char* pszDest, size_t cchDest, const char* pszSrc);
-STRSAFEAPI StringCopyWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc);
 STRSAFEAPI StringCopyExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, const char* pszSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCopyExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
 STRSAFEAPI StringCopyNWorkerA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchSrc);
-STRSAFEAPI StringCopyNWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchSrc);
 STRSAFEAPI StringCopyNExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, const char* pszSrc, size_t cchSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCopyNExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, size_t cchSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
 STRSAFEAPI StringCatWorkerA(char* pszDest, size_t cchDest, const char* pszSrc);
-STRSAFEAPI StringCatWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc);
 STRSAFEAPI StringCatExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, const char* pszSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCatExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
 STRSAFEAPI StringCatNWorkerA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchMaxAppend);
-STRSAFEAPI StringCatNWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchMaxAppend);
 STRSAFEAPI StringCatNExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, const char* pszSrc, size_t cchMaxAppend, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCatNExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, size_t cchMaxAppend, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
 STRSAFEAPI StringVPrintfWorkerA(char* pszDest, size_t cchDest, const char* pszFormat, va_list argList);
-STRSAFEAPI StringVPrintfWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszFormat, va_list argList);
 STRSAFEAPI StringVPrintfExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const char* pszFormat, va_list argList);
-STRSAFEAPI StringVPrintfExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const wchar_t* pszFormat, va_list argList);
 STRSAFEAPI StringLengthWorkerA(const char* psz, size_t cchMax, size_t* pcch);
-STRSAFEAPI StringLengthWorkerW(const wchar_t* psz, size_t cchMax, size_t* pcch);
 #endif  // STRSAFE_INLINE
 
 #ifndef STRSAFE_LIB_IMPL
 // these functions are always inline
 STRSAFE_INLINE_API StringGetsExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFE_INLINE_API StringGetsExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
 #endif
 
 #ifdef _NTSTRSAFE_H_INCLUDED_
@@ -235,12 +204,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCopyA(char* pszDest, size_t cchDest, const char* pszSrc);
-STRSAFEAPI StringCchCopyW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc);
-#ifdef UNICODE
-#define StringCchCopy  StringCchCopyW
-#else
 #define StringCchCopy  StringCchCopyA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCopyA(char* pszDest, size_t cchDest, const char* pszSrc)
@@ -259,21 +223,6 @@ STRSAFEAPI StringCchCopyA(char* pszDest, size_t cchDest, const char* pszSrc)
     return hr;
 }
 
-STRSAFEAPI StringCchCopyW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCopyWorkerW(pszDest, cchDest, pszSrc);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -347,12 +296,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCopyA(char* pszDest, size_t cbDest, const char* pszSrc);
-STRSAFEAPI StringCbCopyW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc);
-#ifdef UNICODE
-#define StringCbCopy  StringCbCopyW
-#else
 #define StringCbCopy  StringCbCopyA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCopyA(char* pszDest, size_t cbDest, const char* pszSrc)
@@ -375,25 +319,6 @@ STRSAFEAPI StringCbCopyA(char* pszDest, size_t cbDest, const char* pszSrc)
     return hr;
 }
 
-STRSAFEAPI StringCbCopyW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc)
-{
-    HRESULT hr;
-    size_t cchDest;
-
-    // convert to count of characters
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCopyWorkerW(pszDest, cchDest, pszSrc);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -493,12 +418,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCopyExA(char* pszDest, size_t cchDest, const char* pszSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCchCopyExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCchCopyEx  StringCchCopyExW
-#else
 #define StringCchCopyEx  StringCchCopyExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCopyExA(char* pszDest, size_t cchDest, const char* pszSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
@@ -522,26 +442,6 @@ STRSAFEAPI StringCchCopyExA(char* pszDest, size_t cchDest, const char* pszSrc, c
     return hr;
 }
 
-STRSAFEAPI StringCchCopyExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringCopyExWorkerW(pszDest, cchDest, cbDest, pszSrc, ppszDestEnd, pcchRemaining, dwFlags);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -641,12 +541,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCopyExA(char* pszDest, size_t cbDest, const char* pszSrc, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCbCopyExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCbCopyEx  StringCbCopyExW
-#else
 #define StringCbCopyEx  StringCbCopyExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCopyExA(char* pszDest, size_t cbDest, const char* pszSrc, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
@@ -678,34 +573,6 @@ STRSAFEAPI StringCbCopyExA(char* pszDest, size_t cbDest, const char* pszSrc, cha
     return hr;
 }
 
-STRSAFEAPI StringCbCopyExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCopyExWorkerW(pszDest, cchDest, cbDest, pszSrc, ppszDestEnd, &cchRemaining, dwFlags);
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
-        }
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -780,12 +647,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCopyNA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchSrc);
-STRSAFEAPI StringCchCopyNW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchSrc);
-#ifdef UNICODE
-#define StringCchCopyN  StringCchCopyNW
-#else
 #define StringCchCopyN  StringCchCopyNA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCopyNA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchSrc)
@@ -805,22 +667,6 @@ STRSAFEAPI StringCchCopyNA(char* pszDest, size_t cchDest, const char* pszSrc, si
     return hr;
 }
 
-STRSAFEAPI StringCchCopyNW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchSrc)
-{
-    HRESULT hr;
-
-    if ((cchDest > STRSAFE_MAX_CCH) ||
-        (cchSrc > STRSAFE_MAX_CCH))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCopyNWorkerW(pszDest, cchDest, pszSrc, cchSrc);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -896,12 +742,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCopyNA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbSrc);
-STRSAFEAPI StringCbCopyNW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbSrc);
-#ifdef UNICODE
-#define StringCbCopyN  StringCbCopyNW
-#else
 #define StringCbCopyN  StringCbCopyNA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCopyNA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbSrc)
@@ -927,28 +768,6 @@ STRSAFEAPI StringCbCopyNA(char* pszDest, size_t cbDest, const char* pszSrc, size
     return hr;
 }
 
-STRSAFEAPI StringCbCopyNW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbSrc)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchSrc;
-
-    // convert to count of characters
-    cchDest = cbDest / sizeof(wchar_t);
-    cchSrc = cbSrc / sizeof(wchar_t);
-
-    if ((cchDest > STRSAFE_MAX_CCH) ||
-        (cchSrc > STRSAFE_MAX_CCH))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCopyNWorkerW(pszDest, cchDest, pszSrc, cchSrc);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -1057,12 +876,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCopyNExA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCchCopyNExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCchCopyNEx  StringCchCopyNExW
-#else
 #define StringCchCopyNEx  StringCchCopyNExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCopyNExA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
@@ -1087,27 +901,6 @@ STRSAFEAPI StringCchCopyNExA(char* pszDest, size_t cchDest, const char* pszSrc, 
     return hr;
 }
 
-STRSAFEAPI StringCchCopyNExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-
-    if ((cchDest > STRSAFE_MAX_CCH) ||
-        (cchSrc > STRSAFE_MAX_CCH))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringCopyNExWorkerW(pszDest, cchDest, cbDest, pszSrc, cchSrc, ppszDestEnd, pcchRemaining, dwFlags);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -1214,12 +1007,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCopyNExA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbSrc, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCbCopyNExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbSrc, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCbCopyNEx  StringCbCopyNExW
-#else
 #define StringCbCopyNEx  StringCbCopyNExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCopyNExA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbSrc, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
@@ -1254,37 +1042,6 @@ STRSAFEAPI StringCbCopyNExA(char* pszDest, size_t cbDest, const char* pszSrc, si
     return hr;
 }
 
-STRSAFEAPI StringCbCopyNExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbSrc, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchSrc;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-    cchSrc = cbSrc / sizeof(wchar_t);
-
-    if ((cchDest > STRSAFE_MAX_CCH) ||
-        (cchSrc > STRSAFE_MAX_CCH))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCopyNExWorkerW(pszDest, cchDest, cbDest, pszSrc, cchSrc, ppszDestEnd, &cchRemaining, dwFlags);
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
-        }
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -1351,12 +1108,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCatA(char* pszDest, size_t cchDest, const char* pszSrc);
-STRSAFEAPI StringCchCatW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc);
-#ifdef UNICODE
-#define StringCchCat  StringCchCatW
-#else
 #define StringCchCat  StringCchCatA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCatA(char* pszDest, size_t cchDest, const char* pszSrc)
@@ -1375,21 +1127,6 @@ STRSAFEAPI StringCchCatA(char* pszDest, size_t cchDest, const char* pszSrc)
     return hr;
 }
 
-STRSAFEAPI StringCchCatW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCatWorkerW(pszDest, cchDest, pszSrc);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -1456,12 +1193,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCatA(char* pszDest, size_t cbDest, const char* pszSrc);
-STRSAFEAPI StringCbCatW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc);
-#ifdef UNICODE
-#define StringCbCat  StringCbCatW
-#else
 #define StringCbCat  StringCbCatA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCatA(char* pszDest, size_t cbDest, const char* pszSrc)
@@ -1483,24 +1215,6 @@ STRSAFEAPI StringCbCatA(char* pszDest, size_t cbDest, const char* pszSrc)
     return hr;
 }
 
-STRSAFEAPI StringCbCatW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc)
-{
-    HRESULT hr;
-    size_t cchDest;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCatWorkerW(pszDest, cchDest, pszSrc);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -1603,12 +1317,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCatExA(char* pszDest, size_t cchDest, const char* pszSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCchCatExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCchCatEx  StringCchCatExW
-#else
 #define StringCchCatEx  StringCchCatExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCatExA(char* pszDest, size_t cchDest, const char* pszSrc, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
@@ -1632,26 +1341,6 @@ STRSAFEAPI StringCchCatExA(char* pszDest, size_t cchDest, const char* pszSrc, ch
     return hr;
 }
 
-STRSAFEAPI StringCchCatExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringCatExWorkerW(pszDest, cchDest, cbDest, pszSrc, ppszDestEnd, pcchRemaining, dwFlags);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -1754,12 +1443,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCatExA(char* pszDest, size_t cbDest, const char* pszSrc, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCbCatExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCbCatEx  StringCbCatExW
-#else
 #define StringCbCatEx  StringCbCatExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCatExA(char* pszDest, size_t cbDest, const char* pszSrc, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
@@ -1791,34 +1475,6 @@ STRSAFEAPI StringCbCatExA(char* pszDest, size_t cbDest, const char* pszSrc, char
     return hr;
 }
 
-STRSAFEAPI StringCbCatExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCatExWorkerW(pszDest, cchDest, cbDest, pszSrc, ppszDestEnd, &cchRemaining, dwFlags);
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
-        }
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -1891,12 +1547,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCatNA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchMaxAppend);
-STRSAFEAPI StringCchCatNW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchMaxAppend);
-#ifdef UNICODE
-#define StringCchCatN  StringCchCatNW
-#else
 #define StringCchCatN  StringCchCatNA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCatNA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchMaxAppend)
@@ -1915,21 +1566,6 @@ STRSAFEAPI StringCchCatNA(char* pszDest, size_t cchDest, const char* pszSrc, siz
     return hr;
 }
 
-STRSAFEAPI StringCchCatNW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchMaxAppend)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringCatNWorkerW(pszDest, cchDest, pszSrc, cchMaxAppend);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -2002,12 +1638,8 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCatNA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbMaxAppend);
-STRSAFEAPI StringCbCatNW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbMaxAppend);
-#ifdef UNICODE
-#define StringCbCatN  StringCbCatNW
-#else
+
 #define StringCbCatN  StringCbCatNA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCatNA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbMaxAppend)
@@ -2033,28 +1665,6 @@ STRSAFEAPI StringCbCatNA(char* pszDest, size_t cbDest, const char* pszSrc, size_
     return hr;
 }
 
-STRSAFEAPI StringCbCatNW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbMaxAppend)
-{
-    HRESULT hr;
-    size_t cchDest;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cchMaxAppend;
-
-        cchMaxAppend = cbMaxAppend / sizeof(wchar_t);
-
-        hr = StringCatNWorkerW(pszDest, cchDest, pszSrc, cchMaxAppend);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -2160,12 +1770,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchCatNExA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchMaxAppend, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCchCatNExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchMaxAppend, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCchCatNEx  StringCchCatNExW
-#else
 #define StringCchCatNEx  StringCchCatNExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchCatNExA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchMaxAppend, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
@@ -2189,26 +1794,7 @@ STRSAFEAPI StringCchCatNExA(char* pszDest, size_t cchDest, const char* pszSrc, s
     return hr;
 }
 
-STRSAFEAPI StringCchCatNExW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchMaxAppend, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
 
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringCatNExWorkerW(pszDest, cchDest, cbDest, pszSrc, cchMaxAppend, ppszDestEnd, pcchRemaining, dwFlags);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -2314,12 +1900,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbCatNExA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbMaxAppend, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-STRSAFEAPI StringCbCatNExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbMaxAppend, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCbCatNEx  StringCbCatNExW
-#else
 #define StringCbCatNEx  StringCbCatNExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbCatNExA(char* pszDest, size_t cbDest, const char* pszSrc, size_t cbMaxAppend, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
@@ -2349,39 +1930,6 @@ STRSAFEAPI StringCbCatNExA(char* pszDest, size_t cbDest, const char* pszSrc, siz
         {
             // safe to multiply cchRemaining * sizeof(char) since cchRemaining < STRSAFE_MAX_CCH and sizeof(char) is 1
             *pcbRemaining = (cchRemaining * sizeof(char)) + (cbDest % sizeof(char));
-        }
-    }
-
-    return hr;
-}
-
-STRSAFEAPI StringCbCatNExW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszSrc, size_t cbMaxAppend, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cchMaxAppend;
-
-        cchMaxAppend = cbMaxAppend / sizeof(wchar_t);
-
-        hr = StringCatNExWorkerW(pszDest, cchDest, cbDest, pszSrc, cchMaxAppend, ppszDestEnd, &cchRemaining, dwFlags);
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
         }
     }
 
@@ -2457,12 +2005,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchVPrintfA(char* pszDest, size_t cchDest, const char* pszFormat, va_list argList);
-STRSAFEAPI StringCchVPrintfW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszFormat, va_list argList);
-#ifdef UNICODE
-#define StringCchVPrintf  StringCchVPrintfW
-#else
 #define StringCchVPrintf  StringCchVPrintfA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchVPrintfA(char* pszDest, size_t cchDest, const char* pszFormat, va_list argList)
@@ -2480,25 +2023,6 @@ STRSAFEAPI StringCchVPrintfA(char* pszDest, size_t cchDest, const char* pszForma
 
     return hr;
 }
-
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCchVPrintfW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszFormat, va_list argList)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringVPrintfWorkerW(pszDest, cchDest, pszFormat, argList);
-    }
-
-    return hr;
-}
-#endif
-
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -2570,12 +2094,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbVPrintfA(char* pszDest, size_t cbDest, const char* pszFormat, va_list argList);
-STRSAFEAPI StringCbVPrintfW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszFormat, va_list argList);
-#ifdef UNICODE
-#define StringCbVPrintf  StringCbVPrintfW
-#else
 #define StringCbVPrintf  StringCbVPrintfA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbVPrintfA(char* pszDest, size_t cbDest, const char* pszFormat, va_list argList)
@@ -2596,27 +2115,6 @@ STRSAFEAPI StringCbVPrintfA(char* pszDest, size_t cbDest, const char* pszFormat,
 
     return hr;
 }
-
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCbVPrintfW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszFormat, va_list argList)
-{
-    HRESULT hr;
-    size_t cchDest;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringVPrintfWorkerW(pszDest, cchDest, pszFormat, argList);
-    }
-
-    return hr;
-}
-#endif
 
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
@@ -2688,12 +2186,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchPrintfA(char* pszDest, size_t cchDest, const char* pszFormat, ...);
-STRSAFEAPI StringCchPrintfW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszFormat, ...);
-#ifdef UNICODE
-#define StringCchPrintf  StringCchPrintfW
-#else
 #define StringCchPrintf  StringCchPrintfA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchPrintfA(char* pszDest, size_t cchDest, const char* pszFormat, ...)
@@ -2718,29 +2211,6 @@ STRSAFEAPI StringCchPrintfA(char* pszDest, size_t cchDest, const char* pszFormat
     return hr;
 }
 
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCchPrintfW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszFormat, ...)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        va_list argList;
-
-        va_start(argList, pszFormat);
-
-        hr = StringVPrintfWorkerW(pszDest, cchDest, pszFormat, argList);
-
-        va_end(argList);
-    }
-
-    return hr;
-}
-#endif
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -2812,12 +2282,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbPrintfA(char* pszDest, size_t cbDest, const char* pszFormat, ...);
-STRSAFEAPI StringCbPrintfW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszFormat, ...);
-#ifdef UNICODE
-#define StringCbPrintf  StringCbPrintfW
-#else
 #define StringCbPrintf  StringCbPrintfA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbPrintfA(char* pszDest, size_t cbDest, const char* pszFormat, ...)
@@ -2845,32 +2310,6 @@ STRSAFEAPI StringCbPrintfA(char* pszDest, size_t cbDest, const char* pszFormat, 
     return hr;
 }
 
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCbPrintfW(wchar_t* pszDest, size_t cbDest, const wchar_t* pszFormat, ...)
-{
-    HRESULT hr;
-    size_t cchDest;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        va_list argList;
-
-        va_start(argList, pszFormat);
-
-        hr = StringVPrintfWorkerW(pszDest, cchDest, pszFormat, argList);
-
-        va_end(argList);
-    }
-
-    return hr;
-}
-#endif
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -2974,12 +2413,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchPrintfExA(char* pszDest, size_t cchDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const char* pszFormat, ...);
-STRSAFEAPI StringCchPrintfExW(wchar_t* pszDest, size_t cchDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const wchar_t* pszFormat, ...);
-#ifdef UNICODE
-#define StringCchPrintfEx  StringCchPrintfExW
-#else
 #define StringCchPrintfEx  StringCchPrintfExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchPrintfExA(char* pszDest, size_t cchDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const char* pszFormat, ...)
@@ -3007,32 +2441,6 @@ STRSAFEAPI StringCchPrintfExA(char* pszDest, size_t cchDest, char** ppszDestEnd,
     return hr;
 }
 
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCchPrintfExW(wchar_t* pszDest, size_t cchDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const wchar_t* pszFormat, ...)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-        va_list argList;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-        va_start(argList, pszFormat);
-
-        hr = StringVPrintfExWorkerW(pszDest, cchDest, cbDest, ppszDestEnd, pcchRemaining, dwFlags, pszFormat, argList);
-
-        va_end(argList);
-    }
-
-    return hr;
-}
-#endif
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -3136,12 +2544,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbPrintfExA(char* pszDest, size_t cbDest, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const char* pszFormat, ...);
-STRSAFEAPI StringCbPrintfExW(wchar_t* pszDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const wchar_t* pszFormat, ...);
-#ifdef UNICODE
-#define StringCbPrintfEx  StringCbPrintfExW
-#else
 #define StringCbPrintfEx  StringCbPrintfExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbPrintfExA(char* pszDest, size_t cbDest, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const char* pszFormat, ...)
@@ -3179,42 +2582,6 @@ STRSAFEAPI StringCbPrintfExA(char* pszDest, size_t cbDest, char** ppszDestEnd, s
     return hr;
 }
 
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCbPrintfExW(wchar_t* pszDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const wchar_t* pszFormat, ...)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        va_list argList;
-
-        va_start(argList, pszFormat);
-
-        hr = StringVPrintfExWorkerW(pszDest, cchDest, cbDest, ppszDestEnd, &cchRemaining, dwFlags, pszFormat, argList);
-
-        va_end(argList);
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
-        }
-    }
-
-    return hr;
-}
-#endif
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -3318,12 +2685,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchVPrintfExA(char* pszDest, size_t cchDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const char* pszFormat, va_list argList);
-STRSAFEAPI StringCchVPrintfExW(wchar_t* pszDest, size_t cchDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const wchar_t* pszFormat, va_list argList);
-#ifdef UNICODE
-#define StringCchVPrintfEx  StringCchVPrintfExW
-#else
 #define StringCchVPrintfEx  StringCchVPrintfExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchVPrintfExA(char* pszDest, size_t cchDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const char* pszFormat, va_list argList)
@@ -3346,29 +2708,6 @@ STRSAFEAPI StringCchVPrintfExA(char* pszDest, size_t cchDest, char** ppszDestEnd
 
     return hr;
 }
-
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCchVPrintfExW(wchar_t* pszDest, size_t cchDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const wchar_t* pszFormat, va_list argList)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringVPrintfExWorkerW(pszDest, cchDest, cbDest, ppszDestEnd, pcchRemaining, dwFlags, pszFormat, argList);
-    }
-
-    return hr;
-}
-#endif
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -3472,12 +2811,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbVPrintfExA(char* pszDest, size_t cbDest, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const char* pszFormat, va_list argList);
-STRSAFEAPI StringCbVPrintfExW(wchar_t* pszDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const wchar_t* pszFormat, va_list argList);
-#ifdef UNICODE
-#define StringCbVPrintfEx  StringCbVPrintfExW
-#else
 #define StringCbVPrintfEx  StringCbVPrintfExA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbVPrintfExA(char* pszDest, size_t cbDest, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const char* pszFormat, va_list argList)
@@ -3509,36 +2843,6 @@ STRSAFEAPI StringCbVPrintfExA(char* pszDest, size_t cbDest, char** ppszDestEnd, 
     return hr;
 }
 
-#ifdef _WIN32 // TODO: benski> port to BSD
-STRSAFEAPI StringCbVPrintfExW(wchar_t* pszDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags, const wchar_t* pszFormat, va_list argList)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringVPrintfExWorkerW(pszDest, cchDest, cbDest, ppszDestEnd, &cchRemaining, dwFlags, pszFormat, argList);
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
-        }
-    }
-
-    return hr;
-}
-#endif
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -3605,12 +2909,7 @@ Return Value:
 
 #ifndef STRSAFE_LIB_IMPL
 STRSAFE_INLINE_API StringCchGetsA(char* pszDest, size_t cchDest);
-STRSAFE_INLINE_API StringCchGetsW(wchar_t* pszDest, size_t cchDest);
-#ifdef UNICODE
-#define StringCchGets  StringCchGetsW
-#else
 #define StringCchGets  StringCchGetsA
-#endif // !UNICODE
 
 STRSAFE_INLINE_API StringCchGetsA(char* pszDest, size_t cchDest)
 {
@@ -3633,26 +2932,6 @@ STRSAFE_INLINE_API StringCchGetsA(char* pszDest, size_t cchDest)
     return hr;
 }
 
-STRSAFE_INLINE_API StringCchGetsW(wchar_t* pszDest, size_t cchDest)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringGetsExWorkerW(pszDest, cchDest, cbDest, NULL, NULL, 0);
-    }
-
-    return hr;
-}
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 #endif  // !STRSAFE_LIB_IMPL
 
@@ -3718,12 +2997,8 @@ Return Value:
 
 #ifndef STRSAFE_LIB_IMPL
 STRSAFE_INLINE_API StringCbGetsA(char* pszDest, size_t cbDest);
-STRSAFE_INLINE_API StringCbGetsW(wchar_t* pszDest, size_t cbDest);
-#ifdef UNICODE
-#define StringCbGets  StringCbGetsW
-#else
+
 #define StringCbGets  StringCbGetsA
-#endif // !UNICODE
 
 STRSAFE_INLINE_API StringCbGetsA(char* pszDest, size_t cbDest)
 {
@@ -3745,25 +3020,6 @@ STRSAFE_INLINE_API StringCbGetsA(char* pszDest, size_t cbDest)
     return hr;
 }
 
-STRSAFE_INLINE_API StringCbGetsW(wchar_t* pszDest, size_t cbDest)
-{
-    HRESULT hr;
-    size_t cchDest;
-
-    // convert to count of characters
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringGetsExWorkerW(pszDest, cchDest, cbDest, NULL, NULL, 0);
-    }
-
-    return hr;
-}
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 #endif  // !STRSAFE_LIB_IMPL
 
@@ -3856,12 +3112,7 @@ Return Value:
 
 #ifndef STRSAFE_LIB_IMPL
 STRSAFE_INLINE_API StringCchGetsExA(char* pszDest, size_t cchDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-STRSAFE_INLINE_API StringCchGetsExW(wchar_t* pszDest, size_t cchDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCchGetsEx  StringCchGetsExW
-#else
 #define StringCchGetsEx  StringCchGetsExA
-#endif // !UNICODE
 
 STRSAFE_INLINE_API StringCchGetsExA(char* pszDest, size_t cchDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
 {
@@ -3884,26 +3135,6 @@ STRSAFE_INLINE_API StringCchGetsExA(char* pszDest, size_t cchDest, char** ppszDe
     return hr;
 }
 
-STRSAFE_INLINE_API StringCchGetsExW(wchar_t* pszDest, size_t cchDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cbDest;
-
-        // safe to multiply cchDest * sizeof(wchar_t) since cchDest < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        cbDest = cchDest * sizeof(wchar_t);
-
-        hr = StringGetsExWorkerW(pszDest, cchDest, cbDest, ppszDestEnd, pcchRemaining, dwFlags);
-    }
-
-    return hr;
-}
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 #endif  // !STRSAFE_LIB_IMPL
 
@@ -3996,12 +3227,7 @@ Return Value:
 
 #ifndef STRSAFE_LIB_IMPL
 STRSAFE_INLINE_API StringCbGetsExA(char* pszDest, size_t cbDest, char** ppszDestEnd, size_t* pbRemaining, unsigned long dwFlags);
-STRSAFE_INLINE_API StringCbGetsExW(wchar_t* pszDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags);
-#ifdef UNICODE
-#define StringCbGetsEx  StringCbGetsExW
-#else
 #define StringCbGetsEx  StringCbGetsExA
-#endif // !UNICODE
 
 STRSAFE_INLINE_API StringCbGetsExA(char* pszDest, size_t cbDest, char** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
 {
@@ -4034,36 +3260,6 @@ STRSAFE_INLINE_API StringCbGetsExA(char* pszDest, size_t cbDest, char** ppszDest
     return hr;
 }
 
-STRSAFE_INLINE_API StringCbGetsExW(wchar_t* pszDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcbRemaining, unsigned long dwFlags)
-{
-    HRESULT hr;
-    size_t cchDest;
-    size_t cchRemaining = 0;
-
-    cchDest = cbDest / sizeof(wchar_t);
-
-    if (cchDest > STRSAFE_MAX_CCH)
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringGetsExWorkerW(pszDest, cchDest, cbDest, ppszDestEnd, &cchRemaining, dwFlags);
-    }
-
-    if (SUCCEEDED(hr) ||
-        (hr == STRSAFE_E_INSUFFICIENT_BUFFER) ||
-        (hr == STRSAFE_E_END_OF_FILE))
-    {
-        if (pcbRemaining)
-        {
-            // safe to multiply cchRemaining * sizeof(wchar_t) since cchRemaining < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-            *pcbRemaining = (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t));
-        }
-    }
-
-    return hr;
-}
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 #endif  // !STRSAFE_LIB_IMPL
 
@@ -4118,12 +3314,7 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCchLengthA(const char* psz, size_t cchMax, size_t* pcch);
-STRSAFEAPI StringCchLengthW(const wchar_t* psz, size_t cchMax, size_t* pcch);
-#ifdef UNICODE
-#define StringCchLength  StringCchLengthW
-#else
 #define StringCchLength  StringCchLengthA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCchLengthA(const char* psz, size_t cchMax, size_t* pcch)
@@ -4142,21 +3333,6 @@ STRSAFEAPI StringCchLengthA(const char* psz, size_t cchMax, size_t* pcch)
     return hr;
 }
 
-STRSAFEAPI StringCchLengthW(const wchar_t* psz, size_t cchMax, size_t* pcch)
-{
-    HRESULT hr;
-
-    if ((psz == NULL) || (cchMax > STRSAFE_MAX_CCH))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringLengthWorkerW(psz, cchMax, pcch);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CCH_FUNCTIONS
 
@@ -4212,12 +3388,8 @@ Return Value:
 --*/
 
 STRSAFEAPI StringCbLengthA(const char* psz, size_t cchMax, size_t* pcch);
-STRSAFEAPI StringCbLengthW(const wchar_t* psz, size_t cchMax, size_t* pcch);
-#ifdef UNICODE
-#define StringCbLength  StringCbLengthW
-#else
+
 #define StringCbLength  StringCbLengthA
-#endif // !UNICODE
 
 #ifdef STRSAFE_INLINE
 STRSAFEAPI StringCbLengthA(const char* psz, size_t cbMax, size_t* pcb)
@@ -4246,31 +3418,6 @@ STRSAFEAPI StringCbLengthA(const char* psz, size_t cbMax, size_t* pcb)
     return hr;
 }
 
-STRSAFEAPI StringCbLengthW(const wchar_t* psz, size_t cbMax, size_t* pcb)
-{
-    HRESULT hr;
-    size_t cchMax;
-    size_t cch = 0;
-
-    cchMax = cbMax / sizeof(wchar_t);
-
-    if ((psz == NULL) || (cchMax > STRSAFE_MAX_CCH))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        hr = StringLengthWorkerW(psz, cchMax, &cch);
-    }
-
-    if (SUCCEEDED(hr) && pcb)
-    {
-        // safe to multiply cch * sizeof(wchar_t) since cch < STRSAFE_MAX_CCH and sizeof(wchar_t) is 2
-        *pcb = cch * sizeof(wchar_t);
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 #endif  // !STRSAFE_NO_CB_FUNCTIONS
 
@@ -4302,36 +3449,6 @@ STRSAFEAPI StringCopyWorkerA(char* pszDest, size_t cchDest, const char* pszSrc)
         }
 
         *pszDest= '\0';
-    }
-
-    return hr;
-}
-
-STRSAFEAPI StringCopyWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc)
-{
-    HRESULT hr = S_OK;
-
-    if (cchDest == 0)
-    {
-        // can not null terminate a zero-byte dest buffer
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        while (cchDest && (*pszSrc != L'\0'))
-        {
-            *pszDest++ = *pszSrc++;
-            cchDest--;
-        }
-
-        if (cchDest == 0)
-        {
-            // we are going to truncate pszDest
-            pszDest--;
-            hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-        }
-
-        *pszDest= L'\0';
     }
 
     return hr;
@@ -4475,144 +3592,6 @@ STRSAFEAPI StringCopyExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, con
     return hr;
 }
 
-STRSAFEAPI StringCopyExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr = S_OK;
-    wchar_t* pszDestEnd = pszDest;
-    size_t cchRemaining = 0;
-
-    // ASSERT(cbDest == (cchDest * sizeof(wchar_t)) ||
-    //        cbDest == (cchDest * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-
-    // only accept valid flags
-    if (dwFlags & (~STRSAFE_VALID_FLAGS))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        if (dwFlags & STRSAFE_IGNORE_NULLS)
-        {
-            if (pszDest == NULL)
-            {
-                if ((cchDest != 0) || (cbDest != 0))
-                {
-                    // NULL pszDest and non-zero cchDest/cbDest is invalid
-                    hr = STRSAFE_E_INVALID_PARAMETER;
-                }
-            }
-
-            if (pszSrc == NULL)
-            {
-                pszSrc = L"";
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (cchDest == 0)
-            {
-                pszDestEnd = pszDest;
-                cchRemaining = 0;
-
-                // only fail if there was actually src data to copy
-                if (*pszSrc != L'\0')
-                {
-                    if (pszDest == NULL)
-                    {
-                        hr = STRSAFE_E_INVALID_PARAMETER;
-                    }
-                    else
-                    {
-                        hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                    }
-                }
-            }
-            else
-            {
-                pszDestEnd = pszDest;
-                cchRemaining = cchDest;
-
-                while (cchRemaining && (*pszSrc != L'\0'))
-                {
-                    *pszDestEnd++= *pszSrc++;
-                    cchRemaining--;
-                }
-
-                if (cchRemaining > 0)
-                {
-                    if (dwFlags & STRSAFE_FILL_BEHIND_NULL)
-                    {
-                        memset(pszDestEnd + 1, STRSAFE_GET_FILL_PATTERN(dwFlags), ((cchRemaining - 1) * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-                    }
-                }
-                else
-                {
-                    // we are going to truncate pszDest
-                    pszDestEnd--;
-                    cchRemaining++;
-
-                    hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                }
-
-                *pszDestEnd = L'\0';
-            }
-        }
-    }
-
-    if (FAILED(hr))
-    {
-        if (pszDest)
-        {
-            if (dwFlags & STRSAFE_FILL_ON_FAILURE)
-            {
-                memset(pszDest, STRSAFE_GET_FILL_PATTERN(dwFlags), cbDest);
-
-                if (STRSAFE_GET_FILL_PATTERN(dwFlags) == 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-                }
-                else if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest + cchDest - 1;
-                    cchRemaining = 1;
-
-                    // null terminate the end of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-
-            if (dwFlags & (STRSAFE_NULL_ON_FAILURE | STRSAFE_NO_TRUNCATION))
-            {
-                if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-
-                    // null terminate the beginning of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (ppszDestEnd)
-        {
-            *ppszDestEnd = pszDestEnd;
-        }
-
-        if (pcchRemaining)
-        {
-            *pcchRemaining = cchRemaining;
-        }
-    }
-
-    return hr;
-}
-
 STRSAFEAPI StringCopyNWorkerA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchSrc)
 {
     HRESULT hr = S_OK;
@@ -4639,37 +3618,6 @@ STRSAFEAPI StringCopyNWorkerA(char* pszDest, size_t cchDest, const char* pszSrc,
         }
 
         *pszDest= '\0';
-    }
-
-    return hr;
-}
-
-STRSAFEAPI StringCopyNWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchSrc)
-{
-    HRESULT hr = S_OK;
-
-    if (cchDest == 0)
-    {
-        // can not null terminate a zero-byte dest buffer
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        while (cchDest && cchSrc && (*pszSrc != L'\0'))
-        {
-            *pszDest++= *pszSrc++;
-            cchDest--;
-            cchSrc--;
-        }
-
-        if (cchDest == 0)
-        {
-            // we are going to truncate pszDest
-            pszDest--;
-            hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-        }
-
-        *pszDest= L'\0';
     }
 
     return hr;
@@ -4814,145 +3762,6 @@ STRSAFEAPI StringCopyNExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, co
     return hr;
 }
 
-STRSAFEAPI StringCopyNExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, size_t cchSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr = S_OK;
-    wchar_t* pszDestEnd = pszDest;
-    size_t cchRemaining = 0;
-
-    // ASSERT(cbDest == (cchDest * sizeof(wchar_t)) ||
-    //        cbDest == (cchDest * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-
-    // only accept valid flags
-    if (dwFlags & (~STRSAFE_VALID_FLAGS))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        if (dwFlags & STRSAFE_IGNORE_NULLS)
-        {
-            if (pszDest == NULL)
-            {
-                if ((cchDest != 0) || (cbDest != 0))
-                {
-                    // NULL pszDest and non-zero cchDest/cbDest is invalid
-                    hr = STRSAFE_E_INVALID_PARAMETER;
-                }
-            }
-
-            if (pszSrc == NULL)
-            {
-                pszSrc = L"";
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (cchDest == 0)
-            {
-                pszDestEnd = pszDest;
-                cchRemaining = 0;
-
-                // only fail if there was actually src data to copy
-                if (*pszSrc != L'\0')
-                {
-                    if (pszDest == NULL)
-                    {
-                        hr = STRSAFE_E_INVALID_PARAMETER;
-                    }
-                    else
-                    {
-                        hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                    }
-                }
-            }
-            else
-            {
-                pszDestEnd = pszDest;
-                cchRemaining = cchDest;
-
-                while (cchRemaining && cchSrc && (*pszSrc != L'\0'))
-                {
-                    *pszDestEnd++= *pszSrc++;
-                    cchRemaining--;
-                    cchSrc--;
-                }
-
-                if (cchRemaining > 0)
-                {
-                    if (dwFlags & STRSAFE_FILL_BEHIND_NULL)
-                    {
-                        memset(pszDestEnd + 1, STRSAFE_GET_FILL_PATTERN(dwFlags), ((cchRemaining - 1) * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-                    }
-                }
-                else
-                {
-                    // we are going to truncate pszDest
-                    pszDestEnd--;
-                    cchRemaining++;
-
-                    hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                }
-
-                *pszDestEnd = L'\0';
-            }
-        }
-    }
-
-    if (FAILED(hr))
-    {
-        if (pszDest)
-        {
-            if (dwFlags & STRSAFE_FILL_ON_FAILURE)
-            {
-                memset(pszDest, STRSAFE_GET_FILL_PATTERN(dwFlags), cbDest);
-
-                if (STRSAFE_GET_FILL_PATTERN(dwFlags) == 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-                }
-                else if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest + cchDest - 1;
-                    cchRemaining = 1;
-
-                    // null terminate the end of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-
-            if (dwFlags & (STRSAFE_NULL_ON_FAILURE | STRSAFE_NO_TRUNCATION))
-            {
-                if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-
-                    // null terminate the beginning of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (ppszDestEnd)
-        {
-            *ppszDestEnd = pszDestEnd;
-        }
-
-        if (pcchRemaining)
-        {
-            *pcchRemaining = cchRemaining;
-        }
-    }
-
-    return hr;
-}
-
 STRSAFEAPI StringCatWorkerA(char* pszDest, size_t cchDest, const char* pszSrc)
 {
    HRESULT hr;
@@ -4963,23 +3772,6 @@ STRSAFEAPI StringCatWorkerA(char* pszDest, size_t cchDest, const char* pszSrc)
    if (SUCCEEDED(hr))
    {
        hr = StringCopyWorkerA(pszDest + cchDestCurrent,
-                              cchDest - cchDestCurrent,
-                              pszSrc);
-   }
-
-   return hr;
-}
-
-STRSAFEAPI StringCatWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc)
-{
-   HRESULT hr;
-   size_t cchDestCurrent;
-
-   hr = StringLengthWorkerW(pszDest, cchDest, &cchDestCurrent);
-
-   if (SUCCEEDED(hr))
-   {
-       hr = StringCopyWorkerW(pszDest + cchDestCurrent,
                               cchDest - cchDestCurrent,
                               pszSrc);
    }
@@ -5134,152 +3926,6 @@ STRSAFEAPI StringCatExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, cons
     return hr;
 }
 
-STRSAFEAPI StringCatExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr = S_OK;
-    wchar_t* pszDestEnd = pszDest;
-    size_t cchRemaining = 0;
-
-    // ASSERT(cbDest == (cchDest * sizeof(wchar_t)) ||
-    //        cbDest == (cchDest * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-
-    // only accept valid flags
-    if (dwFlags & (~STRSAFE_VALID_FLAGS))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        size_t cchDestCurrent;
-
-        if (dwFlags & STRSAFE_IGNORE_NULLS)
-        {
-            if (pszDest == NULL)
-            {
-                if ((cchDest == 0) && (cbDest == 0))
-                {
-                    cchDestCurrent = 0;
-                }
-                else
-                {
-                    // NULL pszDest and non-zero cchDest/cbDest is invalid
-                    hr = STRSAFE_E_INVALID_PARAMETER;
-                }
-            }
-            else
-            {
-                hr = StringLengthWorkerW(pszDest, cchDest, &cchDestCurrent);
-
-                if (SUCCEEDED(hr))
-                {
-                    pszDestEnd = pszDest + cchDestCurrent;
-                    cchRemaining = cchDest - cchDestCurrent;
-                }
-            }
-
-            if (pszSrc == NULL)
-            {
-                pszSrc = L"";
-            }
-        }
-        else
-        {
-            hr = StringLengthWorkerW(pszDest, cchDest, &cchDestCurrent);
-
-            if (SUCCEEDED(hr))
-            {
-                pszDestEnd = pszDest + cchDestCurrent;
-                cchRemaining = cchDest - cchDestCurrent;
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (cchDest == 0)
-            {
-                // only fail if there was actually src data to append
-                if (*pszSrc != L'\0')
-                {
-                    if (pszDest == NULL)
-                    {
-                        hr = STRSAFE_E_INVALID_PARAMETER;
-                    }
-                    else
-                    {
-                        hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                    }
-                }
-            }
-            else
-            {
-                // we handle the STRSAFE_FILL_ON_FAILURE and STRSAFE_NULL_ON_FAILURE cases below, so do not pass
-                // those flags through
-                hr = StringCopyExWorkerW(pszDestEnd,
-                                         cchRemaining,
-                                         (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)),
-                                         pszSrc,
-                                         &pszDestEnd,
-                                         &cchRemaining,
-                                         dwFlags & (~(STRSAFE_FILL_ON_FAILURE | STRSAFE_NULL_ON_FAILURE)));
-            }
-        }
-    }
-
-    if (FAILED(hr))
-    {
-        if (pszDest)
-        {
-            // STRSAFE_NO_TRUNCATION is taken care of by StringCopyExWorkerW()
-
-            if (dwFlags & STRSAFE_FILL_ON_FAILURE)
-            {
-                memset(pszDest, STRSAFE_GET_FILL_PATTERN(dwFlags), cbDest);
-
-                if (STRSAFE_GET_FILL_PATTERN(dwFlags) == 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-                }
-                else if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest + cchDest - 1;
-                    cchRemaining = 1;
-
-                    // null terminate the end of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-
-            if (dwFlags & STRSAFE_NULL_ON_FAILURE)
-            {
-                if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-
-                    // null terminate the beginning of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (ppszDestEnd)
-        {
-            *ppszDestEnd = pszDestEnd;
-        }
-
-        if (pcchRemaining)
-        {
-            *pcchRemaining = cchRemaining;
-        }
-    }
-
-    return hr;
-}
-
 STRSAFEAPI StringCatNWorkerA(char* pszDest, size_t cchDest, const char* pszSrc, size_t cchMaxAppend)
 {
     HRESULT hr;
@@ -5290,24 +3936,6 @@ STRSAFEAPI StringCatNWorkerA(char* pszDest, size_t cchDest, const char* pszSrc, 
     if (SUCCEEDED(hr))
     {
         hr = StringCopyNWorkerA(pszDest + cchDestCurrent,
-                                cchDest - cchDestCurrent,
-                                pszSrc,
-                                cchMaxAppend);
-    }
-
-    return hr;
-}
-
-STRSAFEAPI StringCatNWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszSrc, size_t cchMaxAppend)
-{
-    HRESULT hr;
-    size_t cchDestCurrent;
-
-    hr = StringLengthWorkerW(pszDest, cchDest, &cchDestCurrent);
-
-    if (SUCCEEDED(hr))
-    {
-        hr = StringCopyNWorkerW(pszDest + cchDestCurrent,
                                 cchDest - cchDestCurrent,
                                 pszSrc,
                                 cchMaxAppend);
@@ -5462,153 +4090,6 @@ STRSAFEAPI StringCatNExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, con
     return hr;
 }
 
-STRSAFEAPI StringCatNExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, const wchar_t* pszSrc, size_t cchMaxAppend, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr = S_OK;
-    wchar_t* pszDestEnd = pszDest;
-    size_t cchRemaining = 0;
-    size_t cchDestCurrent = 0;
-
-
-    // ASSERT(cbDest == (cchDest * sizeof(wchar_t)) ||
-    //        cbDest == (cchDest * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-
-    // only accept valid flags
-    if (dwFlags & (~STRSAFE_VALID_FLAGS))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        if (dwFlags & STRSAFE_IGNORE_NULLS)
-        {
-            if (pszDest == NULL)
-            {
-                if ((cchDest == 0) && (cbDest == 0))
-                {
-                    cchDestCurrent = 0;
-                }
-                else
-                {
-                    // NULL pszDest and non-zero cchDest/cbDest is invalid
-                    hr = STRSAFE_E_INVALID_PARAMETER;
-                }
-            }
-            else
-            {
-                hr = StringLengthWorkerW(pszDest, cchDest, &cchDestCurrent);
-
-                if (SUCCEEDED(hr))
-                {
-                    pszDestEnd = pszDest + cchDestCurrent;
-                    cchRemaining = cchDest - cchDestCurrent;
-                }
-            }
-
-            if (pszSrc == NULL)
-            {
-                pszSrc = L"";
-            }
-        }
-        else
-        {
-            hr = StringLengthWorkerW(pszDest, cchDest, &cchDestCurrent);
-
-            if (SUCCEEDED(hr))
-            {
-                pszDestEnd = pszDest + cchDestCurrent;
-                cchRemaining = cchDest - cchDestCurrent;
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (cchDest == 0)
-            {
-                // only fail if there was actually src data to append
-                if (*pszSrc != L'\0')
-                {
-                    if (pszDest == NULL)
-                    {
-                        hr = STRSAFE_E_INVALID_PARAMETER;
-                    }
-                    else
-                    {
-                        hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                    }
-                }
-            }
-            else
-            {
-                // we handle the STRSAFE_FILL_ON_FAILURE and STRSAFE_NULL_ON_FAILURE cases below, so do not pass
-                // those flags through
-                hr = StringCopyNExWorkerW(pszDestEnd,
-                                          cchRemaining,
-                                          (cchRemaining * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)),
-                                          pszSrc,
-                                          cchMaxAppend,
-                                          &pszDestEnd,
-                                          &cchRemaining,
-                                          dwFlags & (~(STRSAFE_FILL_ON_FAILURE | STRSAFE_NULL_ON_FAILURE)));
-            }
-        }
-    }
-
-    if (FAILED(hr))
-    {
-        if (pszDest)
-        {
-            // STRSAFE_NO_TRUNCATION is taken care of by StringCopyNExWorkerW()
-
-            if (dwFlags & STRSAFE_FILL_ON_FAILURE)
-            {
-                memset(pszDest, STRSAFE_GET_FILL_PATTERN(dwFlags), cbDest);
-
-                if (STRSAFE_GET_FILL_PATTERN(dwFlags) == 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-                }
-                else if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest + cchDest - 1;
-                    cchRemaining = 1;
-
-                    // null terminate the end of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-
-            if (dwFlags & (STRSAFE_NULL_ON_FAILURE))
-            {
-                if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-
-                    // null terminate the beginning of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (ppszDestEnd)
-        {
-            *ppszDestEnd = pszDestEnd;
-        }
-
-        if (pcchRemaining)
-        {
-            *pcchRemaining = cchRemaining;
-        }
-    }
-
-    return hr;
-}
-
 STRSAFEAPI StringVPrintfWorkerA(char* pszDest, size_t cchDest, const char* pszFormat, va_list argList)
 {
     HRESULT hr = S_OK;
@@ -5648,47 +4129,6 @@ STRSAFEAPI StringVPrintfWorkerA(char* pszDest, size_t cchDest, const char* pszFo
 
     return hr;
 }
-#ifdef _WIN32 // TOOD: find BSD replacement for _vsnwprintf
-STRSAFEAPI StringVPrintfWorkerW(wchar_t* pszDest, size_t cchDest, const wchar_t* pszFormat, va_list argList)
-{
-    HRESULT hr = S_OK;
-
-    if (cchDest == 0)
-    {
-        // can not null terminate a zero-byte dest buffer
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        int iRet;
-        size_t cchMax;
-
-        // leave the last space for the null terminator
-        cchMax = cchDest - 1;
-
-        iRet = _vsnwprintf(pszDest, cchMax, pszFormat, argList);
-        // ASSERT((iRet < 0) || (((size_t)iRet) <= cchMax));
-
-        if ((iRet < 0) || (((size_t)iRet) > cchMax))
-        {
-            // need to null terminate the string
-            pszDest += cchMax;
-            *pszDest = L'\0';
-
-            // we have truncated pszDest
-            hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-        }
-        else if (((size_t)iRet) == cchMax)
-        {
-            // need to null terminate the string
-            pszDest += cchMax;
-            *pszDest = L'\0';
-        }
-    }
-
-    return hr;
-}
-#endif
 
 STRSAFEAPI StringVPrintfExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, char** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const char* pszFormat, va_list argList)
 {
@@ -5841,159 +4281,6 @@ STRSAFEAPI StringVPrintfExWorkerA(char* pszDest, size_t cchDest, size_t cbDest, 
 
     return hr;
 }
-#ifdef _WIN32
-STRSAFEAPI StringVPrintfExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags, const wchar_t* pszFormat, va_list argList)
-{
-    HRESULT hr = S_OK;
-    wchar_t* pszDestEnd = pszDest;
-    size_t cchRemaining = 0;
-
-    // ASSERT(cbDest == (cchDest * sizeof(wchar_t)) ||
-    //        cbDest == (cchDest * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-
-    // only accept valid flags
-    if (dwFlags & (~STRSAFE_VALID_FLAGS))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        if (dwFlags & STRSAFE_IGNORE_NULLS)
-        {
-            if (pszDest == NULL)
-            {
-                if ((cchDest != 0) || (cbDest != 0))
-                {
-                    // NULL pszDest and non-zero cchDest/cbDest is invalid
-                    hr = STRSAFE_E_INVALID_PARAMETER;
-                }
-            }
-
-            if (pszFormat == NULL)
-            {
-                pszFormat = L"";
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (cchDest == 0)
-            {
-                pszDestEnd = pszDest;
-                cchRemaining = 0;
-
-                // only fail if there was actually a non-empty format string
-                if (*pszFormat != L'\0')
-                {
-                    if (pszDest == NULL)
-                    {
-                        hr = STRSAFE_E_INVALID_PARAMETER;
-                    }
-                    else
-                    {
-                        hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                    }
-                }
-            }
-            else
-            {
-                int iRet;
-                size_t cchMax;
-
-                // leave the last space for the null terminator
-                cchMax = cchDest - 1;
-
-                iRet = _vsnwprintf(pszDest, cchMax, pszFormat, argList);
-                // ASSERT((iRet < 0) || (((size_t)iRet) <= cchMax));
-
-                if ((iRet < 0) || (((size_t)iRet) > cchMax))
-                {
-                    // we have truncated pszDest
-                    pszDestEnd = pszDest + cchMax;
-                    cchRemaining = 1;
-
-                    // need to null terminate the string
-                    *pszDestEnd = L'\0';
-
-                    hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-                }
-                else if (((size_t)iRet) == cchMax)
-                {
-                    // string fit perfectly
-                    pszDestEnd = pszDest + cchMax;
-                    cchRemaining = 1;
-
-                    // need to null terminate the string
-                    *pszDestEnd = L'\0';
-                }
-                else if (((size_t)iRet) < cchMax)
-                {
-                    // there is extra room
-                    pszDestEnd = pszDest + iRet;
-                    cchRemaining = cchDest - iRet;
-
-                    if (dwFlags & STRSAFE_FILL_BEHIND_NULL)
-                    {
-                        memset(pszDestEnd + 1, STRSAFE_GET_FILL_PATTERN(dwFlags), ((cchRemaining - 1) * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-                    }
-                }
-            }
-        }
-    }
-
-    if (FAILED(hr))
-    {
-        if (pszDest)
-        {
-            if (dwFlags & STRSAFE_FILL_ON_FAILURE)
-            {
-                memset(pszDest, STRSAFE_GET_FILL_PATTERN(dwFlags), cbDest);
-
-                if (STRSAFE_GET_FILL_PATTERN(dwFlags) == 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-                }
-                else if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest + cchDest - 1;
-                    cchRemaining = 1;
-
-                    // null terminate the end of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-
-            if (dwFlags & (STRSAFE_NULL_ON_FAILURE | STRSAFE_NO_TRUNCATION))
-            {
-                if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-
-                    // null terminate the beginning of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr) || (hr == STRSAFE_E_INSUFFICIENT_BUFFER))
-    {
-        if (ppszDestEnd)
-        {
-            *ppszDestEnd = pszDestEnd;
-        }
-
-        if (pcchRemaining)
-        {
-            *pcchRemaining = cchRemaining;
-        }
-    }
-
-    return hr;
-}
-#endif
 
 STRSAFEAPI StringLengthWorkerA(const char* psz, size_t cchMax, size_t* pcch)
 {
@@ -6020,30 +4307,6 @@ STRSAFEAPI StringLengthWorkerA(const char* psz, size_t cchMax, size_t* pcch)
     return hr;
 }
 
-STRSAFEAPI StringLengthWorkerW(const wchar_t* psz, size_t cchMax, size_t* pcch)
-{
-    HRESULT hr = S_OK;
-    size_t cchMaxPrev = cchMax;
-
-    while (cchMax && (*psz != L'\0'))
-    {
-        psz++;
-        cchMax--;
-    }
-
-    if (cchMax == 0)
-    {
-        // the string is longer than cchMax
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-
-    if (SUCCEEDED(hr) && pcch)
-    {
-        *pcch = cchMaxPrev - cchMax;
-    }
-
-    return hr;
-}
 #endif  // STRSAFE_INLINE
 
 #ifndef STRSAFE_LIB_IMPL
@@ -6091,12 +4354,12 @@ STRSAFE_INLINE_API StringGetsExWorkerA(char* pszDest, size_t cchDest, size_t cbD
             }
             else
             {
-                int ch;
+                char ch;
 
                 pszDestEnd = pszDest;
                 cchRemaining = cchDest;
 
-                while ((cchRemaining > 1) && (ch = getc(stdin)) != (int)'\n')
+                while ((cchRemaining > 1) && (ch = (char)getc(stdin)) != '\n')
                 {
                     if (ch == EOF)
                     {
@@ -6183,141 +4446,6 @@ STRSAFE_INLINE_API StringGetsExWorkerA(char* pszDest, size_t cchDest, size_t cbD
     return hr;
 }
 
-STRSAFE_INLINE_API StringGetsExWorkerW(wchar_t* pszDest, size_t cchDest, size_t cbDest, wchar_t** ppszDestEnd, size_t* pcchRemaining, unsigned long dwFlags)
-{
-    HRESULT hr = S_OK;
-    wchar_t* pszDestEnd = pszDest;
-    size_t cchRemaining = 0;
-
-    // ASSERT(cbDest == (cchDest * sizeof(char))    ||
-    //        cbDest == (cchDest * sizeof(char)) + (cbDest % sizeof(char)));
-
-    // only accept valid flags
-    if (dwFlags & (~STRSAFE_VALID_FLAGS))
-    {
-        hr = STRSAFE_E_INVALID_PARAMETER;
-    }
-    else
-    {
-        if (dwFlags & STRSAFE_IGNORE_NULLS)
-        {
-            if (pszDest == NULL)
-            {
-                if ((cchDest != 0) || (cbDest != 0))
-                {
-                    // NULL pszDest and non-zero cchDest/cbDest is invalid
-                    hr = STRSAFE_E_INVALID_PARAMETER;
-                }
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            if (cchDest <= 1)
-            {
-                pszDestEnd = pszDest;
-                cchRemaining = cchDest;
-
-                if (cchDest == 1)
-                {
-                    *pszDestEnd = L'\0';
-                }
-
-                hr = STRSAFE_E_INSUFFICIENT_BUFFER;
-            }
-            else
-            {
-                wchar_t ch;
-
-                pszDestEnd = pszDest;
-                cchRemaining = cchDest;
-
-                while ((cchRemaining > 1) && (ch = (wchar_t)getwc(stdin)) != L'\n')
-                {
-                    if (ch == EOF)
-                    {
-                        if (pszDestEnd == pszDest)
-                        {
-                            // we failed to read anything from stdin
-                            hr = STRSAFE_E_END_OF_FILE;
-                        }
-                        break;
-                    }
-
-                    *pszDestEnd = ch;
-
-                    pszDestEnd++;
-                    cchRemaining--;
-                }
-
-                if (cchRemaining > 0)
-                {
-                    // there is extra room
-                    if (dwFlags & STRSAFE_FILL_BEHIND_NULL)
-                    {
-                        memset(pszDestEnd + 1, STRSAFE_GET_FILL_PATTERN(dwFlags), ((cchRemaining - 1) * sizeof(wchar_t)) + (cbDest % sizeof(wchar_t)));
-                    }
-                }
-
-                *pszDestEnd = L'\0';
-            }
-        }
-    }
-
-    if (FAILED(hr))
-    {
-        if (pszDest)
-        {
-            if (dwFlags & STRSAFE_FILL_ON_FAILURE)
-            {
-                memset(pszDest, STRSAFE_GET_FILL_PATTERN(dwFlags), cbDest);
-
-                if (STRSAFE_GET_FILL_PATTERN(dwFlags) == 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-                }
-                else if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest + cchDest - 1;
-                    cchRemaining = 1;
-
-                    // null terminate the end of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-
-            if (dwFlags & (STRSAFE_NULL_ON_FAILURE | STRSAFE_NO_TRUNCATION))
-            {
-                if (cchDest > 0)
-                {
-                    pszDestEnd = pszDest;
-                    cchRemaining = cchDest;
-
-                    // null terminate the beginning of the string
-                    *pszDestEnd = L'\0';
-                }
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr) ||
-        (hr == STRSAFE_E_INSUFFICIENT_BUFFER) ||
-        (hr == STRSAFE_E_END_OF_FILE))
-    {
-        if (ppszDestEnd)
-        {
-            *ppszDestEnd = pszDestEnd;
-        }
-
-        if (pcchRemaining)
-        {
-            *pcchRemaining = cchRemaining;
-        }
-    }
-
-    return hr;
-}
 #endif  // !STRSAFE_LIB_IMPL
 
 
@@ -6362,286 +4490,8 @@ STRSAFE_INLINE_API StringGetsExWorkerW(wchar_t* pszDest, size_t cchDest, size_t 
 #define StringLengthWorkerW      StringLengthWorkerW_instead_use_StringCchLengthW_or_StringCbLengthW;
 #endif // !DEPRECATE_SUPPORTED
 
-
-#ifndef STRSAFE_NO_DEPRECATE
-// Deprecate all of the unsafe functions to generate compiletime errors. If you do not want
-// this then you can #define STRSAFE_NO_DEPRECATE before including this file.
-#ifdef DEPRECATE_SUPPORTED
-
-// First all the names that are a/w variants (or shouldn't be #defined by now anyway).
-#pragma deprecated(lstrcpyA)
-#pragma deprecated(lstrcpyW)
-#pragma deprecated(lstrcatA)
-#pragma deprecated(lstrcatW)
-#pragma deprecated(wsprintfA)
-#pragma deprecated(wsprintfW)
-
-#pragma deprecated(StrCpyW)
-#pragma deprecated(StrCatW)
-#pragma deprecated(StrNCatA)
-#pragma deprecated(StrNCatW)
-#pragma deprecated(StrCatNA)
-#pragma deprecated(StrCatNW)
-#pragma deprecated(wvsprintfA)
-#pragma deprecated(wvsprintfW)
-
-#pragma deprecated(strcpy)
-#pragma deprecated(wcscpy)
-#pragma deprecated(strcat)
-#pragma deprecated(wcscat)
-#pragma deprecated(sprintf)
-#pragma deprecated(swprintf)
-#pragma deprecated(vsprintf)
-#pragma deprecated(vswprintf)
-#pragma deprecated(_snprintf)
-#pragma deprecated(_snwprintf)
-#pragma deprecated(_vsnprintf)
-#pragma deprecated(_vsnwprintf)
-#pragma deprecated(gets)
-#pragma deprecated(_getws)
-
-// Then all the windows.h names - we need to undef and redef based on UNICODE setting
-#undef lstrcpy
-#undef lstrcat
-#undef wsprintf
-#undef wvsprintf
-#pragma deprecated(lstrcpy)
-#pragma deprecated(lstrcat)
-#pragma deprecated(wsprintf)
-#pragma deprecated(wvsprintf)
-#ifdef UNICODE
-#define lstrcpy    lstrcpyW
-#define lstrcat    lstrcatW
-#define wsprintf   wsprintfW
-#define wvsprintf  wvsprintfW
-#else
-#define lstrcpy    lstrcpyA
-#define lstrcat    lstrcatA
-#define wsprintf   wsprintfA
-#define wvsprintf  wvsprintfA
-#endif
-
-// Then the shlwapi names - they key off UNICODE also.
-#undef StrCpyA
-#undef StrCpy
-#undef StrCatA
-#undef StrCat
-#undef StrNCat
-#undef StrCatN
-#pragma deprecated(StrCpyA)
-#pragma deprecated(StrCatA)
-#pragma deprecated(StrCatN)
-#pragma deprecated(StrCpy)
-#pragma deprecated(StrCat)
-#pragma deprecated(StrNCat)
-#define StrCpyA lstrcpyA
-#define StrCatA lstrcatA
-#define StrCatN StrNCat
-#ifdef UNICODE
-#define StrCpy  StrCpyW
-#define StrCat  StrCatW
-#define StrNCat StrNCatW
-#else
-#define StrCpy  lstrcpyA
-#define StrCat  lstrcatA
-#define StrNCat StrNCatA
-#endif
-
-// Then all the CRT names - we need to undef/redef based on _UNICODE value.
-#undef _tcscpy
-#undef _ftcscpy
-#undef _tcscat
-#undef _ftcscat
-#undef _stprintf
-#undef _sntprintf
-#undef _vstprintf
-#undef _vsntprintf
-#undef _getts
-#pragma deprecated(_tcscpy)
-#pragma deprecated(_ftcscpy)
-#pragma deprecated(_tcscat)
-#pragma deprecated(_ftcscat)
-#pragma deprecated(_stprintf)
-#pragma deprecated(_sntprintf)
-#pragma deprecated(_vstprintf)
-#pragma deprecated(_vsntprintf)
-#pragma deprecated(_getts)
-#ifdef _UNICODE
-#define _tcscpy     wcscpy
-#define _ftcscpy    wcscpy
-#define _tcscat     wcscat
-#define _ftcscat    wcscat
-#define _stprintf   swprintf
-#define _sntprintf  _snwprintf
-#define _vstprintf  vswprintf
-#define _vsntprintf _vsnwprintf
-#define _getts      _getws
-#else
-#define _tcscpy     strcpy
-#define _ftcscpy    strcpy
-#define _tcscat     strcat
-#define _ftcscat    strcat
-#define _stprintf   sprintf
-#define _sntprintf  _snprintf
-#define _vstprintf  vsprintf
-#define _vsntprintf _vsnprintf
-#define _getts      gets
-#endif
-
-#else // DEPRECATE_SUPPORTED
-
-#undef strcpy
-#define strcpy      strcpy_instead_use_StringCbCopyA_or_StringCchCopyA;
-
-#undef wcscpy
-#define wcscpy      wcscpy_instead_use_StringCbCopyW_or_StringCchCopyW;
-
-#undef strcat
-#define strcat      strcat_instead_use_StringCbCatA_or_StringCchCatA;
-
-#undef wcscat
-#define wcscat      wcscat_instead_use_StringCbCatW_or_StringCchCatW;
-
-#undef sprintf
-#define sprintf     sprintf_instead_use_StringCbPrintfA_or_StringCchPrintfA;
-
-#undef swprintf
-#define swprintf    swprintf_instead_use_StringCbPrintfW_or_StringCchPrintfW;
-
-#undef vsprintf
-#define vsprintf    vsprintf_instead_use_StringCbVPrintfA_or_StringCchVPrintfA;
-
-#undef vswprintf
-#define vswprintf   vswprintf_instead_use_StringCbVPrintfW_or_StringCchVPrintfW;
-
-#undef _snprintf
-#define _snprintf   _snprintf_instead_use_StringCbPrintfA_or_StringCchPrintfA;
-
-#undef _snwprintf
-#define _snwprintf  _snwprintf_instead_use_StringCbPrintfW_or_StringCchPrintfW;
-
-#undef _vsnprintf
-#define _vsnprintf  _vsnprintf_instead_use_StringCbVPrintfA_or_StringCchVPrintfA;
-
-#undef _vsnwprintf
-#define _vsnwprintf _vsnwprintf_instead_use_StringCbVPrintfW_or_StringCchVPrintfW;
-
-#undef strcpyA
-#define strcpyA     strcpyA_instead_use_StringCbCopyA_or_StringCchCopyA;
-
-#undef strcpyW
-#define strcpyW     strcpyW_instead_use_StringCbCopyW_or_StringCchCopyW;
-
-#undef lstrcpy
-#define lstrcpy     lstrcpy_instead_use_StringCbCopy_or_StringCchCopy;
-
-#undef lstrcpyA
-#define lstrcpyA    lstrcpyA_instead_use_StringCbCopyA_or_StringCchCopyA;
-
-#undef lstrcpyW
-#define lstrcpyW    lstrcpyW_instead_use_StringCbCopyW_or_StringCchCopyW;
-
-#undef StrCpy
-#define StrCpy      StrCpy_instead_use_StringCbCopy_or_StringCchCopy;
-
-#undef StrCpyA
-#define StrCpyA     StrCpyA_instead_use_StringCbCopyA_or_StringCchCopyA;
-
-#undef StrCpyW
-#define StrCpyW     StrCpyW_instead_use_StringCbCopyW_or_StringCchCopyW;
-
-#undef _tcscpy
-#define _tcscpy     _tcscpy_instead_use_StringCbCopy_or_StringCchCopy;
-
-#undef _ftcscpy
-#define _ftcscpy    _ftcscpy_instead_use_StringCbCopy_or_StringCchCopy;
-
-#undef lstrcat
-#define lstrcat     lstrcat_instead_use_StringCbCat_or_StringCchCat;
-
-#undef lstrcatA
-#define lstrcatA    lstrcatA_instead_use_StringCbCatA_or_StringCchCatA;
-
-#undef lstrcatW
-#define lstrcatW    lstrcatW_instead_use_StringCbCatW_or_StringCchCatW;
-
-#undef StrCat
-#define StrCat      StrCat_instead_use_StringCbCat_or_StringCchCat;
-
-#undef StrCatA
-#define StrCatA     StrCatA_instead_use_StringCbCatA_or_StringCchCatA;
-
-#undef StrCatW
-#define StrCatW     StrCatW_instead_use_StringCbCatW_or_StringCchCatW;
-
-#undef StrNCat
-#define StrNCat     StrNCat_instead_use_StringCbCatN_or_StringCchCatN;
-
-#undef StrNCatA
-#define StrNCatA    StrNCatA_instead_use_StringCbCatNA_or_StringCchCatNA;
-
-#undef StrNCatW
-#define StrNCatW    StrNCatW_instead_use_StringCbCatNW_or_StringCchCatNW;
-
-#undef StrCatN
-#define StrCatN     StrCatN_instead_use_StringCbCatN_or_StringCchCatN;
-
-#undef StrCatNA
-#define StrCatNA    StrCatNA_instead_use_StringCbCatNA_or_StringCchCatNA;
-
-#undef StrCatNW
-#define StrCatNW    StrCatNW_instead_use_StringCbCatNW_or_StringCchCatNW;
-
-#undef _tcscat
-#define _tcscat     _tcscat_instead_use_StringCbCat_or_StringCchCat;
-
-#undef _ftcscat
-#define _ftcscat    _ftcscat_instead_use_StringCbCat_or_StringCchCat;
-
-#undef wsprintf
-#define wsprintf    wsprintf_instead_use_StringCbPrintf_or_StringCchPrintf;
-
-#undef wsprintfA
-#define wsprintfA   wsprintfA_instead_use_StringCbPrintfA_or_StringCchPrintfA;
-
-#undef wsprintfW
-#define wsprintfW   wsprintfW_instead_use_StringCbPrintfW_or_StringCchPrintfW;
-
-#undef wvsprintf
-#define wvsprintf   wvsprintf_instead_use_StringCbVPrintf_or_StringCchVPrintf;
-
-#undef wvsprintfA
-#define wvsprintfA  wvsprintfA_instead_use_StringCbVPrintfA_or_StringCchVPrintfA;
-
-#undef wvsprintfW
-#define wvsprintfW  wvsprintfW_instead_use_StringCbVPrintfW_or_StringCchVPrintfW;
-
-#undef _vstprintf
-#define _vstprintf  _vstprintf_instead_use_StringCbVPrintf_or_StringCchVPrintf;
-
-#undef _vsntprintf
-#define _vsntprintf _vsntprintf_instead_use_StringCbVPrintf_or_StringCchVPrintf;
-
-#undef _stprintf
-#define _stprintf   _stprintf_instead_use_StringCbPrintf_or_StringCchPrintf;
-
-#undef _sntprintf
-#define _sntprintf  _sntprintf_instead_use_StringCbPrintf_or_StringCchPrintf;
-
-#undef _getts
-#define _getts      _getts_instead_use_StringCbGets_or_StringCchGets;
-
-#undef gets
-#define gets        _gets_instead_use_StringCbGetsA_or_StringCchGetsA;
-
-#undef _getws
-#define _getws      _getws_instead_use_StringCbGetsW_or_StringCchGetsW;
-
-#endif  // !DEPRECATE_SUPPORTED
-#endif  // !STRSAFE_NO_DEPRECATE
-
 #ifdef _NTSTRSAFE_H_INCLUDED_
 #pragma warning(pop)
 #endif // _NTSTRSAFE_H_INCLUDED_
 
-#endif  // _STRSAFE_H_INCLUDED_
+#endif  
