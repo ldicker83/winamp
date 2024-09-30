@@ -68,10 +68,7 @@
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <TargetExt>.w5s</TargetExt>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(PlatformShortName)_$(Configuration)\</OutDir>
@@ -153,11 +150,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     </ClCompile>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <ImportLibrary>$(ProjectDir)x64_Debug\$(ProjectName).lib</ImportLibrary>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent />
@@ -227,9 +219,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\external_dependencies\giflib\giflib.vcxproj">
-      <Project>{bd6ea0ee-c183-4240-bce6-487fa2ee792d}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Wasabi\Wasabi.vcxproj">
       <Project>{3e0bfa8a-b86a-42e9-a33f-ec294f823f7f}</Project>
     </ProjectReference>

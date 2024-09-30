@@ -4,7 +4,7 @@
 #include <bfc/platform/strcmp.h>
 
 extern "C" {
-#include "../giflib/gif_lib.h"
+#include <gif_lib.h>
 };
 
 static bool StringEnds(const wchar_t *a, const wchar_t *b)

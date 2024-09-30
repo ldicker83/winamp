@@ -82,7 +82,7 @@ void * GIFWriter::convert(const void *pixels, int bitDepth, int w, int h, int *l
 	BYTE* OutputBuffer = (GifByteType *) malloc(w * h * sizeof(GifByteType));
 
 	// this is actually kinda crappy
-	GifQuantizeBuffer(w,h,&colormapsize,redplane,greenplane,blueplane,OutputBuffer,OutputColorMap->Colors);
+	//GifQuantizeBuffer(w,h,&colormapsize,redplane,greenplane,blueplane,OutputBuffer,OutputColorMap->Colors);
 
 	unsigned int alloc = ((w*h / 3) & 0xffffff00) + 0x100; // guess at output file size
 	if(alloc < 4096) alloc = 4096;
