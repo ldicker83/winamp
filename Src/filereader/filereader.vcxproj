@@ -68,12 +68,7 @@
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(PlatformShortName)_$(Configuration)\</OutDir>
-    <IntDir>$(PlatformShortName)_$(Configuration)\</IntDir>
-    <TargetExt>.w5s</TargetExt>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(PlatformShortName)_$(Configuration)\</OutDir>
@@ -93,10 +88,7 @@
     <VcpkgConfiguration>Debug</VcpkgConfiguration>
     <VcpkgTriplet>x86-windows-static-md</VcpkgTriplet>
   </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <VcpkgTriplet>x86-windows-static-md</VcpkgTriplet>
-    <VcpkgConfiguration>Debug</VcpkgConfiguration>
-  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <VcpkgTriplet>x86-windows-static-md</VcpkgTriplet>
   </PropertyGroup>
@@ -139,30 +131,16 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;FILEREADER_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <ImportLibrary>$(ProjectDir)x64_Debug\$(ProjectName).lib</ImportLibrary>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /Y /D $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\System\
-xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\System\</Command>
-      <Message>Post build event: 'xcopy /Y /D $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\System\'</Message>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -232,19 +210,13 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
   <ItemGroup>
     <ClInclude Include="..\Wasabi\api\service\svcs\svc_fileread.h" />
     <ClInclude Include="api__filereader.h" />
-    <ClInclude Include="HTTPReader.h" />
-    <ClInclude Include="HTTPReaderFactory.h" />
-    <ClInclude Include="ProgressiveHTTPReader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceReader.h" />
     <ClInclude Include="ResourceReaderFactory.h" />
     <ClInclude Include="WA5_FileReader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HTTPReader.cpp" />
-    <ClCompile Include="HTTPReaderFactory.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ProgressiveHTTPReader.cpp" />
     <ClCompile Include="ResourceReader.cpp" />
     <ClCompile Include="ResourceReaderFactory.cpp" />
   </ItemGroup>

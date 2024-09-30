@@ -1,16 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="HTTPReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HTTPReaderFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProgressiveHTTPReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceReader.cpp">
@@ -22,15 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api__filereader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HTTPReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HTTPReaderFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProgressiveHTTPReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">

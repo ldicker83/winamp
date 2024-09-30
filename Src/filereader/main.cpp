@@ -3,14 +3,13 @@
 #ifdef _WIN32
 #include "ResourceReaderFactory.h"
 #endif
-#include "HTTPReaderFactory.h"
+
 #include <bfc/platform/export.h>
 
 #ifdef _WIN32
 ResourceReaderFactory resourceReaderFactory;
 #endif
 
-HTTPReaderFactory httpReaderFactory;
 WA5_FileReader wa5_FileReader;
 api_service *WASABI_API_SVC=0;
 api_application *WASABI_API_APP=0;
@@ -26,9 +25,7 @@ void WA5_FileReader::RegisterServices(api_service *service)
 	if (sf)
 		AGAVE_API_CONFIG = (api_config *)sf->getInterface();
 	
-  if (WASABI_API_APP && AGAVE_API_CONFIG)
-    WASABI_API_SVC->service_register(&httpReaderFactory);
-	
+
 #ifdef _WIN32
   WASABI_API_SVC->service_register(&resourceReaderFactory);
 #endif
@@ -41,9 +38,6 @@ int WA5_FileReader::RegisterServicesSafeModeOk()
 
 void WA5_FileReader::DeregisterServices(api_service *service)
 {
-  
-  if (WASABI_API_APP && AGAVE_API_CONFIG)
-		service->service_deregister(&httpReaderFactory);
 #ifdef _WIN32
   service->service_deregister(&resourceReaderFactory);
 #endif
