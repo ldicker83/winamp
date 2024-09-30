@@ -3,8 +3,9 @@
 
 #include <bfc/dispatch.h>
 #include <bfc/platform/types.h>
-#include <bfc/platform/guid.h>
 #include "ifc_configitem.h"
+
+#include "../foundation/guid.h"
 
 class ifc_configgroup : public Dispatchable
 {

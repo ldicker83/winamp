@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include <bfc/platform/guid.h>
+#include "../foundation/guid.h"
 
 // {098C1639-7E02-4f03-9F75-B871EC867E61}
 static const GUID IFC_DeviceSupportedCommandStore = 

@@ -1,12 +1,13 @@
 #include <windows.h>
 #include <bfc/platform/types.h>
-#include <bfc/platform/guid.h>
 #include <bfc/std_mkncc.h>
 #include <rpc.h>
 #include <stdio.h>
 #include <api/service/api_service.h>
 #include "../Agave/Component/ifc_wa5component.h"
 #include "WbmSvcMgr.h"
+
+#include "../foundation/guid.h"
 
 /* layout (binary)
 0xdeadbeef - 32 bits

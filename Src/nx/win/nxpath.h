@@ -1,8 +1,11 @@
 #pragma once
-#include "../../replicant/foundation/types.h"
+
 #include "nx/nxapi.h"
 #include "nx/nxstring.h"
 #include "nx/nxuri.h"
+
+#include "../foundation/guid.h"
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -243,9 +243,6 @@
     <ClInclude Include="parse\pathparse.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="platform\guid.h">
-      <Filter>Header Files\platform</Filter>
-    </ClInclude>
     <ClInclude Include="platform\platform.h">
       <Filter>Header Files\platform</Filter>
     </ClInclude>
@@ -305,9 +302,6 @@
     <Filter Include="Source Files\parse">
       <UniqueIdentifier>{23d80b59-49ab-47a0-ad85-42ca540d3292}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\platform">
-      <UniqueIdentifier>{115977e8-a187-48e9-ac59-c71015d1fc43}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\platform">
       <UniqueIdentifier>{3f34098f-2b62-4216-8c91-f0ecc8b4ccb3}</UniqueIdentifier>
     </Filter>
@@ -325,6 +319,9 @@
     </Filter>
     <Filter Include="Source Files\draw">
       <UniqueIdentifier>{1bd5a793-ec99-4a4b-a886-8a2f97805864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\platform">
+      <UniqueIdentifier>{115977e8-a187-48e9-ac59-c71015d1fc43}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

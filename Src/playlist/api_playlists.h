@@ -1,9 +1,10 @@
-#ifndef NULLSOFT_PLAYLIST_API_PLAYLISTS_H
-#define NULLSOFT_PLAYLIST_API_PLAYLISTS_H
+#pragma once
 
 #include <bfc/dispatch.h>
-#include <bfc/platform/guid.h>
 #include <bfc/std_mkncc.h>
+
+#include "../foundation/guid.h"
+
 // manages Winamp's master list of playlists
 
 /* Important note to users of this API:
@@ -286,5 +287,3 @@ inline int api_playlists::ClearPlaylists()
 // {2DC3C390-D9B8-4a49-B230-EF240ADDDCDB}
 static const GUID api_playlistsGUID =
 { 0x2dc3c390, 0xd9b8, 0x4a49, { 0xb2, 0x30, 0xef, 0x24, 0xa, 0xdd, 0xdc, 0xdb } };
-
-#endif

@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include <bfc/platform/guid.h>
+#include "../foundation/guid.h"
 
 // {C563C537-DFFC-4210-BB1E-E424426789E2}
 static const GUID IFC_DeviceEventManager = 

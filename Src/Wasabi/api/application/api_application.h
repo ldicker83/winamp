@@ -10,8 +10,8 @@
 #define __API_APPLICATION_H
 
 #include <bfc/dispatch.h>
-#include <bfc/platform/guid.h>
 #include <bfc/platform/platform.h>
+#include "../foundation/guid.h"
 #ifdef _WIN32
 #include "ifc_messageprocessor.h"
 #endif

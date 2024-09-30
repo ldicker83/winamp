@@ -266,7 +266,6 @@
     <ClInclude Include="parse\hierarchyparser.h" />
     <ClInclude Include="parse\paramparser.h" />
     <ClInclude Include="parse\pathparse.h" />
-    <ClInclude Include="platform\guid.h" />
     <ClInclude Include="platform\platform.h" />
     <ClInclude Include="platform\types.h" />
     <ClInclude Include="platform\win32.h" />

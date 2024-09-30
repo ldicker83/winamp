@@ -1,7 +1,7 @@
 #pragma once
-//#include <bfc/platform/platform.h>
+
 #include "bfc/platform/types.h"
-#include "bfc/platform/guid.h"
+#include "../foundation/guid.h"
 
 #ifdef WIN32
 #ifndef NOVTABLE

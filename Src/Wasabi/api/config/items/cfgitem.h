@@ -3,8 +3,10 @@
 
 #include <bfc/dispatch.h>
 #include <bfc/platform/types.h>
-#include <bfc/platform/guid.h>
 #include <bfc/wasabi_std.h>
+
+#include "../foundation/guid.h"
+
 
 class ifc_dependent;
 class ifc_window;

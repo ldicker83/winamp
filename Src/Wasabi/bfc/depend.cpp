@@ -1,6 +1,6 @@
 #include "precomp_wasabi_bfc.h"
 #include "depend.h"
-#include "platform/guid.h"
+#include "../foundation/guid.h"
 
 DependentViewerI::DependentViewerI() : viewed_items(NULL) { }
 

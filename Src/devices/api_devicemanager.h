@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include <bfc/platform/guid.h>
+#include "../foundation/guid.h"
 
 // {CB360A8F-0636-4a0d-9374-3BBCC18C8B40}
 static const GUID DeviceManagerGUID = 

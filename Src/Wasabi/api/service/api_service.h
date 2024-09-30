@@ -6,8 +6,7 @@
 // class layer : Dispatchable Interface
 // ----------------------------------------------------------------------------
 
-#ifndef __API_SERVICE_H
-#define __API_SERVICE_H
+#pragma once
 
 #include "bfc/dispatch.h"
 #include "bfc/platform/types.h"
@@ -180,5 +179,3 @@ extern api_service *serviceApi;
 #ifndef WASABI_API_SVC
 #define WASABI_API_SVC serviceApi
 #endif // !WASABI_API_SVC
-
-#endif // __API_SERVICE_H

@@ -1,7 +1,7 @@
 #ifndef _NSGUID_H
 #define _NSGUID_H
-#include "../../replicant/foundation/guid.h"
-#include <bfc/platform/guid.h>
+#include "../foundation/guid.h"
+
 //#include <bfc/common.h>
 
 // Some conversion functions to allow
