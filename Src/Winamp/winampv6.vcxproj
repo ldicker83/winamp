@@ -71,11 +71,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(PlatformShortName)_$(Configuration)\</OutDir>
-    <IntDir>$(PlatformShortName)_$(Configuration)\</IntDir>
     <TargetName>winamp</TargetName>
-    <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -111,7 +107,6 @@
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgInstalledDir>
     </VcpkgInstalledDir>
-    <VcpkgConfiguration>Debug</VcpkgConfiguration>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgInstalledDir>
@@ -208,19 +203,11 @@ xcopy /Y /D /S "..\..\Qt\DLL_5.12_$(PlatformShortName)\$(Configuration)\" "..\..
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..;..\Wasabi;..\external_dependencies\microsoft_directx_sdk_2010\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_WIN32_DCOM;WIN64;_DEBUG;_WINDOWS;_WIN32_WINNT=0x0601;WINVER=0x0601;_WIN32_IE=0x0A00;USE_VIS_HDR_HWND;D3D_DEBUG_INFO;_CRT_SECURE_NO_WARNINGS;_WA_IPC_LEAN_H_;IGNORE_API_GRACENOTE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WarningLevel>Level3</WarningLevel>
-      <DisableSpecificWarnings>4013;4100;4995;4996;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <StringPooling>true</StringPooling>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -239,47 +226,7 @@ xcopy /Y /D /S "..\..\Qt\DLL_5.12_$(PlatformShortName)\$(Configuration)\" "..\..
       <StackCommitSize>38892</StackCommitSize>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /Y /D /S $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
-xcopy /Y /D /S $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
-
-xcopy /Y /D /S "..\external_dependencies\vcpkg\buildtrees\fmt\$(PlatformShortName)-windows-dbg\bin\fmtd.dll" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\"
-
-xcopy /Y /D /S ..\resources\languages\*.wlz ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Lang\
-
-xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
-
-xcopy /Y /D /S ..\resources\skins\Bento\ ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Bento\
-
-del /Q /F /S ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Bento\*.m
-
-xcopy /Y /D /S "..\resources\skins\Big Bento\" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Big Bento\"
-
-del /Q /F /S "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Big Bento\*.m"
-
-del /Q /F /S "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Big Bento\*.bat"
-
-xcopy /Y /D /S "..\resources\skins\Winamp Modern\" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Winamp Modern\"
-
-del /Q /F /S "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Winamp Modern\*.m"
-
-del /Q /F /S "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Skins\Winamp Modern\*.bat"
-
-xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
-
-xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\media\"
-
-xcopy /Y /D /S "..\resources\data\avs" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\avs\"
-
-xcopy /Y /D /S "..\resources\data\freeform\xml\" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\freeform\xml\"
-
-xcopy /Y /D /S ..\resources\data\vis_avs.dat ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
-
-xcopy /Y /D /S ..\resources\plugins\dsp_sps.dll ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
-
-xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\DSP_SPS\"</Command>
-      <Message>Copy resources: whatsnew.txt file, languages, skins (Bento, Big Bento, Winamp Modern) other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

@@ -1,7 +1,7 @@
 #include "nde_c.h"
 #include "../nde.h"
-#include "../../nu/AutoCharFn.h"
-#include "../../nu/AutoWide.h"
+#include "nu/AutoCharFn.h"
+#include "nu/AutoWide.h"
 
 /* Database */
 nde_database_t NDE_CreateDatabase(HINSTANCE hInstance)
