@@ -1,7 +1,6 @@
 #include "api.h"
 #include <bfc/platform/export.h>
 #include "../Agave/Component/ifc_wa5component.h"
-#include "flv_adpcm_decoder.h"
 #include "../nu/Singleton.h"
 #include "avi_adpcm_decoder.h"
 
@@ -40,15 +39,12 @@ void ServiceRelease(api_T *api_t, GUID factoryGUID_t)
 	api_t = NULL;
 }
 
-static FLVDecoderCreator flvCreator;
-static SingletonServiceFactory<svc_flvdecoder, FLVDecoderCreator> flvFactory;
 static SingletonServiceFactory<svc_avidecoder, AVIDecoder> avi_factory;
 static AVIDecoder avi_decoder;
  
 void ADPCMComponent::RegisterServices(api_service *service)
 {
 	WASABI_API_SVC = service;
-	flvFactory.Register(WASABI_API_SVC, &flvCreator);
 	avi_factory.Register(WASABI_API_SVC, &avi_decoder);
 }
 
@@ -59,7 +55,6 @@ int ADPCMComponent::RegisterServicesSafeModeOk()
 
 void ADPCMComponent::DeregisterServices(api_service *service)
 {
-	flvFactory.Deregister(WASABI_API_SVC);
 	avi_factory.Deregister(WASABI_API_SVC);
 }
 

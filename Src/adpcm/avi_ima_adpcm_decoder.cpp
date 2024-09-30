@@ -1,5 +1,5 @@
 #include "avi_ima_adpcm_decoder.h"
-#include "../f263/BitReader.h"
+#include "../Common/BitReader.h"
 
 #pragma pack(push, 1)
 struct ima_adpcm_format 

@@ -7,13 +7,10 @@
     <ClCompile Include="avi_ima_adpcm_decoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\f263\BitReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="flv_adpcm_decoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\BitReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -27,13 +24,10 @@
     <ClInclude Include="avi_ima_adpcm_decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\f263\BitReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flv_adpcm_decoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\BitReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
