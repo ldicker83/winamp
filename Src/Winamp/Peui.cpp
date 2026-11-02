@@ -385,7 +385,7 @@ static void do_addbut(HWND hwnd)
 			{
 				case 0: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDMP3,0); break;
 				case 1: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDDIR,0); break;
-				case 2: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDLOC,0); break;
+				case 2: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDMP3,0); break; // the skin still draws a URL slot here
 			}
 		}
 	}
