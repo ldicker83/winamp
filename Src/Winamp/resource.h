@@ -220,7 +220,6 @@
 #define IDS_P_O_VIDEO_REMOVE_FS_ON_STOP 160
 #define IDD_DISPLAY                     161
 #define IDS_P_O_VIDEO_AUTOOPEN          161
-#define IDD_M3U_DELETE                  161
 #define IDI_FILEICON2                   162
 #define IDS_P_CLASSICVIS                162
 #define IDI_FILEICON3                   163
@@ -245,7 +244,6 @@
 #define IDS_P_FILE_EQ                   174
 #define IDR_ACCELERATOR3                175
 #define IDS_P_EQ_FILE_READ              175
-#define IDD_OPENLOC                     176
 #define IDR_ACCELERATOR4                176
 #define IDS_P_EQ_FILE_WRITE             176
 #define IDD_HTTP                        177
@@ -307,7 +305,6 @@
 #define IDS_HTTP_RESOLVE_HOST_ERROR     212
 #define IDS_HTTP_CONNECT_PROXY          213
 #define IDD_NEWSETUP                    213
-#define IDD_HTTPGET                     214
 #define IDS_HTTP_CONNECT_HOST           214
 #define IDD_NEWPREFS                    215
 #define IDS_HTTP_CONNECT_PROXY_ERROR    215
@@ -452,10 +449,6 @@
 #define IDS_NOTPRESENT                  329
 #define IDS_ARTDELETE                   330
 #define IDS_AREYOUSURE                  331
-#define IDD_ARTDOWNLOADER               332
-#define IDD_ARTDOWNLOADER_SCROLLHOST    333
-#define IDD_ARTDOWNLOADER_IMAGE         334
-#define IDD_ARTDOWNLOADER_SCROLLCHILD   335
 #define IDS_BURN_NULLSOFT_STR           336
 #define IDS_BURN_LIBRARY_INIT_FAILED    337
 #define IDS_BURN_INVALID_PLAYLIST_PATH  338
@@ -472,7 +465,6 @@
 #define IDD_REPLAY_GAIN_UI              351
 #define IDS_PREAMP                      352
 #define IDD_NEWPLUG                     352
-#define IDD_NEWVIDEOOPTS                353
 #define IDS_OPTIONS_MENU                353
 #define IDS_DISABLE_AOT                 354
 #define IDS_ENABLE_AOT                  355
@@ -1155,7 +1147,6 @@
 #define IDC_SEARCHREFINE_YEAR           1375
 #define IDC_SECURITY_DESCRIPTION        1375
 #define IDC_ALLOW_ALWAYS                1376
-#define IDD_JSAPI2_AUTHORIZATION2       1376
 #define IDC_DENY                        1377
 #define IDB_PNG1                        1377
 #define IDB_OSD                         1377

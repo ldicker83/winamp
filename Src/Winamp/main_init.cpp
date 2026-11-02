@@ -76,7 +76,7 @@ BOOL InitApplication(HINSTANCE hInstance)  // register Winamp's window class, re
 		return 0;
 
 	// make other people's dialogs show the winamp icon
-	HWND h = CreateDialogW(hMainInstance, MAKEINTRESOURCE(IDD_OPENLOC), NULL, tmpProc);
+	HWND h = CreateDialogW(hMainInstance, MAKEINTRESOURCE(IDD_JUMPDLG), NULL, tmpProc);
 	SetClassLongPtrW(h, GCLP_HICON, (LONG_PTR)hIcon);
 	DestroyWindow(h);
 
