@@ -197,8 +197,6 @@ void config_write(int i)
 	{
 		WS(defext);
 		WSW(titlefmt);
-		WI(proxy80);
-		WS(proxy);
 		WSW(visplugin_name);
 		WSW(dspplugin_name);
 		WI(check_ft_startup);
@@ -590,8 +588,6 @@ void config_read(int i)
 	WideCharToMultiByteSZ(CP_ACP, 0, playlist_custom_fontW, -1, playlist_custom_font, 128, 0, 0);
 	RI(custom_plfont);
 	RI(no_registry);
-	RB(proxy80);
-	RS(proxy);
 	RS(defext);
 	RSW(titlefmt);
 	RSW(visplugin_name);
@@ -948,7 +944,6 @@ void setup_config(void)
 	GetTempPathW(MAX_PATH, tempPath);
 	PathCombineW(TEMP_FILE, tempPath, L"Winamp.tmp");
 	PathCombineW(DEMOMP3, M3UDIR, L"demo.mp3");
-	PathCombineW(JSAPI2_INIFILE, CONFIGDIR, L"jsapisec.ini");
 	PathCombineW(ML_INI_FILE, CONFIGDIR, L"Plugins\\gen_ml.ini");
 
 	// override INI_FILE if specified

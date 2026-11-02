@@ -1,7 +1,6 @@
 #include "Main.h"
 #include <assert.h>
 #include "MoreItems.h"
-#include "AdData.h"
 #include "../nu/AutoLock.h"
 #include "strutil.h"
 #include "../nu/AutoCharFn.h"
@@ -141,7 +140,6 @@ struct pl_entry
 	unsigned long  starttime     = 0;     // Start time in MS  (0, begin of file)
 	unsigned long  endtime       = 0;     // End time in MS  (0, end of file)
 	moreitems     *moreStuff     = NULL;  // added for subitems in a playlist mar-16-2005-benski
-	ad_data       *ads           = NULL;  // advertisement struct oct-17-2005-maksim
 };
 
 void pl_entry::Free()
@@ -151,12 +149,6 @@ void pl_entry::Free()
 	{
 		delete moreStuff;
 		moreStuff = NULL;
-	}
-
-	if ( ads )
-	{
-		delete ads;
-		ads = 0;
 	}
 
 	plstring_release( strFile );
@@ -203,21 +195,6 @@ void pl_entry::Create( int length, const wchar_t *filename, const wchar_t *title
 
 	if ( ext && *ext )
 		strExt = _wcsdup( ext );
-
-	if ( ( curtain && curtain[ 0 ] ) /*|| (browser && browser[0])*/ )
-	{
-		ads = new ad_data;
-		if ( curtain && curtain[ 0 ] != 0 )
-		{
-			ads->cbCurtain  = (int)strlen( curtain ) + 1;
-			ads->strCurtain = new char[ ads->cbCurtain ];
-			StringCchCopyA( ads->strCurtain, ads->cbCurtain, curtain );
-		}
-	}
-	else
-	{
-		ads = NULL;
-	}
 
 	this->length  = length;
 	selected      = 0;
@@ -593,15 +570,6 @@ extern "C"
 
 	int PlayList_hasanycurtain( int pos )
 	{
-		AutoLock lock( playlistGuard );
-		if ( pos < 0 || pos >= list_size )
-			return 0;
-
-		if ( list )
-		{
-			if ( list[ pos ].ads && list[ pos ].ads->strCurtain )
-				return 1;
-		}
 
 		return 0;
 	}
@@ -614,8 +582,6 @@ extern "C"
 
 		if ( list )
 		{
-			if ( list[ pos ].ads && list[ pos ].ads->strCurtain && list[ pos ].curindex == 0 )
-				return list[ pos ].ads->strCurtain;
 
 			if ( list[ pos ].curindex && list[ pos ].curitems )
 				return list[ pos ].moreStuff->GetHiddenCurtain( list[ pos ].curindex );
@@ -655,7 +621,6 @@ extern "C"
 		if (pos < 0 || pos >= list_size) return NULL;
 		if ( list )
 		{
-			if ( list[pos].ads && list[pos].ads->cbBrowser ) return list[pos].ads->strBrowser;
 		}
 		return NULL;
 	}
@@ -1488,39 +1453,7 @@ extern "C"
 		{
 			if ( !list[ list_pos ].curindex )
 			{
-				wa::strings::wa_string l_filename( L"" );
-
-				wa::strings::wa_string l_original_filename( list[ list_pos ].strFile );
-
-				if ( list[ list_pos ].strExt && *list[ list_pos ].strExt && l_original_filename.contains( "://" ) )
-				{
-					wa::strings::wa_string l_ext( "." );
-					l_ext.append( list[ list_pos ].strExt );
-					l_ext.toUpper();
-
-					wa::strings::wa_string l_strFile( list[ list_pos ].strFile );
-
-					l_filename.append( "http://client.winamp.com/fileproxy?destination=" );
-					l_filename.append( list[ list_pos ].strFile );
-
-					wa::strings::wa_string l_upper_case_filename( l_strFile.GetW() );
-					l_upper_case_filename.toUpper();
-
-					if ( !l_upper_case_filename.contains( l_ext.GetW() ) )
-					{
-						if ( !l_strFile.contains( "?" ) )
-							l_filename.append( "?" );
-						else
-							l_filename.append( "&" );
-
-						l_filename.append( "ext=" );
-						l_filename.append( l_ext );
-					}
-
-					StringCchCopyW( filename, FILENAME_SIZE, l_filename.GetW().c_str() );
-				}
-				else
-					StringCchCopyW( filename, FILENAME_SIZE, list[ list_pos ].strFile );
+				StringCchCopyW( filename, FILENAME_SIZE, list[ list_pos ].strFile );
 			}
 			else
 			{
@@ -2067,15 +2000,7 @@ int LoadPlaylistByExtension(const wchar_t *fn, const wchar_t *ext, int whattodo,
 	int i = 0;
 
 	if (PathIsURLW(fn))
-	{
-		int rval = 1;
-		if (!httpRetrieveFileW(hMainWindow, AutoChar(fn), TEMP_FILE, getStringW(IDS_RETRPL, NULL, 0)))
-		{
-			rval = LoadPlaylistByExtension(TEMP_FILE, ext, whattodo, useBase);
-		}
-		DeleteFileW(TEMP_FILE);
-		return rval;
-	}
+		return 1;
 
 	if (PlayList_getlength())
 	{

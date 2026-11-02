@@ -69,7 +69,6 @@ CONFIG_EXT wchar_t LANGTEMPDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t BOOKMARKFILE[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t BOOKMARKFILE8[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t LANGDIR[MAX_PATH] DEF_VAL(L"");
-CONFIG_EXT wchar_t JSAPI2_INIFILE[MAX_PATH] DEF_VAL(L"");
 
 #define PE_FONTSIZE 12
 CONFIG_EXT int config_pe_fontsize DEF_VAL(PE_FONTSIZE);
@@ -81,7 +80,7 @@ CONFIG_EXT wchar_t config_langpack[MAX_PATH] DEF_VAL(L""), config_langpack2[MAX_
 CONFIG_EXT unsigned char config_wlz_menu DEF_VAL(0);
 CONFIG_EXT int config_skin_prompt DEF_VAL(1);
 CONFIG_EXT int config_wlz_prompt DEF_VAL(1);
-CONFIG_EXT char config_proxy[256], config_inet_mode DEF_VAL(0);
+CONFIG_EXT char config_inet_mode DEF_VAL(0);
 CONFIG_EXT char config_defext[32] DEF_VAL("mp3");
 CONFIG_EXT wchar_t config_titlefmt[1024] DEF_VAL(L"[%artist% - ]$if2(%title%,$filepart(%filename%))");
 CONFIG_EXT int config_useexttitles DEF_VAL(1);

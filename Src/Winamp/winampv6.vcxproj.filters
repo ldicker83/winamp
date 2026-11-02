@@ -7,9 +7,6 @@
     <ClCompile Include="AccessibilityConfigGroup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AdData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AlbumArtRetrieval.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -17,9 +14,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationCOM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AppRefCount.cpp">
@@ -34,19 +28,7 @@
     <ClCompile Include="bm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BookmarksCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoolAttribute.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BrowserCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="burn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BurnManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plush\cam.c">
@@ -70,19 +52,7 @@
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\nu\ConfigCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="conversions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="convert.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CurrentSongCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataStoreCOM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="creditsrend.c">
@@ -157,9 +127,6 @@
     <ClCompile Include="ExtendedReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExternalCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Fft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -178,21 +145,6 @@
     <ClCompile Include="gen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="handler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="html.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\nu\HTMLContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Http.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HTTPRetrieveFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="In.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -202,67 +154,10 @@
     <ClCompile Include="IntAttribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InternetConfigGroup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ipc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="jnetcom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI_CallbackParameters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI_DispatchTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI_Info.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_AsyncDownloader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_Bookmarks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_CallbackManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_Creator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_DownloaderAPI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_ExternalObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_MediaCore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_PlayerAPI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_Security.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_SecurityAPI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_SecurityPrompt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_SkinAPI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_TransportAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="JUMP.cpp">
@@ -275,9 +170,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plush\light.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="linklist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="M3u.cpp">
@@ -371,9 +263,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MemoryManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MediaCoreCOM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plush\math.c">
@@ -472,9 +361,6 @@
     <ClCompile Include="SABuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SecurityCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ServiceFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -488,9 +374,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SHELL.CPP">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinCOM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Skins.cpp">
@@ -529,9 +412,6 @@
     <ClCompile Include="tagz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TempFileCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="plush\text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -554,9 +434,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UnsignedAttribute.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="urlmanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
@@ -595,30 +472,12 @@
     <ClCompile Include="Vis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="../Plugins/Library/ml_bookmarks\bookmark.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Plugins\General\gen_crasher\GetWinVer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Plugins\General\gen_ml\menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Plugins\General\gen_ml\ml_lib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccessibilityConfigGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AdData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationCOM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AppRefCount.h">
@@ -633,12 +492,6 @@
     <ClInclude Include="benskiQ\Biquad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BookmarksCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BurnManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="commandLink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -649,15 +502,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\nu\ConfigCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CurrentSongCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStoreCOM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DecodeFile.h">
@@ -693,16 +537,7 @@
     <ClInclude Include="ExtendedReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ExternalCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FFT.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="handler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\nu\HTMLContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Wasabi\api\application\ifc_messageprocessor.h">
@@ -711,73 +546,10 @@
     <ClInclude Include="..\Agave\Metadata\ifc_metadataReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InternetConfigGroup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ipc_pe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IWasabiDispatchable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="jnetcom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI_CallbackParameters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI_DispatchTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI_Info.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_api_security.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_AsyncDownloader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Bookmarks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_CallbackManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Creator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Downloader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_ExternalObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_MediaCore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_PlayerAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Security.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_SecurityAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_SkinAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_svc_apicreator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_TransportAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Agave\Language\lang.h">
@@ -790,9 +562,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MediaCoreCOM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MemoryManager.h">
@@ -837,16 +606,10 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SecurityCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ServiceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinCOM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="skinWindow.h">
@@ -873,9 +636,6 @@
     <ClInclude Include="tagz.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TempFileCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\nu\threadpool\ThreadFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -889,9 +649,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TIMING.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="urlmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XMLString.h">
@@ -922,12 +679,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Plugins\General\gen_crasher\GetWinVer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Plugins\General\gen_ml\menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dsp.h">
@@ -979,9 +730,6 @@
       <Filter>Header Files\api</Filter>
     </ClInclude>
     <ClInclude Include="..\nu\threadpool\api_threadpool.h">
-      <Filter>Header Files\api</Filter>
-    </ClInclude>
-    <ClInclude Include="api_urlmanager.h">
       <Filter>Header Files\api</Filter>
     </ClInclude>
     <ClInclude Include="api_winamp.h">

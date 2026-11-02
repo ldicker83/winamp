@@ -88,7 +88,7 @@ INT_PTR CALLBACK TitleProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							goto save_local;
 						}
 					}
-					myOpenURL(hwndDlg, dirmask);
+					ShellExecuteW(hwndDlg, L"open", dirmask, NULL, NULL, SW_SHOWNORMAL);
 				}
 				break;
 

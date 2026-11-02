@@ -137,7 +137,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\nsutil\$(PlatformShortName)_$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>msacm32.dll;nsutil.dll;comctl32.dll;comdlg32.dll;tataki.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -162,10 +162,6 @@ xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShort
 xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
 
 xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\media\"
-
-xcopy /Y /D /S "..\resources\data\avs" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\avs\"
-
-xcopy /Y /D /S ..\resources\data\vis_avs.dat ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
 
 xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\DSP_SPS\"
 
@@ -196,7 +192,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\nsutil\$(PlatformShortName)_$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>msacm32.dll;nsutil.dll;comctl32.dll;comdlg32.dll;tataki.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -232,7 +228,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>msacm32.dll;nsutil.dll;comctl32.dll;comdlg32.dll;tataki.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalLibraryDirectories>..\nsutil\$(PlatformShortName)_$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -257,10 +253,6 @@ xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShort
 xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
 
 xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\media\"
-
-xcopy /Y /D /S "..\resources\data\avs" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\avs\"
-
-xcopy /Y /D /S ..\resources\data\vis_avs.dat ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
 
 xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\DSP_SPS\"
 
@@ -296,7 +288,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;msacm32.lib;shlwapi.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>msacm32.dll;nsutil.dll;comctl32.dll;comdlg32.dll;tataki.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalLibraryDirectories>..\nsutil\$(PlatformShortName)_$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -320,10 +312,6 @@ xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShort
 xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
 
 xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\media\"
-
-xcopy /Y /D /S "..\resources\data\avs" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\avs\"
-
-xcopy /Y /D /S ..\resources\data\vis_avs.dat ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
 
 xcopy /Y /D /S ..\resources\plugins\dsp_sps.dll ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
 
@@ -379,17 +367,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)1.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\Elevator\FileTypeRegistrar.cpp" />
-    <ClCompile Include="..\Plugins\General\gen_crasher\GetWinVer.cpp" />
-    <ClCompile Include="..\Plugins\General\gen_ml\menu.cpp" />
-    <ClCompile Include="..\Plugins\General\gen_ml\ml_lib.cpp" />
-    <ClCompile Include="../Plugins/Library/ml_bookmarks\bookmark.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)%(Filename)2.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)%(Filename)2.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)2.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)2.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="..\nu\ConfigCOM.cpp" />
-    <ClCompile Include="..\nu\HTMLContainer.cpp" />
     <ClCompile Include="..\nu\ServiceWatcher.cpp" />
     <ClCompile Include="..\nu\threadpool\ThreadFunctions.cpp" />
     <ClCompile Include="..\nu\threadpool\ThreadID.cpp" />
@@ -398,29 +375,20 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="..\Wasabi\api\syscb\callbacks\syscbx.cpp" />
     <ClCompile Include="About.cpp" />
     <ClCompile Include="AccessibilityConfigGroup.cpp" />
-    <ClCompile Include="AdData.cpp" />
     <ClCompile Include="AlbumArtRetrieval.cpp" />
     <ClCompile Include="application.cpp" />
-    <ClCompile Include="ApplicationCOM.cpp" />
     <ClCompile Include="AppRefCount.cpp" />
     <ClCompile Include="benskiQ\benskiQ.cpp" />
     <ClCompile Include="benskiQ\Biquad.cpp" />
     <ClCompile Include="benskiQ\EqBand.cpp" />
     <ClCompile Include="bm.cpp" />
-    <ClCompile Include="BookmarksCOM.cpp" />
     <ClCompile Include="BoolAttribute.cpp" />
-    <ClCompile Include="BrowserCOM.cpp" />
-    <ClCompile Include="burn.cpp" />
-    <ClCompile Include="BurnManager.cpp" />
     <ClCompile Include="classic_vis.cpp" />
     <ClCompile Include="cmdline.cpp" />
     <ClCompile Include="commandLink.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="conversions.cpp" />
-    <ClCompile Include="convert.cpp" />
     <ClCompile Include="creditsrend.c" />
-    <ClCompile Include="CurrentSongCOM.cpp" />
-    <ClCompile Include="DataStoreCOM.cpp" />
     <ClCompile Include="DecodeFile.cpp" />
     <ClCompile Include="DeveloperConfigGroup.cpp" />
     <ClCompile Include="dispatchCallback.cpp" />
@@ -443,16 +411,11 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="ExplorerFindFile.cpp" />
     <ClCompile Include="ExtendedInfo.cpp" />
     <ClCompile Include="ExtendedReader.cpp" />
-    <ClCompile Include="ExternalCOM.cpp" />
     <ClCompile Include="Fft.cpp" />
     <ClCompile Include="FileInfo.cpp" />
     <ClCompile Include="FloatAttribute.cpp" />
     <ClCompile Include="fullscreen.cpp" />
     <ClCompile Include="gen.cpp" />
-    <ClCompile Include="handler.cpp" />
-    <ClCompile Include="html.cpp" />
-    <ClCompile Include="Http.cpp" />
-    <ClCompile Include="HTTPRetrieveFile.cpp" />
     <ClCompile Include="In.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)%(Filename)3.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)%(Filename)3.obj</ObjectFileName>
@@ -461,32 +424,15 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     </ClCompile>
     <ClCompile Include="install.cpp" />
     <ClCompile Include="IntAttribute.cpp" />
-    <ClCompile Include="InternetConfigGroup.cpp" />
     <ClCompile Include="InW.cpp" />
     <ClCompile Include="ipc.cpp" />
-    <ClCompile Include="jnetcom.cpp" />
-    <ClCompile Include="JSAPI2_Application.cpp" />
-    <ClCompile Include="JSAPI2_AsyncDownloader.cpp" />
-    <ClCompile Include="JSAPI2_Bookmarks.cpp" />
-    <ClCompile Include="JSAPI2_CallbackManager.cpp" />
-    <ClCompile Include="JSAPI2_Creator.cpp" />
-    <ClCompile Include="JSAPI2_DownloaderAPI.cpp" />
-    <ClCompile Include="JSAPI2_ExternalObject.cpp" />
-    <ClCompile Include="JSAPI2_MediaCore.cpp" />
-    <ClCompile Include="JSAPI2_PlayerAPI.cpp" />
-    <ClCompile Include="JSAPI2_Security.cpp" />
-    <ClCompile Include="JSAPI2_SecurityAPI.cpp" />
-    <ClCompile Include="JSAPI2_SecurityPrompt.cpp" />
-    <ClCompile Include="JSAPI2_SkinAPI.cpp" />
-    <ClCompile Include="JSAPI2_TransportAPI.cpp" />
-    <ClCompile Include="JSAPI_CallbackParameters.cpp" />
-    <ClCompile Include="JSAPI_DispatchTable.cpp" />
-    <ClCompile Include="JSAPI_Info.cpp" />
     <ClCompile Include="JUMP.cpp" />
     <ClCompile Include="lang.cpp" />
     <ClCompile Include="LazyServiceFactory.cpp" />
-    <ClCompile Include="linklist.cpp" />
     <ClCompile Include="M3u.cpp" />
+    <ClCompile Include="bookmark.cpp" />
+    <ClCompile Include="ml_lib.cpp" />
+    <ClCompile Include="html.cpp" />
     <ClCompile Include="main.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)%(Filename)4.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)%(Filename)4.obj</ObjectFileName>
@@ -502,7 +448,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="main_nonclient.cpp" />
     <ClCompile Include="main_timer.cpp" />
     <ClCompile Include="main_wndproc.cpp" />
-    <ClCompile Include="MediaCoreCOM.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="menuv5.cpp" />
     <ClCompile Include="MergePlaylist.cpp" />
@@ -585,12 +530,10 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="ResamplingReader.cpp" />
     <ClCompile Include="Sa.cpp" />
     <ClCompile Include="SABuffer.cpp" />
-    <ClCompile Include="SecurityCOM.cpp" />
     <ClCompile Include="ServiceFactory.cpp" />
     <ClCompile Include="ServiceManager.cpp" />
     <ClCompile Include="Set.cpp" />
     <ClCompile Include="SHELL.CPP" />
-    <ClCompile Include="SkinCOM.cpp" />
     <ClCompile Include="Skins.cpp" />
     <ClCompile Include="SkinUtils.cpp" />
     <ClCompile Include="skinWindow.cpp" />
@@ -601,11 +544,9 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="SYSTRAY.cpp" />
     <ClCompile Include="TagProvider.cpp" />
     <ClCompile Include="tagz.cpp" />
-    <ClCompile Include="TempFileCOM.cpp" />
     <ClCompile Include="TIMING.cpp" />
     <ClCompile Include="Ui.cpp" />
     <ClCompile Include="UnsignedAttribute.cpp" />
-    <ClCompile Include="urlmanager.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="Vis.cpp" />
     <ClCompile Include="vu.cpp" />
@@ -627,11 +568,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="..\Agave\Metadata\ifc_metadataReader.h" />
     <ClInclude Include="..\Agave\Metadata\svc_metatag.h" />
     <ClInclude Include="..\config\config.h" />
-    <ClInclude Include="..\Plugins\General\gen_crasher\GetWinVer.h" />
-    <ClInclude Include="..\Plugins\General\gen_ml\menu.h" />
     <ClInclude Include="..\nu\AutoLock.h" />
-    <ClInclude Include="..\nu\ConfigCOM.h" />
-    <ClInclude Include="..\nu\HTMLContainer.h" />
     <ClInclude Include="..\nu\threadpool\api_threadpool.h" />
     <ClInclude Include="..\nu\threadpool\ThreadFunctions.h" />
     <ClInclude Include="..\nu\threadpool\ThreadID.h" />
@@ -642,27 +579,20 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="..\Wasabi\api\application\ifc_messageprocessor.h" />
     <ClInclude Include="..\Wasabi\api\service\api_service.h" />
     <ClInclude Include="AccessibilityConfigGroup.h" />
-    <ClInclude Include="AdData.h" />
     <ClInclude Include="api.h" />
     <ClInclude Include="api_audiostream.h" />
     <ClInclude Include="api_decodefile.h" />
     <ClInclude Include="api_random.h" />
     <ClInclude Include="api_stats.h" />
-    <ClInclude Include="api_urlmanager.h" />
     <ClInclude Include="api_winamp.h" />
     <ClInclude Include="application.h" />
-    <ClInclude Include="ApplicationCOM.h" />
     <ClInclude Include="AppRefCount.h" />
     <ClInclude Include="attributes.h" />
     <ClInclude Include="benskiQ\Biquad.h" />
     <ClInclude Include="benskiQ\EqBand.h" />
-    <ClInclude Include="BookmarksCOM.h" />
-    <ClInclude Include="BurnManager.h" />
     <ClInclude Include="commandLink.h" />
     <ClInclude Include="CommonReader.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="CurrentSongCOM.h" />
-    <ClInclude Include="DataStoreCOM.h" />
     <ClInclude Include="DecodeFile.h" />
     <ClInclude Include="DeveloperConfigGroup.h" />
     <ClInclude Include="directdraw.h" />
@@ -674,39 +604,15 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="EQConfigGroup.h" />
     <ClInclude Include="ExplorerFindFile.h" />
     <ClInclude Include="ExtendedReader.h" />
-    <ClInclude Include="ExternalCOM.h" />
     <ClInclude Include="FFT.H" />
     <ClInclude Include="gen.h" />
-    <ClInclude Include="handler.h" />
     <ClInclude Include="in2.h" />
-    <ClInclude Include="InternetConfigGroup.h" />
     <ClInclude Include="ipc_pe.h" />
     <ClInclude Include="IWasabiDispatchable.h" />
-    <ClInclude Include="jnetcom.h" />
-    <ClInclude Include="JSAPI.h" />
-    <ClInclude Include="JSAPI2_api_security.h" />
-    <ClInclude Include="JSAPI2_Application.h" />
-    <ClInclude Include="JSAPI2_AsyncDownloader.h" />
-    <ClInclude Include="JSAPI2_Bookmarks.h" />
-    <ClInclude Include="JSAPI2_CallbackManager.h" />
-    <ClInclude Include="JSAPI2_Creator.h" />
-    <ClInclude Include="JSAPI2_Downloader.h" />
-    <ClInclude Include="JSAPI2_ExternalObject.h" />
-    <ClInclude Include="JSAPI2_MediaCore.h" />
-    <ClInclude Include="JSAPI2_PlayerAPI.h" />
-    <ClInclude Include="JSAPI2_Security.h" />
-    <ClInclude Include="JSAPI2_SecurityAPI.h" />
-    <ClInclude Include="JSAPI2_SkinAPI.h" />
-    <ClInclude Include="JSAPI2_svc_apicreator.h" />
-    <ClInclude Include="JSAPI2_TransportAPI.h" />
-    <ClInclude Include="JSAPI_CallbackParameters.h" />
-    <ClInclude Include="JSAPI_DispatchTable.h" />
-    <ClInclude Include="JSAPI_Info.h" />
     <ClInclude Include="language.h" />
     <ClInclude Include="LazyServiceFactory.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="main.hpp" />
-    <ClInclude Include="MediaCoreCOM.h" />
     <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="MergePlaylist.h" />
     <ClInclude Include="Metadata.h" />
@@ -722,7 +628,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="Resampler.h" />
     <ClInclude Include="ResamplingReader.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SecurityCOM.h" />
     <ClInclude Include="ServiceManager.h" />
     <CustomBuild Include="setup\spage_connect.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -737,7 +642,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuild>
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="SkinCOM.h" />
     <ClInclude Include="skinWindow.h" />
     <ClInclude Include="skinWindowIPC.h" />
     <ClInclude Include="stats.h" />
@@ -745,9 +649,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="SysCallbacks.h" />
     <ClInclude Include="TagProvider.h" />
     <ClInclude Include="tagz.h" />
-    <ClInclude Include="TempFileCOM.h" />
     <ClInclude Include="TIMING.H" />
-    <ClInclude Include="urlmanager.h" />
     <ClInclude Include="vis.h" />
     <ClInclude Include="w5s.h" />
     <ClInclude Include="WADrawDC.h" />

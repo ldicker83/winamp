@@ -4,7 +4,6 @@
 #include "attributes.h"
 
 // internet
-extern _bool config_proxy80;
 
 
 // audio

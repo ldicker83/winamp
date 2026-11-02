@@ -651,31 +651,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 			GetParameter(lpszCmdParam, p, 40);
 			ExitProcess(_wtoi(p));
 		}*/
-#ifndef _WIN64
-#ifdef BURN_SUPPORT
-		else if (!_wcsnicmp(lpszCmdParam, L"/BURN=", 6))
-		{
-			wchar_t p[1024] = {0};
-			unsigned int retCode;
-			lpszCmdParam = SkipXW(lpszCmdParam, 6);
-			GetParameter(lpszCmdParam, p, 1024);
-			CoInitialize(0); 
-			setup_config();
-			Wasabi_Load();
-			SpectralAnalyzer_Create();
-			w5s_init(NULL);
-			in_init(NULL);
-			config_read(1);
-			retCode = burn_doBurn(AutoChar(p), hMainWindow, hMainInstance);
-			in_deinit(NULL);
-			w5s_deinit(NULL);
-			Wasabi_Unload();
-			SpectralAnalyzer_Destroy();
-			RemoveRegistrar();
-			ExitProcess(retCode);
-		}
-#endif
-#endif
 		/*else if (!_wcsnicmp(lpszCmdParam, L"/WATCHER", 8))
 		{
 			wchar_t p[2048] = {0};

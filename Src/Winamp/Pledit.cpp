@@ -3,9 +3,6 @@
 #include "Main.h"
 #include "ipc_pe.h"
 #include "buildType.h"
-#include "../Plugins/General/gen_ml/ml_ipc.h"
-#include "../Plugins/General/gen_ml/ml.h"
-#include "../Plugins/General/gen_ml/menufucker.h"
 #include "api.h"
 #include "ExplorerFindFile.h"
 #include "../nu/AutoWide.h"
@@ -139,7 +136,6 @@ void PE_Cmd(windowCommand *wc)
 	}
 }
 
-static librarySendToMenuStruct mySendTo;
 static HMENU ratingMenu;
 static int PE_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 {
@@ -216,24 +212,7 @@ static int PE_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 		if (!PlayList_gethidden(wh) && !PlayList_hasanycurtain(wh))
 #endif
 		{
-			LRESULT IPC_LIBRARY_SENDTOMENU = wa_register_ipc((WPARAM)&"LibrarySendToMenu");
-			HMENU menu = 0, ourmenu = GetSubMenu(GetSubMenu(top_menu, 2), 5);
-
-			memset(&mySendTo, 0, sizeof(mySendTo));
-			if (IPC_LIBRARY_SENDTOMENU > 65536 && SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)0, IPC_LIBRARY_SENDTOMENU) == 0xffffffff)
-			{
-				MENUITEMINFOW mii = {sizeof(mii), MIIM_SUBMENU | MIIM_TYPE, MFT_STRING, };
-				mii.hSubMenu = menu = CreatePopupMenu();
-				mii.dwTypeData = getStringW(IDS_SENDTO_STR,NULL,0);
-				mii.cch = (UINT)wcslen(mii.dwTypeData);
-
-				InsertMenuItemW(ourmenu, 1, TRUE, &mii);
-
-				mySendTo.mode = 1;
-				mySendTo.hwnd = hwnd;
-				mySendTo.data_type = ML_TYPE_FILENAMESW;
-				mySendTo.build_hMenu = menu;
-			}
+			HMENU ourmenu = GetSubMenu(GetSubMenu(top_menu, 2), 5);
 
 			{
 				HMENU tmenu = NULL;
@@ -256,82 +235,8 @@ static int PE_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 				}
 			}
 
-			menufucker_t mf = {sizeof(mf),MENU_PLAYLIST,ourmenu,0x3000,0x4000,0};
-			pluginMessage message_build = {(int)wa_register_ipc((WPARAM)&"menufucker_build"),(intptr_t)&mf,0};
-			sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_build);
 			int ret = DoTrackPopup(ourmenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, p.x, p.y, hwnd);
 			ratingMenu = NULL;
-			pluginMessage message_result = {(int)wa_register_ipc((WPARAM)&"menufucker_result"),(intptr_t)&mf,ret,0};
-			sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_result);
-
-			if (menu)
-			{
-				if (mySendTo.mode == 2)
-				{
-					mySendTo.menu_id = ret;
-					if (SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mySendTo, IPC_LIBRARY_SENDTOMENU) == 0xffffffff)
-					{
-						size_t buf_size = 4096;
-						wchar_t *buf = (wchar_t*)malloc(buf_size*sizeof(wchar_t));						
-						size_t buf_pos = 0;
-
-						int i, l = PlayList_getlength();
-
-						for (i = 0;i < l;i++)
-						{
-							if (PlayList_getselect(i)
-#ifdef WINAMP_FINAL_BUILD
-								&& !PlayList_gethidden(i) && !PlayList_hasanycurtain(i)
-#endif
-								)
-							{
-								wchar_t itrFilename[FILENAME_SIZE] = {0};
-								PlayList_getitem(i, itrFilename, NULL);
-								size_t newsize = buf_pos + wcslen(itrFilename) + 1;
-								if (newsize < buf_size)
-								{
-									size_t old_buf_size = buf_size;
-									buf_size = newsize + 4096;
-									wchar_t *new_buf = (wchar_t*)realloc(buf, buf_size*sizeof(wchar_t));
-									if (!new_buf)
-									{
-										new_buf = (wchar_t*)malloc(buf_size*sizeof(wchar_t));
-										if (new_buf)
-										{
-											memcpy(new_buf, buf, old_buf_size*sizeof(wchar_t));
-											free(buf);
-											buf = new_buf;
-										}
-									}
-									else buf = new_buf;
-								}
-								StringCchCopyW(buf + buf_pos, buf_size - buf_pos, itrFilename);
-								buf_pos = newsize;
-							}
-						}
-
-						if (buf_pos)
-						{
-							buf[buf_pos] = 0;
-							mySendTo.mode = 3;
-							mySendTo.data = buf;
-							mySendTo.data_type = ML_TYPE_FILENAMESW;
-							SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mySendTo, IPC_LIBRARY_SENDTOMENU);
-						}
-
-						free(buf);
-						ret = 0;
-					}
-				}
-				// remove sendto
-				DeleteMenu(ourmenu, 1, MF_BYPOSITION);
-			}
-			if (mySendTo.mode)
-			{
-				mySendTo.mode = 4;
-				SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mySendTo, IPC_LIBRARY_SENDTOMENU); // cleanup
-				memset(&mySendTo, 0, sizeof(mySendTo));
-			}
 			if (ret) SendMessageW(hwnd, WM_COMMAND, ret, 0);
 		}
 	}
@@ -433,8 +338,8 @@ static int PE_OnLButtonDblClk(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT k
 
 int setCurrentRating(int rating)
 {
-	LRESULT ret = sendMlIpc(ML_IPC_SETRATING, rating);
-	if (!ret && !got_ml)
+	LRESULT ret = 0;
+	if (!ret)
 	{
 		wchar_t fn[FILENAME_SIZE] = {0};
 		if (!PlayList_getitem2W(PlayList_getPosition(), fn, NULL))
@@ -471,11 +376,7 @@ int setPlRating(int rating)
 	{
 		if (PlayList_getselect(i))
 		{
-			pl_set_rating psr;
-			psr.plentry = i;
-			psr.rating = rating;
-			r |= sendMlIpc(ML_IPC_PL_SETRATING, (WPARAM) & psr);
-			if (!r && !got_ml)
+			if (!r)
 			{
 				wchar_t buf[64] = {0};
 				if (rating > 0)
@@ -524,16 +425,9 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_INITMENUPOPUP:
-			if (wParam && (HMENU)wParam == mySendTo.build_hMenu && mySendTo.mode == 1)
-			{
-				int IPC_LIBRARY_SENDTOMENU = wa_register_ipc((WPARAM)&"LibrarySendToMenu");
-				if (IPC_LIBRARY_SENDTOMENU > 65536 && SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mySendTo, IPC_LIBRARY_SENDTOMENU) == 0xffffffff)
-					mySendTo.mode = 2;
-			}
-
 			// handles the ratings menu and is localised happy now
 			// (compared to the IDS_RATEITEM_STR based code) - DO 26/09/07
-			else if (wParam && (HMENU)wParam == ratingMenu)
+			if (wParam && (HMENU)wParam == ratingMenu)
 			{
 				int darating = -1, firstrating = -1;
 				for (int i = 0; i < PlayList_getlength(); i++)
@@ -546,12 +440,12 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
 						) 
 					{
-						rating = sendMlIpc(ML_IPC_GET_FILE_RATINGW, (WPARAM)fn);
+						rating = 0;
 						if (!i) firstrating = rating;
 
 						// deal with no ml being present and querying the rating of a file from the tag (if possible)
 						// as well as getting a zero rating which could mean that it's not present in the library
-						if (!rating && !got_ml)
+						if (!rating)
 						{
 							wchar_t buf[64] = {0};
 							in_get_extended_fileinfoW(fn, L"rating", buf, 64);

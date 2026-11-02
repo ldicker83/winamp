@@ -1,25 +1,32 @@
-#include "main.h"
-#include "api.h"
-#include <stdio.h>
+/** (c) Nullsoft, Inc.         C O N F I D E N T I A L
+ ** Filename: 
+ ** Project:
+ ** Description:
+ ** Author: 
+ ** Created:
+ **/
+#include "bookmark.h"
 
-void Bookmark_additem(char *fn, char *ft)
+BookmarkWriter::BookmarkWriter():fp(0)
 {
-  FILE *fp;
-  
-  fp=fopen(BOOKMARKFILE,"a+t");
-  if (fp)
-  {
-    char *buf=(char*)malloc(lstrlen(fn)+lstrlen(ft)+3);
-    fprintf(fp,"%s\n%s\n",fn,ft);
-    fclose(fp);
-    if (buf)
-    {
-      lstrcpy(buf,fn);
-      lstrcpy(buf+lstrlen(buf)+1,ft);
-      SendMessage(hMainWindow,WM_WA_IPC,(WPARAM)buf,IPC_ADDBOOKMARK);
-      free(buf);
-			AGAVE_API_STATS->IncrementStat(api_stats::BOOKMARK_COUNT);
-    }
+}
 
-  }
+void BookmarkWriter::Open(const wchar_t *filename)
+{
+	 fp=_wfopen(filename, L"a+t");
+}
+
+void BookmarkWriter::New(const wchar_t *filename)
+{
+	 fp=_wfopen(filename, L"wt");
+}
+
+void BookmarkWriter::Write(const char *filename, const char *title)
+{
+	fprintf(fp,"%s\n%s\n",filename,title);
+}
+
+void BookmarkWriter::Close()
+{
+	if (fp) fclose(fp);
 }

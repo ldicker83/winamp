@@ -556,11 +556,6 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 					SkinDeleteSkin(hwndDlg,-1);
 					return 0;
 				}
-		        	case IDC_WINAMPLINK:
-				{
-					myOpenURLWithFallback(hwndDlg,L"http://www.google.com/search?q=%22winamp+skins%22", L"http://www.google.com/search?q=%22winamp+skins%22");
-					return 0;
-				}
 				case IDC_RANDOM:
 				{
 					config_randskin = IsDlgButtonChecked(hwndDlg,IDC_RANDOM)?1:0;
@@ -665,10 +660,6 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 		return FALSE;
 	}
 
-	if (uMsg == WM_COMMAND && LOWORD(wParam)==IDC_PLUGINVERS)
-	{
-		myOpenURLWithFallback(hwndDlg, L"http://www.google.com/search?q=%22winamp+plugins%22", L"http://www.winamp.com/plugins");
-	}
 	link_handledraw(hwndDlg,uMsg,wParam,lParam);
 
 	const int controls[] = 

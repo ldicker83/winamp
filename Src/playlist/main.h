@@ -3,13 +3,10 @@
 
 #include <windows.h>
 #include <shlwapi.h>
-#include "..\Components\wac_network\wac_network_http_receiver_api.h"
 
 extern int (*warand)(void);
 HRESULT ResolveShortCut(HWND hwnd, LPCWSTR pszShortcutFile, LPWSTR pszPath);
 bool IsUrl(const wchar_t *url);
-void SetUserAgent(api_httpreceiver *http);
-const char *GetProxy();
 
 #include "../Agave/Component/ifc_wa5component.h"
 

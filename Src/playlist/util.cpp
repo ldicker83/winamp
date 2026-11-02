@@ -46,32 +46,3 @@ bool IsUrl(const wchar_t *url)
 	return !!wcsstr(url, L"://");
 }
 
-void SetUserAgent(api_httpreceiver *http)
-{
-	char agent[256] = {0};
-	StringCchPrintfA(agent, 256, "User-Agent: %S/%S", WASABI_API_APP->main_getAppName(), WASABI_API_APP->main_getVersionNumString());
-	http->addheader(agent);
-}
-
-const char *GetProxy()
-{
-	static char proxy[ 256 ] = "";
-	// {C0A565DC-0CFE-405a-A27C-468B0C8A3A5C}
-	const GUID internetConfigGroupGUID =
-	{ 0xc0a565dc, 0xcfe, 0x405a, { 0xa2, 0x7c, 0x46, 0x8b, 0xc, 0x8a, 0x3a, 0x5c } };
-	ifc_configgroup *group = AGAVE_API_CONFIG->GetGroup( internetConfigGroupGUID );
-	if ( group )
-	{
-		ifc_configitem *item = group->GetItem( L"Proxy" );
-		if ( item )
-		{
-			const wchar_t *wideProxy = item->GetString();
-			if ( wideProxy )
-			{
-				WideCharToMultiByteSZ( CP_ACP, 0, wideProxy, -1, proxy, 256, 0, 0 );
-			}
-		}
-	}
-
-	return proxy;
-}

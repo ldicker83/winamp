@@ -11,9 +11,6 @@
 #include "strutil.h"
 #include "../nu/AutoChar.h"
 #include "../nu/AutoCharFn.h"
-#include "MediaCoreCOM.h"
-#include "externalCOM.h"
-#include "JSAPI2_CallbackManager.h"
 
 static int in_play;
 extern int no_notify_play;
@@ -117,14 +114,7 @@ void Play(const wchar_t *playstring)
 
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_STATUS, IPC_CB_MISC);
 
-	MediaCoreCOM *mediaCore;
-	if (SUCCEEDED(JSAPI1_GetMediaCoreCOM(&mediaCore)))
-	{
-		mediaCore->OnPlay();
-		mediaCore->Release();
-	}
 
-	JSAPI2::callbackManager.OnPlay(FileName);
 }
 
 void StartPlaying()
@@ -134,20 +124,6 @@ void StartPlaying()
 	plcleared = 0;
 	if (playing) StopPlaying(0);
 	if (in_play) return ;
-	{
-		// Check if we have the media library , if we do check to see if we have and ad curtain
-		// If we do, and the current item is the first item, display it
-		const char *adcurtain = PlayList_getcurtain(PlayList_getPosition());
-		if (adcurtain && *adcurtain)
-		{
-			if (*adcurtain == 'a')
-			{
-				// 'a' means it's an Ad, so pop out of fullscreen.
-				adcurtain = CharNextA(adcurtain); // get past the a in ahttp://....
-			}
-		}
-	}
-
 	if (!no_notify_play)
 	{
 		PlayList_getcurrent(FileName, FileTitle, FileTitleNum);
@@ -237,14 +213,7 @@ void StopPlaying(int g_quit)
 
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_STATUS, IPC_CB_MISC);
 	
-	MediaCoreCOM *mediaCore;
-	if (SUCCEEDED(JSAPI1_GetMediaCoreCOM(&mediaCore)))
-	{
-		mediaCore->OnStop(last_time, g_fullstop);
-		mediaCore->Release();
-	}
 
-	JSAPI2::callbackManager.OnStop(last_time, g_fullstop);
 }
 
 void Skin_OnPause()
@@ -275,14 +244,7 @@ void PausePlaying()
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_STATUS, IPC_CB_MISC);
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_PAUSE, IPC_CB_MISC);
 	
-	MediaCoreCOM *mediaCore;
-	if (SUCCEEDED(JSAPI1_GetMediaCoreCOM(&mediaCore)))
-	{
-		mediaCore->OnPause();
-		mediaCore->Release();
-	}
 
-	JSAPI2::callbackManager.OnPause(true);
 }
 
 void UnPausePlaying()
@@ -296,14 +258,7 @@ void UnPausePlaying()
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_STATUS, IPC_CB_MISC);
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_UNPAUSE, IPC_CB_MISC);
 	
-	MediaCoreCOM *mediaCore = 0;
-	if (SUCCEEDED(JSAPI1_GetMediaCoreCOM(&mediaCore)) && mediaCore)
-	{
-		mediaCore->OnResume();
-		mediaCore->Release();
-	}
 
-	JSAPI2::callbackManager.OnPause(false);
 }
 
 

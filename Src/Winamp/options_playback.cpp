@@ -9,7 +9,6 @@
 #include "resource.h"
 #include "options.h"
 #include "WinampAttributes.h"
-#include "../Plugins/General/gen_ml/ml.h"
 
 static void EnableDisableReplayGain(HWND hwndDlg)
 {
@@ -27,22 +26,16 @@ static void EnableDisableReplayGain(HWND hwndDlg)
 	EnableWindow(GetDlgItem(hwndDlg, IDC_REPLAY_ADJ), enabled);
 }
 
-static DWORD ml_rg_config_ipc;
-static DLGPROC ml_rg_config_dlg;
 
 static void EnableReplayGainAnalyzer(HWND hwndDlg)
 {
-	pluginMessage message_build = {(int)ml_rg_config_ipc,0,0};
-
-	BOOL enabled = sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_build);
+	BOOL enabled = FALSE;
 	ShowWindow(GetDlgItem(hwndDlg, IDC_RGAS), enabled);
 	ShowWindow(GetDlgItem(hwndDlg, IDC_RG_ASK), enabled);
 	ShowWindow(GetDlgItem(hwndDlg, IDC_RG_ALBUM), enabled);
 	ShowWindow(GetDlgItem(hwndDlg, IDC_RG_ALL), enabled);
 	ShowWindow(GetDlgItem(hwndDlg, IDC_RGC), enabled);
 
-	message_build.param1 = 1;
-	ml_rg_config_dlg = (DLGPROC)sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_build);
 }
 
 #define NON_RG_MIN_DB 14
@@ -255,8 +248,6 @@ static LRESULT CALLBACK ReplayGainUIProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,
 		}
 	}
 
-	// call the ml_rg config dialog (if we've got a dlgproc for the embedded options)
-	if(ml_rg_config_dlg) ml_rg_config_dlg(hwndDlg,uMsg,wParam,lParam);
 
 	const int controls[] = 
 	{
@@ -298,11 +289,6 @@ INT_PTR CALLBACK PlaybackProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lPar
 			item.pszText=getStringW(IDS_P_SILENCE_DETECT,NULL,0);
 			TabCtrl_InsertItemW(tabwnd,3,&item);
 			#endif
-
-			ml_rg_config_ipc = wa_register_ipc((WPARAM)&"ml_rg_config");
-			pluginMessage message_build = {(int)ml_rg_config_ipc,2,0};
-			BOOL select_rg_page = sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_build);
-			if(select_rg_page) config_last_playback_page = 2;
 
 			TabCtrl_SetCurSel(tabwnd,config_last_playback_page);
 			subWnd = _dosetsel(hwndDlg,subWnd,&config_last_playback_page,playbackPages,sizeof(playbackPages)/sizeof(playbackPages[0]));

@@ -61,8 +61,7 @@ HWND WinampApi::GetDlgParent(void)
 
 HRESULT WinampApi::OpenUrl(HWND hwnd, const wchar_t *url)
 {
-	myOpenURL(hwnd, (wchar_t*)url);
-	return S_OK;
+	return E_NOTIMPL;
 }
 
 int WinampApi::GetRegVer()

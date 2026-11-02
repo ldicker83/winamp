@@ -9,7 +9,6 @@
 #include "main.h"
 #include "menuv5.h"
 #include "../nu/AutoWide.h"
-#include "../Plugins/General/gen_ml/ml.h"
 
 #define TREE_LOCALMEDIA 1000
 #define TREE_PLAYLISTS 3001
@@ -339,48 +338,14 @@ int V5_Help_Menu(HWND hwnd, int x, int y, int width, int height)
 	return Help_Menu(hwnd, x, y, width, height);
 }
 
-LRESULT sendMlIpc(int msg, WPARAM param);
 
-// TODO:: need to make this only show what's needed at the time ie it'll still show even if there's no ml_playlists
-//        and properly show if there's no playlists
 int V5_PE_File_Menu(HWND hwnd, int x, int y, int width, int height)
 {
 	int flag = TPM_LEFTALIGN;
 	HMENU pefile_menu = GetSubMenu(v5_top_menu, 5);
-	HMENU playlistsmenu = NULL;
-	HMENU viewmenu = NULL;
-	HWND mlwnd = (HWND)sendMlIpc(0, 0);
-	int viewmenu_added = 0;
-	g_open_ml_item_in_pe = 1;
-	if (mlwnd)
-	{
-		mlGetTreeStruct mgts = { TREE_PLAYLISTS, 45000, -1 };
-		playlistsmenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (WPARAM) & mgts, ML_IPC_GETTREE);
-		if (playlistsmenu)
-		{
-			mlGetTreeStruct mgts = { TREE_QUERIES, 45000, -1 };
-			viewmenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (WPARAM) & mgts, ML_IPC_GETTREE);
-			if (GetMenuItemCount(playlistsmenu) == 0) InsertMenuW(playlistsmenu, 0, MF_BYPOSITION | MF_STRING | MF_GRAYED, 0, getStringW(IDS_ML_NO_PLAYLISTS,NULL,0));
-			InsertMenuW(pefile_menu, 2, MF_BYPOSITION | MF_ENABLED | MF_POPUP, (UINT_PTR)playlistsmenu, getStringW(IDS_ML_OPEN_PLAYLIST,NULL,0));
-			if (viewmenu && GetMenuItemCount(viewmenu) > 0)
-			{
-				viewmenu_added = 1;
-				InsertMenuW(pefile_menu, 3, MF_BYPOSITION | MF_ENABLED | MF_POPUP, (UINT_PTR)viewmenu, getStringW(IDS_ML_OPEN_VIEW_RESULTS,NULL,0));
-			}
-		}
-	}
-
 	ModifyMenuW(pefile_menu, ID_PE_CLOSE, MF_BYCOMMAND | MF_STRING, ID_PE_CLOSE, config_pe_open ? getStringW(IDS_PE_CLOSE,NULL,0) : getStringW(IDS_PE_OPEN,NULL,0));
 	ensureInScreen(pefile_menu, &x, &y, &flag, width, height);
 	DoTrackPopup(pefile_menu, flag, x, y, hwnd);
-
-	if (playlistsmenu)
-	{
-		if (viewmenu_added) RemoveMenu(pefile_menu, 3, MF_BYPOSITION);
-		if (viewmenu) DestroyMenu(viewmenu);
-		RemoveMenu(pefile_menu, 2, MF_BYPOSITION);
-		DestroyMenu(playlistsmenu);
-	}
 	return 1;
 }
 
@@ -405,110 +370,6 @@ int V5_PE_Sort_Menu(HWND hwnd, int x, int y, int width, int height)
 int V5_PE_Help_Menu(HWND hwnd, int x, int y, int width, int height)
 {
 	return Help_Menu(hwnd, x, y, width, height);
-}
-
-int V5_ML_File_Menu(HWND hwnd, int x, int y, int width, int height)
-{
-	int flag = TPM_LEFTALIGN;
-	HMENU mlfile_menu = GetSubMenu(v5_top_menu, 8);
-	HWND mlwnd = (HWND)sendMlIpc(0, 0);
-	HWND mlplwnd = (HWND)SendMessageW(mlwnd, WM_ML_IPC, 0, ML_IPC_GETPLAYLISTWND);
-	ModifyMenuW(mlfile_menu, 3, MF_BYPOSITION | (mlplwnd == NULL ? MF_GRAYED : 0), ID_MLFILE_SAVEPLAYLIST, getStringW(IDS_ML_EXPORT_PLAYLIST,NULL,0));
-	{
-		int visible = IsWindowVisible(mlwnd);
-		int p = getMenuItemPos(mlfile_menu, ID_FILE_CLOSELIBRARY);
-		if (p == -1) p = getMenuItemPos(mlfile_menu, ID_FILE_SHOWLIBRARY);
-		ModifyMenuW(mlfile_menu, p, MF_BYPOSITION | MF_STRING, visible ? ID_FILE_CLOSELIBRARY : ID_FILE_SHOWLIBRARY, visible ? getStringW(IDS_ML_CLOSE_ML,NULL,0) : getStringW(IDS_ML_OPEN_ML,NULL,0));
-	}
-	ensureInScreen(mlfile_menu, &x, &y, &flag, width, height);
-	DoTrackPopup(mlfile_menu, flag, x, y, hwnd);
-	return 1;
-}
-
-int V5_ML_View_Menu(HWND hwnd, int x, int y, int width, int height)
-{
-	int flag = TPM_LEFTALIGN;
-	HMENU mlview_menu = GetSubMenu(v5_top_menu, 9), mediamenu = NULL;
-	HWND mlwnd = (HWND)sendMlIpc(0, 0);
-	if (mlwnd)
-	{
-		mlGetTreeStruct mgts = { 0, 45000, -1 };
-		mediamenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (WPARAM) & mgts, ML_IPC_GETTREE);
-		if (mediamenu)
-		{
-			MergeMenu(mediamenu, mlview_menu, 0);
-			//InsertMenu(mediamenu, 0, MF_BYPOSITION | MF_STRING, ID_MLVIEW_MEDIA, "All &Media");
-			//InsertMenu(mlview_menu, 1, MF_BYPOSITION | MF_ENABLED | MF_POPUP, (UINT)mediamenu, "&Local Media");
-		}/*
-		mgts.item_start = TREE_PLAYLISTS;
-		playlistsmenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (int) & mgts, ML_IPC_GETTREE);
-		if (playlistsmenu)
-		{
-			if (GetMenuItemCount(playlistsmenu) == 0) InsertMenu(playlistsmenu, 0, MF_BYPOSITION | MF_STRING | MF_GRAYED, 0, "No playlists");
-			InsertMenu(mlview_menu, 2, MF_BYPOSITION | MF_ENABLED | MF_POPUP, (UINT)playlistsmenu, "&Playlists");
-		}
-		mgts.item_start = TREE_DEVICES;
-		devicesmenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (int) & mgts, ML_IPC_GETTREE);
-		if (devicesmenu)
-		{
-			if (GetMenuItemCount(devicesmenu) == 0) InsertMenu(devicesmenu, 0, MF_BYPOSITION | MF_STRING | MF_GRAYED, 0, "No devices");
-			InsertMenu(mlview_menu, 3, MF_BYPOSITION | MF_ENABLED | MF_POPUP, (UINT)devicesmenu, "&Devices");
-		}*/
-	}
-
-	g_open_ml_item_in_pe = 0;
-
-	//ID_MLVIEW_PLAYLISTS
-	//ID_MLVIEW_DEVICES
-
-	ensureInScreen(mediamenu, &x, &y, &flag, width, height);
-	DoTrackPopup(mediamenu, flag, x, y, hwnd);
-/*
-	if (devicesmenu)
-	{
-		RemoveMenu(mlview_menu, 3, MF_BYPOSITION);
-		DestroyMenu(devicesmenu);
-	}
-	if (playlistsmenu)
-	{
-		RemoveMenu(mlview_menu, 2, MF_BYPOSITION);
-		DestroyMenu(playlistsmenu);
-	}*/
-	if (mediamenu)
-	{
-		//RemoveMenu(mlview_menu, 1, MF_BYPOSITION);
-		DestroyMenu(mediamenu);
-	}
-	return 1;
-}
-
-int V5_ML_Help_Menu(HWND hwnd, int x, int y, int width, int height)
-{
-	return Help_Menu(hwnd, x, y, width, height);
-}
-
-int V5_PE_ListOfPlaylists_Menu(int x, int y)
-{
-	HMENU viewmenu = NULL;
-	mlGetTreeStruct mgts = { TREE_PLAYLISTS, 55000, -1 };
-	HWND mlwnd = (HWND)sendMlIpc(0, 0);
-	HMENU playlistsmenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (WPARAM) & mgts, ML_IPC_GETTREE);
-	if (playlistsmenu)
-	{
-		InsertMenuW(playlistsmenu, 0, MF_BYPOSITION | MF_STRING, ID_MANAGEPLAYLISTS, getStringW(IDS_ML_MANAGE_PLAYLISTS,NULL,0));
-		{
-			mlGetTreeStruct mgts = { TREE_QUERIES, 55000, -1 };
-			viewmenu = (HMENU)SendMessageW(mlwnd, WM_ML_IPC, (WPARAM) &mgts, ML_IPC_GETTREE);
-		}
-		if (viewmenu && GetMenuItemCount(viewmenu) > 0)
-			InsertMenuW(playlistsmenu, 1, MF_BYPOSITION | MF_ENABLED | MF_POPUP, (UINT_PTR)viewmenu, getStringW(IDS_ML_SMART_VIEW_RESULTS,NULL,0));
-		InsertMenu(playlistsmenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-		g_open_ml_item_in_pe = 1;
-		DoTrackPopup(playlistsmenu, TPM_LEFTALIGN, x, y, hMainWindow);
-	}
-	DestroyMenu(playlistsmenu);
-	DestroyMenu(viewmenu);
-	return 1;
 }
 
 void getViewportFromPoint(POINT *pt, RECT *r)

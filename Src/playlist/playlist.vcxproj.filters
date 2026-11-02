@@ -19,15 +19,6 @@
     <ClCompile Include="Handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JSAPI2_Creator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_Playlist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSAPI2_Playlists.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="M3U8Writer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,12 +66,6 @@
     </ClCompile>
     <ClCompile Include="..\Wasabi\bfc\assert.cpp">
       <Filter>Source Files\Wasabi\bfc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Winamp\JSAPI_CallbackParameters.cpp">
-      <Filter>Source Files\Winamp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Winamp\JSAPI_ObjectArray.cpp">
-      <Filter>Source Files\Winamp</Filter>
     </ClCompile>
     <ClCompile Include="..\Wasabi\bfc\memblock.cpp">
       <Filter>Source Files\Wasabi\bfc</Filter>
@@ -142,18 +127,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ifc_playlistloader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Winamp\JSAPI_ObjectArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Creator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Playlist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JSAPI2_Playlists.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="M3U8Writer.h">

@@ -37,36 +37,7 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 	{
 		case WM_INITDIALOG:
 		{
-			SendMessageW(GetDlgItem(hwndDlg,IDC_PROXYSTR),EM_LIMITTEXT,sizeof(config_proxy),0);
-			/// SetWindowTextA(GetDlgItem(hwndDlg,IDC_PROXYSTR),config_proxy);   // PROXY disabled
 			CheckDlgButton(hwndDlg,IDC_MINST,config_minst?1:0);
-
-			SendDlgItemMessageW(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)getStringW(IDS_INST_INET1,NULL,0));
-			SendDlgItemMessageW(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)getStringW(IDS_INST_INET2,NULL,0));
-			SendDlgItemMessageW(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)getStringW(IDS_INST_INET3,NULL,0));
-
-			if (config_inet_mode==3) isInetAvailable(); // autodetect
-
-			if (config_inet_mode==2) SendDlgItemMessage(hwndDlg,IDC_COMBO2, CB_SETCURSEL,2,0);
-			else if (config_inet_mode==1) SendDlgItemMessage(hwndDlg,IDC_COMBO2, CB_SETCURSEL,1,0);
-			else SendDlgItemMessage(hwndDlg,IDC_COMBO2, CB_SETCURSEL,0,0);
-
-			// disable the version and stats aspects as
-			// they are when internet access is disabled
-			EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK), (config_inet_mode != 2));
-			EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK2), (config_inet_mode != 2));
-			EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK_RC), (config_inet_mode != 2));
-
-			if (config_newverchk) 
-				CheckDlgButton(hwndDlg,IDC_NEWVERCHECK,BST_CHECKED);
-			if (config_newverchk2) 
-				CheckDlgButton(hwndDlg,IDC_NEWVERCHECK2,BST_CHECKED);
-			if (config_newverchk_rc)
-				CheckDlgButton(hwndDlg, IDC_NEWVERCHECK_RC, BST_CHECKED);
-			
-			EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK_RC), config_newverchk > 0);
-
-			if (GetPrivateProfileIntW(L"Winamp",L"proxyonly80",0,INI_FILE)) CheckDlgButton(hwndDlg,IDC_PROXY_ONLY_PORT_80,BST_CHECKED);
 
 			CheckDlgButton(hwndDlg,IDC_DROPAOTFS,config_dropaotfs?1:0);
 			CheckDlgButton(hwndDlg,IDC_NO_MOUSEWHEEL,config_nomwheel?1:0);
@@ -100,40 +71,8 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 		case WM_COMMAND:
 			switch (LOWORD(wParam))
 			{
-				case IDC_NEWVERCHECK:
-				case IDC_NEWVERCHECK2:
-					config_newverchk=IsDlgButtonChecked(hwndDlg,IDC_NEWVERCHECK)?(config_newverchk?config_newverchk:1):0;
-					EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK_RC), config_newverchk > 0);
-					if (config_newverchk)
-					{
-						config_newverchk_rc = IsDlgButtonChecked(hwndDlg, IDC_NEWVERCHECK_RC) ? (config_newverchk_rc ? config_newverchk_rc : 1) : 0;
-					}
-
-					config_newverchk2=!!IsDlgButtonChecked(hwndDlg,IDC_NEWVERCHECK2);
-					return 0;
-
-				case IDC_COMBO2:
-					if (HIWORD(wParam) == CBN_SELCHANGE)
-					{
-						int l=SendDlgItemMessage(hwndDlg,IDC_COMBO2,CB_GETCURSEL,0,0);
-						if (l == 2) config_inet_mode=2;
-						else if (l == 1) config_inet_mode=1;
-						else config_inet_mode=0;
-
-						// disable the version and stats aspects as
-						// they are when internet access is disabled
-						EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK), (l != 2));
-						EnableWindow(GetDlgItem(hwndDlg, IDC_NEWVERCHECK2), (l != 2));
-					}
-					return 0;
-
 				case IDC_MINST:
 					config_minst = !!IsDlgButtonChecked(hwndDlg,IDC_MINST);
-					return 0;
-
-				case IDC_PROXY_ONLY_PORT_80:
-					config_proxy80 = (IsDlgButtonChecked(hwndDlg,IDC_PROXY_ONLY_PORT_80)==BST_CHECKED);
-					WritePrivateProfileStringW(L"Winamp",L"proxyonly80",config_proxy80?L"1":L"0",INI_FILE);
 					return 0;
 
 				case IDC_RECYCLE:
@@ -210,10 +149,6 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 			    set_priority();
 		    }
 	    }	
-			return 0;
-
-		case WM_DESTROY:
-			GetWindowTextA(GetDlgItem(hwndDlg,IDC_PROXYSTR),config_proxy,sizeof(config_proxy));
 			return 0;
 
 		case WM_PAINT:

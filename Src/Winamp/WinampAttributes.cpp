@@ -1,7 +1,6 @@
 #include "main.h"
 #include "api.h"
 #include "WinampAttributes.h"
-#include "InternetConfigGroup.h"
 #include "PlaybackConfigGroup.h"
 #include "EQConfigGroup.h"
 #include "DeveloperConfigGroup.h"
@@ -11,8 +10,6 @@ extern Config config;
 
 
 /* --- Internet --- */
-InternetConfigGroup internetConfigGroup;
-_bool config_proxy80(false);
 
 /* --- Playback --- */
 PlaybackConfigGroup playbackConfigGroup;
@@ -45,7 +42,6 @@ _bool config_accessibility_modalflash(true);
 	
 void RegisterConfigGroups()
 {
-	config.RegisterGroup(&internetConfigGroup);
 	config.RegisterGroup(&playbackConfigGroup);
 	config.RegisterGroup(&eqConfigGroup);
 	config.RegisterGroup(&developerConfigGroup);

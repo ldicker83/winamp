@@ -3,7 +3,6 @@
 #include "main.h"
 #include "../nu/ns_wc.h"
 #include "api.h"
-#include "JSAPI.h"
 #include "draw.h"
 #include "WADrawDC.h"
 #include "options.h"

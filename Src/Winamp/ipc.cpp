@@ -11,19 +11,14 @@
 #define APSTUDIO_INVOKED
 #include "resource.h"
 
-#include "../Plugins/General/gen_ml/ml.h"
 #include "../nu/ns_wc.h"
 #include "menuv5.h"
 #include "vis.h"
 #include "minizip/unzip.h"
 #include "wa_dlg.h"
-#include "CurrentSongCOM.h"
-#include "SkinCOM.h"
-#include "ExternalCOM.h"
 #include "api.h"
 
 #include "tagz.h"
-#include "Browser.h"
 #include "../nu/AutoWide.h"
 #include "../nu/AutoWideFn.h"
 #include "../nu/AutoChar.h"
@@ -31,8 +26,6 @@
 #include <api/syscb/callbacks/metacb.h>
 
 #include "./skinwindow.h"
-#include "JSAPI2_ExternalObject.h"
-#include "JSAPI2_CallbackManager.h"
 
 #include "stats.h"
 
@@ -186,10 +179,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_USE_REGISTRY:
 			return !config_no_registry;
 		case IPC_GET_DISPATCH_OBJECT:
-			{
-				ExternalCOM *external;
-				return (SUCCEEDED(JSAPI1_GetExternal(&external))) ? reinterpret_cast<LRESULT>((IDispatch*)external) : NULL;
-			}
+			return 0;
 		case IPC_REGISTER_LOWORD_COMMAND:
 			if (data == 0)
 				return unique_loword_command++;
@@ -200,19 +190,10 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				return temp;
 			}
 		case IPC_METADATA_CHANGED:
-			{
-				CurrentSongCOM *currentSongCOM;
-				if(SUCCEEDED(JSAPI1_GetCurrentSongCOM(&currentSongCOM)))
-				{
-					currentSongCOM->MetadataChanged((char *)data);
-					currentSongCOM->Release();
-				}
-				break;
-			}
+			break;
 		case IPC_SKIN_CHANGED:
 			{
 				WADlg_init(hMainWindow);
-				JSAPI1_SkinChanged();
 				break;
 			}
 		case IPC_GET_RANDFUNC:
@@ -361,7 +342,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			return vis_running();
 		case IPC_SETRATING:
 		{
-			LRESULT ret = sendMlIpc(ML_IPC_SETRATING, data);
+			LRESULT ret = 0;
 			if (!ret)
 			{
 				wchar_t fn[FILENAME_SIZE] = {0};
@@ -381,11 +362,11 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		}
 		case IPC_GETRATING:
 		{
-			LRESULT ret = sendMlIpc(ML_IPC_GETRATING, 0);
+			LRESULT ret = 0;
 
 			// deal with no ml being present and querying the rating of a file from the tag (if possible)
 			// as well as getting a zero rating which could mean that it's not present in the library
-			if (!ret && !got_ml)
+			if (!ret)
 			{
 				wchar_t fn[FILENAME_SIZE] = {0};
 				if (!PlayList_getitem2W(PlayList_getPosition(), fn, NULL))
@@ -788,29 +769,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_GETVERSIONSTRING:
 			return (LRESULT)app_version_string;
 		case IPC_OPEN_URL:
-			{
-				char *url = (char *)data;
-				if ((url[0] == 'h' || url[0] == 'H') && url[1] == 0) // unicode!
-				{
-					myOpenURL(NULL, (wchar_t *)url);
-				}
-				else // ANSI
-				{
-					// copes with trying to open local files e.g. local help
-					// as above checking would otherwise force it always to
-					// be treated as ansi even if sent as a unicode file:///
-					if(PathFileExistsW((wchar_t *)url))
-					{
-						myOpenURL(NULL, (wchar_t *)url);
-					}
-					else
-					{
-						myOpenURL(NULL, AutoWide(url));
-					}
-				}
-
 			return 0;
-			}
 		case IPC_GETREGISTEREDVERSION:
 			if (((unsigned int) data) > 0xffff)
 			{
@@ -1179,11 +1138,11 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_EX_ISRIGHTEXE:
 			return stat_isit;
 		case IPC_GETHTTPGETTER:
-			return (LRESULT)httpRetrieveFile;
+			return 0;
 		case IPC_GETHTTPGETTERW:
-			return (LRESULT)httpRetrieveFileW;
+			return 0;
 		case IPC_INETAVAILABLE:
-			return isInetAvailable();
+			return 0;
 		case IPC_GET_SHUFFLE:
 			return !!config_shuffle;
 		case IPC_GET_MANUALPLADVANCE:
@@ -1365,12 +1324,6 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 					return 0;
 			}
 		case IPC_GET_EXTENDED_FILE_INFOW_HOOKABLE:
-			{
-				extendedFileInfoStructW *efis = (extendedFileInfoStructW *)data;
-				if (JSAPI2::callbackManager.OverrideMetadata(efis->filename, efis->metadata, efis->ret, efis->retlen))
-					return 1;
-			}
-			// fall through
 		case IPC_GET_EXTENDED_FILE_INFOW:
 			{
 				extendedFileInfoStructW *efis = (extendedFileInfoStructW *)data;
@@ -1431,46 +1384,23 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_WRITE_EXTENDED_FILE_INFO:
 			return in_write_extended_fileinfo();
 		case IPC_CONVERTFILE:
-			return convert_file((convertFileStruct *)data);
 		case IPC_CONVERTFILEW:
-			return convert_fileW((convertFileStructW *)data);
 		case IPC_CONVERT_TEST:
-			return convert_file_test((convertFileStructW *)data);
 		case IPC_CONVERTFILE_END:
-			convert_end((convertFileStruct *)data);
-			break;
 		case IPC_CONVERTFILEW_END:
-			convert_endW((convertFileStructW *)data);
-			break;
 		case IPC_CONVERT_CONFIG:
-			return reinterpret_cast<LRESULT>(convert_config((convertConfigStruct *)data));
 		case IPC_CONVERT_CONFIG_END:
-			convert_config_end((convertConfigStruct *)data);
-			break;
 		case IPC_CONVERT_CONFIG_ENUMFMTS:
-			convert_enumfmts((converterEnumFmtStruct *)data);
-			break;
 		case IPC_CONVERT_SET_PRIORITY:
-			convert_setPriority((convertSetPriority *)data);
-			break;
 		case IPC_CONVERT_SET_PRIORITYW:
-			convert_setPriorityW((convertSetPriorityW *)data);
-			break;
 		case IPC_CONVERT_CONFIG_SET_ITEM:
-			return convert_setConfigItem((convertConfigItem*)data);
 		case IPC_CONVERT_CONFIG_GET_ITEM:
-			return convert_getConfigItem((convertConfigItem*)data);
+			return 0;
 		case IPC_PLCMD:
 			PE_Cmd((windowCommand*)data);
 			break;
 		case IPC_GETDROPTARGET:
 			return reinterpret_cast<LRESULT>(Ole_getDropTarget());
-	#ifdef BURN_SUPPORT
-	#if !defined(_WIN64)
-		case IPC_BURN_CD:
-			return burn_start((burnCDStruct *)data);
-	#endif
-	#endif
 		case IPC_GET_NEXT_PLITEM:
 			return -1;
 		case IPC_GET_PREVIOUS_PLITEM:
@@ -1526,57 +1456,23 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				return V5_PE_Help_Menu(p->wnd, p->xpos, p->ypos, p->width, p->height);
 			}
 		case IPC_SPAWNMLFILEMENU:
-			{
-				waSpawnMenuParms2 *p = (waSpawnMenuParms2*)data;
-				return V5_ML_File_Menu(p->wnd, p->xpos, p->ypos, p->width, p->height);
-			}
 		case IPC_SPAWNMLVIEWMENU:
-			{
-				waSpawnMenuParms2 *p = (waSpawnMenuParms2*)data;
-				return V5_ML_View_Menu(p->wnd, p->xpos, p->ypos, p->width, p->height);
-			}
 		case IPC_SPAWNMLHELPMENU:
-			{
-				waSpawnMenuParms2 *p = (waSpawnMenuParms2*)data;
-				return V5_ML_Help_Menu(p->wnd, p->xpos, p->ypos, p->width, p->height);
-			}
 		case IPC_SPAWNPELISTOFPLAYLISTS:
-			{
-				waSpawnMenuParms *p = (waSpawnMenuParms*)data;
-				return V5_PE_ListOfPlaylists_Menu(p->xpos, p->ypos);
-			}
+			return 0;
 		case IPC_GET_UNIQUE_DISPATCH_ID:
-			return JSAPI1_GenerateUniqueDispatchId();
+			return 0;
 		case IPC_ADD_DISPATCH_OBJECT:
 			{
 				DispatchInfo *info = (DispatchInfo*)data;
 				if (NULL != info)
-				{				
-					ExternalCOM *external;
-					if (SUCCEEDED(JSAPI1_GetExternal(&external)))
-					{
-						info->id = external->AddDispatch(info->name, info->dispatch);
-						external->Release();
-					}
-					else
-					{
-						info->id = 0;
-					}
-				}
-				return 0;
-			}
-		case IPC_REMOVE_DISPATCH_OBJECT:
-			{
-				ExternalCOM *external;
-				if (SUCCEEDED(JSAPI1_GetExternal(&external)))
-				{
-					external->RemoveDispatch((DWORD)data);
-					external->Release();
-				}
+					info->id = 0;
 			}
 			return 0;
+		case IPC_REMOVE_DISPATCH_OBJECT:
+			return 0;
 		case IPC_GET_PROXY_STRING:
-			return reinterpret_cast<LRESULT>(config_proxy);
+			return reinterpret_cast<LRESULT>("");
 		case IPC_PLAYLIST_GET_NEXT_SELECTED:
 			return PlayList_GetNextSelected(data);
 		case IPC_PLAYLIST_GET_SELECTED_COUNT:
@@ -1651,23 +1547,9 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				return RetrieveAlbumArt((artFetchData *)data);
 			}*/
 		case IPC_JSAPI2_GET_DISPATCH_OBJECT:
-			return (LRESULT)new JSAPI2::ExternalObject((const wchar_t *)data);
+			return 0;
 		case IPC_HANDLE_URI:
-			{
-				const wchar_t *cmd  = (const wchar_t *)data;
-				if (cmd)
-				{
-					if (cmd[0] == '\"')
-					{
-						wchar_t temp[1024] = {0};
-						GetParameter(cmd, temp, 1024);
-						HandleFilename(temp);
-					}
-					else
-						HandleFilename(cmd);
-				return 0;
-				}
-			}
+			return 0;
 		case IPC_GET_D3DX9:
 			{
 				HMODULE d3dx_lib = FindD3DX9();

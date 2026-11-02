@@ -135,5 +135,5 @@ void doHtmlPlaylist(void)
 	fprintf(fp, "<hr><br></body></html>");
 	fclose(fp);
 
-	myOpenURL(hPLWindow, filename);
+	ShellExecuteW(hPLWindow, L"open", filename, NULL, NULL, SW_SHOWNORMAL);
 }

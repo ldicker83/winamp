@@ -13,10 +13,6 @@
 #include "../Agave/Config/api_config.h"
 #endif
 
-#include "../Winamp/JSAPI2_api_security.h"
-extern JSAPI2::api_security *jsapi2_security;
-#define AGAVE_API_JSAPI2_SECURITY jsapi2_security
-
 #include "../Winamp/api_stats.h"
 extern api_stats *statsApi;
 #define AGAVE_API_STATS statsApi

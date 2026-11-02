@@ -8,7 +8,6 @@
 
 #include "Main.h"
 #include "WinampAttributes.h"
-#include "ExternalCOM.h"
 #include "../nu/AutoWide.h"
 
 static int dc_pos=0;
@@ -57,8 +56,6 @@ void set_caption(int alt_cb, wchar_t *format, ...)
 	dc_pos=0;
 	if (systray_intray) systray_minimize(caption);    
 
-	// TODO in some cases this is crashing based on crash reports (issue with 'now playling' ??)
-	JSAPI1_CurrentTitleChanged();
 	PostMessageW(hMainWindow,WM_WA_IPC,(!alt_cb?IPC_CB_MISC_TITLE:IPC_CB_MISC_TITLE_RATING),IPC_CB_MISC);
 	SendNotifyMessage(HWND_BROADCAST, songChangeBroadcastMessage, 0, 0);
 }

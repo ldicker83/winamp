@@ -113,8 +113,6 @@ extern HINSTANCE language_pack_instance;
 	/***********************
 	*** burn.cpp
 	*/
-	int burn_start(burnCDStruct *param);
-	unsigned int burn_doBurn(char *cmdline, HWND winampWnd, HINSTANCE winampInstance);
 
 	/***********************
 	*** config.c 
@@ -154,17 +152,7 @@ extern HINSTANCE language_pack_instance;
 	/***********************
 	*** convert.cpp
 	*/
-	int convert_file(convertFileStruct *cfs);
-	void convert_end(convertFileStruct *cfs);
-	int convert_fileW(convertFileStructW *cfs);
-	void convert_endW(convertFileStructW *cfs);
-	HWND convert_config(convertConfigStruct *ccs);
 	void convert_config_end(convertConfigStruct *ccs);
-	void convert_enumfmts(converterEnumFmtStruct *cefs);
-	void convert_setPriority(convertSetPriority *csp);
-	void convert_setPriorityW(convertSetPriorityW *csp);
-	int convert_setConfigItem(convertConfigItem *cci);
-	int convert_getConfigItem(convertConfigItem *cci);
 	int convert_file_test(convertFileStructW *cfs);
 
 	/***********************
@@ -342,8 +330,6 @@ extern HINSTANCE language_pack_instance;
 	/*****************
 	*** http.c 
 	*/
-	int httpRetrieveFile(HWND hwnd, const char *url, char *file, char *dlgtitle);
-	int httpRetrieveFileW(HWND hwnd, const char *url, const wchar_t *file, const wchar_t *dlgtitle);
 
 	/*****************
 	*** in.c 
@@ -462,7 +448,6 @@ extern HINSTANCE language_pack_instance;
 	extern wchar_t playlist_custom_fontW[128];
 	extern int config_custom_plfont;
 	extern int disable_skin_cursors;
-	LRESULT sendMlIpc(int msg, WPARAM param);
 	extern HWND hExternalVisWindow;
 	int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 	int CALLBACK WINAPI BrowseCallbackProc_Download(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
@@ -801,11 +786,8 @@ extern HINSTANCE language_pack_instance;
 	void link_handledraw(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT link_handlecursor(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void link_startsubclass(HWND hwndDlg, UINT id);
-	void myOpenURL(HWND, const wchar_t *url);
-	void myOpenURLWithFallback(HWND, wchar_t *url, wchar_t *fallbackUrl);
 	char *my_strdup(char *s);
 	int geticonid(int x);
-	int isInetAvailable(void);
 	unsigned int getDay(void);
 	const wchar_t *scanstr_backcW(const wchar_t *str, const wchar_t *toscan, const wchar_t *defval);
 	void getViewport(RECT *r, HWND wnd, int full, RECT *sr);
@@ -873,8 +855,6 @@ extern HINSTANCE language_pack_instance;
 	*/
 	extern int g_video_numaudiotracks;
 	extern int g_video_curaudiotrack;
-	void Browser_Create();
-	void Browser_Destroy();
 
 	/***********************
 	*** vis.c 
@@ -971,20 +951,11 @@ extern HINSTANCE language_pack_instance;
 	/*
 	void LaunchBrowser(const char *url);
 	void OpenBrowser();
-	void Browser_toggleVisible(int showing);
 	void CloseBrowser();
-	void Browser_init();
-	void Browser_kill();
 	*/
 
 	/*******************
-	*** ExternalCOM.cpp
 	*/
-	DISPID __cdecl JSAPI1_GenerateUniqueDispatchId();
-	HRESULT __cdecl JSAPI1_Initialize();
-	HRESULT __cdecl JSAPI1_Uninitialize();
-	HRESULT __cdecl JSAPI1_SkinChanged();
-	HRESULT __cdecl JSAPI1_CurrentTitleChanged();
 
 	/*******************
 	*** SkinUtils.cpp
@@ -1060,7 +1031,6 @@ extern HINSTANCE language_pack_instance;
 	extern int playlist_open(HWND hwnd);
 	extern int setPlRating(int rating);
 	extern int setCurrentRating(int rating);
-	extern int got_ml;
 	int peui_isrbuttoncaptured();
 	extern void makeurlcodes(char *in, char *out);
 	extern HIMAGELIST toolbarIcons;
@@ -1089,7 +1059,6 @@ extern HINSTANCE language_pack_instance;
 	void LoadPathsIni();
 	LRESULT Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 	extern int g_BookmarkTop, g_SkinTop, g_LangTop;
-	extern int g_open_ml_item_in_pe;
 	void RegisterConfigGroups();
 	void CopyExtendedFileInfo(const wchar_t *source, const wchar_t *destination);
 

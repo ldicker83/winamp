@@ -6,16 +6,12 @@
  ** Created:
  **/
 #include "Main.h"
-#include "../Plugins/General/gen_crasher/GetWinVer.h"
 #include "resource.h"
-#include "../Plugins/General/gen_ml/ml.h"
 #include "../nu/AutoWide.h"
 #include "api.h"
 #include "ExplorerFindFile.h"
 #include <assert.h>
 #include "vis.h"
-LRESULT sendMlIpc(int msg, WPARAM param);
-int g_open_ml_item_in_pe = 0;
 EXTERN_C BOOL eggTyping;
 
 void showLibrary()
@@ -130,24 +126,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 					{
 						if (x++ == id)
 						{
-							// this will track the gen_ml or main play/enqueue setting
-							// done as something which koopa requested back in 09/2011
-							// including following 'shift' to invert the default mode.
-							int addtolist, enqplay = 0;
-							if (got_ml)
-							{
-								enqplay = GetPrivateProfileIntW(L"MLEnqPlay", L"enqueuedef", -1, INI_FILE);
-								if (enqplay != -1)
-								{
-									addtolist = (!!enqplay) ^ (!!(GetAsyncKeyState(VK_SHIFT)&0x8000));
-								}
-								else
-								{
-									addtolist = (!!GetPrivateProfileIntW(L"gen_ml_config", L"enqueuedef", 0, ML_INI_FILE)) ^ (!!(GetAsyncKeyState(VK_SHIFT)&0x8000));
-								}
-							}
-							else
-								addtolist = (!!config_addtolist) ^ (!!(GetAsyncKeyState(VK_SHIFT)&0x8000));
+							int addtolist = (!!config_addtolist) ^ (!!(GetAsyncKeyState(VK_SHIFT)&0x8000));
 
 							if(!addtolist) PlayList_delete();
 							PlayList_appendthing(AutoWideDup(fn, CP_UTF8), 0, 0);
@@ -157,12 +136,8 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 								else PlayList_setposition(0);
 								PlayList_getcurrent(FileName, FileTitle, FileTitleNum);
 							}
-							else
-							{
-								if (enqplay == 2) PlayList_setposition(PlayList_getlength());
-							}
 							plEditRefresh();
-							if(!addtolist || enqplay == 2)
+							if(!addtolist)
 								StartPlaying();
 							break;
 						}
@@ -231,38 +206,8 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		return 1;
 	}
 
-	if (LOWORD(wID) >= 45000 && LOWORD(wID) < 55000)
-	{
-		int id = LOWORD(wID);
-		HWND mlhwnd = (HWND)sendMlIpc(0, 0);
-		if (mlhwnd != NULL)
-		{
-			if (!g_open_ml_item_in_pe && !IsWindowVisible(mlhwnd))
-				SendMessageW(hMainWindow, WM_COMMAND, ID_FILE_SHOWLIBRARY, 0);
-
-			// should switching the ml view to the target be disabled if we only want to play the playlist entry in the pe ?
-			if (!g_open_ml_item_in_pe)
-				SendMessageW(mlhwnd, WM_ML_IPC, id - 45000, ML_IPC_SETCURTREEITEM);
-		}
-		return 1;
-	}
-
 	switch (LOWORD(wID))
 	{
-	case ID_HELP_HELPTOPICS:
-		myOpenURL(hwnd, L"https://help.winamp.com/hc/sections/8103009633300-Winamp-Desktop-Player-");
-		break;
-	case ID_HELP_FEEDBACK:
-	{
-		wchar_t url[512] = {0}, winVer[32] = {0}, build[32] = {0};
-		int nWinVer = 0;
-		GetWinVer(winVer, &nWinVer, build);
-		// May 2022 - this services url is dead and we currently don't have a replacement
-		StringCchPrintfW(url, 512, L"http://services.winamp.com/redirect/support?reason=Feedback&subject=Winamp Feedback&product=Winamp Desktop&v=%s Build %d&platform=%s (%s)",
-						 WIDEN(APP_VERSION), BUILD_NUMBER, winVer, build);
-		myOpenURL(hwnd, url);
-		break;
-	}
 	case ID_VIS_NEXT:
 	case ID_VIS_PREV:
 	case ID_VIS_RANDOM:
@@ -284,7 +229,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 	case IDM_EQ_DELPRE:
 	case IDM_EQ_DELMP3:
 		return SendMessageW(hEQWindow, WM_COMMAND, LOWORD(wID), 0);
-	case ID_POST_PLAY_PLAYLIST: g_open_ml_item_in_pe = 0; return 0;
 	case ID_MAIN_PLAY_AUDIOCD:
 	case ID_MAIN_PLAY_AUDIOCD2:
 	case ID_MAIN_PLAY_AUDIOCD3:
@@ -508,9 +452,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 	case WINAMP_PE_SEARCH:
 	case WINAMP_JUMPFILE:
 		jump_file_dialog(hMainWindow);
-		return 1;
-	case WINAMP_TOGGLE_LIBRARY:
-		sendMlIpc(ML_IPC_TOGGLE_VISIBLE, 0);
 		return 1;
 	case WINAMP_JUMP:
 		if (playing && in_mod && in_mod->is_seekable)
@@ -754,9 +695,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 			if (i) StartPlaying();
 		}
 		return 1;
-	case WINAMP_GETMORESKINS:
-		myOpenURLWithFallback(hwnd, L"http://www.google.com/search?q=Winamp+Skins", L"http://www.google.com/search?q=Winamp+Skins");
-		return 0;
 	case WINAMP_VISCONF:
 		{
 			wchar_t b[MAX_PATH] = {0};
@@ -802,70 +740,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		else
 			minimize_hack_winamp = 0;
 		ShowWindow(hMainWindow, SW_MINIMIZE);
-		return 1;
-	case ID_MLFILE_NEWPLAYLIST:
-		{
-			HWND h = (HWND)sendMlIpc(0, 0);
-			HWND fgw = GetForegroundWindow();
-			if (h && IsWindow(h) && IsWindowVisible(h) && IsChild(fgw, h))
-				sendMlIpc(ML_IPC_NEWPLAYLIST, (WPARAM)h);
-			else sendMlIpc(ML_IPC_NEWPLAYLIST, (WPARAM)(g_dialog_box_parent ? g_dialog_box_parent : hMainWindow));
-			showLibrary();
-		}
-		return 1;
-	case ID_MLFILE_SAVEPLAYLIST:
-		showLibrary();
-		{
-			HWND h = (HWND)sendMlIpc(0, 0);
-			HWND fgw = GetForegroundWindow();
-			if (h && IsWindow(h) && IsWindowVisible(h) && IsChild(fgw, h))
-				sendMlIpc(ML_IPC_SAVEPLAYLIST, (WPARAM)h);
-			else sendMlIpc(ML_IPC_SAVEPLAYLIST, (WPARAM)(g_dialog_box_parent ? g_dialog_box_parent : hMainWindow));
-		}
-		return 1;
-	case ID_MLFILE_LOADPLAYLIST:
-		{
-			HWND h = (HWND)sendMlIpc(0, 0);
-			HWND fgw = GetForegroundWindow();
-			if (h && IsWindow(h) && IsWindowVisible(h) && IsChild(fgw, h))
-				sendMlIpc(ML_IPC_IMPORTPLAYLIST, (WPARAM)h);
-			else
-				sendMlIpc(ML_IPC_IMPORTPLAYLIST, (WPARAM)(g_dialog_box_parent ? g_dialog_box_parent : hMainWindow));
-			showLibrary();
-		}
-		return 1;
-	case ID_MLFILE_IMPORTCURRENTPLAYLIST:
-		sendMlIpc(ML_IPC_IMPORTCURRENTPLAYLIST, 0);
-		showLibrary();
-		return 1;
-	case ID_MLVIEW_MEDIA:
-#define TREE_LOCALMEDIA 1000
-		showLibrary();
-		sendMlIpc(ML_IPC_SETCURTREEITEM, TREE_LOCALMEDIA);
-		return 1;
-	case ID_MLVIEW_PLAYLISTS:
-#define TREE_PLAYLISTS 3001
-		showLibrary();
-		sendMlIpc(ML_IPC_SETCURTREEITEM, TREE_PLAYLISTS);
-		return 1;
-	case ID_MLVIEW_DEVICES:
-#define TREE_DEVICES 10000
-		showLibrary();
-		sendMlIpc(ML_IPC_SETCURTREEITEM, TREE_DEVICES);
-		return 1;
-	case ID_MLVIEW_INTERNETRADIO:
-#define TREE_INTERNET_RADIO 11000
-		showLibrary();
-		sendMlIpc(ML_IPC_SETCURTREEITEM, TREE_INTERNET_RADIO);
-		return 1;
-	case ID_MLVIEW_INTERNETTV:
-#define TREE_INTERNET_VIDEO 11001
-		showLibrary();
-		sendMlIpc(ML_IPC_SETCURTREEITEM, TREE_INTERNET_VIDEO);
-		return 1;
-	case ID_MLVIEW_LIBRARYPREFERENCES:
-		showLibrary();
-		sendMlIpc(ML_IPC_OPENPREFS, 0);
 		return 1;
 	case ID_PLAY_VOLUMEUP:          // increase by ~ 10%
 		{

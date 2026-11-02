@@ -1270,7 +1270,6 @@ void ui_handlecursor(void)
 		else SetCursor(LoadCursor(NULL,IDC_ARROW));
 }
 
-#include "../Plugins/General/gen_ml/menu.h"
 BOOL DoTrackPopup(HMENU hMenu, UINT fuFlags, int x, int y, HWND hwnd)
 {
 	if(hMenu == NULL)
@@ -1278,13 +1277,5 @@ BOOL DoTrackPopup(HMENU hMenu, UINT fuFlags, int x, int y, HWND hwnd)
 		return NULL;
 	}
 
-	HWND ml_wnd = (HWND)sendMlIpc(0, 0);
-	if (IsWindow(ml_wnd))
-	{
-		return Menu_TrackPopup(ml_wnd, hMenu, fuFlags, x, y, hwnd, NULL);
-	}
-	else
-	{ 
 		return TrackPopupMenu(hMenu, fuFlags, x, y, 0, hwnd, NULL);
-	}
 }

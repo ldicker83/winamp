@@ -15,16 +15,12 @@
 #include "Language.h"
 #include "ExplorerFindFile.h"
 #include "../config/config.h"
-#include "JSAPI2_Security.h"
-#include "JSAPI2_Creator.h"
 #include "stats.h"
 #include "../nu/Singleton.h"
-#include "handler.h"
 
 api_playlistmanager *playlistManager=0;
 api_playlists *AGAVE_API_PLAYLISTS=0;
 api_language *WASABI_API_LNG=0;
-api_downloadManager *WAC_API_DOWNLOADMANAGER=0;
 api_albumart *AGAVE_API_ALBUMART=0;
 // ----- Services -----
 api_service *serviceManager = 0;
@@ -35,12 +31,10 @@ MemoryManager *memoryManager = 0;
 Metadata *metadata = 0;
 Application *application = 0;
 DecodeFile *decodeFile = 0;
-URLManager *AGAVE_API_URLMANAGER = 0;
 ThreadPool *WASABI_API_THREADPOOL = 0;
 WinampApi *WASABI_API_WINAMP = 0;
 
 Random random;
-WinampURIHandler winamp_uri_handler;
 Language *langManager = 0;
 ExplorerFindFile *explorerFindFileManager = 0;
 
@@ -65,20 +59,14 @@ public:
 		decodeFileFactory(decodeFile),
 		languageFactory(langManager),
 		ExplorerFindFileFactory(explorerFindFileManager),
-		urlManagerFactory(AGAVE_API_URLMANAGER),
-		jsapi2_securityFactory(&JSAPI2::security, true),
 		threadPoolFactory(WASABI_API_THREADPOOL),
 		winampFactory(WASABI_API_WINAMP)
 	{
-		WASABI_API_SVC->service_register(&jsapi2_creator_factory);
 		WASABI_API_LNG = langManager;
-		uriHandlerFactory.Register(WASABI_API_SVC, &winamp_uri_handler);
 	}
 	
 	~WinampServices()
 	{
-		WASABI_API_SVC->service_deregister(&jsapi2_creator_factory);
-		uriHandlerFactory.Deregister(WASABI_API_SVC);
 	}
 	
 	Singleton<api_memmgr, MemoryManager>              memoryManagerFactory;
@@ -88,13 +76,9 @@ public:
 	Singleton<api_decodefile, DecodeFile>             decodeFileFactory;
 	Singleton<api_language, Language>                 languageFactory;
 	Singleton<api_explorerfindfile, ExplorerFindFile> ExplorerFindFileFactory;
-	Singleton<api_urlmanager, URLManager>             urlManagerFactory;
-	Singleton<JSAPI2::api_security, JSAPI2::Security> jsapi2_securityFactory;
 	Singleton<api_threadpool, ThreadPool>             threadPoolFactory;
 	Singleton<api_winamp, WinampApi>                  winampFactory;
 	
-	SingletonServiceFactory<svc_urihandler, WinampURIHandler> uriHandlerFactory;
-	JSAPI2CreatorFactory jsapi2_creator_factory;
 };
 
 WinampServices *services=0;
@@ -167,10 +151,6 @@ void Wasabi_FindSystemServices()
 	if (sf)
 		AGAVE_API_PLAYLISTMANAGER = (api_playlistmanager *)sf->getInterface();
 
-	sf = WASABI_API_SVC->service_getServiceByGuid(DownloadManagerGUID);
-	if (sf)
-		WAC_API_DOWNLOADMANAGER = (api_downloadManager *)sf->getInterface();
-
 
 	sf = WASABI_API_SVC->service_getServiceByGuid(api_playlistsGUID);
 	if (sf)
@@ -198,14 +178,6 @@ void Wasabi_ForgetSystemServices()
 		if (sf)
 			sf->releaseInterface(AGAVE_API_PLAYLISTMANAGER);
 		AGAVE_API_PLAYLISTMANAGER = 0;
-	}
-
-	if (WAC_API_DOWNLOADMANAGER)
-	{
-		sf = WASABI_API_SVC->service_getServiceByGuid(DownloadManagerGUID);
-		if (sf)
-			sf->releaseInterface(WAC_API_DOWNLOADMANAGER);
-		WAC_API_DOWNLOADMANAGER = 0;
 	}
 
 

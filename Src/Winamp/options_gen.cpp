@@ -295,9 +295,6 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				return FALSE;
 
-			case IDC_PLUGINVERS:
-				myOpenURLWithFallback(hwndDlg, L"http://www.google.com/search?q=Winamp+General+Plugins", L"http://www.google.com/search?q=Winamp+General+Plugins");
-				break;
 		}
 	}
 	else

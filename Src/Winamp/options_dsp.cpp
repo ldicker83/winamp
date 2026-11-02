@@ -482,9 +482,6 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 				return FALSE;
 			}
 
-			case IDC_PLUGINVERS:
-				myOpenURLWithFallback( hwndDlg, L"http://www.google.com/search?q=Winamp+DSP+Effect+Plugins", L"http://www.google.com/search?q=Winamp+DSP+Effect+Plugins" );
-				return TRUE;
 		}
 	}
 

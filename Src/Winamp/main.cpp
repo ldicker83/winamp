@@ -18,7 +18,6 @@
 #include "../nu/AutoWide.h"
 #include "../nu/AutoChar.h"
 #include "menuv5.h"
-#include "../Plugins/General/gen_ml/ml.h"
 #include "wa_dlg.h"
 #include "strutil.h"
 #include "./commandLink.h"
@@ -649,63 +648,6 @@ VOID CALLBACK PrefsShowProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTim
 		SetForegroundWindow( prefs_hwnd );
 }
 
-void load_gen_crasher()
-{
-	// this will load gen_crasher.dll as applicable (included in beta builds but not release mode by default)
-	// with extra checks to ensure it's 'valid' (as can be) so we could drop it into release builds as needed
-	wchar_t crasherDll[ MAX_PATH ] = { 0 };
-	PathCombineW( crasherDll, PLUGINDIR, L"gen_crasher.dll" );
-	HMODULE hm = LoadLibraryW( crasherDll );
-	if ( hm )
-	{
-		int( __cdecl * StartHandler )( wchar_t *iniPath ) = NULL;
-		*(FARPROC *)&StartHandler = GetProcAddress( hm, "StartHandler" );
-		if ( StartHandler )
-		{
-			wchar_t iniPath[ MAX_PATH ] = { 0 };
-			if ( SUCCEEDED( StringCchPrintfW( iniPath, MAX_PATH, L"%s\\Plugins", CONFIGDIR ) ) )
-			{
-				winampGeneralPurposePluginGetter pr = (winampGeneralPurposePluginGetter)GetProcAddress( hm, "winampGetGeneralPurposePlugin" );
-				if ( pr )
-				{
-					winampGeneralPurposePlugin *plugin = pr();
-					if ( plugin && plugin->version == GPPHDR_VER_U )
-					{
-						char desc[ 128 ] = { 0 };
-						lstrcpynA( desc, plugin->description, sizeof( desc ) );
-						if ( desc[ 0 ] && !memcmp( desc, "nullsoft(", 9 ) )
-						{
-							char *p = strrchr( desc, ')' );
-							if ( p )
-							{
-								*p = 0;
-								if ( !_wcsicmp( L"gen_crasher.dll", AutoWide( desc + 9 ) ) )
-								{
-									StartHandler( iniPath );
-								}
-								else
-									FreeLibrary( hm );
-							}
-							else
-								FreeLibrary( hm );
-						}
-						else
-							FreeLibrary( hm );
-					}
-					else
-						FreeLibrary( hm );
-				}
-				else
-					FreeLibrary( hm );
-			}
-			else
-				FreeLibrary( hm );
-		}
-		else
-			FreeLibrary( hm );
-	}
-}
-
 DWORD CALLBACK MainThread( LPVOID param )
 {
 	language_pack_instance = hMainInstance;
@@ -722,18 +664,8 @@ DWORD CALLBACK MainThread( LPVOID param )
 	CoInitialize( 0 );
 	Wasabi_Load();
 	plstring_init();
-	/*Browser_Create();*/
 
 
-	// check if it's gen_crasher.dll that's being removed and skip loading it so uninstall will work
-	bool skip_crasher = false;
-	wchar_t buf[ 1024 ] = { 0 };
-	_r_sW( "remove_genplug", buf, 1024 );
-	if ( buf[ 0 ] )
-		skip_crasher = !wcsicmp( PathFindFileNameW( buf ), L"gen_crasher.dll" );
-
-	if ( !skip_crasher )
-		load_gen_crasher();
 
 
 	draw_firstinit();
@@ -813,14 +745,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 			if ( GetRegistrar( &registrar, true ) == 0 && registrar )
 			{
 				registrar->DeleteItem( buf );
-				// if gen_crasher is requested to remove, also remove reporter.exe
-				if ( skip_crasher )
-				{
-					GetModuleFileNameW( NULL, buf, MAX_PATH );
-					PathRemoveFileSpecW( buf );
-					PathCombineW( buf, buf, L"reporter.exe" );
-					registrar->DeleteItem( buf );
-				}
 				registrar->Release();
 			}
 
@@ -830,7 +754,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 
 	fft_init();
 	SpectralAnalyzer_Create();
-	JSAPI1_Initialize();
 	stats_init();
 
 	w5s_init();
@@ -956,7 +879,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	parseMessageCommands( hMainWindow, bCommand, bCmdParam );
 
 	WPARAM exitParam = WinampMessageLoop();
-	JSAPI1_Uninitialize();
 
 	unload_genplugins();
 	w5s_deinit();
@@ -964,7 +886,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	stats_save();
 	SpectralAnalyzer_Destroy();
 
-	/*Browser_Destroy();*/
 	//RaiseException(0x0000DEAD,0,0,0);
 
 	Ole_uninitDragDrop();
@@ -998,9 +919,7 @@ void MoveOffscreen( HWND hwnd )
 
 int g_showcode, deferring_show = 0;
 
-#include "../Plugins/General/gen_ml/ml_ipc.h"
 
-extern librarySendToMenuStruct mainSendTo = { 0 };
 
 // used to delay / filter out quick IPC_SETDIALOGBOXPARENT messages
 // to try to prevent the aero-peek buttons failing / part loading
@@ -1107,13 +1026,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case WM_INITMENUPOPUP:
 		{
 			HMENU hMenu = (HMENU)wParam;
-			if ( wParam && hMenu == mainSendTo.build_hMenu && mainSendTo.mode == 1 )
-			{
-				int IPC_LIBRARY_SENDTOMENU = wa_register_ipc( ( WPARAM ) & "LibrarySendToMenu" );
-				if ( IPC_LIBRARY_SENDTOMENU > 65536 && SendMessageW( hMainWindow, WM_WA_IPC, (WPARAM)&mainSendTo, IPC_LIBRARY_SENDTOMENU ) == 0xffffffff )
-					mainSendTo.mode = 2;
-			}
-
 			if ( config_usecursors && !disable_skin_cursors )
 			{
 				if ( Skin_Cursors[ 2 ] )
@@ -1731,23 +1643,6 @@ int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPA
 			EnumChildWindows( hwnd, browseEnumProc, 0 );
 		}
 	}
-
-	return 0;
-}
-
-LRESULT sendMlIpc( int msg, WPARAM param )
-{
-	static LRESULT IPC_GETMLWINDOW;
-	static HWND mlwnd;
-
-	if ( !IPC_GETMLWINDOW ) IPC_GETMLWINDOW = wa_register_ipc( ( WPARAM ) & "LibraryGetWnd" );
-	if ( !mlwnd || (int)mlwnd == 1 )
-		mlwnd = (HWND)SendMessageW( hMainWindow, WM_WA_IPC, 0, IPC_GETMLWINDOW );
-
-	if ( param == 0 && msg == 0 ) return (LRESULT)mlwnd;
-
-	if ( IsWindow( mlwnd ) )
-		return SendMessageW( mlwnd, WM_ML_IPC, param, msg );
 
 	return 0;
 }

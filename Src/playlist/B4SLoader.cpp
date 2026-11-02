@@ -1,7 +1,6 @@
 #include "main.h"
 #include "B4SLoader.h"
 #include "../nu/AutoChar.h"
-#include "..\Components\wac_network\wac_network_http_receiver_api.h"
 #include <strsafe.h>
 
 B4SLoader::B4SLoader() : parser(0), parserFactory(0)
@@ -50,46 +49,6 @@ B4SLoader::~B4SLoader()
 	parser = 0;
 }
 
-#define HTTP_BUFFER_SIZE 1024
-static int FeedXMLHTTP(api_httpreceiver *http, obj_xml *parser, bool *noData)
-{
-	char downloadedData[HTTP_BUFFER_SIZE] = {0};
-	int xmlResult = API_XML_SUCCESS; 
-	int downloadSize = http->get_bytes(downloadedData, HTTP_BUFFER_SIZE);
-	if (downloadSize)
-	{
-		xmlResult = parser->xmlreader_feed((void *)downloadedData, downloadSize);
-		*noData=false;
-	}
-	else	
-		*noData = true;
-
-	return xmlResult;
-}
-
-static void RunXMLDownload(api_httpreceiver *http, obj_xml *parser)
-{
-	int ret;
-	bool noData;
-	do
-	{
-		Sleep(50);
-		ret = http->run();
-		if (FeedXMLHTTP(http, parser, &noData) != API_XML_SUCCESS)
-			return ;
-	}
-	while (ret == HTTPRECEIVER_RUN_OK);
-
-	// finish off the data
-	do
-	{
-		if (FeedXMLHTTP(http, parser, &noData) != API_XML_SUCCESS)
-			return ;
-	} while (!noData);
-
-	parser->xmlreader_feed(0, 0);
-}
-
 void B4SXML::StartTag(const wchar_t *xmlpath, const wchar_t *xmltag, ifc_xmlreaderparams *params)
 {
 	if (!_wcsicmp(xmltag, L"entry")) 
@@ -125,57 +84,6 @@ void B4SXML::EndTag(const wchar_t *xmlpath, const wchar_t *xmltag)
 	}
 }
 #if 0 // TOOD: reimplement
-void B4SLoader::LoadURL(const char *url)
-{
-	if (!parser)
-		return ; // no sense in continuing if there's no parser available
-
-	api_httpreceiver *http = 0;
-	waServiceFactory *sf = WASABI_API_SVC->service_getServiceByGuid(httpreceiverGUID);
-	if (sf)
-		http = (api_httpreceiver *)sf->getInterface();
-
-	if (!http)
-		return ;
-	http->AllowCompression();
-	http->open(API_DNS_AUTODNS, HTTP_BUFFER_SIZE, GetProxy());
-	SetUserAgent(http);
-	http->connect(url);
-	int ret;
-	bool first = true;
-
-	do
-	{
-		Sleep(50);
-		ret = http->run();
-		if (ret == -1) // connection failed
-			break;
-
-		// ---- check our reply code ----
-		int replycode = http->GetReplyCode();
-		switch (replycode)
-		{
-		case 0:
-		case 100:
-			break;
-		case 200:
-			{
-				RunXMLDownload(http, parser);
-				sf->releaseInterface(http);
-				return ;
-			}
-			break;
-		default:
-			sf->releaseInterface(http);
-			return ;
-		}
-	}
-	while (ret == HTTPRECEIVER_RUN_OK);
-	const char *er = http->geterrorstr();
-	sf->releaseInterface(http);
-	return ;
-}
-
 void B4SLoader::LoadFile(const char *filename)
 {
 	if (!parser)

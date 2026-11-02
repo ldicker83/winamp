@@ -247,8 +247,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="..\Wasabi\bfc\string\string.cpp" />
     <ClCompile Include="..\Wasabi\bfc\string\StringW.cpp" />
     <ClCompile Include="..\Wasabi\bfc\wasabi_std.cpp" />
-    <ClCompile Include="..\Winamp\JSAPI_CallbackParameters.cpp" />
-    <ClCompile Include="..\Winamp\JSAPI_ObjectArray.cpp" />
     <ClCompile Include="..\Winamp\strutil.cpp" />
     <ClCompile Include="B4SLoader.cpp" />
     <ClCompile Include="B4SWriter.cpp" />
@@ -256,9 +254,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="factory_playlistmanager.cpp" />
     <ClCompile Include="factory_playlists.cpp" />
     <ClCompile Include="Handler.cpp" />
-    <ClCompile Include="JSAPI2_Creator.cpp" />
-    <ClCompile Include="JSAPI2_Playlist.cpp" />
-    <ClCompile Include="JSAPI2_Playlists.cpp" />
     <ClCompile Include="M3U8Writer.cpp" />
     <ClCompile Include="M3ULoader.cpp" />
     <ClCompile Include="M3UWriter.cpp" />
@@ -276,7 +271,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="XMLString.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Winamp\JSAPI_ObjectArray.h" />
     <ClInclude Include="..\Winamp\strutil.h" />
     <ClInclude Include="api__playlist.h" />
     <ClInclude Include="api_playlistmanager.h" />
@@ -289,9 +283,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="Handler.h" />
     <ClInclude Include="ifc_playlist.h" />
     <ClInclude Include="ifc_playlistloader.h" />
-    <ClInclude Include="JSAPI2_Creator.h" />
-    <ClInclude Include="JSAPI2_Playlist.h" />
-    <ClInclude Include="JSAPI2_Playlists.h" />
     <ClInclude Include="M3U8Writer.h" />
     <ClInclude Include="M3ULoader.h" />
     <ClInclude Include="M3UWriter.h" />

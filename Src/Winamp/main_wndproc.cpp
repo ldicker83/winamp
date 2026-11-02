@@ -239,15 +239,9 @@ LRESULT Main_OnCopyData(HWND sendingHWND, COPYDATASTRUCT *cds)
 				return SendMessageW(sendingHWND, WM_COPYDATA, (WPARAM)hMainWindow, (LPARAM)&answer);
 			}
 		case IPC_OPEN_URL:
-			{
-				myOpenURL(hMainWindow, (wchar_t *)cds->lpData);
-				return TRUE;
-			}
+			return FALSE;
 		case IPC_HANDLE_URI:
-			{
-				HandleFilename((wchar_t *)cds->lpData);
-				return TRUE;
-			}
+			return FALSE;
 	}
 	return FALSE;
 }

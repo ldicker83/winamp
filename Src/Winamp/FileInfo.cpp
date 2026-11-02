@@ -19,7 +19,7 @@
 #include "decodefile.h"
 #include "../nu/AutoLock.h"
 #include <api/service/svcs/svc_imgwrite.h>
-#include "../Plugins/General/gen_ml/ml.h"
+#include "ml.h"
 #include <vector>
 
 extern Nullsoft::Utility::LockGuard getMetadataGuard;
@@ -819,13 +819,6 @@ static INT_PTR CALLBACK FileInfo_Metadata(HWND hwndDlg, UINT uMsg, WPARAM wParam
 		if (remove)
 		{
 			DestroyWindow(GetDlgItem(hwndDlg,IDC_AUTOTAG));
-		}
-		else
-		{
-			if (!isInetAvailable())
-			{
-				EnableWindow(GetDlgItem(hwndDlg,IDC_AUTOTAG), FALSE);
-			}
 		}
 	}
 	break;
@@ -1932,10 +1925,7 @@ static void FreeQueryList()
 	{
 		free( query->item.query );
 
-		if ( query->ml )
-			sendMlIpc( ML_IPC_DB_FREEQUERYRESULTSW, (WPARAM)query );
-		else
-			freeRecordList( &query->item.results );
+		freeRecordList( &query->item.results );
 
 		free( query );
 	}
@@ -1992,7 +1982,6 @@ again:
 					if (m_upd_nb >= queryList.size())
 					{
 						//done
-						if (got_local_ml == 1) sendMlIpc(ML_IPC_DB_SYNCDB, 0);
 						EndDialog(hwndDlg, 1);
 						break;
 					}
@@ -2093,9 +2082,8 @@ again:
 					}
 
 					// no need to send this if there's no ml present
-					if (got_local_ml == 1) sendMlIpc((!config_upd_mode ? ML_IPC_DB_ADDORUPDATEITEMW : ML_IPC_DB_UPDATEITEMW), (WPARAM)song);
 
-					if (updtagz || !got_local_ml)
+					if (updtagz || 1)
 					{
 						m_stopped = 1;
 retry:
@@ -2135,11 +2123,6 @@ retry:
 							else buf[0] = 0;
 							if (!in_set_extended_fileinfoW(song->filename, L"rating", buf))
 							{
-								// for ratings, try using the library just to cover all bases for format types
-								file_set_ratingW rate = {0};
-								rate.fileName = song->filename;
-								rate.newRating = song->rating;
-								sendMlIpc(ML_IPC_SET_FILE_RATINGW, (WPARAM)&rate);
 							}
 
 							if (song->bpm > 0) wsprintfW(buf, L"%d", song->bpm);
@@ -2208,17 +2191,6 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				disable_director = 0, disable_producer = 0, disable_bpm = 0, disable_rating = 0,
 				disable_ispodcast = 0, disable_podcastchannel = 0, nb = 0;
 
-			if (got_local_ml == -1)
-			{
-				got_local_ml = (got_ml ? !!GetModuleHandleW(L"ml_local.dll") : 0);
-			}
-
-			if (got_local_ml == 1)
-			{
-				if (GetPrivateProfileIntW(L"gen_ml_config", L"upd_tagz", 1, ML_INI_FILE))
-					CheckDlgButton(hwndDlg, 1052, BST_CHECKED);
-			}
-			else
 				ShowWindow(GetDlgItem(hwndDlg, 1052), SW_HIDE);
 
 			EnableWindow(GetDlgItem(hwndDlg, IDOK), FALSE);
@@ -2250,7 +2222,7 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 								// hit the library where possible as it'll be faster (and more integrated)
 								if (got_local_ml == 1)
 								{
-									if (sendMlIpc(ML_IPC_DB_RUNQUERY_FILENAMEW, (WPARAM)query) == 1)
+									if (0)
 									{
 #define SAVE_LAST_STR(last, check, disable) if (!disable && check && check[0]) { if (!last) last = check; else if (wcscmp(check, last)) disable = 1; }
 #define SAVE_LAST_INT(last, check, disable) if (!disable && check > 0) { if (last == -1) last = check; else if (last != check) disable = 1; }
@@ -2342,7 +2314,7 @@ non_ml:
 									if (in_get_extended_fileinfoW(fn, L"rating", pszBuffer, TEXTBUFFER_MAX))
 										query->item.results.Items[0].rating = _wtoi(pszBuffer);
 									else
-										query->item.results.Items[0].rating = sendMlIpc(ML_IPC_GET_FILE_RATINGW, (WPARAM)fn);
+										query->item.results.Items[0].rating = 0;
 									SAVE_LAST_INT(last_rating, query->item.results.Items[0].rating, disable_rating);
 
 									if (in_get_extended_fileinfoW(fn, L"bpm", pszBuffer, TEXTBUFFER_MAX))
@@ -2487,13 +2459,6 @@ non_ml:
 				case IDC_CHECK_RATING: HANDLE_CONTROL(IDC_COMBO_RATING, IDC_CHECK_RATING); break;
 				case IDOK:
 				{
-					if (got_local_ml == 1)
-					{
-						wchar_t str[4] = {0};
-						StringCchPrintfW(str, 4, L"%d", !!IsDlgButtonChecked(hwndDlg, 1052));
-						WritePrivateProfileStringW(L"gen_ml_config", L"upd_tagz", str, ML_INI_FILE);
-					}
-
 					int ret = LPDialogBoxW(IDD_ADDSTUFF, hwndDlg, updateFiles_dialogProc);
 					if (!ret) break;
 				}

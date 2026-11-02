@@ -7,11 +7,7 @@
  **/
 #include "Main.h"
 #include "resource.h"
-#include "../Plugins/General/gen_ml/ml.h"
 extern "C" HMENU g_submenus_vis;
-#include "../Plugins/General/gen_ml/ml_ipc.h"
-extern librarySendToMenuStruct mainSendTo;
-#include "../Plugins/General/gen_ml/menufucker.h"
 
 void ScaleMouseButtons(int &x, int &y)
 {
@@ -39,10 +35,10 @@ int Main_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 		static HMENU ratingmenu = NULL;
 		hmenu = GetSubMenu(GetSubMenu(top_menu,3),0);
 		CheckMenuItem(hmenu,WINAMP_TOGGLE_AUTOSCROLL,(config_autoscrollname&1)?MF_CHECKED:MF_UNCHECKED);
-		rating = sendMlIpc(ML_IPC_GETRATING, 0);
+		rating = 0;
 		// deal with no ml being present and querying the rating of a file from the tag (if possible)
 		// as well as getting a zero rating which could mean that it's not present in the library
-		if (!rating && !got_ml)
+		if (!rating)
 		{
 			wchar_t fn[FILENAME_SIZE] = {0};
 			if (!PlayList_getitem2W(PlayList_getPosition(), fn, NULL))
@@ -65,61 +61,8 @@ int Main_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 		CheckMenuItem(ratingmenu, ID_RATING1, (rating == 1) ? MF_CHECKED : MF_UNCHECKED);
 		CheckMenuItem(ratingmenu, ID_RATING0, (rating == 0) ? MF_CHECKED : MF_UNCHECKED);
 
-		LRESULT IPC_LIBRARY_SENDTOMENU = wa_register_ipc((WPARAM)&"LibrarySendToMenu");
-		HMENU menu = 0;
-		memset(&mainSendTo, 0, sizeof(mainSendTo));
-		if (IPC_LIBRARY_SENDTOMENU > 65536 && SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)0, IPC_LIBRARY_SENDTOMENU) == 0xffffffff)
-		{
-			MENUITEMINFOW mii = {sizeof(mii), MIIM_SUBMENU | MIIM_TYPE, MFT_STRING, };
-			mii.hSubMenu = menu = CreatePopupMenu();
-			mii.dwTypeData = getStringW(IDS_SENDTO_STR,NULL,0);
-			mii.cch = (UINT)wcslen(mii.dwTypeData);
-
-			InsertMenuItemW(hmenu, 4, TRUE, &mii);
-
-			mainSendTo.mode = 1;
-			mainSendTo.hwnd = hwnd;
-			mainSendTo.data_type = ML_TYPE_FILENAMESW;
-			mainSendTo.build_hMenu = menu;
-		}
-
-		menufucker_t mf = {sizeof(mf),MENU_SONGTICKER,hmenu,0x3000,0x4000,0};
-		pluginMessage message_build = {(int)wa_register_ipc((WPARAM)&"menufucker_build"),(intptr_t)&mf,0};
-		sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_build);
-		
 		int ret = DoTrackPopup(hmenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, p.x, p.y, hwnd);
 
-		pluginMessage message_result = {(int)wa_register_ipc((WPARAM)&"menufucker_result"),(intptr_t)&mf,ret,0};
-		sendMlIpc(ML_IPC_SEND_PLUGIN_MESSAGE,(WPARAM)&message_result);
-
-		if (menu)
-		{
-			if (mainSendTo.mode == 2)
-			{
-				mainSendTo.menu_id = ret;
-				if (SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mainSendTo, IPC_LIBRARY_SENDTOMENU) == 0xffffffff)
-				{
-					wchar_t buf[1041] = {0};
-					wchar_t *end=buf;
-					size_t endSize;
-					StringCchCopyExW(buf, 1040, FileName, &end, &endSize, 0);
-					end[1]=0; // double null terminate (since we passed 1040 for a 1041 size buffer, this is always safe)
-
-					mainSendTo.mode = 3;
-					mainSendTo.data = buf;
-					mainSendTo.data_type = ML_TYPE_FILENAMESW;
-					SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mainSendTo, IPC_LIBRARY_SENDTOMENU);
-				}
-			}
-			// remove sendto
-			DeleteMenu(hmenu, 4, MF_BYPOSITION);
-		}
-		if (mainSendTo.mode)
-		{
-			mainSendTo.mode = 4;
-			SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&mainSendTo, IPC_LIBRARY_SENDTOMENU); // cleanup
-			memset(&mainSendTo, 0, sizeof(mainSendTo));
-		}
 		if (ret) SendMessageW(hwnd, WM_COMMAND, ret, 0);
 		return 1;
 	}

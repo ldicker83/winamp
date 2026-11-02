@@ -423,9 +423,6 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				}
 				return FALSE;
 
-			case IDC_PLUGINVERS:
-				myOpenURLWithFallback(hwndDlg, L"http://www.google.com/search?q=Winamp+Visualization+Plugins", L"http://www.google.com/search?q=Winamp+Visualization+Plugins");
-				return TRUE;
 		}
 	}
 

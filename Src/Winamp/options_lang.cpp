@@ -593,11 +593,6 @@ INT_PTR CALLBACK LangProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 					}
 					break;
 				}
-				case IDC_WINAMPLINK:
-				{
-					myOpenURLWithFallback(hwndDlg, L"http://www.google.com/search?q=%22winamp+language+packs%22+5.9", L"http://forums.winamp.com/showthread.php?t=458120#lang");
-					return 0;
-				}
 				case IDC_CHDIR:
 				{
 					BROWSEINFOW bi = {0};

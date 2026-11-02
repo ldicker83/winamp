@@ -8,7 +8,6 @@
 
 std::vector<winampGeneralPurposePlugin*> gen_plugins;
 extern LARGE_INTEGER freq;
-int got_ml = 0;
 
 typedef struct _PLUGINORDER
 {
@@ -18,11 +17,8 @@ typedef struct _PLUGINORDER
 
 static PLUGINORDER preload[] =
 {
-	{ L"gen_crasher.dll", false },  //
-	{ L"gen_ff.dll",      false },  //
 	{ L"gen_hotkeys.dll", false },  //
 	{ L"gen_tray.dll",    false },  //
-	{ L"gen_ml.dll",      false },  //
 	{ L"gen_jumpex.dll",  false },
 };
 
@@ -120,9 +116,6 @@ void LoadGenPlugin(const wchar_t* filename)
 
 			LOG_DEBUG( _log_message_w );
 
-
-			if ( !_wcsicmp(filename, L"gen_ml.dll") )
-				got_ml = 1;
 
 			gen_plugins.push_back(plugin);
 		}

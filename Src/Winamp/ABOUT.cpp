@@ -1145,10 +1145,6 @@ static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 				{
 					getStringW(IDS_LOCALIZED_HOMEPAGE, homepage, 1024);
 				}
-				if (homepage[0])
-					myOpenURL(hwndDlg, homepage);
-				else
-					myOpenURL(hwndDlg,L"http://www.winamp.com/");
 			}
 			return 0;
 		}
@@ -1511,18 +1507,6 @@ static BOOL CALLBACK translationProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPAR
 		if(LOWORD(wParam) == IDCANCEL)
 		{
 			DestroyWindow(about_hwnd);
-		}
-		else if (LOWORD(wParam) == IDC_AUTHOR_HOMEPAGE)
-		{
-			wchar_t homepage[1024] = {0};
-			getStringW(IDS_AUTHOR_HOMEPAGE, homepage, 1024);
-			myOpenURL(hwndDlg, homepage);
-		}
-		else if (LOWORD(wParam) == IDC_AUTHOR_HOMEPAGE2)
-		{
-			wchar_t homepage[1024] = {0};
-			getStringW(IDS_AUTHOR_HOMEPAGE2, homepage, 1024);
-			myOpenURL(hwndDlg, homepage);
 		}
 		break;
 	} 

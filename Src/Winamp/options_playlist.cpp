@@ -11,8 +11,6 @@
 #include "Main.h"
 #include "resource.h"
 #include "Options.h"
-#include "SkinCOM.h"
-#include "ExternalCOM.h"
 #include "../nu/combobox.h"
 #include "../nu/ns_wc.h"
 #include <malloc.h>
@@ -126,7 +124,6 @@ INT_PTR CALLBACK PlaybackOptionsProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 				EnableWindow( GetDlgItem( hwndDlg, IDC_STATIC_CUSTOMFONT ), IsDlgButtonChecked( hwndDlg, IDC_NOCUSTOMFONT ) ? 0 : 1 );
 				draw_reinit_plfont( 1 );
 				InvalidateRect( hPLWindow, NULL, FALSE );
-				JSAPI1_SkinChanged();
 				break;
 
 			case IDC_CUSTOMFONT:
@@ -147,7 +144,6 @@ INT_PTR CALLBACK PlaybackOptionsProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					_freea( t );
 					draw_reinit_plfont( 1 );
 					InvalidateRect( hPLWindow, NULL, FALSE );
-					JSAPI1_SkinChanged();
 				}
 				break;
 
@@ -190,7 +186,6 @@ INT_PTR CALLBACK PlaybackOptionsProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 							InvalidateRect( hPLWindow, NULL, FALSE );
 						}
 
-						JSAPI1_SkinChanged();
 					}
 				}
 				break;

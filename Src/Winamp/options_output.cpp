@@ -314,9 +314,6 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 			}
 			break;
 
-			case IDC_PLUGINVERS:
-				myOpenURLWithFallback(hwndDlg,L"http://www.google.com/search?q=Winamp+Output+Plugins", L"http://www.google.com/search?q=Winamp+Output+Plugins");
-				break;
 		}
 	}
 	else

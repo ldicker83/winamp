@@ -6,7 +6,7 @@
  ** Created:
  **/
 #include "main.h"
-#include "../Plugins/Library/ml_bookmarks/bookmark.h"
+#include "bookmark.h"
 #include <malloc.h>
 #include "api.h"
 #include "../nu/AutoCharFn.h"

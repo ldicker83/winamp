@@ -5,7 +5,6 @@
 #include "ServiceManager.h"
 #include "SysCallbacks.h"
 #include "MemoryManager.h"
-#include "URLManager.h"
 
 #define WASABI_API_SVC serviceManager
 #define WASABI_API_SYSCB sysCallbacks
@@ -41,10 +40,7 @@ extern api_playlistmanager *playlistManager;
 extern api_playlists *playlistsManager;
 #define AGAVE_API_PLAYLISTS playlistsManager
 
-#include "../Components/wac_downloadManager/wac_downloadManager_api.h"
 
-extern URLManager *urlmanagerApi;
-#define AGAVE_API_URLMANAGER urlmanagerApi
 
 #include "./winampApi.h"
 extern WinampApi *winampApi;
