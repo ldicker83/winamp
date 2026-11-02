@@ -67,7 +67,6 @@ static PLUGINORDER preload[] =
 
 	// tend to have a lot of extensions so do later
 	{ L"in_wave.dll",   false },
-	{ L"in_midi.dll",   false },
 	{ L"in_mod.dll",    false }
 };
 
