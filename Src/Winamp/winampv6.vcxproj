@@ -465,7 +465,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="options_gen.cpp" />
     <ClCompile Include="options_general.cpp" />
     <ClCompile Include="options_in.cpp" />
-    <ClCompile Include="options_lang.cpp" />
     <ClCompile Include="options_output.cpp" />
     <ClCompile Include="options_playback.cpp" />
     <ClCompile Include="options_playlist.cpp" />

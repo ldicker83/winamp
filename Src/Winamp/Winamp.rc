@@ -565,30 +565,6 @@ BEGIN
     DEFPUSHBUTTON   "Start",IDOK,246,143,50,14
 END
 
-IDD_NEWLANG DIALOGEX 0, 0, 273, 246
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-    GROUPBOX        "Localization",IDC_STATIC,0,0,272,246
-    GROUPBOX        "Installed Language Packs (Double-click to switch)",IDC_STATIC,5,11,260,133
-    LISTBOX         IDC_SELBOX,12,24,186,67,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Switch to",IDC_SELECT_LNG_PACK,203,24,55,13
-    PUSHBUTTON      "Re&name...",IDC_RENAME_LNG_PACK,203,43,55,13,WS_DISABLED
-    PUSHBUTTON      "&Uninstall...",IDC_DELETE_LNG_PACK,203,61,55,13,WS_DISABLED
-    LTEXT           "",IDC_LANG_INFO_STR,12,94,140,8
-    LTEXT           "",IDC_LANG_ID_STR,163,94,35,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_EDIT1,12,105,173,32,ES_MULTILINE | ES_READONLY | WS_VSCROLL
-    GROUPBOX        "Language Pack Directory",IDC_STATIC,5,147,260,31
-    GROUPBOX        "Miscellaneous",IDC_STATIC,5,181,260,51
-    CONTROL         "Show Language Packs in a sub-menu on the main right-click menu",IDC_SHOW_LNG_PACK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,194,224,10
-    PUSHBUTTON      "",IDC_CHDIR,12,159,246,13,BS_CENTER | BS_VCENTER | BS_MULTILINE | NOT WS_TABSTOP
-    CTEXT           "Restart of Winamp is required for the language pack change to be applied",IDC_LANG_RESTART_TEXT,5,236,260,18,SS_NOPREFIX | NOT WS_VISIBLE | WS_DISABLED
-    CONTROL         "Show install prompt before installing language packs\nAlways ensure you are installing language packs from a safe source.",IDC_LANG_INSTALL_PROMPT,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,12,208,246,16
-END
-
 IDD_NEWSETUP DIALOGEX 0, 0, 276, 258
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 EXSTYLE WS_EX_CONTROLPARENT
@@ -1340,13 +1316,6 @@ BEGIN
             MENUITEM "&Rename skin...",             ID_PREFS_SKIN_RENAMESKIN
             MENUITEM "&Delete skin...",             ID_PREFS_SKIN_DELETESKIN
         END
-        POPUP "Lang"
-        BEGIN
-            MENUITEM "&Switch to language pack",    ID_LANG_SWITCHTOLANGUAGEPACK
-            MENUITEM SEPARATOR
-            MENUITEM "&Rename language pack...",    ID_LANG_RENAMELANGUAGEPACK
-            MENUITEM "&Delete language pack...",    ID_LANG_DELETELANGUAGEPACK
-        END
     END
 END
 
@@ -1817,18 +1786,11 @@ IDR_ATF_HTML            HTML                    "resource\\atf.htm"
 
 STRINGTABLE
 BEGIN
-    IDS_P_SELECT_LANGDIR    "Select Winamp Language Pack Directory"
-    IDS_P_LANG_ERR_RENAME   "Error renaming language file"
-    IDS_P_LANG_ERR_RENAME_TITLE "Language File Rename Error"
-    IDS_LOCALIZATION        "Localization"
     IDS_NO_MATCHES_FOUND    "No matches were found\t"
-    IDS_NO_MATCH_FOUND      "No match found"
-    IDS_FAILED              "Failed"
     IDS_SHUFFLE_MORPH_INFO  "Shuffle morph rate controls how songs within playlists are selected during shuffle playback.\n\nSlow shuffle morphing causes a slight variation of the playlist order, whereas fast\nshuffle morphing causes major variations of the playlist order."
     IDS_SHUFFLE_MORPH_RATE  "Shuffle Morph Rate"
     IDS_ADD_FOLDER          "Add Folder"
     IDS_SHOW_ALL_HISTORY    "Show All History"
-    IDS_P_LNG_CHDR          "This button lets you change the directory where you keep your language packages."
     IDS_P_DISP_SPLEDPOS     "Shows the playlist item position in the Windows taskbar if selected."
     IDS_IMAGE_FILES         "Image Files"
 END
@@ -1922,7 +1884,6 @@ BEGIN
     IDS_P_CLASSIC_9FPS      "9fps"
     IDS_P_PLUGIN_UNINSTALL  "Permanently uninstall this plug-in?\n(This may require a restart of Winamp)"
     IDS_P_PLUGIN_UNINSTALL_CONFIRM "Confirmation"
-    IDS_LANGCHANGE_TITLE    "Note"
     IDS_P_PLAYBACK_RG_SOURCE_TRACK "Track"
     IDS_P_PLAYBACK_RG_SOURCE_ALBUM "Album"
     IDS_P_PLAYBACK_RG_MODE_AG "Apply Gain"
@@ -1945,7 +1906,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LANGUAGEPACKS_MENU  "Language Packs"
     IDS_WHATSNEW_FAIL       "Can't find whatsnew.txt"
     IDS_SKINS_INSTALL_PROMPT 
                             "Are you sure that you want to install this Winamp Skin?\n\nWe recommend that you only install skins from sources that you trust.\nIf you do not trust the source of this skin, click No."
@@ -1959,9 +1919,6 @@ BEGIN
     IDS_NO_BOOKMARKS        "No bookmarks found"
     IDS_NO_IMAGE            "(no image)"
     IDS_PLAYLISTSTRING_NEW  "Playlist Files (%s)"
-    IDS_P_LANG_PACK_DELETEWLZ "Delete Language Pack?"
-    IDS_P_LANG_PACK_DELETEWLZ_PROMPT "Delete the language pack '%s'?"
-    IDS_RENAME_WLZ          "Rename Language Pack"
 END
 
 STRINGTABLE
@@ -2029,7 +1986,6 @@ BEGIN
     IDS_PREFS_PLUG_DSP      "DSP/Effect"
     IDS_PREFS_PLUG_GEN      "General Purpose"
     IDS_P_FT_CD             "This option will associate Winamp with Audio CDs in explorer, so that when you insert a disc or click on the disc icon in explorer Winamp will automatically play it."
-    IDS_LANGCHANGE          "Note that a restart of Winamp is required for the change of language pack to take effect.      \n\nPress Ok to restart Winamp, or cancel to continue using Winamp\n(The language pack will be loaded on Winamp's next restart with cancel)."
     IDS_DELETEAUTOLOAD1     "Delete auto-load preset"
     IDS_DELETEAUTOLOAD2     "&Delete..."
     IDS_DELETEPRE1          "Delete preset"
@@ -2041,7 +1997,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_TOOLTIPS            "Toggle Windowshade Mode|Minimize|Close|Winamp Menu|Toggle Graphical Equalizer|Toggle Playlist Editor|Options Menu|Toggle Always-On-Top|File Info Box|Toggle Doublesize Mode|Visualization Menu|Volume Bar|Panning Bar|Seeking Bar|Toggle Shuffle|Toggle Repeat|About Winamp|Open file(s)|Previous Track|Play|Pause|Stop|Next Track|Time Display (click to toggle elapsed/remaining)|Song Title (right-click for options)"
-    IDS_P_SETUP_LANG        "This lets you change the current language pack for Winamp. The default is English."
     IDS_P_FT_DIRCONTEXT     "Checking this option makes Winamp add a 'play' and 'enqueue' option to directories in explorer."
     IDS_P_DISP_SNAPW        "This value controls at what distance (in pixels) Winamp windows snap to each other and to the viewport."
     IDS_P_PLUG_VISDIR       "This button lets you select the directory for Winamp visualization plug-ins. The default is <yourwinampdirectory>\\Plugins"
@@ -2163,10 +2118,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_CUR_WLZ_INFO        "Current language pack information:"
-    IDS_SEL_WLZ_INFO        "Selected language pack information:"
-    IDS_WA_RESTART_FOR_WLZ_NEEDED 
-                            "Restart of Winamp is required for the language pack\n(%s) change to be applied"
     IDS_COVER               "cover"
     IDS_METADATA_ERROR      "Cannot save metadata: Error writing to file or file is read-only."
     IDS_METADATA_ERROR_TITLE "Error saving metadata"
@@ -2189,12 +2140,9 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LANG_DIR_MOVE_MESSAGE 
-                            "Since you are changing the language pack directory, would you like to\nmove the contents of the langauge pack directory to the new location?\n\nChoosing 'Yes' will move all of the directory contents from:\n\n%s\nto\n%s"
     IDS_SKIN_DIR_MOVE_MESSAGE 
                             "Since you are changing the skins directory, would you like to\nmove the contents of the skins directory to the new location?\n\nChoosing 'Yes' will move all of the directory contents from:\n\n%s\nto\n%s"
     IDS_DIR_MOVE_ERROR      "You have specified a drive root as the new location which is not allowed. The location change will now be aborted.\n\nPlease select a different location which is not a drive root."
-    IDS_LANG_DIR_MOVE       "Language Pack Directory Change"
     IDS_SKIN_DIR_MOVE       "Skins Directory Change"
     IDS_NOML_SAVE_RATING    "Do you want to save the rating to file?\nNote: You will not be prompted again."
     IDS_NOML_SAVE_RATING_TITLE "Media Library Not Detected"

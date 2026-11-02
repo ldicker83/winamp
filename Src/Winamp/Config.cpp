@@ -365,7 +365,6 @@ void config_write(int i)
 	WI(last_fileinfo_page);
 	WSW(artwork_filter);
 	WI(zeropadplnum);
-	WI(wlz_menu);
 	WI(accessibility_modalbeep);
 	WI(accessibility_modalflash);
 
@@ -587,7 +586,6 @@ void config_read(int i)
 	RSW(visplugin_name);
 	RSW(dspplugin_name);
 	RI(zeropadplnum);
-	RI(wlz_menu);
 	RB(accessibility_modalbeep);
 	RB(accessibility_modalflash);
 

@@ -86,7 +86,6 @@
 #define IDS_P_GEN_LIB                   78
 #define IDS_P_GEN_CONF                  79
 #define IDS_TOOLTIPS                    81
-#define IDS_P_SETUP_LANG                83
 #define IDS_P_FT_DIRCONTEXT             84
 #define IDS_P_DISP_SNAPW                85
 #define IDS_P_PLUG_VISDIR               86
@@ -109,7 +108,6 @@
 #define ICON_XP                         102
 #define IDD_BUFFERS                     103
 #define IDD_OUTPUT                      104
-#define IDS_LANGCHANGE                  104
 #define IDS_DELETEAUTOLOAD1             106
 #define IDS_DELETEAUTOLOAD2             107
 #define IDS_DELETEPRE1                  108
@@ -212,9 +210,6 @@
 #define IDD_JUMPDLG                     184
 #define IDS_PLAYLISTSTRING_NEW          184
 #define IDD_JUMPFILEDLG                 185
-#define IDS_P_LANG_PACK_DELETEWLZ       185
-#define IDS_P_LANG_PACK_DELETEWLZ_PROMPT 186
-#define IDS_RENAME_WLZ                  187
 #define IDD_ABOUT7                      188
 #define IDD_SKINS                       189
 #define IDD_PLUGIN2                     190
@@ -222,7 +217,6 @@
 #define IDC_REGDLG                      191
 #define IDD_EDITENTRY                   192
 #define IDS_STRING192                   192
-#define IDS_LANGUAGEPACKS_MENU          192
 #define IDD_OPTIONS                     193
 #define IDB_EQMAIN                      194
 #define IDB_PANBAR                      197
@@ -301,7 +295,6 @@
 #define IDS_P_PLUGIN_UNINSTALL          264
 #define IDB_SPLASH2                     265
 #define IDS_P_PLUGIN_UNINSTALL_CONFIRM  265
-#define IDS_LANGCHANGE_TITLE            266
 #define IDB_PLATE                       267
 #define IDD_STATIONINFO                 267
 #define IDS_P_PLAYBACK_RG_SOURCE_TRACK  267
@@ -334,7 +327,6 @@
 #define IDS_ADD_PLAYLIST                306
 #define IDS_SAVE_PLAYLIST               307
 #define IDS_PLAYLIST_FILTER_STRING      308
-#define IDD_NEWLANG                     317
 #define IDD_FILEINFO                    318
 #define IDD_FILEINFO_METADATA           319
 #define IDD_FILEINFO_ARTWORK            320
@@ -366,18 +358,11 @@
 #define IDS_CLASSIC_BASE_SKIN_VERSION   373
 #define IDS_REFRESH_PLAYLIST_TITLES     376
 #define IDS_ATF_HAS_CHANGED             377
-#define IDS_P_SELECT_LANGDIR            384
-#define IDS_P_LANG_ERR_RENAME           385
-#define IDS_P_LANG_ERR_RENAME_TITLE     386
-#define IDS_LOCALIZATION                387
 #define IDS_NO_MATCHES_FOUND            388
-#define IDS_NO_MATCH_FOUND              390
-#define IDS_FAILED                      391
 #define IDS_SHUFFLE_MORPH_INFO          392
 #define IDS_SHUFFLE_MORPH_RATE          393
 #define IDS_ADD_FOLDER                  394
 #define IDS_SHOW_ALL_HISTORY            396
-#define IDS_P_LNG_CHDR                  397
 #define IDS_P_DISP_SPLEDPOS             398
 #define IDS_IMAGE_FILES                 399
 #define IDS_P_EQUALIZER                 400
@@ -396,9 +381,6 @@
 #define IDS_BMP_FILE                    413
 #define IDS_P_EQ_TYPE_CHANGE            414
 #define IDS_P_EQ_TYPE_CHANGE_MSG        415
-#define IDS_CUR_WLZ_INFO                416
-#define IDS_SEL_WLZ_INFO                417
-#define IDS_WA_RESTART_FOR_WLZ_NEEDED   418
 #define IDS_COVER                       420
 #define IDS_METADATA_ERROR              422
 #define IDS_METADATA_ERROR_TITLE        423
@@ -413,10 +395,8 @@
 #define IDS_WIN7TOOLBAR_TOOLTIP_PAUSE   432
 #define IDS_WIN7TOOLBAR_TOOLTIP_STOP    433
 #define IDS_WIN7TOOLBAR_TOOLTIP_NEXT    434
-#define IDS_LANG_DIR_MOVE_MESSAGE       449
 #define IDS_SKIN_DIR_MOVE_MESSAGE       450
 #define IDS_DIR_MOVE_ERROR              451
-#define IDS_LANG_DIR_MOVE               452
 #define IDS_SKIN_DIR_MOVE               453
 #define IDS_NOML_SAVE_RATING            454
 #define IDS_STRING455                   455
@@ -945,7 +925,6 @@
 #define IDC_MOUSE_SCROLL_DOUBLE_LINES   1359
 #define IDC_PLSCROLL                    1360
 #define IDC_SHUFFLE_HELP                1361
-#define IDC_LANG_ID_STR                 1362
 #define IDC_EQ                          1365
 #define IDC_FREQ_BANDS                  1366
 #define IDC_STATIC_EQ                   1367
@@ -953,7 +932,6 @@
 #define IDC_LIMITER                     1369
 #define IDB_EQMAIN_ISO                  1370
 #define IDC_EQ_RESTART_TEXT             1370
-#define IDC_LANG_RESTART_TEXT           1371
 #define IDR_ACCELERATOR_EQ              1371
 #define IDC_SEARCHAGAIN                 1372
 #define IDR_ACCELERATOR_PL              1372
@@ -961,7 +939,6 @@
 #define IDR_ACCELERATOR_MAIN            1373
 #define IDC_SEARCHREFINE_ALBUM          1374
 #define IDR_ACCELERATOR_GLOBAL          1374
-#define IDC_LANG_INFO_STR               1374
 #define IDC_SEARCHREFINE_YEAR           1375
 #define IDC_SECURITY_DESCRIPTION        1375
 #define IDC_ALLOW_ALWAYS                1376
@@ -1009,14 +986,12 @@
 #define IDC_RGAS                        1402
 #define IDC_RGC                         1403
 #define IDC_RELEASED                    1404
-#define IDC_SHOW_LNG_PACK               1405
 #define IDC_USE_SILENCE_DETECT          1406
 #define IDC_CMDLINE                     1407
 #define IDC_STATIC_URL                  1417
 #define IDC_EXTRA_METADATA              1418
 #define IDC_STATIC_PLAY_URL             1419
 #define IDC_SKIN_INSTALL_PROMPT         1421
-#define IDC_LANG_INSTALL_PROMPT         1422
 #define IDS_P_O_RECYCLE                 32768
 #define WINAMP_FILE_QUIT                40001
 #define WINAMP_OPTIONS_PREFS            40012
@@ -1257,10 +1232,6 @@
 #define ID_SONGTITLE_SEND               40446
 #define WINAMP_TOGGLE_LIBRARY           40451
 #define ID_Menu                         40454
-#define ID_PREFS_LANG                   40457
-#define ID_LANG_SWITCHTOLANGUAGEPACK    40458
-#define ID_LANG_RENAMELANGUAGEPACK      40459
-#define ID_LANG_DELETELANGUAGEPACK      40460
 #define ID_HELP_FEEDBACK                40464
 #define ID_FILE_ADDCURRENTPLAYLISTTOLIBRARY 40466
 #define ID_PE_FFOD                      40468

@@ -27,7 +27,6 @@ INT_PTR CALLBACK classicSkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM l
 INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK PlugProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
-INT_PTR CALLBACK LangProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 
 void do_help(HWND hwnd, UINT id, HWND hTooltipWnd);
 #ifdef DO_COLORS

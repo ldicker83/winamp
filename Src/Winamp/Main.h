@@ -384,10 +384,9 @@ extern HINSTANCE language_pack_instance;
 	extern UINT songChangeBroadcastMessage;
 	extern HMENU main_menu, top_menu, systray_menu, g_submenus_bookmarks1,
 				 g_submenus_bookmarks2, g_submenus_skins1, g_submenus_skins2,
-				 g_submenus_vis, g_submenus_options, g_submenus_lang,
+				 g_submenus_vis, g_submenus_options,
 				 g_submenus_play, v5_top_menu;
 	extern int unique_loword_command;
-	extern int g_submenus_lang_id;
 	extern int g_dropaot_timer_set;
 	extern int is_install;
 	extern int g_fsapp;
@@ -524,23 +523,6 @@ extern HINSTANCE language_pack_instance;
 	/***************
 	*** options_general.cpp
 	*/
-	typedef struct _ENUMLANG
-	{
-		const wchar_t	*pszFileName;
-		const wchar_t	*pszName;
-		int				nType;
-		int				bActive;
-	} ENUMLANG;
-
-	//#define LANG_FILETYPE_LNG	1	// DEPRECATED: no longer a supported type
-	#define LANG_FILETYPE_WLZ	2
-	#define LANG_FILETYPE_EMBED	3
-	#define LANG_FILETYPE_ZIP	4	// added 5.66
-	#define LANG_FILETYPE_DIR	0	// added 5.66
-	
-	typedef int (CALLBACK *ENUMLANGPROC)(ENUMLANG* /*pel*/, void * /*user*/); // return 0 to stop enumeration
-	int EnumerateLanguages(ENUMLANGPROC fnEnumLang, void *user);
-	void LangSwitchToLangPrompt(HWND hwndDlg, wchar_t* newLang);
 	/***************
 	*** out.c 
 	*/
@@ -1048,7 +1030,7 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 
 	void LoadPathsIni();
 	LRESULT Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
-	extern int g_BookmarkTop, g_SkinTop, g_LangTop;
+	extern int g_BookmarkTop, g_SkinTop;
 	void RegisterConfigGroups();
 	void CopyExtendedFileInfo(const wchar_t *source, const wchar_t *destination);
 

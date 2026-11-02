@@ -79,10 +79,8 @@ DWORD mainThreadId; // main thread ID
 HMENU main_menu = 0, top_menu = 0, g_submenus_bookmarks1 = 0,
 g_submenus_bookmarks2 = 0, g_submenus_skins1 = 0,
 g_submenus_skins2 = 0, g_submenus_vis = 0,
-g_submenus_options = 0, g_submenus_lang = 0,
+g_submenus_options = 0,
 g_submenus_play = 0;
-
-int     g_submenus_lang_id = 0;
 
 int     bStartPlaying = 0;
 int     paused = 0;
@@ -96,7 +94,7 @@ int     g_srate, g_brate, g_nch, g_srate_exact;
 int     last_brate = -1;
 int     g_need_titleupd = 0;
 int     g_need_infoupd = 0;
-int     g_SkinTop, g_BookmarkTop, g_LangTop;
+int     g_SkinTop, g_BookmarkTop;
 int     g_mm_optionsbase_adj = 0;       //used by IPC_ADJUST_OPTIONSMENUPOS
 int     g_mm_ffwindowsbase_adj = 0;       //used by IPC_ADJUST_FFWINDOWSMENUPOS
 int     g_mm_ffoptionsbase_adj = 0;       //used by IPC_ADJUST_FFOPTIONSMENUPOS
@@ -1127,91 +1125,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					g_SkinTop = l_menu_info.wID;
 					while ( !a ) if ( !RemoveMenu( hMenu, l_menu_info.wID++ + 3 - 32768, MF_BYPOSITION ) ) a = 1;
 					if ( !checked ) CheckMenuItem( hMenu, 32767, MF_CHECKED );
-				}
-			}
-			else if ( ( hMenu == g_submenus_lang ) && config_wlz_menu )
-			{
-				MENUITEMINFOW l_menu_info = { sizeof( l_menu_info ), };
-				HANDLE h;
-				WIN32_FIND_DATAW d = { 0 };
-				wchar_t dirmask[ MAX_PATH ] = { 0 };
-
-				l_menu_info.fMask = MIIM_TYPE | MIIM_DATA | MIIM_ID | MIIM_STATE;
-				l_menu_info.fType = MFT_STRING;
-				l_menu_info.wID = 34700;
-				PathCombineW( dirmask, LANGDIR, L"*" );
-
-				l_menu_info.dwTypeData = L"English (US)";
-				l_menu_info.cch = (UINT)wcslen( l_menu_info.dwTypeData );
-				InsertMenuItemW( hMenu, l_menu_info.wID - 34700, TRUE, &l_menu_info );
-				l_menu_info.wID++;
-
-				CheckMenuItem( hMenu, 34700, ( !config_langpack[ 0 ] ? MF_CHECKED : MF_UNCHECKED ) );
-
-				h = FindFirstFileW( dirmask, &d );
-				if ( h != INVALID_HANDLE_VALUE )
-				{
-					int a = 0, checked = 0;
-					do
-					{
-						if ( !wcscmp( d.cFileName, L"." ) || !wcscmp( d.cFileName, L".." ) ) continue;
-
-						if ( ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"zip" ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"wlz" ) )
-						{
-
-							if ( !_wcsicmp( config_langpack, d.cFileName ) )
-							{
-								l_menu_info.fState = MFS_CHECKED | MFS_ENABLED;
-								checked = 1;
-							}
-							else
-							{
-								l_menu_info.fState = MFS_UNCHECKED | MFS_ENABLED;
-							}
-
-							if ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
-							{
-								wchar_t check[ MAX_PATH ] = { 0 };
-								PathCombineW( check, LANGDIR, d.cFileName );
-								PathCombineW( check, check, L"winamp.lng" );
-
-								if ( !PathFileExistsW( check ) )
-									continue;
-
-								l_menu_info.dwItemData = 0;
-							}
-							else
-							{
-								if ( !_wcsicmp( extensionW( d.cFileName ), L"zip" ) )
-									l_menu_info.dwItemData = 1;
-								else
-									l_menu_info.dwItemData = 2;
-
-								extensionW( d.cFileName )[ -1 ] = 0;
-							}
-
-							l_menu_info.dwTypeData = d.cFileName;
-							l_menu_info.cch = (UINT)wcslen( d.cFileName );
-
-							if ( !a )
-								if ( !RemoveMenu( hMenu, l_menu_info.wID - 34700, MF_BYPOSITION ) )
-									a = 1;
-
-							InsertMenuItemW( hMenu, l_menu_info.wID - 34700, TRUE, &l_menu_info );
-							l_menu_info.wID++;
-						}
-					} while ( l_menu_info.wID < 34800 && FindNextFileW( h, &d ) );
-
-					FindClose( h );
-					g_LangTop = l_menu_info.wID;
-					while ( !a )
-						if ( !RemoveMenu( hMenu, l_menu_info.wID++ - 34700, MF_BYPOSITION ) )
-							a = 1;
-
-					if ( !checked )
-						CheckMenuItem( hMenu, 34700, MF_CHECKED );
 				}
 			}
 			break;

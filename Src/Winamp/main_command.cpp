@@ -177,30 +177,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		return 1;
 	}
 
-	if (LOWORD(wID) >= 34700 && LOWORD(wID) < g_LangTop && config_wlz_menu)
-	{
-		wchar_t curfilename[MAX_PATH]={0};
-		int id = LOWORD(wID);
-		if (id >= 34701)
-		{
-			MENUITEMINFOW mi = {sizeof(mi), MIIM_DATA | MIIM_TYPE, MFT_STRING};
-			mi.dwTypeData = curfilename;
-			mi.cch = MAX_PATH;
-			GetMenuItemInfoW(main_menu, id, FALSE, &mi);
-
-			if (mi.dwItemData == 1)
-				StringCchCatW(curfilename, MAX_PATH, L".zip");
-			else if (mi.dwItemData == 2)
-				StringCchCatW(curfilename, MAX_PATH, L".wlz");
-		}
-
-		if (_wcsicmp(config_langpack, curfilename))
-		{
-			LangSwitchToLangPrompt(hMainWindow, curfilename);
-		}
-		return 1;
-	}
-
 	switch (LOWORD(wID))
 	{
 	case ID_VIS_NEXT:

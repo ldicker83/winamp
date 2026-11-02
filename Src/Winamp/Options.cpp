@@ -320,7 +320,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			//SendMessageW(hwnd,TVM_EXPAND,TVE_EXPAND,(long)h);
 			//h=_additem(hwnd,TVI_ROOT,getStringW(IDS_PREFS_OPTIONS,NULL,0),1,20);
 
-			_additem(hwnd, h, getStringW(IDS_LOCALIZATION, NULL, 0), 0, 25);
 
 			insertDialogs(hwnd, 0, h, &pluginids);
 
@@ -414,7 +413,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 						case 21: id = IDD_NEWTITLE; proc = TitleProc; break;
 						case 22: id = IDD_PREFS_CLASSICSKIN; proc = classicSkinProc; break;
 						case 23: id = IDD_NEWSHUFFLEOPTS; proc = PlaybackOptionsProc; break; // playlist
-												case 25: id = IDD_NEWLANG; proc = LangProc; break;
 						case 30: id = IDD_NEWPLUG; proc = PlugProc; break;
 						case 31: id = IDD_NEWINPUT; proc = InputProc; break;
 						case 32: id = IDD_NEWOUTPUT; proc = OutputProc; break;
