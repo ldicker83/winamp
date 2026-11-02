@@ -1308,7 +1308,6 @@ BEGIN
         MENUITEM "&Main Window\tAlt+W",         WINAMP_MAIN_WINDOW
         MENUITEM "Playlist &Editor\tAlt+E",     WINAMP_OPTIONS_PLEDIT
         MENUITEM "E&qualizer     \tAlt+G",      WINAMP_OPTIONS_EQ
-        MENUITEM "&Video\tAlt+V",               WINAMP_OPTIONS_VIDEO
         MENUITEM SEPARATOR
         POPUP "&Options"
         BEGIN
@@ -1547,27 +1546,6 @@ BEGIN
         BEGIN
             MENUITEM "Playlist &Editor\tAlt+E",     WINAMP_OPTIONS_PLEDIT
         END
-        POPUP "VideoWnd"
-        BEGIN
-            MENUITEM "&Fullscreen\tAlt+Enter",      ID_VIDEOWND_ZOOMFULLSCREEN
-            MENUITEM SEPARATOR
-            MENUITEM "&Normal size\t1",             ID_VIDEOWND_ZOOM100
-            MENUITEM "&Half size\t` or 3",          ID_VIDEOWND_ZOOM50
-            MENUITEM "&Double size\t2",             ID_VIDEOWND_ZOOM200
-            MENUITEM SEPARATOR
-            MENUITEM "Vertically &flip\tShift+F",   ID_VIDEOWND_VERTICALLYFLIP
-            MENUITEM SEPARATOR
-            POPUP "&Audio track"
-            BEGIN
-                MENUITEM "Track 1",                     ID_VID_AUDIO0
-            END
-            POPUP "&Video track"
-            BEGIN
-                MENUITEM "Track 1",                     ID_VID_VIDEO0
-            END
-            MENUITEM SEPARATOR
-            MENUITEM "Video &options...",           ID_VIDEOWND_VIDEOOPTIONS
-        END
     END
     POPUP "EQContext"
     BEGIN
@@ -1704,7 +1682,6 @@ BEGIN
     POPUP "Windows",                        65535,MFT_STRING,MFS_ENABLED
     BEGIN
         MENUITEM "Playlist &Editor\tAlt+E",     40040,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Video\tAlt+V",               40328,MFT_STRING,MFS_ENABLED
         MENUITEM "Visualizations\tCtrl+Shift+K", 40192,MFT_STRING,MFS_ENABLED
     END
     POPUP "Help",                           65535,MFT_STRING,MFS_ENABLED
@@ -2030,7 +2007,6 @@ BEGIN
     "E",            WINAMP_OPTIONS_PLEDIT,  VIRTKEY, ALT, NOINVERT
     "P",            WINAMP_OPTIONS_PREFS,   VIRTKEY, CONTROL, NOINVERT
     "T",            WINAMP_OPTIONS_TOGTIME, VIRTKEY, CONTROL, NOINVERT
-    "V",            WINAMP_OPTIONS_VIDEO,   VIRTKEY, ALT, NOINVERT
     "W",            WINAMP_OPTIONS_WINDOWSHADE_GLOBAL, VIRTKEY, CONTROL, NOINVERT
     "K",            WINAMP_PLGSETUP,        VIRTKEY, CONTROL, NOINVERT
     "O",            WINAMP_PLGSETUP,        VIRTKEY, ALT, NOINVERT

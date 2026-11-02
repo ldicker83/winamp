@@ -65,7 +65,7 @@ extern HINSTANCE language_pack_instance;
 	extern const char app_name[], app_version[], app_version_string[];
 #define BIGINT 1000000000
 
-#define MAINMENU_OPTIONS_BASE (11+g_mm_optionsbase_adj)
+#define MAINMENU_OPTIONS_BASE (10+g_mm_optionsbase_adj)
 #define WINDOWMENU_FFWINDOWS_BASE (3+g_mm_ffwindowsbase_adj)
 
 #define HIDDEN_TRAP -33

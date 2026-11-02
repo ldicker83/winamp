@@ -840,10 +840,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 		}
 	}
 
-	RemoveMenu( main_menu, WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
-	RemoveMenu( GetSubMenu( v5_top_menu, 3 ), WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
-	g_mm_optionsbase_adj -= 1;
-
 	set_aot( 0 ); // in case our gen plugins did anything fun
 	set_priority();
 
