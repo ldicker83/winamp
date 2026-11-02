@@ -342,7 +342,6 @@
 #define IDS_NOTPRESENT                  329
 #define IDS_ARTDELETE                   330
 #define IDS_AREYOUSURE                  331
-#define IDD_AUTOTAGGING                 349
 #define IDD_REPLAY_GAIN_UI              351
 #define IDS_PREAMP                      352
 #define IDD_NEWPLUG                     352
@@ -373,7 +372,6 @@
 #define IDS_P_LANG_ERR_RENAME_TITLE     386
 #define IDS_LOCALIZATION                387
 #define IDS_NO_MATCHES_FOUND            388
-#define IDS_GRACENOTE_TOOLS_NOT_INSTALLED 389
 #define IDS_NO_MATCH_FOUND              390
 #define IDS_FAILED                      391
 #define IDS_SHUFFLE_MORPH_INFO          392
@@ -971,13 +969,10 @@
 #define IDC_IMGTEXT                     1355
 #define IDC_PLACEHOLDER                 1356
 #define IDC_SELECT                      1357
-#define IDC_AUTOTAG                     1358
 #define IDC_MOUSE_SCROLL_DOUBLE_LINES   1359
 #define IDC_PLSCROLL                    1360
 #define IDC_SHUFFLE_HELP                1361
 #define IDC_LANG_ID_STR                 1362
-#define IDC_GN_FILEID                   1363
-#define IDC_GN_EXTDATA                  1364
 #define IDC_EQ                          1365
 #define IDC_FREQ_BANDS                  1366
 #define IDC_STATIC_EQ                   1367

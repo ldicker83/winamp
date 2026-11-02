@@ -667,9 +667,6 @@ BEGIN
     EDITTEXT        IDC_FORMATINFO,218,11,119,96,ES_MULTILINE | ES_READONLY | NOT WS_BORDER
     GROUPBOX        "Replay Gain",IDC_STATIC,214,114,127,33
     EDITTEXT        IDC_REPLAYGAIN,218,125,115,16,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
-    PUSHBUTTON      "Auto-Tag",IDC_AUTOTAG,291,150,50,14
-    EDITTEXT        IDC_GN_FILEID,277,150,6,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
-    EDITTEXT        IDC_GN_EXTDATA,284,150,6,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
 END
 
 IDD_FILEINFO_ARTWORK DIALOGEX 0, 0, 341, 164
@@ -690,16 +687,6 @@ BEGIN
     PUSHBUTTON      "Copy",IDC_BUTTON_COPY,281,46,50,14
     PUSHBUTTON      "Paste",IDC_BUTTON_PASTE,281,62,49,14
     PUSHBUTTON      "Delete",IDC_BUTTON_DELETE,281,78,50,14
-END
-
-IDD_AUTOTAGGING DIALOGEX 0, 0, 200, 62
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Working..."
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Your file is being scanned, please wait...",IDC_STATIC,7,7,130,8
-    LTEXT           "The Winamp Auto-Tagger is unavailable in this release",IDC_STATIC,7,47,165,8
-    LTEXT           "Tip: To Auto-Tag many tracks at once, select them all and use the Auto-Tag option in the right-click Send To menu.",IDC_STATIC,7,19,186,24
 END
 
 IDD_PLAYBACK DIALOGEX 0, 0, 260, 225
@@ -1007,14 +994,6 @@ BEGIN
     IDD_FILEINFO_METADATA, DIALOG
     BEGIN
         RIGHTMARGIN, 339
-    END
-
-    IDD_AUTOTAGGING, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 179
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 55
     END
 
     IDD_REPLAY_GAIN_UI, DIALOG
@@ -1851,8 +1830,6 @@ BEGIN
     IDS_P_LANG_ERR_RENAME_TITLE "Language File Rename Error"
     IDS_LOCALIZATION        "Localization"
     IDS_NO_MATCHES_FOUND    "No matches were found\t"
-    IDS_GRACENOTE_TOOLS_NOT_INSTALLED 
-                            "CDDB tools are unavailable in this release"
     IDS_NO_MATCH_FOUND      "No match found"
     IDS_FAILED              "Failed"
     IDS_SHUFFLE_MORPH_INFO  "Shuffle morph rate controls how songs within playlists are selected during shuffle playback.\n\nSlow shuffle morphing causes a slight variation of the playlist order, whereas fast\nshuffle morphing causes major variations of the playlist order."
