@@ -1858,7 +1858,6 @@ BEGIN
     IDS_SHUFFLE_MORPH_INFO  "Shuffle morph rate controls how songs within playlists are selected during shuffle playback.\n\nSlow shuffle morphing causes a slight variation of the playlist order, whereas fast\nshuffle morphing causes major variations of the playlist order."
     IDS_SHUFFLE_MORPH_RATE  "Shuffle Morph Rate"
     IDS_ADD_FOLDER          "Add Folder"
-    IDS_ADD_URL             "Add URL"
     IDS_SHOW_ALL_HISTORY    "Show All History"
     IDS_P_LNG_CHDR          "This button lets you change the directory where you keep your language packages."
     IDS_P_DISP_SPLEDPOS     "Shows the playlist item position in the Windows taskbar if selected."
@@ -1868,8 +1867,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_LOCALIZED_HOMEPAGE  "http://www.winamp.com"
-    IDS_AUTHOR_HOMEPAGE2    "http://www.winamp.com"
-    IDS_AUTHOR_HOMEPAGE     "http://www.winamp.com"
     65534                   "en-US"
     65535                   "{A0099AA7-F980-45cf-818D-64EAA9F4EF4B}"
 END
@@ -1879,11 +1876,8 @@ BEGIN
     IDS_LANG_INSTALL_PROMPT "Are you sure that you want to install this Winamp Language Pack?\n\nWe recommend that you only install language packs from sources that\nyou trust. If you do not trust the source of this language pack, click No.\t"
     IDS_LANG_INSTALL_HEADER "Winamp Language Pack Install"
     IDS_PLEDIT_NOFILE_WSHADE "<no file>"
-    IDS_AUDIO_CD_FORMAT     "Audio CD %c:"
     IDS_CLASSIC_SKIN_NAME   "Winamp Classic"
     IDS_CLASSIC_BASE_SKIN_VERSION "Winamp base skin v%s"
-    IDS_OSD_PROGRESS_TEXT   "Progress "
-    IDS_OSD_VOLUME_TEXT     "Volume "
     IDS_REFRESH_PLAYLIST_TITLES "Refresh playlist titles"
     IDS_ATF_HAS_CHANGED     "Your advanced title formatting string has been changed.\nWould you like to refresh the titles in your current playlist?"
 END
@@ -1910,31 +1904,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_BURN_NULLSOFT_STR   "Nullsoft Winamp Burner"
-    IDS_BURN_LIBRARY_INIT_FAILED "Unable to initialize burning library."
-    IDS_BURN_INVALID_PLAYLIST_PATH "Unable to read playlist path."
-    IDS_BURN_INVALID_TEMP_PATH "Unable to get temporary path."
-    IDS_BURN_INVALID_CONFIG_PATH "Unable to get config path."
-    IDS_BURN_INVALID_CMDLINE "Incorrect command line."
-    IDS_BURN_BAD_DRIVE_LETTER "Bad drive letter."
-    IDS_BURN_LOAD_FROM_PLAYLIST_FAIL "Unable to load files from the playlist."
-    IDS_BURN_CREATE_DIALOG_FAIL "Unable to create burner dialog."
-    IDS_BURN_UNKNOWN_ERROR  "Unknown Error."
-    IDS_BURN_INIT_ERROR_REASON "Burner Initialization Error!\nReason: %s"
-    IDS_BURN_INIT_ERROR_UNKNOWN 
-                            "Burner Initialization Error!\nReason: Unknown error."
-END
-
-STRINGTABLE
-BEGIN
-    IDS_CONV_SRC_EQUALS_DEST "Source file and destination file are identical"
-    IDS_CONV_DECODER_MISSING "Cannot find decoder"
-    IDS_CONV_INPUT_PLUGIN_NOT_SUPPORTING 
-                            "Input plug-in doesn't support transcoding"
-    IDS_CONV_DRM_DECODE_FAIL "Cannot decode DRM file"
-    IDS_CONV_ERROR_OPEN_FILE "Error opening file for decoding"
-    IDS_CONV_ERROR_OPEN_ENCODER "Cannot open encoder"
-    IDS_CONV_ERROR_OPEN_DEST "Cannot open destination file"
     IDS_NOTPRESENT          "not present"
     IDS_ARTDELETE           "Are you sure you want to delete this artwork? This action can't be undone."
     IDS_AREYOUSURE          "Are you sure?"
@@ -1952,9 +1921,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_P_SKIN_ERR_RENAME_TITLE "Skin Rename Error"
-    IDS_P_TAGZ_ERROR_TITLE  "Help"
-    IDS_P_TAGZ_NOT_INSTALLED "ATF not installed"
     IDS_WINAMP_MENUITEM     "About &Winamp...\tCtrl+F1"
     IDS_ML_MISSING_FOR_BOOKMARKS 
                             "You must have the Winamp Library installed to edit your bookmarks"
@@ -1974,12 +1940,10 @@ BEGIN
     IDS_P_PLDIRECTION_R2L   "Force right-to-left order"
     IDS_P_SELECT_SKINDIR    "Select Winamp Skin Directory"
     IDS_P_SKIN_NO_INFO_FOUND "<no info found>"
-    IDS_P_SKIN_ERR_RENAME   "Error renaming skin"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_SENDTO_STR          "Send to:"
     IDS_RATEITEM_STR        "Rate items"
     IDS_ERROR_DELETING      "Error deleting %s"
     IDS_PREFS_PLAYBACK      "Playback"
@@ -1997,73 +1961,26 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_ML_NO_PLAYLISTS     "No playlists in Media Library"
-    IDS_ML_OPEN_PLAYLIST    "Open playlist from &Library"
-    IDS_ML_OPEN_VIEW_RESULTS "Open Library &view results"
     243                     "&Close Playlist Editor\tAlt+E"
     IDS_PE_OPEN             "Open Playlist &Editor\tAlt+E"
-    IDS_ML_EXPORT_PLAYLIST  "&Export playlist"
-    IDS_ML_CLOSE_ML         "&Close Media Library\tAlt+L"
-    IDS_ML_OPEN_ML          "Open Media &Library\tAlt+L"
-    IDS_ML_MANAGE_PLAYLISTS "&Manage Playlists..."
-    IDS_ML_SMART_VIEW_RESULTS "Media Library Smart &View results"
     IDS_OFD_OPEN_FILES      "Open file(s)"
     IDS_OFD_ADD_FILES_TO_PLAYLIST "Add file(s) to playlist"
     IDS_OFD_ALL_FILES       "All files (*.*)"
     IDS_STATIONINFOCAPTION  "Station Info"
-    IDS_STATIONINFO_MENU    "Station Info\tAlt+B"
-    IDS_WINAMP_UPDATE       "Winamp Update"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_HTTP_FILE_INCOMPLETE "File incomplete"
-    IDS_HTTP_SUCCESS        "Success!"
-    IDS_HTTP_CLOSE          "Close"
-    IDS_CLOSE_COUNTDOWN     "Close [%d]"
-    IDS_HTTP_WINAMP_UPDATE_SITE "Winamp Update Site"
-    IDS_HTTP_INIT           "Initializing..."
-    IDS_HTTP_ABORT          "Aborting..."
     IDS_HTML_ERROR_WRITE    "Error writing HTML file."
-    IDS_HTTP_RET_FILE       "Retrieving file...\n%d bytes read"
-    IDS_HTTP_RET_FILE_PERCENT 
-                            "Retrieving file (%d%% done)\n%d of %d bytes read"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_HTTP_SOCKET_ERROR   "Error creating socket"
-    IDS_HTTP_RESOLVE_PROXY  "Resolving proxy"
-    IDS_HTTP_RESOLVE_HOST   "Resolving host..."
-    IDS_HTTP_RESOLVE_PROXY_ERROR "Error resolving proxy"
-    IDS_HTTP_RESOLVE_HOST_ERROR "Error resolving host"
-    IDS_HTTP_CONNECT_PROXY  "Connecting to proxy"
-    IDS_HTTP_CONNECT_HOST   "Connecting to host..."
-    IDS_HTTP_CONNECT_PROXY_ERROR "Error connecting to proxy"
-    IDS_HTTP_CONNECT_HOST_ERROR "Error connecting to host"
-    IDS_HTTP_SEND_REQUEST   "Sending HTTP request"
-    IDS_HTTP_READ_REQUEST   "Reading HTTP response"
-    IDS_HTTP_CONNECTION_LOST "Connection to host lost"
-    IDS_HTTP_CONNECTION_CLOSED "\nConnection closed. "
-    IDS_HTTP_ERROR_OPEN_FILE "Error opening local file!"
-    IDS_HTTP_RETRIEVE_FILE_LENGTH 
-                            "Retrieving file (%d%% done)\n%d/%d bytes read @ %d.%02d KB/sec"
-    IDS_HTTP_RETRIEVE_FILE  "Retrieving file...\n%d bytes read @ %d.%02d KB/sec"
 END
 
 STRINGTABLE
 BEGIN
     IDS_LANGUAGEPACKS_MENU  "Language Packs"
-    IDS_ONLINESERVICE_SELDOWNLOADDIR "Set folder for all %s downloads."
     IDS_WHATSNEW_FAIL       "Can't find whatsnew.txt"
-    IDS_WINAMP_CMDLINE      "Winamp Commandline"
     IDS_SKINS_INSTALL_PROMPT 
                             "Are you sure that you want to install this Winamp Skin?\n\nWe recommend that you only install skins from sources that you trust.\nIf you do not trust the source of this skin, click No."
     IDS_SKINS_INSTALL_HEADER "Winamp Skin Install"
-    IDS_HTTP_LOAD_ERROR     "Error loading wsock32.dll"
-    IDS_HTTP_INIT_SOCKET    "Initializing winsock..."
-    IDS_HTTP_INIT_SOCKET_ERROR "Error initializing winsock"
-    IDS_HTTP_SOCKET_CREATE  "Creating socket..."
 END
 
 STRINGTABLE
@@ -2071,18 +1988,11 @@ BEGIN
     IDS_P_EQ_FILE_WRITE     "Select file to write"
     IDS_P_FILE_ALL          "All Files"
     IDS_NO_BOOKMARKS        "No bookmarks found"
-    IDS_ART_SEARCH_PROGRESS "search in progress"
-    IDS_ART_SEARCH_STATUS   "Status: %s, %d images found: %d downloaded, %d failed, %d downloading"
-    IDS_ART_SEARCH_NOT_FOUND_TITLE "Not Found"
-    IDS_ART_SEARCH_NOT_FOUND 
-                            "No cover art matching this album could be found."
     IDS_NO_IMAGE            "(no image)"
     IDS_PLAYLISTSTRING_NEW  "Playlist Files (%s)"
     IDS_P_LANG_PACK_DELETEWLZ "Delete Language Pack?"
     IDS_P_LANG_PACK_DELETEWLZ_PROMPT "Delete the language pack '%s'?"
     IDS_RENAME_WLZ          "Rename Language Pack"
-    IDS_P_O_VIDEO_FLIPRGB   "Resolves issue where videos play upside-down when graphics drivers are old"
-    IDS_SELDOWNLOADDIR      "Download folder"
 END
 
 STRINGTABLE
@@ -2092,17 +2002,12 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_P_O_VIDEO_REMOVE_FS_ON_STOP 
-                            "This option will make the video window switch back from fullscreen when the playback stops"
-    IDS_P_O_VIDEO_AUTOOPEN  "This option will make the video window open every time a video file is played"
     IDS_P_CLASSICVIS        "Classic Visualization"
     IDS_P_IN_UNINST         "This button will uninstall the selected input plug-in. This may require a restart of Winamp."
     IDS_P_VIS_UNINST        "This button will uninstall the selected visualization plug-in."
     IDS_P_OUT_UNINST        "This button will uninstall the selected output plug-in. This may require a restart of Winamp."
     IDS_P_SKINS_DELETESKIN  "Delete Skin?"
     IDS_P_SKINS_DELETESKIN_PROMPT "Delete the skin '%s'?"
-    IDS_P_O_VIDEO_AGRESSIVENOSS 
-                            "This option makes Winamp try even harder to prevent the screensaver from coming on while playing video. Use with care, it might not be the best idea..."
     IDS_P_PLUG_DISSEHVIS    "Enabling this option disables structured exception handling (SEH) for visualization plug-ins, which lets plug-in developers more easily debug their plug-ins."
     IDS_P_PLUG_DISSEHDSP    "Enabling this option disables structured exception handling (SEH) for DSP plug-ins, which lets plug-in developers more easily debug their plug-ins."
     IDS_P_PLUG_DISSEHGEN    "Enabling this option disables structured exception handling (SEH) for general purpose plug-ins, which lets plug-in developers more easily debug their plug-ins."
@@ -2114,22 +2019,10 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_P_FILEASSOCIATIONS  "This option lets the Agent maintain Winamp's file associations, so that if other software is installed that uses the same extensions, Winamp will keep them."
     IDS_CONFIG_BOOKMARKSTR  "Add to Winamp's &Bookmark list"
     IDS_P_O_ONPLAY          "Reads track info such as title or ID3 tag, as well as a track length estimate, on play only (rather than on view or load)."
     IDS_P_O_SMS             "This controls how quickly the playlist order changes (morphs) over time, when shuffle is on."
     IDS_PREFS_SHUFFLE       "Playlist"
-    IDS_VIDEOCAPTION        "Winamp Video"
-    IDS_PREFS_VIDEO         "Video"
-    IDS_P_O_VIDEO_VSYNC     "This option enables video to sync with the vertical blank line for smoother display."
-    IDS_P_O_VIDEO_ADJASP    "This option corrects the aspect ratio of the videos so they display at the correct size."
-    IDS_P_O_VIDEO_OVERLAYS  "This option enables the use of the video card overlay feature (if available)."
-    IDS_P_O_VIDEO_UPDSIZE   "This option will make the video window resize to the video dimensions"
-    IDS_P_O_VIDEO_AUTOCLOSE "Close video window as soon as playing is done"
-    IDS_P_O_VIDEO_NOSS      "This option disables your current screen saver when a video is playing"
-    IDS_P_O_VIDEO_OSD       "This option enables the On Screen Display interface when a video is playing in Fullscreen mode"
-    IDS_P_O_VIDEO_YV12      "This option enables the use of the YV12 type when overlay is enabled. It makes video updates faster when possible but some video cards don't support it well or correctly."
-    IDS_P_O_VIDEO_STOPCLOSE "This option will make the playback stop when the video window is closed"
 END
 
 STRINGTABLE
@@ -2139,9 +2032,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_P_SETUP_INET1       "LAN internet connection"
-    IDS_P_SETUP_INET2       "Dialup modem internet connection"
-    IDS_P_SETUP_INET3       "No internet connection"
     IDS_DSP_NONE            "(none)"
     IDS_CONFIG_PLAYSTR      "&Play in Winamp"
     IDS_CONFIG_ENQUEUESTR   "&Enqueue in Winamp"
@@ -2151,8 +2041,6 @@ BEGIN
     IDS_P_SK_RND            "When this is checked, Winamp will switch skins randomly on every new file played."
     IDS_P_SK_CHDR           "This button lets you change the directory where you keep your skins."
     IDS_PREFS_CLASSICSKIN   "Classic Skins"
-    IDS_PREFS_AG            "Agent"
-    IDS_P_SETUP_VER2        "This option, when checked, allows Winamp to report anonymous usage information back to Nullsoft. It simply reports how much Winamp is being used, but not how you are using it."
     IDS_P_A_ENABLE          "This option enables the Winamp Agent, which runs at all times and lets you have enhanced functionality."
     IDS_P_A_TRAY            "This option, when the Agent is enabled, shows an icon in the notification area that lets you run Winamp, load your bookmarks/playlists, etc."
 END
@@ -2162,19 +2050,7 @@ BEGIN
     IDS_PLFONT_CHARSET      "1"
     IDS_P_FT_RSTART         "This option will make Winamp retake its filetypes when other programs steal them. It is recommended."
     IDS_P_DISP_BIFONT       "This option makes Winamp use its own (skinnable) font for displaying track titles. Disable this if you want to be able to see titles with non-English characters in them."
-    IDS_GETMORE             "Update Links\tCtrl+Alt+R"
-    IDS_INST_DONETITLE      "Winamp install information"
-    IDS_INST_CLOSE          "Close Winamp"
     IDS_P_DISP_PLPOS        "If enabled this option makes Winamp display the current playlist position in the song scroller"
-    IDS_ART_SEARCH_FAILED   "search failed"
-    IDS_INST_SENDINGIN      "Sending in user information"
-    IDS_INST_FINISH         "Run Winamp"
-    IDS_INST_INET1          "Always connected (LAN, DSL, Cable)"
-    IDS_INST_INET2          "Connected via dial-up (Modem)"
-    IDS_INST_INET3          "Not connected to the internet"
-    IDS_ART_SEARCH_FINISHED "finished search"
-    IDS_P_SETUP_VER         "This option when enabled will have Winamp automatically detect whether a new version has been released and notify you of it."
-    IDS_P_SETUP_INTERNET    "Select your internet connection method here."
 END
 
 STRINGTABLE
@@ -2184,11 +2060,7 @@ BEGIN
     IDS_PREFS_PLUG_DSP      "DSP/Effect"
     IDS_PREFS_PLUG_GEN      "General Purpose"
     IDS_P_FT_CD             "This option will associate Winamp with Audio CDs in explorer, so that when you insert a disc or click on the disc icon in explorer Winamp will automatically play it."
-    IDS_MBCAPTION           "Winamp Minibrowser"
-    IDS_INETLOC             "Open URL...\tCtrl+O"
-    IDS_PERMDELALL          "Using this command will remove\nall selected files PERMANENTLY\nfrom disk. Are you SURE you want\nto do this?"
     IDS_LANGCHANGE          "Note that a restart of Winamp is required for the change of language pack to take effect.      \n\nPress Ok to restart Winamp, or cancel to continue using Winamp\n(The language pack will be loaded on Winamp's next restart with cancel)."
-    IDS_SELLANGPACK         "Open language pack (select Winamp.exe for English)"
     IDS_DELETEAUTOLOAD1     "Delete auto-load preset"
     IDS_DELETEAUTOLOAD2     "&Delete..."
     IDS_DELETEPRE1          "Delete preset"
@@ -2200,7 +2072,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_TOOLTIPS            "Toggle Windowshade Mode|Minimize|Close|Winamp Menu|Toggle Graphical Equalizer|Toggle Playlist Editor|Options Menu|Toggle Always-On-Top|File Info Box|Toggle Doublesize Mode|Visualization Menu|Volume Bar|Panning Bar|Seeking Bar|Toggle Shuffle|Toggle Repeat|About Winamp|Open file(s)|Previous Track|Play|Pause|Stop|Next Track|Time Display (click to toggle elapsed/remaining)|Song Title (right-click for options)"
-    IDS_P_SETUP_START2      "Removes Winamp items (added from the 'Add' button) from the Start Menu."
     IDS_P_SETUP_LANG        "This lets you change the current language pack for Winamp. The default is English."
     IDS_P_FT_DIRCONTEXT     "Checking this option makes Winamp add a 'play' and 'enqueue' option to directories in explorer."
     IDS_P_DISP_SNAPW        "This value controls at what distance (in pixels) Winamp windows snap to each other and to the viewport."
@@ -2218,8 +2089,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_P_FT_ICON2          "Selects the icon that Winamp playlist files use in Explorer."
-    IDS_P_SETUP_START       "Adds Winamp items (program, documentation, and uninstall link) to the Start Menu."
-    IDS_PREFSHLP_FT_DESK    "Adds Winamp as an icon to the Windows Desktop. Uses the currently selected file icon for the icon."
     IDS_P_VIS_LIB           "This is a list of installed visualization plug-ins. You can select one, and start/stop or configure it."
     IDS_P_VIS_MOD           "Once you have selected a plug-in, you can select a different module with this combo box."
     IDS_P_PLUG_AUTO         "This option makes visualization plug-ins auto-execute when you start a file."
@@ -2278,20 +2147,15 @@ END
 STRINGTABLE
 BEGIN
     IDS_BASICINFO           "Basic Info"
-    IDS_DLINK_ERROR         "Error updating links!"
     IDS_ARTWORK             "Artwork"
     IDS_ADVANCED            "Advanced"
-    IDS_WINAMP_UPDATE_MSG   "New Winamp Available"
     IDS_NOOUTPUT            "Cannot find the selected output plug-in or a native output plug-in to fallback to for playback.\n\nGoto Preferences -> Plug-ins -> Output and select an appropriate output plug-in or re-install Winamp to restore its native plug-ins."
     IDS_PLAYLISTSTRING      "Playlist Files (*.M3U;*.PLS;*.ASX;*.WAX;*.WMX;*.WVX;*.WPL;*.B4S;*.BPL)"
     IDS_ALLTYPES            "All supported types"
-    IDS_RETRPL              "Retrieving playlist..."
-    IDS_CONF_HELPSTR        "Try hovering the mouse over the\nitem you want help on (a tooltip\nwill appear)!"
     IDS_P_IN_INPUTS         "This is a list of installed input plug-ins for Winamp. You can configure each one by selecting it and hitting Configure."
     IDS_P_IN_CONF           "This option configures the selected input plug-in."
     IDS_P_IN_ABOUT          "This option views the about box for the selected input plug-in."
     IDS_P_O_DEFEXT          "If no input plug-ins can claim the current file extension as their own, this extension is used by default. (we recommend: mp3)."
-    IDS_P_SETUP_PROXY       "This specifies the proxy server to use for HTTP transfers.\rIf blank, no proxy is used. Otherwise, specify machine:port, i.e. proxy.noip.com:81, or user:password@machine:port, i.e. justin:rules@myproxy.com:80"
     IDS_P_OUT_CONF          "This button configures the currently selected output plug-in. Changes to the output plug-in usually take effect after restarting playback."
 END
 
@@ -2302,13 +2166,9 @@ BEGIN
     IDS_EQCAPTION           "Winamp Equalizer"
     IDS_PECAPTION           "Winamp Playlist Editor"
     IDS_OPENDIR             "Open Folder"
-    IDS_OPENDIRMORE         "Select a folder to play:"
     IDS_PLUGINERROR         "Plug-in executed illegal operation.\nRestart of Winamp is recommended"
     IDS_ERRORLOADINGPLUGIN  "Error loading module"
-    IDS_DYNAMICLINKS        "Dynamic Links"
     IDS_PREFS_BOOK          "Bookmarks"
-    IDS_DLINK_NOCONTENT     "Error finding content (try hitting update)"
-    IDS_DLINK_GETTING       "Retrieving Winamp dynamic links"
 END
 
 STRINGTABLE
@@ -2338,12 +2198,9 @@ BEGIN
     IDS_SEL_WLZ_INFO        "Selected language pack information:"
     IDS_WA_RESTART_FOR_WLZ_NEEDED 
                             "Restart of Winamp is required for the language pack\n(%s) change to be applied"
-    IDS_DOWNLOADING         "Downloading"
     IDS_COVER               "cover"
-    IDS_KBPS                "kbps"
     IDS_METADATA_ERROR      "Cannot save metadata: Error writing to file or file is read-only."
     IDS_METADATA_ERROR_TITLE "Error saving metadata"
-    IDS_CLICKHERE           "Click here"
     IDS_WINAMP_MEDIA_FILE   "Winamp media file"
     IDS_WINAMP_PLAYLIST_FILE "Winamp playlist file"
     IDS_WINAMP_EXTENSION_INSTALLATION_FILE 
@@ -2359,36 +2216,10 @@ BEGIN
     IDS_WIN7TOOLBAR_TOOLTIP_PAUSE "Pause"
     IDS_WIN7TOOLBAR_TOOLTIP_STOP "Stop"
     IDS_WIN7TOOLBAR_TOOLTIP_NEXT "Next"
-    IDS_SECURITY_APPLICATION_LAUNCHURL 
-                            "This service is trying to launch a URL in the browser."
-    IDS_SECURITY_TRANSPORT_EVENTS 
-                            "This service is trying to monitor playback events."
-    IDS_SECURITY_TRANSPORT_METADATA 
-                            "This service is trying to get information about the currently playing song."
-    IDS_SECURITY_TRANSPORT_CONTROLS 
-                            "This service is trying to control playback."
-    IDS_SECURITY_PLAYER_PLAYLIST 
-                            "This service is trying to access your active playlist."
-    IDS_SECURITY_PLAYER_METADATA 
-                            "This service is trying to get information about an item in your active playlist."
-    IDS_SECURITY_DOWNLOADER_EVENTS 
-                            "This service is trying to monitor media downloading events."
-    IDS_SECURITY_DOWNLOADER_DOWNLOADMEDIA 
-                            "This service is trying to download media to your computer."
-    IDS_SECURITY_SECURITY_AUTH "This service is trying to steal yer secretz."
-    IDS_SECURITY_BOOKMARKS_AUTH 
-                            "This service is trying to access your bookmarks."
-    IDS_SECURITY_SKIN_AUTH  "This service is trying to access your skin settings."
-    IDS_SECURITY_MEDIACORE_METADATAHOOK 
-                            "This service is trying to provide metadata to Winamp."
-    IDS_SECURITY_MEDIACORE_METADATA 
-                            "This service is trying to access information about media on your computer."
 END
 
 STRINGTABLE
 BEGIN
-    IDS_SECURITY_MEDIACORE_EXTENSIONS 
-                            "This service is trying to access information about media supported by Winamp."
     IDS_LANG_DIR_MOVE_MESSAGE 
                             "Since you are changing the language pack directory, would you like to\nmove the contents of the langauge pack directory to the new location?\n\nChoosing 'Yes' will move all of the directory contents from:\n\n%s\nto\n%s"
     IDS_SKIN_DIR_MOVE_MESSAGE 
@@ -2460,8 +2291,6 @@ BEGIN
     IDS_MAN_ADV_ON          "Manual Advance: On"
     IDS_MAN_ADV_OFF         "Manual Advance: Off"
     IDS_DEF_PROG_LOAD_ERROR "Unable to open the 'Set Default Programs' window. You will need to manually go to the Control Panel and enter 'Set Default Programs' into the search bar to easily find it."
-    IDS_RESET_URLS          "Are you sure you want to reset the saved URL history?\nNote: This cannot be undone after choosing 'Yes'."
-    IDS_RESET_URLS_TITLE    "Reset URL History"
     IDS_P_DISP_BIFONT_ALT   "This option makes Winamp use an alternative style for the un-skinned font for displaying track titles which may make it easier to see the track titles when 'Double size' is enabled."
     IDS_P_FILE_ASSOC        "Winamp File Association"
 END
@@ -2481,23 +2310,13 @@ BEGIN
     IDS_UPDATING_X          "Updating %s..."
     IDS_ERROR_UPDATING_FILE "Error updating file: %s\n"
     IDS_INFO_UPDATING_ERROR "Info updating error"
-    IDS_P_O_VIDEO_AUTO_FS_ON_START 
-                            "This option will make the video window automatically switch to fullscreen when playback is started."
-    IDS_P_O_VIDEO_ENABLE    "This option allows you to enable or disable Winamp's video support. This requires a restart for the change to be applied."
 END
 
 STRINGTABLE
 BEGIN
-    IDS_P_VIDEO_CHANGE      "Enable / Disable Video Support"
-    IDS_P_VIDEO_CHANGE_MSG  "You will need to restart Winamp for this change to be applied.\n\nChoose Yes to restart Winamp now."
-    IDS_P_O_VIDEO_HIDE_PREFS 
-                            "This option allows you to permanently hide this preference page when video support is disabled. To restore access to this preference page set no_video=1 in your winamp.ini file."
     IDS_STREAMINFO          "Stream Info"
     IDS_P_SK_PROMPT         "When this option is checked, you will receive a prompt when installing new skins. If unchecked, always ensure you are installing skins from a safe source."
-    IDS_PREFS_ARTWORK       "Artwork"
     IDS_UNKNOWN_MIME        "unknown"
-    IDS_RC_CHANNEL_TITLE    "Join RC Channel"
-    IDS_RC_CHANNEL_MESSAGE  "Are you interested in participating in our next round of release candidate (RC) upgrades?"
 END
 
 #endif    // English (United States) resources
