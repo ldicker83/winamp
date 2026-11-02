@@ -1142,7 +1142,6 @@ BEGIN
             MENUITEM "Winamp Classic",              32767
         END
         MENUITEM SEPARATOR
-        MENUITEM SEPARATOR
         MENUITEM "E&xit\tAlt+F4",               WINAMP_FILE_QUIT
     END
     POPUP "EQpresets"
