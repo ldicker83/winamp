@@ -303,8 +303,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <PostBuildEvent>
       <Command>xcopy /Y /D /S $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
-xcopy /Y /D /S "..\external_dependencies\vcpkg\buildtrees\fmt\$(PlatformShortName)-windows-rel\bin\fmt.dll" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\"
-
 xcopy /Y /D /S ..\resources\languages\*.wlz ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Lang\
 
 xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
