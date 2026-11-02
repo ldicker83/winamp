@@ -678,31 +678,31 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     GROUPBOX        "General Preferences",IDC_STATIC,0,0,269,247
-    CONTROL         "Show splash screen at startup",IDC_PREFS_SPLASH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,115,113,10
-    CONTROL         "Allow &multiple instances",IDC_MINST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,128,91,10
-    LTEXT           "Show Winamp in:",IDC_STATIC,7,146,60,8
-    CONTROL         "Notification area",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,157,69,10
-    CONTROL         "Taskbar",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,169,41,10
-    GROUPBOX        "Notification Area Icon",IDC_STATIC,86,147,112,32
-    CONTROL         "Slider1",IDC_SYSTRAY_SCROLLER,"msctls_trackbar32",TBS_AUTOTICKS | WS_GROUP | WS_TABSTOP,86,158,93,13
-    ICON            ICON_TB1,IDC_SYSTRAY_ICON,178,158,14,13,NOT WS_VISIBLE
+    CONTROL         "Show splash screen at startup",IDC_PREFS_SPLASH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,13,113,10
+    CONTROL         "Allow &multiple instances",IDC_MINST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,26,91,10
+    LTEXT           "Show Winamp in:",IDC_STATIC,7,44,60,8
+    CONTROL         "Notification area",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,55,69,10
+    CONTROL         "Taskbar",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,67,41,10
+    GROUPBOX        "Notification Area Icon",IDC_STATIC,86,45,112,32
+    CONTROL         "Slider1",IDC_SYSTRAY_SCROLLER,"msctls_trackbar32",TBS_AUTOTICKS | WS_GROUP | WS_TABSTOP,86,56,93,13
+    ICON            ICON_TB1,IDC_SYSTRAY_ICON,178,56,14,13,NOT WS_VISIBLE
     CONTROL         "Scroll title in the Windows taskbar",IDC_SCROLLTITLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,182,123,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,80,123,10
     CONTROL         "Show the playlist number in the Windows taskbar",IDC_SHOWPLEDITPOS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,195,173,10
-    GROUPBOX        "Priority Class",IDC_STATIC,200,74,62,140
-    RTEXT           "Realtime",IDC_STATIC,212,86,28,8
-    RTEXT           "High",IDC_STATIC,224,103,16,8
-    RTEXT           "Above Normal",IDC_STATIC,217,116,23,16
-    RTEXT           "Normal",IDC_STATIC,217,137,23,8
-    RTEXT           "Idle",IDC_STATIC,225,155,15,8
-    CONTROL         "Slider1",IDC_PREFS_PRIORITY_CLASS,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | TBS_TOP | WS_TABSTOP,244,85,13,80
-    LTEXT           "Change only if needed. High and Realtime priorities are not recommended.",IDC_STATIC,205,169,52,40,WS_DISABLED
-    CONTROL         "Recycle permanently deleted files",IDC_RECYCLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,209,124,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,93,173,10
+    GROUPBOX        "Priority Class",IDC_STATIC,200,14,62,140
+    RTEXT           "Realtime",IDC_STATIC,212,26,28,8
+    RTEXT           "High",IDC_STATIC,224,43,16,8
+    RTEXT           "Above Normal",IDC_STATIC,217,56,23,16
+    RTEXT           "Normal",IDC_STATIC,217,77,23,8
+    RTEXT           "Idle",IDC_STATIC,225,95,15,8
+    CONTROL         "Slider1",IDC_PREFS_PRIORITY_CLASS,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | TBS_TOP | WS_TABSTOP,244,25,13,80
+    LTEXT           "Change only if needed. High and Realtime priorities are not recommended.",IDC_STATIC,205,109,52,40,WS_DISABLED
+    CONTROL         "Recycle permanently deleted files",IDC_RECYCLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,107,124,10
     CONTROL         "Prevent the mouse wheel from altering the volume",IDC_NO_MOUSEWHEEL,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,5,222,177,10
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,5,120,177,10
     CONTROL         "Disable always on top while fullscreen applications are focused",IDC_DROPAOTFS,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,1,234,249,10
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,1,132,249,10
 END
 
 IDD_FILEINFO DIALOGEX 0, 0, 366, 230
