@@ -1,6 +1,6 @@
 #ifndef _NSGUID_H
 #define _NSGUID_H
-#include "../foundation/guid.h"
+#include "../../foundation/guid.h"
 
 //#include <bfc/common.h>
 

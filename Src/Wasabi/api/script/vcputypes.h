@@ -1,7 +1,9 @@
 #ifndef __VCPUTYPES_H
 #define __VCPUTYPES_H
 
-#include <bfc/platform/platform.h>
+#include "scriptvar.h"
+
+#include "../../bfc/platform/platform.h"
 
 // Basic types
 #define SCRIPT_FIRSTTYPE        SCRIPT_VOID
@@ -19,7 +21,6 @@
 static const GUID guidNull = 
 { 0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
 
-#include <api/script/scriptvar.h>
 
 #ifdef _MSC_VER
 #pragma pack(push, 1)

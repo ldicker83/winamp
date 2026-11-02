@@ -5,10 +5,12 @@
 #include "../nu/AutoChar.h"
 #include "../nu/ns_wc.h"
 
+#include <string>
+
 unsigned char eq_tab[10] = {31, 31, 31, 31, 31, 31, 31, 31, 31, 31};
 
-static int writeEQfile(wchar_t *file, char *name);
-static int readEQfile(wchar_t *file, char *name);
+static int writeEQfile(wchar_t *file, const std::string &name);
+static int readEQfile(wchar_t *file, const std::string &name);
 static void deleteEQfile(wchar_t *file, char *name);
 static void addEQtolistbox(wchar_t *file, HWND listbox);
 
@@ -45,7 +47,9 @@ void eq_autoload(const char *mp3fn)
 		return;
 
 	if (readEQfile(EQDIR2, scanstr_back((char*)mp3fn, "\\", (char*)mp3fn - 1) + 1))
+	{
 		readEQfile(EQDIR1, "Default");
+	}
 
 	PostMessageW(hMainWindow, WM_WA_IPC, IPC_CB_MISC_EQ, IPC_CB_MISC);
 }
@@ -861,7 +865,7 @@ static BOOL EQ_OnNCActivate(HWND hwnd, BOOL fActive, HWND hwndActDeact, BOOL fMi
 	return TRUE;
 }
 
-int writeEQfile_init(wchar_t *file, char *name, unsigned char *tab)
+int writeEQfile_init(wchar_t *file, const std::string& name, unsigned char *tab)
 {
 	unsigned char preamp = 31;
 	char s[2048] = {0};
@@ -884,13 +888,13 @@ int writeEQfile_init(wchar_t *file, char *name, unsigned char *tab)
 			SetFilePointer(hFile, 0, NULL, FILE_END);
 			break;
 		}
-		if (!_stricmp(name, s))
+		if (!_stricmp(name.c_str(), s))
 		{
 			CloseHandle(hFile);
 			return 0; // don't write it
 		}
 	}
-	StringCchCopyExA(s, _MAX_FNAME+1, name, 0, 0, STRSAFE_FILL_BEHIND_NULL);
+	StringCchCopyExA(s, _MAX_FNAME+1, name.c_str(), 0, 0, STRSAFE_FILL_BEHIND_NULL);
 	memcpy(s + _MAX_FNAME + 1, tab, 10);
 	memcpy(s + _MAX_FNAME + 1 + 10, &preamp, 1);
 	a = 0; WriteFile(hFile, s, _MAX_FNAME + 1 + 10 + 1, &a, NULL);

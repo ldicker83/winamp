@@ -1,8 +1,8 @@
 #ifndef _LOADLIB_H
 #define _LOADLIB_H
 
-#include <bfc/wasabi_std.h>
-#include <bfc/named.h>
+#include "wasabi_std.h"
+#include "named.h"
 
 class Library : public NamedW
 {

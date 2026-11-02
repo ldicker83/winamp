@@ -1,7 +1,8 @@
 #ifndef NULLSOFT_BFC_STD_RECT_H
 #define NULLSOFT_BFC_STD_RECT_H
 
-#include <bfc/platform/platform.h>
+#include "platform/platform.h"
+
 namespace Wasabi
 {
 	namespace Std

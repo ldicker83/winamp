@@ -1,8 +1,8 @@
 #ifndef _PLAYSTRING_H
 #define _PLAYSTRING_H
 
-#include <bfc/common.h>
-#include <bfc/string/StringW.h>
+#include "../common.h"
+#include "../string/StringW.h"
 
 class Playstring 
 {

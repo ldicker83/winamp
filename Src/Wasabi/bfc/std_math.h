@@ -3,7 +3,8 @@
 
 // FG> doesn't work for me without this include (error C2039: 'sin' : is not a member of '`global namespace'')
 #include <math.h>
-#include <bfc/platform/types.h>
+#include "platform/types.h"
+
 #ifdef __cplusplus
 static inline double SIN(double a) { return ::sin(a); }
 static inline double COS(double a) { return ::cos(a); }

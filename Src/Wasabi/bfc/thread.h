@@ -1,7 +1,7 @@
 #ifndef _THREAD_H
 #define _THREAD_H
 
-#include <bfc/common.h>
+#include "common.h"
 
 #if !defined(WIN32) && !defined(LINUX)
 #error port me!

@@ -1,4 +1,4 @@
-#include "precomp_wasabi_bfc.h"
+#include "../precomp_wasabi_bfc.h"
 #include "recursedir.h"
 
 RecurseDir::RecurseDir( const wchar_t *_path, const wchar_t *_match ) :

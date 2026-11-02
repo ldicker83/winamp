@@ -1,7 +1,7 @@
 #ifndef __API_FONT_H
 #define __API_FONT_H
 
-#include <bfc/dispatch.h>
+#include "../../bfc/dispatch.h"
 
 class ifc_canvas;
 

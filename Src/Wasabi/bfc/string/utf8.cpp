@@ -1,4 +1,4 @@
-#include "precomp_wasabi_bfc.h"
+#include "../precomp_wasabi_bfc.h"
 
 #include "utf8.h"
 

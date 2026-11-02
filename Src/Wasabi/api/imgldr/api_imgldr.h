@@ -1,8 +1,8 @@
 #ifndef __API_IMGLOADER_H
 #define __API_IMGLOADER_H
 
-#include <wasabicfg.h>
-#include <bfc/dispatch.h>
+#include "../../wasabicfg.h"
+#include "../../bfc/dispatch.h"
 
 class RegionServer;
 class api_region;

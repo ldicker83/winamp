@@ -1,10 +1,10 @@
 #ifndef _RECURSEDIR_H
 #define _RECURSEDIR_H
 
-#include <bfc/wasabi_std.h>
-#include <bfc/ptrlist.h>
-#include <bfc/common.h>
-#include <bfc/file/readdir.h>
+#include "../wasabi_std.h"
+#include "../ptrlist.h"
+#include "../common.h"
+#include "../file/readdir.h"
 
 class ReadDir;
 

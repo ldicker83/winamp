@@ -1,10 +1,11 @@
-#include "precomp_wasabi_bfc.h"
-// someday, there will be a file here.
-#include <bfc/wasabi_std.h>
 #include "encodedstr.h"
-#include <bfc/string/bfcstring.h>
-#include <api/service/svcs/svc_stringconverter.h>
-#include <api/memmgr/api_memmgr.h>
+
+#include "../precomp_wasabi_bfc.h"
+#include "../wasabi_std.h"
+#include "../string/bfcstring.h"
+#include "../../api/service/svcs/svc_stringconverter.h"
+#include "../../api/memmgr/api_memmgr.h"
+
 EncodedStr::EncodedStr(FOURCC encodingType, void *encodedBuffer, int bufferSize, int deleteIt) {
   encoding_type = encodingType;
   encoded_buffer = encodedBuffer;

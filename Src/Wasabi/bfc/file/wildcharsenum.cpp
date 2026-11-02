@@ -1,12 +1,15 @@
 // NONPORTABLE NONPORTABLE NONPORTABLE
-#include "precomp_wasabi_bfc.h"
+#include "../precomp_wasabi_bfc.h"
+
 #ifdef WIN32
 #include <windows.h>
 #endif
+
+#include "readdir.h"
 #include "wildcharsenum.h"
-#include <bfc/parse/pathparse.h>
-#include <bfc/parse/paramparser.h>
-#include <bfc/file/readdir.h>
+
+#include "../parse/pathparse.h"
+#include "../parse/paramparser.h"
 
 WildcharsEnumerator::WildcharsEnumerator(const wchar_t *_selection) : selection(_selection) 
 {

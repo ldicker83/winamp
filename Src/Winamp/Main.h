@@ -2,6 +2,8 @@
 #define _MAIN_H_
 #ifdef __cplusplus
 
+#include <string>
+
 //#pragma warning(error:4311)
 extern "C"
 {
@@ -462,7 +464,7 @@ extern HINSTANCE language_pack_instance;
 	extern wchar_t FileName[FILENAME_SIZE];
 	extern wchar_t FileTitle[FILETITLE_SIZE];
 	extern wchar_t FileTitleNum[FILETITLE_SIZE];
-	extern char *app_date;
+	extern const std::string app_date;
 	extern int g_srate, g_brate, g_nch, g_srate_exact;
 
 	extern int g_mm_optionsbase_adj;

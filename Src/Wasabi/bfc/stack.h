@@ -2,8 +2,8 @@
 #ifndef _STACK_H
 #define _STACK_H
 
-#include <bfc/common.h>
-#include <bfc/wasabi_std.h>
+#include "common.h"
+#include "wasabi_std.h"
 
 // a self-growing stack. note that it never shrinks (for now)
 

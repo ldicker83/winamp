@@ -57,13 +57,6 @@ extern URLManager *urlmanagerApi;
 extern WinampApi *winampApi;
 #define WASABI_API_WINAMP winampApi
 
-#include "../jpeg/amg.h"
-extern api_amgsucks *amgSucks;
-#define AGAVE_API_AMGSUCKS amgSucks
-
-#include "../Agave/AlbumArt/api_albumart.h"
-extern api_albumart *albumArtApi;
-#define AGAVE_API_ALBUMART albumArtApi
 
 /* Services we need to watch for */
 #include <api/skin/api_skin.h>

@@ -844,7 +844,7 @@ static INT_PTR WINAPI AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 
 				wchar_t buf[2048] = {0}, buf2[2048] = {0};
 				GetWindowTextW(GetDlgItem(hwndDlg,IDC_VER_TEXT),buf,ARRAYSIZE(buf));
-				StringCchPrintfW(buf2,2048,(buf[0] ? buf : L"v%s %s - %s"),AutoWideDup(app_version_string),AutoWideDup(APP_VERSION_PLATFORM),AutoWideDup(app_date));
+				StringCchPrintfW(buf2,2048,(buf[0] ? buf : L"v%s %s - %s"),AutoWideDup(app_version_string),AutoWideDup(APP_VERSION_PLATFORM),AutoWideDup(app_date.c_str()));
 				SetWindowTextW(GetDlgItem(hwndDlg,IDC_VER_TEXT),buf2);
 			}
 			break;

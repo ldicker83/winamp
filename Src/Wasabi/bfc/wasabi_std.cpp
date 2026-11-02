@@ -1,6 +1,13 @@
 #include "wasabi_std.h"
-//#include <wasabicfg.h>
-#include <bfc/parse/pathparse.h>
+
+#include "parse/pathparse.h"
+
+#include "bfc_assert.h"
+#include "ptrlist.h"
+
+#include <time.h>  // CUT if possible... maybe make bfc/platform/time.h
+
+
 #ifdef WIN32
 
 #define WIN32_LEAN_AND_MEAN
@@ -29,11 +36,7 @@ DECLARE_HANDLE(HMONITOR);
 
 #endif  // WIN32
 
-#include <bfc/bfc_assert.h>
 
-#include <bfc/ptrlist.h>
-
-#include <time.h>  // CUT if possible... maybe make bfc/platform/time.h
 #ifdef __APPLE__
 #include <sys/time.h>
 #include <sys/stat.h>

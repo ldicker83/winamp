@@ -9,13 +9,14 @@
 #ifndef __API_MAKI_H
 #define __API_MAKI_H
 
-#include <bfc/dispatch.h>
+#include "../../bfc/dispatch.h"
+
+#include "scriptvar.h"
+#include "vcputypes.h"
 
 class ScriptObject;
 class ScriptObjectController;
 
-#include <api/script/scriptvar.h>
-#include <api/script/vcputypes.h>
 
 // ----------------------------------------------------------------------------
 

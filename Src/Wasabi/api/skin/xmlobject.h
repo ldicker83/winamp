@@ -1,11 +1,11 @@
 #ifndef __XMLOBJECT_H
 #define __XMLOBJECT_H
 
-#include <bfc/nsguid.h>
-#include <bfc/ptrlist.h>
-#include <bfc/dispatch.h>
-#include <bfc/string/StringW.h>
-#include <bfc/wasabi_std.h>
+#include "../../bfc/nsguid.h"
+#include "../../bfc/ptrlist.h"
+#include "../../bfc/dispatch.h"
+#include "../../bfc/string/StringW.h"
+#include "../../bfc/wasabi_std.h"
 
 #define XML_ATTRIBUTE_IMPLIED  0
 #define XML_ATTRIBUTE_REQUIRED 1

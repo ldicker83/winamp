@@ -1,9 +1,9 @@
 #ifndef _DEPEND_H
 #define _DEPEND_H
 
-#include <bfc/platform/platform.h>
-#include <bfc/common.h>
-#include <bfc/ptrlist.h>
+#include "platform/platform.h"
+#include "common.h"
+#include "ptrlist.h"
 
 // a pair of classes to implement data dependency. a viewer can register
 // a list of things it wants to know about
@@ -14,7 +14,7 @@
 
 class ifc_dependent;
 
-#include <api/dependency/api_dependentviewer.h>
+#include "../api/dependency/api_dependentviewer.h"
 
 // inherit from this one
 class /*NOVTABLE */DependentViewerI : public api_dependentviewer

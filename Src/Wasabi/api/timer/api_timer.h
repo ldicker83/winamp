@@ -3,8 +3,8 @@
 
 // Under linux, the Timer API requires the Linux API
 
-#include <bfc/dispatch.h>
-#include <bfc/platform/platform.h>
+#include "../../bfc/dispatch.h"
+#include "../../bfc/platform/platform.h"
 
 class TimerClient;
 

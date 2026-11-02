@@ -1,6 +1,7 @@
-#include <bfc/wasabi_std.h>
 #include "string.h"
-#include <bfc/nsguid.h>
+
+#include "../wasabi_std.h"
+#include "../nsguid.h"
 
 String::String(const char *initial_val)
 		: val(NULL)

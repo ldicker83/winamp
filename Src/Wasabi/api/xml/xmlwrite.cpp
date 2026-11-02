@@ -1,24 +1,15 @@
-#include <precomp.h>
+#include "../../precomp.h"
 
 #include "xmlwrite.h"
 
-#include <bfc/wasabi_std.h>
-#include <bfc/string/bfcstring.h>
-#include <bfc/parse/paramparser.h>
-
-#if 0
-static unsigned char xmltypecheck[256] = 
-{
-#define BT_COLON BT_NMSTRT
-#include "latin1tab.h"
-#undef BT_COLON
-#include "asciitab.h"
-        };
-#endif
+#include "../../bfc/wasabi_std.h"
+#include "../../bfc/string/bfcstring.h"
+#include "../../bfc/parse/paramparser.h"
 
 #define EFPRINTF (nohicharconversion ? eutf8fprintf : efprintf)
 
-#include "../nu/AutoChar.h"
+#include "../../../nu/AutoChar.h"
+
 XMLWrite::XMLWrite(const wchar_t *filename, const wchar_t *doctype, const wchar_t *dtddoctype, int no_hi_chars_conversion)
 {
 	nohicharconversion = no_hi_chars_conversion;

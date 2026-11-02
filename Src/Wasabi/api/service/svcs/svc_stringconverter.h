@@ -1,9 +1,12 @@
 #ifndef _SVC_STRINGCONVERTER_H
 #define _SVC_STRINGCONVERTER_H
 
-#include <bfc/dispatch.h>
-#include <api/service/services.h>
-#include <api/service/svcs/svc_stringtypes.h>
+#include "../../bfc/dispatch.h"
+#include "../services.h"
+#include "svc_stringtypes.h"
+
+#include "../svc_enum.h"
+
 
 // Porting Rule: A new service to respond to at least OSNATIVE and UTF16 shall be
 // provided for every new platform.  This service should provide transcoding
@@ -78,7 +81,6 @@ protected:
   RECVS_DISPATCH;
 };
 
-#include <api/service/svc_enum.h>
 
 class StringConverterEnum : public SvcEnumT<svc_stringConverter> {
 public:

@@ -1,9 +1,9 @@
 #ifndef _FREELIST_H
 #define _FREELIST_H
 
-#include <bfc/wasabi_std.h>
-#include <bfc/memblock.h>
-#include <bfc/ptrlist.h>
+#include "wasabi_std.h"
+#include "memblock.h"
+#include "ptrlist.h"
 
 // actual implementation
 class FreelistPriv {

@@ -1,8 +1,8 @@
 #ifndef _NAMED_H
 #define _NAMED_H
 
-#include <bfc/common.h>
-#include <bfc/string/StringW.h>
+#include "common.h"
+#include "string/StringW.h"
 
 class NOVTABLE NamedW
 {

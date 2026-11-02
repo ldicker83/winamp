@@ -1,9 +1,7 @@
 #ifndef _MEMBLOCK_H
 #define _MEMBLOCK_H
 
-//#include <bfc/wasabi_std.h>
-#include <bfc/std_mem.h>
-//#include <wasabicfg.h>
+#include "std_mem.h"
 
 #ifdef _DEBUG
 extern int memblocks_totalsize;

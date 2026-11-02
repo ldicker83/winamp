@@ -20,6 +20,7 @@
 #include <assert.h>
 #include "zlib.h"
 
+
 ID3_Elem *ID3_Tag::GetLastElem(ID3_Elem *list)
 {
 	ID3_Elem *last = list;

@@ -1,7 +1,7 @@
 #ifndef _SERVICES_H
 #define _SERVICES_H
 
-#include "bfc/std_mkncc.h" // for MKnCC()
+#include "../../bfc/std_mkncc.h" // for MKnCC()
 
 // lower-case service names are reserved by Nullsoft for future use
 // upper-case service names are for 3rd parties to extend the service system

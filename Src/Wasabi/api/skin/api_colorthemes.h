@@ -1,6 +1,6 @@
 #pragma once
-#include <bfc/dispatch.h>
-#include <api/skin/colorthemes.h>
+#include "../../bfc/dispatch.h"
+#include "../../api/skin/colorthemes.h"
 
 class api_colorthemes : public Dispatchable
 {

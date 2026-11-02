@@ -2,7 +2,8 @@
 #define _SVC_ENUM_H
 
 // try to use this one, it does a clientLock for you
-#include <api/service/waservicefactory.h>
+#include "waservicefactory.h"
+
 template <class T>
 class castService {
 public:

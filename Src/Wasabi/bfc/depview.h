@@ -1,7 +1,7 @@
 #ifndef _DEPVIEW_H
 #define _DEPVIEW_H
 
-#include <bfc/depend.h>
+#include "depend.h"
 #include <map>
 
 // this handles classes that use the getDependencyPtr() method instead of a

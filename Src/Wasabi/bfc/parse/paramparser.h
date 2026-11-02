@@ -1,7 +1,7 @@
 #ifndef __PARAMPARSE_H
 #define __PARAMPARSE_H
 
-#include <bfc/parse/pathparse.h>
+#include "pathparse.h"
 
 class ParamParser : private PathParserW
 {

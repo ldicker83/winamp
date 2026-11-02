@@ -7,8 +7,8 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#include <bfc/common.h>
-#include <bfc/bfc_assert.h>
+#include "common.h"
+#include "bfc_assert.h"
 
 /**
   CriticalSection is a portable object that implements a critical section,

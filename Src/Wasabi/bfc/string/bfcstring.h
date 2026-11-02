@@ -15,8 +15,8 @@
   @see DebugString
 */
 
-#include <bfc/platform/types.h>
-//#include <bfc/std.h>
+#include "../platform/types.h"
+
 #include <stdarg.h>
 
 class String

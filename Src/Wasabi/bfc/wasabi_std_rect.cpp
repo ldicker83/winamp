@@ -1,6 +1,7 @@
 #include "wasabi_std_rect.h"
-#include <bfc/platform/minmax.h>
-#include <bfc/std_mem.h>
+
+#include "platform/minmax.h"
+#include "std_mem.h"
 
 bool  Wasabi::Std::rectIntersect(const RECT &i1, const RECT &i2, RECT *intersection)
 {

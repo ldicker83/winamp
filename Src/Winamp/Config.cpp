@@ -49,15 +49,15 @@ static bool NeedElevation()
 	return !IsUserAnAdmin();
 }
 
-static Nullsoft::Utility::LockGuard registrarGuard;
-static const GUID ftr_guid = 
-			{ 0x3B29AB5C, 0x52CB, 0x4a36, { 0x93,0x14,0xE3,0xFE,0xE0,0xBA,0x74,0x68 } };
+//static Nullsoft::Utility::LockGuard registrarGuard;
+static const GUID ftr_guid = { 0x3B29AB5C, 0x52CB, 0x4a36, { 0x93,0x14,0xE3,0xFE,0xE0,0xBA,0x74,0x68 } };
 static IFileTypeRegistrar *masterRegistrar;
 static FileTypeRegistrar builtIn;
 bool usingBuiltIn = false;
+
 int GetRegistrar(IFileTypeRegistrar **registrar, BOOL use_fallback)
 {
-	Nullsoft::Utility::AutoLock autolock(registrarGuard);
+	//Nullsoft::Utility::AutoLock autolock(registrarGuard);
 	// attempt to re-get an elevated object as needed
 	// i.e. if user selects no but wants to try again
 	//		then we need to try going elevated again
@@ -116,36 +116,36 @@ int GetRegistrar(IFileTypeRegistrar **registrar, BOOL use_fallback)
 
 void RemoveRegistrar()
 {
-	Nullsoft::Utility::AutoLock autolock(registrarGuard);
+	//Nullsoft::Utility::AutoLock autolock(registrarGuard);
 	if (masterRegistrar) masterRegistrar->Release();
 	masterRegistrar = 0;
 	usingBuiltIn = false;
 }
 
-int _r_i(char *name, int def)
+int _r_i(const std::string& name, int def)
 {
-	return GetPrivateProfileIntA(app_name, name, def, INI_FILEA);
+	return GetPrivateProfileIntA(app_name, name.c_str(), def, INI_FILEA);
 }
 
 #define RI(x) (( config_##x ) = _r_i(#x,( config_##x )))
 #define RI_NP(x) (( x ) = _r_i(#x,( x )))
 #define RB(x) (( config_##x ) = !!_r_i(#x,( config_##x )))
-void _w_i(char *name, intptr_t d)
+void _w_i(const std::string& name, intptr_t d)
 {
 	char str[120] = {0};
 	StringCchPrintfA(str, 120, "%d", d);
-	WritePrivateProfileStringA(app_name, name, str, INI_FILEA);
+	WritePrivateProfileStringA(app_name, name.c_str(), str, INI_FILEA);
 }
 #define WI(x) _w_i(#x,( config_##x ))
 #define WI_NP(x) _w_i(#x,( x ))
 
-void _r_s(char *name, char *data, int mlen)
+void _r_s(const std::string& name, char *data, int mlen)
 {
 	char utf8_data[2048] = {0};
 	wchar_t utf16_data[2048] = {0};
 	char buf[2048] = {0};
 	StringCchCopyA(buf, 2048, data);
-	GetPrivateProfileStringA(app_name, name, buf, utf8_data, 2048, INI_FILEA);
+	GetPrivateProfileStringA(app_name, name.c_str(), buf, utf8_data, 2048, INI_FILEA);
 	MultiByteToWideCharSZ(CP_UTF8, 0, utf8_data, -1, utf16_data, 2048);
 	WideCharToMultiByteSZ(CP_ACP, 0, utf16_data, -1, data, mlen, 0, 0);
 }

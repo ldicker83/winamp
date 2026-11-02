@@ -351,7 +351,7 @@ const wchar_t *scanstr_backcW(const wchar_t *str, const wchar_t *toscan, const w
 	}
 }
 
-char *scanstr_back(char *str, char *toscan, char *defval)
+char *scanstr_back(char *str, const char *toscan, char *defval)
 {
 	char *s = GetLastCharacter(str);
 	if (!s || !str[0]) return defval;

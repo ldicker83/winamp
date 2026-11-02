@@ -1,7 +1,7 @@
 #ifndef __API_FILEREADER_H
 #define __API_FILEREADER_H
 
-#include <bfc/dispatch.h>
+#include "../../bfc/dispatch.h"
 
 class NOVTABLE api_fileReader : public Dispatchable 
 {

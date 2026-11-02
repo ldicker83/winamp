@@ -1,8 +1,8 @@
 #ifndef _STD_WIN_H
 #define _STD_WIN_H
 
-#include <bfc/platform/platform.h>
-#include <bfc/wasabi_std.h>
+#include "platform/platform.h"
+#include "wasabi_std.h"
 
 #define ROOTSTRING L"RootWnd"
 #define BASEWNDCLASSNAME L"BaseWindow_" ROOTSTRING

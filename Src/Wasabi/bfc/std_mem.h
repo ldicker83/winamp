@@ -1,7 +1,7 @@
 #ifndef _STD_MEM_H
 #define _STD_MEM_H
 
-#include <bfc/platform/platform.h>
+#include "platform/platform.h"
 #include <string.h>
 
 wchar_t *WMALLOC(size_t size);

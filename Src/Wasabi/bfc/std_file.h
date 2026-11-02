@@ -1,8 +1,9 @@
 #ifndef _STD_FILE_H
 #define _STD_FILE_H
 
-#include <bfc/platform/platform.h>
+#include "platform/platform.h"
 #include "wasabi_std.h"
+
 #include <stdio.h>
 
 /* TODO:

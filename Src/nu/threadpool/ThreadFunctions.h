@@ -22,7 +22,7 @@ public:
 
 	typedef std::map<HANDLE, const ThreadFunctions::Data*> DataMap;
 	DataMap data;
-	Nullsoft::Utility::LockGuard guard;
+	//Nullsoft::Utility::LockGuard guard;
 
 	typedef std::deque<ThreadFunctions::Data*> FuncList;
 	FuncList functions_list;

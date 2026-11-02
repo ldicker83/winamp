@@ -83,7 +83,7 @@ private:
 	void RemoveHandle_Internal(size_t start, HANDLE handle); // recursive helper function for RemoveHandle()
 	void AddHandle_Internal(size_t start, HANDLE handle, int flags); // recursive helper function for RemoveHandle()
 
-	Nullsoft::Utility::LockGuard guard; // guards threads, any_thread_handles, and non_reserved_handles data structures
+	//Nullsoft::Utility::LockGuard guard; // guards threads, any_thread_handles, and non_reserved_handles data structures
 	typedef std::vector<ThreadID*> ThreadList;
 	ThreadList threads;
 	ThreadPoolTypes::HandleList any_thread_handles[THREAD_TYPES];

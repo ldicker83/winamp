@@ -3,8 +3,8 @@
 
 
 
-#include <bfc/common.h>
-#include <bfc/string/StringW.h>
+#include "../common.h"
+#include "../string/StringW.h"
 
 /* intended use:
   ReadDir dir(path);

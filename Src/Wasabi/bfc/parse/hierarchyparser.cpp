@@ -1,7 +1,11 @@
-#include "precomp_wasabi_bfc.h"
 #include "hierarchyparser.h"
-#include <bfc/nsguid.h>
+
+#include "../nsguid.h"
+#include "../precomp_wasabi_bfc.h"
+
 #include <wchar.h>
+
+
 // This uses an AMAZINGLY inefficient algorithm!  woo hoo!
 
 HierarchyParser::HierarchyParser(const wchar_t *str, const wchar_t *_sibling, const wchar_t *_escape, const wchar_t *_parent_open, const wchar_t *_parent_close) {

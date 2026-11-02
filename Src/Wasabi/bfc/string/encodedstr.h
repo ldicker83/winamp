@@ -1,7 +1,9 @@
 #ifndef _ENCODEDSTR_H
 #define _ENCODEDSTR_H
 
-#include <api/service/svcs/svc_stringtypes.h>
+#include "../../api/service/svcs/svc_stringtypes.h"
+
+typedef unsigned long FOURCC;
 
 class String;
 
@@ -9,7 +11,7 @@ class EncodedStr {
 public:
   // The EncodedStr object will automatically delete its ram, unless you 
   // specify 0 in that "delete it" parameter there, partner.
-  EncodedStr(FOURCC encodingType = 0, void *encodedBuffer = NULL, int bufferSize = 0, int deleteIt = 1);
+  EncodedStr(FOURCC encodingType = 0, void *encodedBuffer = nullptr, int bufferSize = 0, int deleteIt = 1);
   ~EncodedStr();
 
   // A "reset" will ensure any previously set buffer will be deleted

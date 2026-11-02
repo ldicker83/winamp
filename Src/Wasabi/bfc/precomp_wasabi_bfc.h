@@ -2,7 +2,7 @@
 #define NULLSOFT_BFC_PRECOMP_H
 
 // Platform
-#include <bfc/platform/platform.h>
+#include "platform/platform.h"
 
 // Std
 #include "wasabi_std.h"

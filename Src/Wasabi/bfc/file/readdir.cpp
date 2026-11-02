@@ -1,4 +1,5 @@
-#include "precomp_wasabi_bfc.h"
+#include "..\..\bfc\precomp_wasabi_bfc.h"
+
 #include "readdir.h"
 
 #ifdef _WIN32

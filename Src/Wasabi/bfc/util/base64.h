@@ -1,7 +1,7 @@
 #ifndef _BASE64_H
 #define _BASE64_H
 
-#include <bfc/memblock.h>
+#include "../memblock.h"
 
 class Base64 {
 public:

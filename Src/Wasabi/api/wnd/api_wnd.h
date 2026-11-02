@@ -1,9 +1,10 @@
 #ifndef __API_WND_H
 #define __API_WND_H
 
-#include <wasabicfg.h>
-#include <bfc/dispatch.h>
-#include <bfc/platform/platform.h>
+#include "../../wasabicfg.h"
+#include "../../bfc/dispatch.h"
+#include "../../bfc/platform/platform.h"
+
 class ifc_window;		
 class PopupExitCallback; // see ../bfc/popexitcb.h
 class ifc_canvas;	// see ../common/canvas.h

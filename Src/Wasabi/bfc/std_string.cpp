@@ -1,5 +1,6 @@
 #include "std_string.h"
-#include <bfc/assert.h>
+
+#include "bfc_assert.h"
 
 int WCSICOLL(const wchar_t *str1, const wchar_t *str2)
 {

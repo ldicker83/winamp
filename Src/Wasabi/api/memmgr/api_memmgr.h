@@ -1,9 +1,9 @@
 #ifndef __API_MEMMGR_H
 #define __API_MEMMGR_H
 
-#include <bfc/dispatch.h>
-#include <bfc/platform/types.h>
-#include <new>
+#include "../../bfc/dispatch.h"
+#include "../../bfc/platform/types.h"
+
 class NOVTABLE api_memmgr : public Dispatchable
 {
 protected:

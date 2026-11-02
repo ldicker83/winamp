@@ -1,7 +1,10 @@
-#include <precomp.h>
-#include <bfc/bfc_assert.h>
 #include "xmlobject.h"
+
+#include "../../precomp.h"
+#include "../../bfc/bfc_assert.h"
+
 #include <new>
+
 #define PILENODE_AUTOINCREMENT 50
 
 /*

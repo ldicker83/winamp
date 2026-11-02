@@ -467,31 +467,31 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 					GetWhatsNewFromFile(fp);
 					fclose(fp);
 					wchar_t* p = ver_buf;
-					while(p && *p)
+					while (p && *p)
 					{
 						// populate the version combobox
-						if(!wcsncmp(p,L"Winamp 5.",9))
+						if (!wcsncmp(p, L"Winamp 5.", 9))
 						{
-							wchar_t* pp = p, ver[64] = {0};
-							while(pp && *pp && *pp != L'\r') pp = CharNextW(pp);
+							wchar_t* pp = p, ver[64] = { 0 };
+							while (pp && *pp && *pp != L'\r') pp = CharNextW(pp);
 							// need to make sure that we've actually found a valid part otherwise
 							// just skip over things and don't fill in the combobox (attempted exploit)
-							if(pp && *pp && *pp == L'\r'){
+							if (pp && *pp && *pp == L'\r') {
 								pp = CharNextW(pp);
 								// make sure that we keep within the buffer size as some people have
 								// tried to make a buffer overflow vulnerability with this on XP SP3
-								lstrcpynW(ver,p,(pp-p<64?pp-p:64));
-								wchar_t* v = ver, *vn = 0, *vne = 0;
-								while(v && *v && *v != L'\t') v = CharNextW(v);
-								if(v && *v == L'\t'){
+								lstrcpynW(ver, p, (pp - p < 64 ? pp - p : 64));
+								wchar_t* v = ver, * vn = 0, * vne = 0;
+								while (v && *v && *v != L'\t') v = CharNextW(v);
+								if (v && *v == L'\t') {
 									vn = vne = CharNextW(v);
 									*v = 0;
-									if(vn && *vn == L'[') vn = CharNextW(vn);
-									while(vne && *vne && *vne != L']') vne = CharNextW(vne);
-									if(vne && *vne == L']') *vne = 0;
+									if (vn && *vn == L'[') vn = CharNextW(vn);
+									while (vne && *vne && *vne != L']') vne = CharNextW(vne);
+									if (vne && *vne == L']') *vne = 0;
 								}
-								last_add = SendDlgItemMessageW(hwndDlg,IDC_VER_COMBO,CB_ADDSTRING,0,(LPARAM)ver);
-								SendDlgItemMessageW(hwndDlg,IDC_VER_COMBO,CB_SETITEMDATA,last_add,(LPARAM)p);
+								last_add = SendDlgItemMessageW(hwndDlg, IDC_VER_COMBO, CB_ADDSTRING, 0, (LPARAM)ver);
+								SendDlgItemMessageW(hwndDlg, IDC_VER_COMBO, CB_SETITEMDATA, last_add, (LPARAM)p);
 								versions[last_add] = wcsdup(vn);
 							}
 						}
@@ -500,8 +500,8 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 					// reset the selection to the last view and force an update to that
 					// would be better to do it straight away on load but this ensures all synchs up
-					SendDlgItemMessage(hwndDlg,IDC_VER_COMBO,CB_SETCURSEL,_r_i("whtsnewlp",1),0);
-					SendMessageW(hwndDlg,WM_COMMAND,MAKEWPARAM(IDC_VER_COMBO,CBN_SELCHANGE),(LPARAM)GetDlgItem(hwndDlg,IDC_VER_COMBO));
+					SendDlgItemMessage(hwndDlg, IDC_VER_COMBO, CB_SETCURSEL, _r_i("whtsnewlp", 1), 0);
+					SendMessageW(hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_VER_COMBO, CBN_SELCHANGE), (LPARAM)GetDlgItem(hwndDlg, IDC_VER_COMBO));
 				}
 				else
 				{
@@ -1089,7 +1089,7 @@ static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 					*t1 = 0, *t2 = 0, *t3 = 0;
 			GetDlgItemTextW(hwndDlg,IDC_ABOUTTEXT,buf,ARRAYSIZE(buf));
 			StringCchPrintfW(buf2,2048,buf,(buf3[0] ? buf3 : (t1 = AutoWideDup(app_version_string))),
-							 (t2 = AutoWideDup(APP_VERSION_PLATFORM)), (t3 = AutoWideDup(app_date)));
+							 (t2 = AutoWideDup(APP_VERSION_PLATFORM)), (t3 = AutoWideDup(app_date.c_str())));
 			SetDlgItemTextW(hwndDlg, IDC_ABOUTTEXT, buf2);
 			link_startsubclass(hwndDlg, IDC_WINAMPLINK);
 			if (t1) free(t1);

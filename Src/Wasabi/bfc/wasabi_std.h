@@ -2,10 +2,12 @@
 #define _STD_H
 
 #include <string.h>
-#include <bfc/platform/platform.h>
-#include <bfc/common.h>
-#include <bfc/bfc_assert.h>
-//#include <bfc/string/string.h>
+
+#include "platform/platform.h"
+#include "common.h"
+#include "bfc_assert.h"
+#include "string/bfcstring.h"
+
 
 //#define WANT_UTF8_WARNINGS
 
@@ -178,8 +180,6 @@ typedef pthread_t THREADID;
 #endif
 
 #ifdef __cplusplus
-
-#include <bfc/string/bfcstring.h>
 
 namespace Wasabi
 {

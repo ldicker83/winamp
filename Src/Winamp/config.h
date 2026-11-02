@@ -35,12 +35,14 @@
 
 /* -------------------------------------------------------------------------------- --- */
 
-extern void _r_s(char *name,char *data, int mlen);
-extern void _w_s(char *name, char *data);
-void _w_sW(const char *name, const wchar_t *data);
-void _r_sW(const char *name, wchar_t *data, int mlen);
-extern int _r_i(char *name, int def);
-extern void _w_i(char *name, intptr_t d);
+#include <string>
+
+extern void _r_s(const std::string& name, char *data, int mlen);
+extern void _w_s(const std::string& name, const char *data);
+void _w_sW(const std::string& name, const wchar_t *data);
+void _r_sW(const std::string& name, wchar_t *data, int mlen);
+extern int _r_i(const std::string& name, int def);
+extern void _w_i(const std::string& name, intptr_t d);
 
 CONFIG_EXT int config_utf8 DEF_VAL(1);
 CONFIG_EXT wchar_t M3UDIR[MAX_PATH] DEF_VAL(L"");

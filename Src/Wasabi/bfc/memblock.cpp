@@ -1,5 +1,6 @@
 #include "memblock.h"
-#include <bfc/bfc_assert.h>
+
+#include "bfc_assert.h"
 
 #ifdef _DEBUG
 int memblocks_totalsize=0;

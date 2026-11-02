@@ -1,8 +1,10 @@
 #ifndef __WASABI_IFC_MESSAGEPROCESSOR_H
 #define __WASABI_IFC_MESSAGEPROCESSOR_H
 
-#include <bfc/dispatch.h>
+#include "../../bfc/dispatch.h"
+
 #include <windows.h>
+
 class ifc_messageprocessor : public Dispatchable
 {
 protected:

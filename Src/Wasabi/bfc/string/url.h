@@ -1,8 +1,8 @@
 #ifndef _URL_H
 #define _URL_H
 
-#include <bfc/common.h>
-#include <bfc/string/StringW.h>
+#include "../common.h"
+#include "StringW.h"
 
 //#define URLENCODE_NOTHING                 1     // encode nothing (add some flags!), default is to start with everything
 #define URLENCODE_EXCLUDEALPHANUM         2     // do not encode characters that are alphanumeric (a-z,0-1) or _ - and .

@@ -1,9 +1,9 @@
 #ifndef _FILENAME_H
 #define _FILENAME_H
 
-#include <bfc/string/StringW.h>
-#include <bfc/string/playstring.h>
-#include <bfc/dispatch.h>
+#include "../string/StringW.h"
+#include "../string/playstring.h"
+#include "../dispatch.h"
 
 // a simple class to drag-and-drop filenames around
 

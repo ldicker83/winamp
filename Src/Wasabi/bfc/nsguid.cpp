@@ -1,5 +1,5 @@
 #include "nsguid.h"
-#include <bfc/wasabi_std.h>
+#include "wasabi_std.h"
 #ifdef LINUX
 #include <uuid/uuid.h>
 #endif

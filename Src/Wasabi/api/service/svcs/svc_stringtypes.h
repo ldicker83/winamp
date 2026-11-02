@@ -1,6 +1,8 @@
 #ifndef _SVC_STRINGTYPES_H
 #define _SVC_STRINGTYPES_H
 
+#include "../../../bfc/std_mkncc.h"
+
 // Here, you look like you're in need of some error codes.
 namespace SvcStrCnv {
   typedef enum {

@@ -1,13 +1,9 @@
-#ifndef _PTRLIST_H
-#define _PTRLIST_H
+#pragma once
 
-#include <bfc/std_math.h>
-//#include <bfc/memblock.h>
-#include <bfc/bfc_assert.h>
+#include "std_math.h"
+#include "bfc_assert.h"
+#include "platform/platform.h"
 
-#include <bfc/platform/platform.h>
-
-//#include <wasabicfg.h>
 
 #ifdef _DEBUG
 extern int ptrlist_totalnitems;
@@ -770,8 +766,3 @@ public:
 		return item;
 	}
 };
-
-
-#include <bfc/foreach.h>
-
-#endif

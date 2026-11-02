@@ -1,7 +1,9 @@
-#include <bfc/wasabi_std.h>
-#include <bfc/std_mem.h>
-#include <bfc/nsguid.h>
 #include "StringW.h"
+
+#include "../wasabi_std.h"
+#include "../std_mem.h"
+#include "../nsguid.h"
+
 #ifdef _WIN32
 #include <shlwapi.h>
 #endif

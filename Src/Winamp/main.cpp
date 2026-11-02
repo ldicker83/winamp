@@ -28,6 +28,8 @@
 #include <shlwapi.h>
 #include <shobjidl.h>
 
+#include <string>
+
 #include "WAT/WAT.h"
 
 #ifndef WM_DWMSENDICONICTHUMBNAIL
@@ -65,7 +67,8 @@ char g_audiocdletter[ 4 ] = { 0 };
 int g_audiocdletters = 0;
 const char app_name[] = "Winamp", app_version[] = APP_VERSION, app_version_string[] = APP_VERSION_STRING; // application name and version strings
 int g_fullstop;
-char *app_date = __DATE__;
+//char *app_date = __DATE__;
+const std::string app_date{ __DATE__ };
 int g_stopaftercur;
 int is_install;
 HWND hTooltipWindow, hEQTooltipWindow, hVideoTooltipWindow, hPLTooltipWindow;
@@ -137,15 +140,15 @@ int bNoHwndOther = 0;
 
 static void CreateEQPresets()
 {
-	if ( !PathFileExistsW( EQDIR1 ) )
+	if (!PathFileExistsW(EQDIR1))
 	{
-		int x;
-		struct
+		struct EQSET
 		{
-			char *s;
-			unsigned char tab[ 10 ];
-		}
-		eqsets[] =
+			const std::string s;
+			unsigned char tab[10];
+		};
+
+		EQSET eqsets[] =
 		{
 			{"Classical", {31, 31, 31, 31, 31, 31, 44, 44, 44, 48}},
 			{"Club", {31, 31, 26, 22, 22, 22, 26, 31, 31, 31}},
@@ -167,8 +170,10 @@ static void CreateEQPresets()
 			{"Techno", {19, 22, 31, 41, 40, 31, 19, 16, 16, 17}},
 		};
 
-		for ( x = 0; x < sizeof( eqsets ) / sizeof( eqsets[ 0 ] ); x++ )
-			writeEQfile_init( EQDIR1, eqsets[ x ].s, eqsets[ x ].tab );
+		for (int x = 0; x < sizeof(eqsets) / sizeof(eqsets[0]); x++)
+		{
+			writeEQfile_init(EQDIR1, eqsets[x].s.c_str(), eqsets[x].tab);
+		}
 	}
 }
 

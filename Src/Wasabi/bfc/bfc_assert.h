@@ -1,7 +1,7 @@
 #ifndef _ASSERT_H
 #define _ASSERT_H
 
-#include <bfc/wasabi_std.h>
+#include "wasabi_std.h"
 
 #ifdef CPLUSPLUS
 extern "C" {

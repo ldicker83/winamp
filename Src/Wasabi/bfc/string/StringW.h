@@ -15,7 +15,7 @@
   @see DebugString
 */
 
-#include <bfc/platform/types.h>
+#include "../platform/types.h"
 
 class StringW
 {

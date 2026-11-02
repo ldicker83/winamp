@@ -1,5 +1,5 @@
 /* Based on code from Dave Winer (http://www.scripting.com/midas/base64/) */
-#include "precomp_wasabi_bfc.h"
+#include "../precomp_wasabi_bfc.h"
 #include "base64.h"
  
 char Base64::encodingTable [64] = {

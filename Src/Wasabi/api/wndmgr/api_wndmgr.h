@@ -1,8 +1,8 @@
 #ifndef __WNDMGR_API_H
 #define __WNDMGR_API_H
 
-#include <bfc/dispatch.h>
-#include <bfc/nsguid.h>
+#include "../../bfc/dispatch.h"
+#include "../../bfc/nsguid.h"
 
 class ifc_window;
 class WindowHolder;

@@ -1,7 +1,10 @@
 #pragma once
-#include <bfc/dispatch.h>
-#include <api/skin/skinitem.h>
-#include <api/skin/skin.h>
+
+#include "skinitem.h"
+#include "skin.h"
+
+#include "../../bfc/dispatch.h"
+
 #include <tataki/region/region.h>
 
 class api_palette : public Dispatchable

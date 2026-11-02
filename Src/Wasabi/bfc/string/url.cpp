@@ -1,7 +1,8 @@
-#include "precomp_wasabi_bfc.h"
+#include "../precomp_wasabi_bfc.h"
+
 #include "url.h"
 
-#include <bfc/wasabi_std.h>
+#include "../wasabi_std.h"
 
 void Url::encode(StringW &dest, int use_plus_for_space, int encoding, int style)
 {

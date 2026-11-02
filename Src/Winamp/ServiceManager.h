@@ -1,7 +1,7 @@
 #ifndef NULLSOFT_SERVICEMANAGERH
 #define NULLSOFT_SERVICEMANAGERH
 
-#include <api/service/api_service.h>
+#include "api/service/api_service.h"
 #include "../nu/AutoLock.h"
 #include <vector>
 #include <map>
@@ -35,7 +35,7 @@ protected:
 	RECVS_DISPATCH;
 	
 private:
-	Nullsoft::Utility::LockGuard serviceGuard;
+	//Nullsoft::Utility::LockGuard serviceGuard;
 	typedef std::vector<waServiceFactory *> ServiceList;
 	ServiceList services;
 	std::vector<Counter *> locks;

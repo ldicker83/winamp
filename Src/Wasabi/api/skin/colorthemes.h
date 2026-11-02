@@ -1,7 +1,7 @@
 #ifndef __COLORTHEMEGROUP_H
 #define __COLORTHEMEGROUP_H
 
-#include <bfc/dispatch.h>
+#include "../../bfc/dispatch.h"
 
 class ColorThemeGroup : public Dispatchable 
 {

@@ -1,9 +1,9 @@
 #ifndef _PATHPARSE_H
 #define _PATHPARSE_H
 
-#include <bfc/ptrlist.h>
-#include <bfc/string/bfcstring.h>
-#include <bfc/string/StringW.h>
+#include "../ptrlist.h"
+#include "../string/bfcstring.h"
+#include "../string/StringW.h"
 
 /**
   PathParser is a class that parses a DOS/Windows (example: C:\DOS) 
@@ -44,7 +44,8 @@ public:
   */
   char *enumString(int i);
 
-  char *enumStringSafe(int i, char *def_val="");
+  // \fixme This will probably cause issues with anything expecting an actual value over a nullptr
+  char *enumStringSafe(int i, char *def_val = nullptr);
 
   /**
     Gets the last path element from the parsed path.
@@ -112,7 +113,8 @@ public:
   */
   wchar_t *enumString(int i);
 
-  wchar_t *enumStringSafe(int i, wchar_t *def_val=L"");
+  // \fixme This will probably cause issues with anything expecting an actual value over a nullptr
+  wchar_t *enumStringSafe(int i, wchar_t *def_val=nullptr);
 
   /**
     Gets the last path element from the parsed path.

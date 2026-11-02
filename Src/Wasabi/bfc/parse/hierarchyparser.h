@@ -1,9 +1,9 @@
 #ifndef __PARAMPARSE_H
 #define __PARAMPARSE_H
 
-#include <bfc/parse/pathparse.h>
-#include <bfc/node.h>
-#include <bfc/string/StringW.h>
+#include "../parse/pathparse.h"
+#include "../node.h"
+#include "../string/StringW.h"
 
 
 // typedef NodeC<String> HPNode   // OH YAH, YOU CAN'T FWD REF TYPEDEFS.  STOOOOOOPID.

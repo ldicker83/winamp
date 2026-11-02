@@ -1,8 +1,8 @@
 #ifndef __API_SKIN_H
 #define __API_SKIN_H
 
-#include <wasabicfg.h>
-#include <bfc/dispatch.h>
+#include "../../wasabicfg.h"
+#include "../../bfc/dispatch.h"
 
 class ifc_window;
 class GuiObject;

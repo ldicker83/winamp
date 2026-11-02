@@ -1,7 +1,7 @@
 #pragma once
 
 #include <bfc/dispatch.h>
-#include <bfc/platform/guid.h>
+//#include <bfc/platform/guid.h>
 
 class api_urlmanager : public Dispatchable
 {

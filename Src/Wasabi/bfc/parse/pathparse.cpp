@@ -1,6 +1,7 @@
-#include "precomp_wasabi_bfc.h"
-#include <bfc/wasabi_std.h>
 #include "pathparse.h"
+
+#include "../precomp_wasabi_bfc.h"
+#include "../wasabi_std.h"
 
 PathParser::PathParser(const char *_str, const char *sep, int uniquestrs) :
   processed(FALSE), str(_str ? _str : ""), separators(sep), uniques(uniquestrs)

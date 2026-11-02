@@ -1,12 +1,12 @@
 #include "precomp_wasabi_bfc.h"
 
 #include "wasabi_std_wnd.h"
-#include "api.h"
-#include <api/wnd/api_window.h>
-#include <api/wnd/wndevent.h>
-#include <api/wnd/wndevent.h>
-#include <shobjidl.h>
-#include "../winamp/wa_ipc.h"
+#include "../api.h"
+#include "../api/wnd/api_window.h"
+#include "../api/wnd/wndevent.h"
+#include "../api/wnd/wndevent.h"
+//#include ../shobjidl.h
+#include "../../winamp/wa_ipc.h"
 
 #ifndef AC_SRC_ALPHA
 const int AC_SRC_ALPHA = 1;

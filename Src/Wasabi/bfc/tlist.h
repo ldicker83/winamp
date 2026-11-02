@@ -1,10 +1,12 @@
-//PORTABLE
-#ifndef _TLIST_H
-#define _TLIST_H
+#pragma once
 
-#include <bfc/common.h>
-#include <bfc/wasabi_std.h>
-#include <bfc/named.h>
+#include "common.h"
+#include "bfc_assert.h"
+
+#include "named.h"
+#include "std_mem.h"
+#include "wasabi_std.h"
+
 
 /*
 
@@ -15,8 +17,6 @@ will not be called.
 
 */
 
-#include <bfc/bfc_assert.h>
-#include <bfc/std_mem.h>
 
 #define TLIST_INCREMENT 32
 
@@ -151,6 +151,3 @@ private:
   int nitems, nslots;
   T *items;
 };
-
-
-#endif

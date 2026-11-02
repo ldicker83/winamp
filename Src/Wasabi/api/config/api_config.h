@@ -9,8 +9,8 @@
 #ifndef __API_CONFIG_H
 #define __API_CONFIG_H
 
-#include <bfc/dispatch.h>
-#include <bfc/platform/types.h>
+#include "../../bfc/dispatch.h"
+#include "../../bfc/platform/types.h"
 
 class CfgItem;
 class ConfigFile;

@@ -1,4 +1,4 @@
-#include "precomp.h"
+#include "../../precomp.h"
 #include "paintcb.h"
 #include "api_window.h"
 

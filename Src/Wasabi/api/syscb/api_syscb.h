@@ -9,8 +9,8 @@
 #ifndef __API_SYSCB_H
 #define __API_SYSCB_H
 
-#include <bfc/dispatch.h>
-#include <bfc/platform/types.h>
+#include "../../bfc/dispatch.h"
+#include "../../bfc/platform/types.h"
 
 class SysCallback;
 

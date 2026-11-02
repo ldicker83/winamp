@@ -1,5 +1,4 @@
-#ifndef _COMMON_H
-#define _COMMON_H
+#pragma once
 
 #ifdef WIN32
 // disable "dll-interface to be used by clients of class" warning message.
@@ -18,6 +17,4 @@
 #define EXTC extern "C" 
 #endif
 
-#include <bfc/wasabi_std.h>
-
-#endif /* _COMMON_H */
+#include "wasabi_std.h"

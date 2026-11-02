@@ -1,6 +1,6 @@
-#include "precomp_wasabi_bfc.h"
-
 #include "playstring.h"
+
+#include "../precomp_wasabi_bfc.h"
 
 #define USE_TABLE
 

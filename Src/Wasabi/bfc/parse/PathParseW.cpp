@@ -1,5 +1,7 @@
-#include <bfc/bfc_assert.h>
 #include "pathparse.h"
+
+#include "../bfc_assert.h"
+
 
 PathParserW::PathParserW(const wchar_t *_str, const wchar_t *sep, int uniquestrs) :
   processed(FALSE), str(_str ? _str : L""), separators(sep), uniques(uniquestrs)

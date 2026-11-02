@@ -91,7 +91,8 @@ private:
 	bool FilterMessage(MSG *msg);
 	bool DirectMouseWheel_ProccessMessage(MSG *msg);
 	void DirectMouseWheel_InitBlackList();
-	friend static BOOL DirectMouseWheel_RegisterMessage();
+	//friend static BOOL DirectMouseWheel_RegisterMessage();
+	static BOOL DirectMouseWheel_RegisterMessage();
 	static LRESULT CALLBACK MessageHookProc(INT code, WPARAM wParam, LPARAM lParam);
 
 private:

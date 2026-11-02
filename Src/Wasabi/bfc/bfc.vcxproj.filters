@@ -100,9 +100,6 @@
     <ClCompile Include="platform\platform.cpp">
       <Filter>Source Files\platform</Filter>
     </ClCompile>
-    <ClCompile Include="string\bigstring.cpp">
-      <Filter>Source Files\string</Filter>
-    </ClCompile>
     <ClCompile Include="string\encodedstr.cpp">
       <Filter>Source Files\string</Filter>
     </ClCompile>
@@ -129,9 +126,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="assert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="bitlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -252,9 +246,6 @@
     <ClInclude Include="platform\win32.h">
       <Filter>Header Files\platform</Filter>
     </ClInclude>
-    <ClInclude Include="string\bigstring.h">
-      <Filter>Header Files\string</Filter>
-    </ClInclude>
     <ClInclude Include="string\encodedstr.h">
       <Filter>Header Files\string</Filter>
     </ClInclude>
@@ -277,6 +268,9 @@
       <Filter>Header Files\string</Filter>
     </ClInclude>
     <ClInclude Include="std_string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bfc_assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

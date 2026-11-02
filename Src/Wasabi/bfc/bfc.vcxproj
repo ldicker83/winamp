@@ -26,22 +26,22 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -69,8 +69,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(PlatformShortName)_$(Configuration)\</OutDir>
-    <IntDir>$(PlatformShortName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -133,7 +131,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..;../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_LIB;_WIN32_WINNT=0x0601;WINVER=0x0601;_CRT_SECURE_NO_WARNINGS;WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -145,6 +142,7 @@
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -229,7 +227,6 @@
     <ClCompile Include="std_math.cpp" />
     <ClCompile Include="wasabi_std_rect.cpp" />
     <ClCompile Include="std_wnd.cpp" />
-    <ClCompile Include="string\bigstring.cpp" />
     <ClCompile Include="string\encodedstr.cpp" />
     <ClCompile Include="string\PathString.cpp" />
     <ClCompile Include="string\playstring.cpp" />
@@ -242,7 +239,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\api\xml\xmlwrite.h" />
-    <ClInclude Include="assert.h" />
+    <ClInclude Include="bfc_assert.h" />
     <ClInclude Include="bitlist.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="critsec.h" />
@@ -281,7 +278,6 @@
     <ClInclude Include="std_mkncc.h" />
     <ClInclude Include="wasabi_std_rect.h" />
     <ClInclude Include="wasabi_std_wnd.h" />
-    <ClInclude Include="string\bigstring.h" />
     <ClInclude Include="string\encodedstr.h" />
     <ClInclude Include="string\PathString.h" />
     <ClInclude Include="string\playstring.h" />

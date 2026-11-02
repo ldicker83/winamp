@@ -1,7 +1,8 @@
-#include "precomp_wasabi_bfc.h"
 #include "paramparser.h"
-#include <bfc/nsguid.h>
-#include <bfc/wasabi_std.h>
+
+#include "../precomp_wasabi_bfc.h"
+#include "../nsguid.h"
+#include "../wasabi_std.h"
 
 int ParamParser::findGuid(GUID g) {
   for (int i=0;i<getNumItems();i++) {
