@@ -607,19 +607,19 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,80,123,10
     CONTROL         "Show the playlist number in the Windows taskbar",IDC_SHOWPLEDITPOS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,93,173,10
-    GROUPBOX        "Priority Class",IDC_STATIC,200,14,62,140
+    GROUPBOX        "Priority Class",IDC_STATIC,200,14,62,148
     RTEXT           "Realtime",IDC_STATIC,212,26,28,8
     RTEXT           "High",IDC_STATIC,224,43,16,8
     RTEXT           "Above Normal",IDC_STATIC,217,56,23,16
     RTEXT           "Normal",IDC_STATIC,217,77,23,8
     RTEXT           "Idle",IDC_STATIC,225,95,15,8
     CONTROL         "Slider1",IDC_PREFS_PRIORITY_CLASS,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | TBS_TOP | WS_TABSTOP,244,25,13,80
-    LTEXT           "Change only if needed. High and Realtime priorities are not recommended.",IDC_STATIC,205,109,52,40,WS_DISABLED
+    LTEXT           "Change only if needed. High and Realtime priorities are not recommended.",IDC_STATIC,205,109,52,48,WS_DISABLED
     CONTROL         "Recycle permanently deleted files",IDC_RECYCLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,107,124,10
     CONTROL         "Prevent the mouse wheel from altering the volume",IDC_NO_MOUSEWHEEL,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,5,120,177,10
     CONTROL         "Disable always on top while fullscreen applications are focused",IDC_DROPAOTFS,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,1,132,249,10
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,5,133,177,18
 END
 
 IDD_FILEINFO DIALOGEX 0, 0, 366, 230
