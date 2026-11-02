@@ -56,7 +56,6 @@ IDB_EQEX                BITMAP                  "resource/eq_ex.bmp"
 
 IDB_SPLASH              BITMAP                  "resource/splash2.bmp"
 
-IDB_VIDEOLOGO           BITMAP                  "resource/video_logo.bmp"
 
 IDB_VIDEO               BITMAP                  "resource/video.bmp"
 
@@ -2208,7 +2207,6 @@ BEGIN
     IDS_NOML_SAVE_RATING_TITLE "Media Library Not Detected"
     IDS_RELEASED            "Released: %s"
     IDS_EQ_TOOLTIPS         "EQ on/off|EQ auto|Open presets"
-    IDS_VID_TOOLTIPS        "Fullscreen|Normal Size|Double Size|Internet TV|Options"
     IDS_PL_TOOLTIPS         "Add Files to Playlist|Remove Files from Playlist|Select Files in Playlist|Misc Actions|Manage Playlist|Scroll Up|Scroll Down|Adjust Horizontal Size"
     IDS_P_FT_EXTENSIONS_WIN8 
                             "Extensions listed here are able to be registered to Winamp via the 'Set Default Programs' Control Panel in Windows."
