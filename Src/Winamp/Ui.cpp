@@ -69,8 +69,7 @@ static int __do_buttons(int which)
 	int m = WINAMP_BUTTON1 + which;
 	if (which == 5)
 	{
-		if (mouse_stats & MK_CONTROL) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_LOC,0);
-		else if (mouse_stats & MK_SHIFT) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_DIR,0);
+		if (mouse_stats & MK_SHIFT) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_DIR,0);
 		else SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_PLAY,0);
 	}
 	else
@@ -890,8 +889,7 @@ static int do_eject()
 		case -1:
 			do_eject_needupdate=0;
 			draw_eject(0);
-			if (mouse_stats & MK_CONTROL) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_LOC,0);
-			else if (mouse_stats & MK_SHIFT) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_DIR,0);
+			if (mouse_stats & MK_SHIFT) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_DIR,0);
 			else SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_PLAY,0);
 			break;
 		}

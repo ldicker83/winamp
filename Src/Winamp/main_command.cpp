@@ -542,9 +542,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		if (g_exit_disabled) return 0;
 		SendMessageW(hwnd, WM_CLOSE, 0, 0);
 		return 1;
-	case WINAMP_FILE_LOC:
-		plEditRefresh();
-		return 1;
 	case WINAMP_FILE_PLAY:         // open file(s)
 		getNewFile(1,        /*NULL*/DIALOG_PARENT(hwnd), 0);
 		plEditRefresh();

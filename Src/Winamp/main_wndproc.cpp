@@ -41,9 +41,7 @@ LRESULT Main_OnWASystray(HWND hwnd, int id)
 	switch (id)
 	{
 	case WM_LBUTTONUP:
-		if (GetAsyncKeyState(VK_CONTROL) & (1 << 15))
-			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_LOC, 0);
-		else if (GetAsyncKeyState(VK_SHIFT) & (1 << 15))
+		if (GetAsyncKeyState(VK_SHIFT) & (1 << 15))
 			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_PLAY, 0);
 		else if (!IsWindowVisible(hwnd))
 		{
