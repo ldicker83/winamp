@@ -50,19 +50,12 @@ static PLUGINORDER preload[] =
 	{ L"in_mp3.dll",    false },
 
 	// no extension configuration
-	{ L"in_avi.dll",    false },
-	{ L"in_cdda.dll",   false },
 	{ L"in_linein.dll", false },
-	{ L"in_mkv.dll",    false },
-	{ L"in_nsv.dll",    false },
-	{ L"in_swf.dll",    false },
 	{ L"in_vorbis.dll", false },
 
 	// extension configuration
 	{ L"in_mp4.dll",    false },
-	{ L"in_dshow.dll",  false },	// load after in_avi and in_mkv as often those extensions are associated with this one as well
 	{ L"in_flac.dll",   false },
-	{ L"in_flv.dll",    false },
 	{ L"in_wm.dll",     false },
 
 	// tend to have a lot of extensions so do later
