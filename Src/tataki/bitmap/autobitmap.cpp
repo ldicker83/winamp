@@ -1,6 +1,6 @@
 #include <tataki/api__tataki.h>
 #include "autobitmap.h"
-#include <bfc/assert.h>
+#include <bfc/bfc_assert.h>
 #define TIMER_ID_RESET 0x1664
 
 #ifdef DROP_BITMAP_ON_IDLE

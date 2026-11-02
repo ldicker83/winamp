@@ -7,7 +7,6 @@
 // Std
 #include "wasabi_std.h"
 #include "std_mem.h"
-#include "wasabi_std_wnd.h"
 #include "std_math.h"
 #include "std_string.h"
 

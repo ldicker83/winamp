@@ -7,9 +7,6 @@
     <ClCompile Include="canvas\win\win32_canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="color\skinclr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\nu\ServiceWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -17,9 +14,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="canvas\ifc_canvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="color\filteredcolor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="canvas\win\BltCanvas.cpp">
@@ -72,9 +66,6 @@
     <ClInclude Include="export.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="color\filteredcolor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="bitmap\ifc_bitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -94,9 +85,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\nu\ServiceWatcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="color\skinclr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

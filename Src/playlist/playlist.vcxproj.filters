@@ -67,24 +67,6 @@
     <ClCompile Include="PLSWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptObjectFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptObjectService.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SPlaylist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SPlaylistManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SPlaylists.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SPlaylistsEnumerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -92,9 +74,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Wasabi\bfc\assert.cpp">
-      <Filter>Source Files\Wasabi\bfc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Wasabi\bfc\foreach.cpp">
       <Filter>Source Files\Wasabi\bfc</Filter>
     </ClCompile>
     <ClCompile Include="..\Winamp\JSAPI_CallbackParameters.cpp">
@@ -109,23 +88,8 @@
     <ClCompile Include="..\Wasabi\bfc\nsguid.cpp">
       <Filter>Source Files\Wasabi\bfc</Filter>
     </ClCompile>
-    <ClCompile Include="..\Wasabi\api\script\objcontroller.cpp">
-      <Filter>Source Files\Wasabi\api</Filter>
-    </ClCompile>
     <ClCompile Include="..\Wasabi\bfc\parse\PathParseW.cpp">
       <Filter>Source Files\Wasabi\bfc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Wasabi\api\script\objects\rootobj.cpp">
-      <Filter>Source Files\Wasabi\api</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Wasabi\api\script\objects\rootobjcbx.cpp">
-      <Filter>Source Files\Wasabi\api</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Wasabi\api\script\scriptobji.cpp">
-      <Filter>Source Files\Wasabi\api</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Wasabi\api\script\scriptobjx.cpp">
-      <Filter>Source Files\Wasabi\api</Filter>
     </ClCompile>
     <ClCompile Include="..\nu\ServiceWatcher.cpp">
       <Filter>Source Files\nu</Filter>
@@ -232,24 +196,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptObjectFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptObjectService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SPlaylist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SPlaylistManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SPlaylists.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SPlaylistsEnumerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="svc_playlisthandler.h">

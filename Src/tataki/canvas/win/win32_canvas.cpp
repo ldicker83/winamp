@@ -7,11 +7,8 @@
 #include "canvas.h"
 #include <tataki/bitmap/bitmap.h>
 #include <tataki/region/region.h>
-#include <api/wnd/basewnd.h>
-#include <api/wnd/fontdef.h>
-#include <api/wnd/paintsets.h>
 
-#include <bfc/assert.h>
+#include <bfc/bfc_assert.h>
 
 #include "bltcanvas.h"
 #include <nsutil/alpha.h>
@@ -20,41 +17,26 @@
 #define CBCLASS Canvas
 START_DISPATCH;
 CB(GETHDC, getHDC);
-CB(GETROOTWND, getRootWnd);
 CB(GETBITS, getBits);
 VCB(GETOFFSETS, getOffsets);
 CB(ISFIXEDCOORDS, isFixedCoords);
 CB(GETDIM, getDim);
-CB(GETTEXTFONT, getTextFont);
-CB(GETTEXTSIZE, getTextSize);
-CB(GETTEXTBOLD, getTextBold);
-CB(GETTEXTOPAQUE, getTextOpaque);
-CB(GETTEXTUNDERLINE, getTextUnderline);
-CB(GETTEXTITALIC, getTextItalic);
-CB(GETTEXTALIGN, getTextAlign);
-CB(GETTEXTCOLOR, getTextColor);
-CB(GETTEXTBKCOLOR, getTextBkColor);
-CB(GETTEXTAA, getTextAntialias);
 CB(GETCLIPBOX, getClipBox);
 END_DISPATCH;
 #undef CBCLASS
 
 //NONPORTABLE
 
-extern const wchar_t wasabi_default_fontnameW[];
-
 Canvas::Canvas()
 		: hdc(NULL),
 		bits(NULL),
-		srcwnd(NULL),
 		fcoord(FALSE),
 		xoffset(0),		yoffset(0),
 		width(0),
 		height(0),
 		pitch(0),
 		defpen(NULL),
-		curpen(NULL),
-		userFontInfo(0)
+		curpen(NULL)
 {
 
 	//tfont = new String; // using dynamic tfont here coz we need to manage em with stack, so stacking fonts won't take sizeof(String) and their destruction will not fuxor everything
@@ -69,23 +51,11 @@ Canvas::~Canvas()
 		DeleteObject(curpen);
 	}
 
-	if (!penstack.isempty())
-		DebugStringW(L"Pen stack not empty in Canvas::~Canvas !");
-}
-
-void Canvas::setBaseWnd(BaseWnd *b)
-{
-	srcwnd = b;
 }
 
 HDC Canvas::getHDC()
 {
 	return hdc;
-}
-
-ifc_window *Canvas::getRootWnd()
-{
-	return srcwnd;
 }
 
 void *Canvas::getBits()
@@ -110,11 +80,6 @@ void Canvas::getOffsets(int *x, int *y)
 bool Canvas::isFixedCoords()
 {
 	return fcoord;
-}
-
-BaseWnd *Canvas::getBaseWnd()
-{
-	return srcwnd;
 }
 
 void Canvas::fillRgn(RegionI *r, COLORREF color)
@@ -231,37 +196,6 @@ DeleteObject(pen);
 #endif
 }
 
-int Canvas::getTextAlign()
-{
-	return getFontInfo()->alignFlags;
-}
-
-int Canvas::getTextOpaque()
-{
-	return getFontInfo()->opaque;
-}
-
-
-int Canvas::getTextUnderline()
-{
-	return getFontInfo()->underline;
-}
-
-int Canvas::getTextItalic()
-{
-	return getFontInfo()->italic;
-}
-
-int Canvas::getTextBold()
-{
-	return getFontInfo()->bold;
-}
-
-int Canvas::getTextAntialias()
-{
-	return getFontInfo()->antialias;
-}
-
 void Canvas::pushPen(COLORREF color)
 {
 	pushPen(PENSTYLE_SOLID, 1, color);
@@ -308,26 +242,6 @@ int Canvas::getPenWidth()
 	return penwidth;
 }
 
-COLORREF Canvas::getTextColor()
-{
-	return getFontInfo()->color;
-}
-
-COLORREF Canvas::getTextBkColor()
-{
-	return getFontInfo()->bgColor;
-}
-
-int Canvas::getTextSize()
-{
-	return getFontInfo()->pointSize;
-}
-
-const wchar_t *Canvas::getTextFont()
-{
-	return getFontInfo()->face;
-}
-
 void Canvas::moveTo(int x, int y)
 {
 	MoveToEx(hdc, x, y, NULL);
@@ -350,15 +264,6 @@ void Canvas::drawSysObject(const RECT *r, int sysobj, int alpha)
 	RECT i_dont_trust_ms_with_my_rect = *r;
 	switch (sysobj)
 	{
-	case DrawSysObj::BUTTON:
-		WASABI_API_WND->paintset_render(Paintset::BUTTONUP, this, r, alpha);
-		break;
-	case DrawSysObj::BUTTON_PUSHED:
-		WASABI_API_WND->paintset_render(Paintset::BUTTONDOWN, this, r, alpha);
-		break;
-	case DrawSysObj::BUTTON_DISABLED:
-		WASABI_API_WND->paintset_render(Paintset::BUTTONDISABLED, this, r, alpha);
-		break;
 #ifdef WIN32
 	case DrawSysObj::OSBUTTON:
 	{
@@ -429,71 +334,6 @@ void Canvas::drawSysObject(const RECT *r, int sysobj, int alpha)
 	break;
 	}
 #endif
-}
-
-void Canvas::textOut(int x, int y, const wchar_t *txt, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_textOut(this, WA_FONT_TEXTOUT_NORMAL, x, y, 0, 0, txt);
-	userFontInfo = 0;
-}
-
-void Canvas::textOut(int x, int y, int w, int h, const wchar_t *txt, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_textOut(this, WA_FONT_TEXTOUT_RECT, x, y, w, h, txt);
-	userFontInfo = 0;
-}
-
-void Canvas::textOutEllipsed(int x, int y, int w, int h, const wchar_t *txt, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_textOut(this, WA_FONT_TEXTOUT_ELLIPSED, x, y, w, h, txt);
-	userFontInfo = 0;
-}
-
-void Canvas::textOutWrapped(int x, int y, int w, int h, const wchar_t *txt, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_textOut(this, WA_FONT_TEXTOUT_WRAPPED, x, y, w, h, (txt));
-	userFontInfo = 0;
-}
-
-void Canvas::textOutWrappedPathed(int x, int y, int w, const wchar_t *txt, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_textOut(this, WA_FONT_TEXTOUT_WRAPPEDPATHED, x, y, w, 0, (txt));
-	userFontInfo = 0;
-}
-
-void Canvas::textOutCentered(RECT *r, const wchar_t *txt, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_textOut(this, WA_FONT_TEXTOUT_CENTERED, r->left, r->top, r->right, r->bottom, (txt));
-	userFontInfo = 0;
-}
-
-int Canvas::getTextWidth(const wchar_t *text, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	int ret = WASABI_API_FONT->font_getInfo(this, fontInfo->face, WA_FONT_GETINFO_WIDTH, (text), NULL, NULL);
-	userFontInfo = 0;
-	return ret;
-}
-
-int Canvas::getTextHeight(const wchar_t *text, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	int ret = WASABI_API_FONT->font_getInfo(this, fontInfo->face, WA_FONT_GETINFO_HEIGHT, (text), NULL, NULL);
-	userFontInfo = 0;
-	return ret;
-}
-
-void Canvas::getTextExtent(const wchar_t *txt, int *w, int *h, const Wasabi::FontInfo *fontInfo)
-{
-	userFontInfo = fontInfo;
-	WASABI_API_FONT->font_getInfo(this, fontInfo->face, WA_FONT_GETINFO_WIDTHHEIGHT, (txt), w, h);
-	userFontInfo = 0;
 }
 
 void Canvas::offsetRect(RECT *r)
@@ -992,12 +832,6 @@ void Canvas::colorToColor(COLORREF from, COLORREF to, RECT *r)
 
 double Canvas::getSystemFontScale()
 {
-	if (WASABI_API_CONFIG)
-	{
-		int v = WASABI_API_CONFIG->getIntPublic(L"manualsysmetrics", -1);
-		if (v != -1) return (v / 100.0f);
-	}
-
 	int nLogDPIX = GetDeviceCaps(getHDC(), LOGPIXELSX);
 	return ((float)nLogDPIX / 96.0f);
 }
@@ -1035,63 +869,6 @@ void Canvas::premultiply(ARGB32 *m_pBits, int nwords, int newalpha)
 	}
 }
 
-TextInfoCanvas::TextInfoCanvas(BaseWnd *basewnd)
-{
-	ASSERT(basewnd != NULL);
-	hWnd = basewnd->gethWnd();
-	hdc = GetDC(hWnd);
-}
-
-TextInfoCanvas::~TextInfoCanvas()
-{
-	if (hdc)
-		ReleaseDC(hWnd, hdc);
-}
-
-WndCanvas::WndCanvas(BaseWnd *basewnd)
-{
-	attachToClient(basewnd);
-}
-
-WndCanvas::WndCanvas()
-{
-	hWnd = NULL;
-}
-
-WndCanvas::~WndCanvas()
-{
-	if (hWnd != NULL && hdc != NULL) ReleaseDC(hWnd, hdc);
-	hdc = NULL;
-}
-
-int WndCanvas::attachToClient(BaseWnd *basewnd)
-{
-	if (basewnd == NULL)
-		return 0;
-
-	hWnd = basewnd->gethWnd();
-	if (hWnd == NULL)
-		return 0;
-
-	hdc = GetDC(hWnd);
-	if (hdc == NULL)
-		return 0;
-
-	srcwnd = basewnd;
-	return 1;
-}
-
-#if 0//CUT
-int WndCanvas::attachToWnd(HWND _hWnd)
-{
-	hWnd = _hWnd;
-	ASSERT(hWnd != NULL);
-	hdc = GetWindowDC(hWnd);
-	ASSERT(hdc != NULL);
-	return 1;
-}
-#endif
-
 PaintCanvas::PaintCanvas()
 {
 	hWnd = NULL;
@@ -1109,149 +886,13 @@ void PaintCanvas::getRcPaint(RECT *r)
 	*r = ps.rcPaint;
 }
 
-int PaintCanvas::beginPaint(BaseWnd *basewnd)
-{
-	hWnd = basewnd->gethWnd();	// NONPORTABLE
-	ASSERT(hWnd != NULL);
-	hdc = BeginPaint(hWnd, &ps);
-	ASSERT(hdc != NULL);
-	srcwnd = basewnd;
-	return 1;
-}
-
 int PaintCanvas::beginPaint(HWND wnd)
 {
 	hWnd = wnd;	// NONPORTABLE
 	ASSERT(hWnd != NULL);
 	hdc = BeginPaint(hWnd, &ps);
 	ASSERT(hdc != NULL);
-	srcwnd = NULL;
 	return 1;
-}
-
-PaintBltCanvas::PaintBltCanvas()
-{
-	hWnd = NULL;
-	wnddc = NULL;
-	hbmp = NULL;
-	prevbmp = NULL;
-	bits = NULL;
-	fcoord = TRUE;
-	nonclient = FALSE;
-}
-
-PaintBltCanvas::~PaintBltCanvas()
-{
-	RECT r;
-
-	if (hdc == NULL) return ;
-
-	ASSERT(srcwnd != NULL);
-	if (nonclient) //FG> nonclient painting fix
-		srcwnd->getNonClientRect(&r);
-	else
-		srcwnd->getClientRect(&r);
-
-	// blt here
-	//GdiFlush();
-	BitBlt(wnddc, r.left, r.top, r.right - r.left, r.bottom - r.top, hdc, 0, 0, SRCCOPY);
-
-	//SelectClipRgn(hdc, NULL);
-	// kill the bitmap and its DC
-	SelectObject(hdc, prevbmp);
-	DeleteDC(hdc);
-	hdc = NULL;
-	DeleteObject(hbmp);
-	bits = NULL;
-	width = 0;
-	height = 0;
-	pitch = 0;
-
-	EndPaint(hWnd, &ps);	// end of wnddc
-	wnddc = NULL;
-}
-
-//FG> nonclient painting fix
-int PaintBltCanvas::beginPaintNC(BaseWnd *basewnd)
-{
-	nonclient = TRUE;
-	return beginPaint(basewnd);
-}
-
-void PaintBltCanvas::getRcPaint(RECT *r)
-{
-	*r = ps.rcPaint;
-}
-
-int PaintBltCanvas::beginPaint(BaseWnd *basewnd)
-{
-
-	RECT r;
-
-	if (nonclient)
-		basewnd->getNonClientRect(&r); //FG> nonclient painting fix
-	else
-		basewnd->getClientRect(&r);
-
-	if (r.right - r.left <= 0 || r.bottom - r.top <= 0) return 0;
-
-	hWnd = basewnd->gethWnd();	// NONPORTABLE
-	ASSERT(hWnd != NULL);
-
-	BITMAPINFO bmi;
-	ZeroMemory(&bmi, sizeof bmi);
-	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = r.right - r.left;
-	bmi.bmiHeader.biHeight = -(r.bottom - r.top);
-	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biBitCount = 32;
-	bmi.bmiHeader.biCompression = BI_RGB;
-	bmi.bmiHeader.biSizeImage = 0;
-	bmi.bmiHeader.biXPelsPerMeter = 0;
-	bmi.bmiHeader.biYPelsPerMeter = 0;
-	bmi.bmiHeader.biClrUsed = 0;
-	bmi.bmiHeader.biClrImportant = 0;
-
-	wnddc = BeginPaint(hWnd, &ps);
-
-	ASSERT(wnddc != NULL);
-
-	//GdiFlush();
-	width = r.right - r.left;
-	height = -ABS(r.bottom - r.top);
-	pitch = width * 4;
-	hbmp = CreateDIBSection(wnddc, &bmi, DIB_RGB_COLORS, &bits, NULL, 0);
-
-	if (hbmp == NULL)
-	{
-		EndPaint(hWnd, &ps);	// end of wnddc
-		wnddc = NULL;
-		return 0;
-	}
-
-	// create tha DC
-	hdc = CreateCompatibleDC(wnddc);
-	if (hdc == NULL)
-	{
-		DeleteObject(hbmp);
-		EndPaint(hWnd, &ps);	// end of wnddc
-		wnddc = NULL;
-		return 0;
-	}
-	prevbmp = (HBITMAP)SelectObject(hdc, hbmp);
-
-	RegionI clip(&ps.rcPaint);
-
-	selectClipRgn(&clip);
-
-	srcwnd = basewnd;
-
-	return 1;
-}
-
-void *PaintBltCanvas::getBits()
-{
-	return bits;
 }
 
 MemCanvas::MemCanvas()
@@ -1269,14 +910,13 @@ int MemCanvas::createCompatible(Canvas *canvas)
 	ASSERT(canvas->getHDC() != NULL);
 	hdc = CreateCompatibleDC(canvas->getHDC());
 	ASSERT(hdc != NULL);
-	srcwnd = canvas->getBaseWnd();
 	return 1;
 }
 
 
-DCCanvas::DCCanvas(HDC clone, BaseWnd *srcWnd)
+DCCanvas::DCCanvas(HDC clone)
 {
-	if (clone != NULL) cloneDC(clone, srcWnd);
+	if (clone != NULL) cloneDC(clone);
 }
 
 DCCanvas::~DCCanvas()
@@ -1284,11 +924,10 @@ DCCanvas::~DCCanvas()
 	hdc = NULL;
 }
 
-int DCCanvas::cloneDC(HDC clone, BaseWnd *srcWnd)
+int DCCanvas::cloneDC(HDC clone)
 {
 	ASSERT(clone != NULL);
 	hdc = clone;
-	srcwnd = srcWnd;
 	return 1;
 }
 
@@ -1352,11 +991,10 @@ int DCBltCanvas::commitDC(void)
 	return 1;
 }
 
-int DCBltCanvas::cloneDC(HDC clone, RECT *r, BaseWnd *srcWnd)
+int DCBltCanvas::cloneDC(HDC clone, RECT *r)
 {
 	origdc = clone;
 
-	srcwnd = srcWnd;
 
 	ASSERT(r != NULL);
 	rect = *r;
@@ -1427,16 +1065,6 @@ int BaseCloneCanvas::clone(ifc_canvas *cloner)
 	cloner->getDim(&width, &height, &pitch);
 	//  srcwnd = cloner->getBaseWnd();
 	cloner->getOffsets(&xoffset, &yoffset);
-
-	canvasFontInfo.face =  cloner->getTextFont(); // just copies the pointer so be careful
-	canvasFontInfo.pointSize = cloner->getTextSize();
-	canvasFontInfo.bold = cloner->getTextBold();
-	canvasFontInfo.opaque = !!cloner->getTextOpaque();
-	canvasFontInfo.underline = !!cloner->getTextUnderline();
-	canvasFontInfo.italic = !!cloner->getTextItalic();
-	canvasFontInfo.alignFlags = cloner->getTextAlign();
-	canvasFontInfo.color = cloner->getTextColor();
-	canvasFontInfo.bgColor = cloner->getTextBkColor();
 
 	return (hdc != NULL);
 }

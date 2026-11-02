@@ -1,5 +1,6 @@
 #include "ptrlist.h"
 #include "bfc_assert.h"
+#include "memblock.h"
 
 // if this symbol is enabled, do sanity checking in a bunch of methods
 //#define DO_VERIFY_PTRLIST

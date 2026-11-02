@@ -10,15 +10,6 @@
     <ClCompile Include="critsec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="depend.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="depview.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="foreach.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="freelist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -34,9 +25,6 @@
     <ClCompile Include="nsguid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\api\wnd\paintcb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="precomp_wasabi_bfc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,25 +37,13 @@
     <ClCompile Include="wasabi_std.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="std_keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="std_math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wasabi_std_rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="std_wnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="thread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\api\syscb\callbacks\wndcb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\api\skin\xmlobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\api\xml\xmlwrite.cpp">
@@ -82,19 +58,10 @@
     <ClCompile Include="file\recursedir.cpp">
       <Filter>Source Files\file</Filter>
     </ClCompile>
-    <ClCompile Include="file\wildcharsenum.cpp">
-      <Filter>Source Files\file</Filter>
-    </ClCompile>
-    <ClCompile Include="parse\hierarchyparser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="parse\pathparse.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="parse\PathParseW.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="parse\paramparser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="platform\platform.cpp">
@@ -135,16 +102,7 @@
     <ClInclude Include="critsec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="depend.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="depview.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dispatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="foreach.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="freelist.h">
@@ -186,9 +144,6 @@
     <ClInclude Include="wasabi_std.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="std_keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="std_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -199,9 +154,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wasabi_std_rect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wasabi_std_wnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="thread.h">
@@ -224,15 +176,6 @@
     </ClInclude>
     <ClInclude Include="file\tmpnamestr.h">
       <Filter>Header Files\file</Filter>
-    </ClInclude>
-    <ClInclude Include="file\wildcharsenum.h">
-      <Filter>Header Files\file</Filter>
-    </ClInclude>
-    <ClInclude Include="parse\hierarchyparser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="parse\paramparser.h">
-      <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="parse\pathparse.h">
       <Filter>Header Files\parse</Filter>

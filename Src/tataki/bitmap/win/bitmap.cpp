@@ -1,7 +1,6 @@
 #include <tataki/api__tataki.h>
 
 //#define NO_SIMPLEFASTMODE
-#include <api/imgldr/api_imgldr.h>
 #include <tataki/blending/blending.h>
 
 #include "bitmap.h"
@@ -156,18 +155,8 @@ SkinBitmap::SkinBitmap(HINSTANCE hInstance, int id, const wchar_t *forcegroup)
 	ASSERT(hInstance != NULL);
 	ownbits = 1;
 	fromskin = 0;
-	bits = WASABI_API_IMGLDR->imgldr_makeBmp(hInstance, id,&has_alpha,&fullimage_w,&fullimage_h, forcegroup);
-	last_failed = 0;
-	if (bits == NULL)
-	{
-		//last_failed = 1;
-		//TODO: bits = WASABI_API_IMGLDR->imgldr_requestSkinBitmap(ERRORBMP, &has_alpha, &x_offset, &y_offset, &subimage_w, &subimage_h, &fullimage_w, &fullimage_h,_cached);
-	}
-	if (bits == NULL)
-	{
-		last_failed = 1;
-		bits = WASABI_API_IMGLDR->imgldr_makeBmp(HARDERRORBMP, &has_alpha, &fullimage_w, &fullimage_h);
-	}
+	bits = NULL;
+	last_failed = 1;
 }
 
 SkinBitmap::SkinBitmap(ARGB32 *_bits, int w, int h, bool own)
@@ -285,48 +274,7 @@ SkinBitmap::SkinBitmap(const wchar_t *elementname, int _cached)
 	ownbits = OWNBITS_USEIMGLDR;
 	bits = NULL;
 	fromskin = 0;
-	last_failed = 0;
-
-	if (WASABI_API_IMGLDR) // someone might be using us in Classic Skin so explicitly check this
-	{
-		bits = WASABI_API_IMGLDR->imgldr_requestSkinBitmap(elementname, &has_alpha, &x_offset, &y_offset, &subimage_w, &subimage_h, &fullimage_w, &fullimage_h,_cached);
-		fromskin = (bits != NULL);
-
-		if (bits == NULL)
-			bits = WASABI_API_IMGLDR->imgldr_makeBmp(elementname, &has_alpha, &fullimage_w, &fullimage_h);
-
-		if (bits == NULL)
-		{
-			bits = WASABI_API_IMGLDR->imgldr_requestSkinBitmap(ERRORBMP, &has_alpha, &x_offset, &y_offset, &subimage_w, &subimage_h, &fullimage_w, &fullimage_h,_cached);
-			last_failed = 1;
-		}
-
-		if (bits == NULL)
-		{
-			bits = WASABI_API_IMGLDR->imgldr_makeBmp(HARDERRORBMP, &has_alpha, &fullimage_w, &fullimage_h);
-			last_failed = 1;
-		}
-
-		// check that coordinates are correct
-		if (x_offset!=-1 && x_offset>fullimage_w) x_offset=fullimage_w-1;
-		if (y_offset!=-1 && y_offset>fullimage_h) y_offset=fullimage_h-1;
-		if (subimage_w!=-1 && (x_offset+subimage_w)>fullimage_w) subimage_w=fullimage_w-x_offset;
-		if (subimage_h!=-1 && (y_offset+subimage_h)>fullimage_h) subimage_h=fullimage_h-y_offset;
-
-			// ASSERTPR(bits != NULL, elementname);
-	if (bits == NULL)
-	{
-		DebugStringW(L"element not found ! %s\n", elementname);
-		int n = 10*10;
-		bits = (ARGB32 *)WASABI_API_MEMMGR->sysMalloc(n * sizeof(ARGB32));
-		fromskin = OWNBITS_USESYSFREE;
-		ARGB32 *p = bits;
-		while (n--)
-			*p++ = 0xFFFF00FF;
-	}
-	}
-	else
-		last_failed = 1;
+	last_failed = 1;
 }
 
 SkinBitmap::SkinBitmap(HBITMAP bitmap)
@@ -466,17 +414,6 @@ SkinBitmap::~SkinBitmap()
 				break;
 			case OWNBITS_USEIMGLDR:
 			{
-				if (WASABI_API_IMGLDR)
-				{
-					if (fromskin)
-						WASABI_API_IMGLDR->imgldr_releaseSkinBitmap(bits);
-					else
-#ifndef _WASABIRUNTIME
-						WASABI_API_IMGLDR->imgldr_releaseBmp(bits);
-#else
-						WASABI_API_IMGLDR->imgldr_releaseSkinBitmap(bits);
-#endif
-				}
 			}
 			break;
 		}

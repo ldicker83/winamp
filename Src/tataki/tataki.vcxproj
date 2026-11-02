@@ -108,6 +108,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../Wasabi;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;TATAKI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -174,6 +175,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -257,8 +259,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="canvas\PaintCanvas.h" />
     <ClInclude Include="canvas\win\bltcanvas.h" />
     <ClInclude Include="canvas\win\canvas.h" />
-    <ClInclude Include="color\filteredcolor.h" />
-    <ClInclude Include="color\skinclr.h" />
     <ClInclude Include="export.h" />
     <ClInclude Include="region\api_region.h" />
     <ClInclude Include="region\region.h" />
@@ -273,8 +273,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="canvas\ifc_canvas.cpp" />
     <ClCompile Include="canvas\win\BltCanvas.cpp" />
     <ClCompile Include="canvas\win\win32_canvas.cpp" />
-    <ClCompile Include="color\filteredcolor.cpp" />
-    <ClCompile Include="color\skinclr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="region\api_region.cpp" />
     <ClCompile Include="region\win\win32_region.cpp" />

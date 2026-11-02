@@ -11,13 +11,10 @@
 
 class Canvas;
 class MemCanvasBmp;
-class BaseWnd;
-class ifc_window;
 class api_region;
 class SkinBitmap;
 
 #include <bfc/stack.h>
-#include <api/service/svcs/svc_font.h> // for STDFONT_* stuff.  should make a std_font thingy later
 #include <bfc/dispatch.h>
 
 enum {
@@ -53,33 +50,17 @@ public:
 
 // ifc_canvas stuff
 	HDC getHDC();
-	ifc_window *getRootWnd();
 	void *getBits();
 	void getOffsets(int *x, int *y);
 	bool isFixedCoords();
 	bool getDim(int *w, int *h, int *p);
-	void setBaseWnd(BaseWnd *b);
 // end ifc_canvas stuff
-
-	virtual BaseWnd *getBaseWnd();
 
 	// graphics commands
 	void fillRect(const RECT *r, COLORREF color);
 	void fillRectAlpha(const RECT *r, COLORREF color, int alpha);
 	void fillRgn(RegionI *r, COLORREF color);
 	void drawRect(const RECT *r, int solid, COLORREF color, int alpha = 255);
-
-	// text commands
-	const wchar_t *getTextFont();
-	int getTextSize();
-	int getTextBold();
-	int getTextAntialias();
-	int getTextOpaque();
-	int getTextUnderline();
-	int getTextItalic();
-	int getTextAlign();
-	COLORREF getTextColor();
-	COLORREF getTextBkColor();
 
 	void pushPen(COLORREF color);
 	void pushPen(int style, int width, COLORREF color);
@@ -88,23 +69,6 @@ public:
 	int getPenStyle();
 	COLORREF getPenColor();
 	int getPenWidth();
-
-	// normal text
-	void textOut(int x, int y, const wchar_t *txt, const Wasabi::FontInfo *fontInfo);
-	void textOut(int x, int y, int w, int h, const wchar_t *txt, const Wasabi::FontInfo *fontInfo);
-	void textOutEllipsed(int x, int y, int w, int h, const wchar_t *txt, const Wasabi::FontInfo *fontInfo);
-	// returns height used
-	void textOutWrapped(int x, int y, int w, int h, const wchar_t *txt, const Wasabi::FontInfo *fontInfo);
-	void textOutWrappedPathed(int x, int y, int w, const wchar_t *txt, const Wasabi::FontInfo *fontInfo);
-	void textOutCentered(RECT *r, const wchar_t *txt, const Wasabi::FontInfo *fontInfo);
-
-	int getTextWidth(const wchar_t *text, const Wasabi::FontInfo *fontInfo);
-	int getTextHeight(const wchar_t *text, const Wasabi::FontInfo *fontInfo);
-	void getTextExtent(const wchar_t *text, int *w, int *h, const Wasabi::FontInfo *fontInfo);
-	int getTextHeight(const Wasabi::FontInfo *fontInfo)
-	{
-		return getTextHeight(L"M", fontInfo);
-	}
 
 	void selectClipRgn(api_region *r);
 	int getClipBox(RECT *r); // returns 0 if no clipping region
@@ -143,14 +107,6 @@ public:
 	static void premultiply(ARGB32 *m_pBits, int nwords, int newalpha = -1);
 
 protected:
-	const Wasabi::FontInfo *getFontInfo()
-	{
-		if (userFontInfo)
-			return userFontInfo;
-		else
-			return &canvasFontInfo;
-	}
-
 	RECVS_DISPATCH;
 
 	HDC hdc;
@@ -158,9 +114,6 @@ protected:
 	int width, height, pitch;
 	bool fcoord;
 	int xoffset, yoffset;
-	BaseWnd *srcwnd;
-	Wasabi::FontInfo canvasFontInfo; // to hold our defaults
-	const Wasabi::FontInfo *userFontInfo; // passed from someone calling this function.  usually is NULL
 
 private:
 	Stack<penstruct> penstack;
@@ -190,58 +143,18 @@ enum {
 };
 };
 
-class TATAKIAPI WndCanvas : public Canvas
-{
-public:
-	WndCanvas();
-	WndCanvas(BaseWnd *basewnd);
-	virtual ~WndCanvas();
-
-	// address client area
-	int attachToClient(BaseWnd *basewnd);
-//CUT  // address entire window
-//CUT  int attachToWnd(HWND _hWnd);	// NONPORTABLE: avoid! mostly for mainwnd
-
-private:
-	HWND hWnd;
-};
-
 class TATAKIAPI PaintCanvas : public Canvas
 {
 public:
 	PaintCanvas();
 	virtual ~PaintCanvas();
 
-	int beginPaint(BaseWnd *basewnd);
 	int beginPaint(HWND wnd);
 	void getRcPaint(RECT *r);
 
 private:	// NONPORTABLE
 	HWND hWnd;
 	PAINTSTRUCT ps;
-};
-
-class BltCanvas;
-class TATAKIAPI PaintBltCanvas : public Canvas
-{
-public:
-	PaintBltCanvas();
-	virtual ~PaintBltCanvas();
-	int beginPaint(BaseWnd *basewnd);
-	int beginPaintNC(BaseWnd *basewnd);
-
-	void *getBits();
-	void getRcPaint(RECT *r);
-
-private:	// NONPORTABLE
-	HWND hWnd;
-	PAINTSTRUCT ps;
-	HDC wnddc;
-	HBITMAP hbmp, prevbmp;
-	bool nonclient;
-#ifdef LINUX
-	BltCanvas *blitter;
-#endif
 };
 
 class TATAKIAPI MemCanvas : public Canvas
@@ -257,10 +170,10 @@ private:
 class TATAKIAPI DCCanvas : public Canvas
 {
 public:
-	DCCanvas(HDC clone = NULL, BaseWnd *srcWnd = NULL);
+	DCCanvas(HDC clone = NULL);
 	virtual ~DCCanvas();
 
-	int cloneDC(HDC clone, BaseWnd *srcWnd = NULL);
+	int cloneDC(HDC clone);
 };
 
 class TATAKIAPI SysCanvas : public Canvas
@@ -270,28 +183,13 @@ public:
 	virtual ~SysCanvas();
 };
 
-/* benski>
- a quick Canvas class to be created on-the-fly when you need to retrieve information about fonts
- e.g. getTextExtent
- don't try to draw with it or bad things will happen.
-
-*/
-class TATAKIAPI TextInfoCanvas : public Canvas
-{
-public:
-	TextInfoCanvas(BaseWnd *basewnd);
-	virtual ~TextInfoCanvas();
-private:
-	HWND hWnd;
-};
-
 class TATAKIAPI DCBltCanvas : public Canvas
 {
 public:
 	DCBltCanvas();
 	virtual ~DCBltCanvas();
 
-	int cloneDC(HDC clone, RECT *r, BaseWnd *srcWnd = NULL);
+	int cloneDC(HDC clone, RECT *r);
 	int setOrigDC(HDC neworigdc); // set to null to prevent commitdc on delete, non null to change destination dc
 	int commitDC(void);						// allows commit to DC without deleting
 #if 0
@@ -315,7 +213,6 @@ private:
 };
 
 
-// note: getBaseWnd() returns NULL for this class
 class TATAKIAPI BaseCloneCanvas : public Canvas
 {
 public:

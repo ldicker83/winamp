@@ -103,18 +103,11 @@ int Playlist::Swap( size_t item1, size_t item2 )
 	return PLAYLIST_SUCCESS;
 }
 
-class RandMod
-{
-public:
-	RandMod( int ( *_generator )( ) ) : generator( _generator )       {}
-	int operator ()( int n )                                          { return generator() % n; }
-	int ( *generator )( );
-};
-
 int Playlist::Randomize( int ( *generator )( ) )
 {
-	RandMod randMod( generator );
-	std::random_shuffle( entries.begin(), entries.end(), randMod );
+	// std::random_shuffle is gone in C++17, and std::shuffle can't take this generator
+	for ( size_t i = entries.size(); i > 1; --i )
+		std::swap( entries[ i - 1 ], entries[ generator() % i ] );
 
 	return PLAYLIST_SUCCESS;
 }

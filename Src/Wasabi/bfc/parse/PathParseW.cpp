@@ -42,13 +42,12 @@ void PathParserW::process() {
     postProcess(pt);
     if (uniques) {
       int exists = 0;
-      foreach(strings)
-        if (!WCSICMP(strings.getfor(), pt)) 
+      for (int i = 0; i < strings.getNumItems(); i++)
+        if (!WCSICMP(strings.enumItem(i), pt))
 				{
           exists=1;
           break;
         }
-      endfor;
       if (exists) continue;
     }
     strings.addItem(pt);

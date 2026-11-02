@@ -108,6 +108,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..;../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_LIB;_WIN32_WINNT=0x0601;WINVER=0x0601;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -152,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..;../..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -195,25 +197,17 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\api\skin\xmlobject.cpp" />
-    <ClCompile Include="..\api\syscb\callbacks\wndcb.cpp" />
-    <ClCompile Include="..\api\wnd\paintcb.cpp" />
     <ClCompile Include="..\api\xml\xmlwrite.cpp" />
     <ClCompile Include="assert.cpp" />
     <ClCompile Include="critsec.cpp" />
-    <ClCompile Include="depend.cpp" />
-    <ClCompile Include="depview.cpp" />
     <ClCompile Include="file\filename.cpp" />
     <ClCompile Include="file\readdir.cpp" />
     <ClCompile Include="file\recursedir.cpp" />
-    <ClCompile Include="file\wildcharsenum.cpp" />
-    <ClCompile Include="foreach.cpp" />
     <ClCompile Include="freelist.cpp" />
     <ClCompile Include="loadlib.cpp" />
     <ClCompile Include="memblock.cpp" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="nsguid.cpp" />
-    <ClCompile Include="parse\hierarchyparser.cpp" />
     <ClCompile Include="parse\paramparser.cpp" />
     <ClCompile Include="parse\pathparse.cpp" />
     <ClCompile Include="parse\PathParseW.cpp" />
@@ -223,10 +217,8 @@
     <ClCompile Include="stack.cpp" />
     <ClCompile Include="std_string.cpp" />
     <ClCompile Include="wasabi_std.cpp" />
-    <ClCompile Include="std_keyboard.cpp" />
     <ClCompile Include="std_math.cpp" />
     <ClCompile Include="wasabi_std_rect.cpp" />
-    <ClCompile Include="std_wnd.cpp" />
     <ClCompile Include="string\encodedstr.cpp" />
     <ClCompile Include="string\PathString.cpp" />
     <ClCompile Include="string\playstring.cpp" />
@@ -243,15 +235,11 @@
     <ClInclude Include="bitlist.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="critsec.h" />
-    <ClInclude Include="depend.h" />
-    <ClInclude Include="depview.h" />
     <ClInclude Include="dispatch.h" />
     <ClInclude Include="file\filename.h" />
     <ClInclude Include="file\readdir.h" />
     <ClInclude Include="file\recursedir.h" />
     <ClInclude Include="file\tmpnamestr.h" />
-    <ClInclude Include="file\wildcharsenum.h" />
-    <ClInclude Include="foreach.h" />
     <ClInclude Include="freelist.h" />
     <ClInclude Include="loadlib.h" />
     <ClInclude Include="memblock.h" />
@@ -260,8 +248,6 @@
     <ClInclude Include="node.h" />
     <ClInclude Include="nsguid.h" />
     <ClInclude Include="pair.h" />
-    <ClInclude Include="parse\hierarchyparser.h" />
-    <ClInclude Include="parse\paramparser.h" />
     <ClInclude Include="parse\pathparse.h" />
     <ClInclude Include="platform\platform.h" />
     <ClInclude Include="platform\types.h" />
@@ -272,12 +258,10 @@
     <ClInclude Include="stack.h" />
     <ClInclude Include="std_string.h" />
     <ClInclude Include="wasabi_std.h" />
-    <ClInclude Include="std_keyboard.h" />
     <ClInclude Include="std_math.h" />
     <ClInclude Include="std_mem.h" />
     <ClInclude Include="std_mkncc.h" />
     <ClInclude Include="wasabi_std_rect.h" />
-    <ClInclude Include="wasabi_std_wnd.h" />
     <ClInclude Include="string\encodedstr.h" />
     <ClInclude Include="string\PathString.h" />
     <ClInclude Include="string\playstring.h" />

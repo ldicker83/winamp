@@ -108,6 +108,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WINVER=0x0601;_UNICODE;UNICODE;WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -144,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -192,69 +194,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="api\config\items\attribute.cpp" />
-    <ClCompile Include="api\config\items\cfgitemi.cpp" />
-    <ClCompile Include="api\config\items\cfgitemx.cpp" />
-    <ClCompile Include="api\script\objcontroller.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_checkbox.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_container.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_edit.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_group.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_guiobject.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_layout.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_rootobj.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_slider.cpp" />
-    <ClCompile Include="api\script\objects\c_script\c_text.cpp" />
-    <ClCompile Include="api\script\objects\c_script\h_checkbox.cpp" />
-    <ClCompile Include="api\script\objects\c_script\h_edit.cpp" />
-    <ClCompile Include="api\script\objects\c_script\h_guiobject.cpp" />
-    <ClCompile Include="api\script\objects\c_script\h_rootobj.cpp" />
-    <ClCompile Include="api\script\objects\c_script\h_slider.cpp" />
-    <ClCompile Include="api\script\objects\c_script\scripthook.cpp" />
-    <ClCompile Include="api\script\objects\rootobj.cpp" />
-    <ClCompile Include="api\script\objects\rootobjcbx.cpp" />
-    <ClCompile Include="api\script\scriptobj.cpp" />
-    <ClCompile Include="api\script\scriptobji.cpp" />
-    <ClCompile Include="api\script\scriptobjx.cpp" />
     <ClCompile Include="api\service\api_service.cpp" />
     <ClCompile Include="api\service\svcenum.cpp" />
-    <ClCompile Include="api\service\svcs\svc_wndcreate.cpp" />
-    <ClCompile Include="api\service\svcs\svc_xuiobject.cpp" />
     <ClCompile Include="api\service\svc_enum.cpp" />
     <ClCompile Include="api\service\waservicefactoryx.cpp" />
-    <ClCompile Include="api\skin\nakedobject.cpp" />
-    <ClCompile Include="api\syscb\callbacks\skincb.cpp" />
     <ClCompile Include="api\syscb\callbacks\syscbx.cpp" />
-    <ClCompile Include="api\timer\timerclient.cpp" />
-    <ClCompile Include="api\wndmgr\skinwnd.cpp" />
-    <ClCompile Include="api\wnd\basewnd.cpp" />
-    <ClCompile Include="api\wnd\di.cpp" />
-    <ClCompile Include="api\wnd\findobjectcb.cpp" />
-    <ClCompile Include="api\wnd\popup.cpp" />
-    <ClCompile Include="api\wnd\rootwnd.cpp" />
-    <ClCompile Include="api\wnd\virtualwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\abstractwndhold.cpp" />
-    <ClCompile Include="api\wnd\wndclass\appbarwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\buttwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\clickwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\guiobjwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\labelwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\listwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\rootwndholder.cpp" />
-    <ClCompile Include="api\wnd\wndclass\scbkgwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\scrollbar.cpp" />
-    <ClCompile Include="api\wnd\wndclass\SelItemList.cpp" />
-    <ClCompile Include="api\wnd\wndclass\sepwnd.cpp" />
-    <ClCompile Include="api\wnd\wndclass\svcwndhold.cpp" />
-    <ClCompile Include="api\wnd\wndclass\tooltip.cpp" />
     <ClCompile Include="bfc\std_file.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api.h" />
     <ClInclude Include="api\service\api_service.h" />
-    <ClInclude Include="api\wnd\bltcanvas.h" />
-    <ClInclude Include="api\wnd\canvas.h" />
-    <ClInclude Include="api\wnd\wndclass\guiobjwnd.h" />
     <ClInclude Include="bfc\std_file.h" />
     <ClInclude Include="precomp.h" />
     <ClInclude Include="wasabicfg.h" />

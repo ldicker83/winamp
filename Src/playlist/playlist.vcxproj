@@ -107,6 +107,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..;../Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PLAYLIST_EXPORTS;_WIN32_WINNT=0x0601;WINVER=0x0601;_WIN32_IE=0x0A00;_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_WCSTOK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -169,6 +170,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..;../Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -237,13 +239,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\nu\ServiceWatcher.cpp" />
-    <ClCompile Include="..\Wasabi\api\script\objcontroller.cpp" />
-    <ClCompile Include="..\Wasabi\api\script\objects\rootobj.cpp" />
-    <ClCompile Include="..\Wasabi\api\script\objects\rootobjcbx.cpp" />
-    <ClCompile Include="..\Wasabi\api\script\scriptobji.cpp" />
-    <ClCompile Include="..\Wasabi\api\script\scriptobjx.cpp" />
     <ClCompile Include="..\Wasabi\bfc\assert.cpp" />
-    <ClCompile Include="..\Wasabi\bfc\foreach.cpp" />
     <ClCompile Include="..\Wasabi\bfc\memblock.cpp" />
     <ClCompile Include="..\Wasabi\bfc\nsguid.cpp" />
     <ClCompile Include="..\Wasabi\bfc\parse\PathParseW.cpp" />
@@ -276,12 +272,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="plstring.cpp" />
     <ClCompile Include="PLSWriter.cpp" />
     <ClCompile Include="pl_entry.cpp" />
-    <ClCompile Include="ScriptObjectFactory.cpp" />
-    <ClCompile Include="ScriptObjectService.cpp" />
-    <ClCompile Include="SPlaylist.cpp" />
-    <ClCompile Include="SPlaylistManager.cpp" />
-    <ClCompile Include="SPlaylists.cpp" />
-    <ClCompile Include="SPlaylistsEnumerator.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="XMLString.cpp" />
   </ItemGroup>
@@ -316,12 +306,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="PLSWriter.h" />
     <ClInclude Include="pl_entry.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ScriptObjectFactory.h" />
-    <ClInclude Include="ScriptObjectService.h" />
-    <ClInclude Include="SPlaylist.h" />
-    <ClInclude Include="SPlaylistManager.h" />
-    <ClInclude Include="SPlaylists.h" />
-    <ClInclude Include="SPlaylistsEnumerator.h" />
     <ClInclude Include="svc_playlisthandler.h" />
     <ClInclude Include="XMLString.h" />
   </ItemGroup>

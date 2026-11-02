@@ -13,9 +13,6 @@
 #include "../Agave/Config/api_config.h"
 #endif
 
-#include <api/script/api_maki.h>
-#define WASABI_API_MAKI makiApi
-
 #include "../Winamp/JSAPI2_api_security.h"
 extern JSAPI2::api_security *jsapi2_security;
 #define AGAVE_API_JSAPI2_SECURITY jsapi2_security

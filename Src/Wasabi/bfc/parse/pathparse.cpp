@@ -41,12 +41,11 @@ void PathParser::process() {
     postProcess(pt);
     if (uniques) {
       int exists = 0;
-      foreach(strings)
-        if (STRCASEEQL(strings.getfor(), pt)) {
+      for (int i = 0; i < strings.getNumItems(); i++)
+        if (STRCASEEQL(strings.enumItem(i), pt)) {
           exists=1;
           break;
         }
-      endfor;
       if (exists) continue;
     }
     strings.addItem(pt);

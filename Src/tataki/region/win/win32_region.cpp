@@ -1,10 +1,10 @@
 #if defined _WIN64 || defined _WIN32
 #include <tataki/api__tataki.h>
 #include "region.h"
-#include <api/imgldr/api_imgldr.h>
 #include <tataki/region/api_region.h>
 #include <tataki/canvas/ifc_canvas.h>
-#include <api/wnd/basewnd.h>
+#include <tataki/canvas/canvas.h>
+#include <bfc/memblock.h>
 
 
 #define GETOSHANDLE(x) (const_cast<api_region *>(x)->getOSHandle())
@@ -161,39 +161,12 @@ OSREGIONHANDLE RegionI::makeWindowRegion()
 RegionI::RegionI(SkinBitmap *bitmap, RECT *r, int xoffset, int yoffset, bool inverted, int dothreshold, char threshold, int thinverse, int minalpha)
 {
 	init();
-	const wchar_t *id = bitmap->getBitmapName();
-
-	if (xoffset == 0 && yoffset == 0 && r == NULL && !inverted && !dothreshold && minalpha == 1 && id != NULL && *id != 0)
-	{
-		srv = WASABI_API_IMGLDR->imgldr_requestSkinRegion(id);
-		if (srv != NULL)
-		{
-			srv->addRef(this);
-			hrgn = srv->getRegion()->getOSHandle();
-		}
-	}
-
 	if (srv == NULL)
 	{
 		if (r)
 			hrgn = alphaToRegionRect(bitmap, xoffset, yoffset, TRUE, r->left, r->top, r->right - r->left, r->bottom - r->top, inverted, dothreshold, threshold, thinverse, minalpha);
 		else
 			hrgn = alphaToRegionRect(bitmap, xoffset, yoffset, FALSE, 0, 0, 0, 0, inverted, dothreshold, threshold, thinverse, minalpha);
-
-		if (id != NULL && *id != 0)
-		{
-			if (xoffset == 0 && yoffset == 0 && r == NULL && !inverted && !dothreshold && minalpha == 1)
-			{
-				WASABI_API_IMGLDR->imgldr_cacheSkinRegion(id, this);
-				srv = WASABI_API_IMGLDR->imgldr_requestSkinRegion(id);
-				if (srv != NULL)
-				{
-					srv->addRef(this);
-					DeleteObject(hrgn);
-					hrgn = srv->getRegion()->getOSHandle();
-				}
-			}
-		}
 	}
 	optimize();
 

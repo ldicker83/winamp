@@ -38,7 +38,6 @@
 #include "std_string.h"
 #include "std_file.h"
 #include "wasabi_std_rect.h"
-#include "std_keyboard.h"
 #include <stdlib.h>
 #include <locale.h>
 #define WASABI_DEFAULT_FONTNAME "Arial"
