@@ -1297,12 +1297,6 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					SetFocus(hwnd);
 					SetForegroundWindow(hwnd);
 					return 0;
-				case IDC_PLAYLIST_ADDLOC:
-					{
-						RECT r = {0, 0, config_pe_width, config_pe_height - 37};
-						InvalidateRect(hwnd, &r, FALSE);
-					}
-					return 0;
 				case IDC_PLAYLIST_ADDDIR:
 				{
 					BROWSEINFOW bi = {0};
