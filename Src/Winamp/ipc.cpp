@@ -929,12 +929,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				HMENU hmenu = NULL;
 				switch (data)
 				{
-					case 0:
-					{
-						hmenu = GetSubMenu(GetSubMenu(top_menu, 3), 7);
-						UpdateAudioCDMenus(hmenu);
-					}
-					break;
+					case 0: hmenu = GetSubMenu(GetSubMenu(top_menu, 3), 7); break;
 					case 1: hmenu = GetSubMenu(GetSubMenu(top_menu, 3), 2); break;
 					case 2: hmenu = GetSubMenu(GetSubMenu(top_menu, 3), 6); break;
 					case 3: hmenu = GetSubMenu(GetSubMenu(top_menu, 3), 4); break;

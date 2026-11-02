@@ -2245,8 +2245,6 @@ BEGIN
     IDS_NO_MODERN_SKIN_SUPPORT 
                             "You are attempting to use a Modern skin (""%s"") but have not installed the Modern skin support plug-in required to load these skins.\n\nYou will need to re-run the Winamp installer and ensure you select Modern skin support to be able to use this skin."
     IDS_SKIN_LOAD_ERROR     "Winamp Skin Loading Error"
-    IDS_AUDIO_CD            "Audio CD %c: [%s]"
-    IDS_EMPTY               "Empty"
     IDS_BYTES               "bytes"
     IDS_KIB                 "KiB"
     IDS_MIB                 "MiB"

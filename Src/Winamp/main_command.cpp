@@ -224,21 +224,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 	case IDM_EQ_DELPRE:
 	case IDM_EQ_DELMP3:
 		return SendMessageW(hEQWindow, WM_COMMAND, LOWORD(wID), 0);
-	case ID_MAIN_PLAY_AUDIOCD:
-	case ID_MAIN_PLAY_AUDIOCD2:
-	case ID_MAIN_PLAY_AUDIOCD3:
-	case ID_MAIN_PLAY_AUDIOCD4:
-		if (g_audiocdletter[LOWORD(wID) - ID_MAIN_PLAY_AUDIOCD])
-		{
-			wchar_t s[32] = {0};
-			StopPlaying(0);
-			StringCchPrintfW(s, 32, L"cda://%c", g_audiocdletter[LOWORD(wID) - ID_MAIN_PLAY_AUDIOCD]);
-			PlayList_delete();
-			PlayList_appendthing(s, 0, 0);
-			BeginPlayback();
-			plEditRefresh();
-		}
-		return 1;
 	case ID_PE_OPEN:
 		{
 			if (!playlist_open(g_dialog_box_parent ? g_dialog_box_parent : hMainWindow)) break;

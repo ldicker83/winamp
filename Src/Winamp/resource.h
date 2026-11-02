@@ -452,8 +452,6 @@
 #define IDS_RESTART                     482
 #define IDS_NO_MODERN_SKIN_SUPPORT      483
 #define IDS_SKIN_LOAD_ERROR             484
-#define IDS_AUDIO_CD                    485
-#define IDS_EMPTY                       486
 #define IDS_BYTES                       487
 #define IDS_KIB                         488
 #define IDS_MIB                         489
@@ -1224,11 +1222,6 @@
 #define WINAMP_EDIT_BOOKMARKS           40320
 #define WINAMP_MAKECURBOOKMARK          40321
 #define ID_MAIN_PLAY_BOOKMARK_NONE      40322
-#define ID_MAIN_PLAY_AUDIOCD            40323
-#define ID_MAIN_PLAY_AUDIOCD2           40324
-#define ID_MAIN_PLAY_AUDIOCD3           40325
-#define ID_MAIN_PLAY_AUDIOCD4           40326
-#define ID_MAIN_PLAY_AUDIOCD_SEP        40327
 #define WINAMP_MINIMIZE                 40334
 #define ID_PE_FONTBIGGER                40335
 #define ID_PE_FONTSMALLER               40336

@@ -153,7 +153,7 @@ void main_Create()
 
 	g_submenus_play = GetSubMenu(main_menu, 2);
 	g_submenus_bookmarks1 = GetSubMenu(main_menu, 4);
-	g_submenus_bookmarks2 = GetSubMenu(GetSubMenu(main_menu, 2), 3 + (g_audiocdletters ? g_audiocdletters + 1 : 0));
+	g_submenus_bookmarks2 = GetSubMenu(GetSubMenu(main_menu, 2), 3);
 	g_submenus_skins1 = GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE + 3);
 	g_submenus_skins2 = GetSubMenu(GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE), 1);
 	g_submenus_vis = GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE + 2);

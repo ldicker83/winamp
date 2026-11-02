@@ -61,8 +61,6 @@ int no_notify_play = 0;
 int last_no_notify_play = 0;
 int main_delta_carryover = 0;
 int g_restartonquit = 0;
-char g_audiocdletter[ 4 ] = { 0 };
-int g_audiocdletters = 0;
 const char app_name[] = "Winamp", app_version[] = APP_VERSION, app_version_string[] = APP_VERSION_STRING; // application name and version strings
 int g_fullstop;
 //char *app_date = __DATE__;
@@ -926,63 +924,6 @@ VOID CALLBACK TaskButtonCreated( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD d
 	OnTaskbarButtonCreated( TRUE );
 }
 
-void UpdateAudioCDMenus( HMENU hmenu )
-{
-	wchar_t buf[ 32 ] = { 0 };
-	if ( IsMenu( hmenu ) && in_get_extended_fileinfoW( L"cda://", L"ext_cdda", buf, ARRAYSIZE( buf ) ) && buf[ 0 ] == L'1' )
-	{
-		for ( int i = 0; i < 5; i++ )
-		{
-			DeleteMenu( hmenu, ID_MAIN_PLAY_AUDIOCD + i, MF_BYCOMMAND );
-		}
-
-		MENUITEMINFOW i = { sizeof( i ), MIIM_TYPE | MIIM_DATA | MIIM_ID, MFT_STRING, };
-		i.wID = ID_MAIN_PLAY_AUDIOCD;
-
-		DWORD drives = GetLogicalDrives();
-		g_audiocdletters = 0;
-
-		int need_sep = 1;
-		for ( int drivemask = 0; drivemask < 32; drivemask++ )
-		{
-			if ( drives & ( 1 << drivemask ) )
-			{
-				int old_error_mode = SetErrorMode( SEM_FAILCRITICALERRORS );
-				wchar_t str[ 64 ] = { 0 }, tmp[ 64 ] = { 0 }, vol_buf[ 40 ] = { 0 }, empty[ 64 ] = { 0 };
-				DWORD system_flags = 0, max_file_len = 0;
-				char c = ( 'A' + drivemask );
-				StringCchPrintfW( str, 64, L"%c:\\", c );
-
-				if ( GetDriveTypeW( str ) == DRIVE_CDROM )
-				{
-					if ( need_sep )
-					{
-						MENUITEMINFO i2 = { sizeof( i2 ), MIIM_TYPE | MIIM_ID, MFT_SEPARATOR, };
-						i2.wID = ID_MAIN_PLAY_AUDIOCD_SEP;
-						InsertMenuItem( hmenu, 4, TRUE, &i2 );
-						need_sep = 0;
-					}
-
-					GetVolumeInformationW( str, vol_buf, ARRAYSIZE( vol_buf ), 0, &max_file_len, &system_flags, 0, 0 );
-					SetErrorMode( old_error_mode );
-
-					StringCchPrintfW( str, 256, getStringW( IDS_AUDIO_CD, tmp, 64 ), c, ( vol_buf[ 0 ] ? vol_buf : getStringW( IDS_EMPTY, empty, 64 ) ) );
-
-					g_audiocdletter[ g_audiocdletters ] = c;
-					i.dwTypeData = str;
-					i.cch = (UINT)wcslen( str );
-					InsertMenuItemW( hmenu, 4 + g_audiocdletters, TRUE, &i );
-					i.wID++;
-
-					g_audiocdletters++;
-					if ( g_audiocdletters == 4 )
-						break;
-				}
-			}
-		}
-	}
-}
-
 // Main Winamp window procedure
 // we use message crackers when available, write our own for the ones that aren't
 LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -1041,10 +982,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				l_menu_info.cch = (UINT)wcslen( l_menu_info.dwTypeData );
 				SetMenuItemInfoW( main_menu, 0, TRUE, &l_menu_info );
 				EnableMenuItem( main_menu, WINAMP_FILE_QUIT, MF_BYCOMMAND | ( g_exit_disabled ? MF_GRAYED : MF_ENABLED ) );
-			}
-			else if ( hMenu == g_submenus_play )
-			{
-				UpdateAudioCDMenus( g_submenus_play );
 			}
 			else if ( hMenu == g_submenus_bookmarks1 || hMenu == g_submenus_bookmarks2 )
 			{

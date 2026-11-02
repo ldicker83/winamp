@@ -720,21 +720,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 			lpszCmdParam = SkipXW(lpszCmdParam, 4);
 			*bCommand = MAKEWPARAM(WINAMP_BUTTON1_SHIFT, 0);
 		}
-		else if (!_wcsnicmp(lpszCmdParam, L"/CD", 3))	// CD<[0]-3>
-		{
-			wchar_t p[3] = {0};
-			lpszCmdParam = SkipXW(lpszCmdParam, 3);
-			GetParameter(lpszCmdParam, p, 3);
-
-			// only allow 4 drives so we limit to g_audiocdletters
-			int id = _wtoi(p);
-			if (id >= 0 && id < 4)
-			{
-				*bCommand = MAKEWPARAM(ID_MAIN_PLAY_AUDIOCD + id, 0);
-			}
-			else
-				ExitProcess(0);
-		}
 		else if (!_wcsnicmp(lpszCmdParam, L"/RANDOM=", 8))
 		{
 			wchar_t p[2] = {0};
