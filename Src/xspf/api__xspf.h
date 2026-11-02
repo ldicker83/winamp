@@ -5,9 +5,6 @@
 #include "api/service/api_service.h"
 
 // Media Library API
-#include "../Plugins/Library/ml_local/api_mldb.h"
-extern api_mldb *mldbApi;
-#define AGAVE_API_MLDB mldbApi
 
 #include "../Agave/Language/api_language.h"
 

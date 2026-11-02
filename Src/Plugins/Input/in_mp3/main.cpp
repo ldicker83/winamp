@@ -112,10 +112,6 @@ int g_eq_ok;
 
 int isourfile(const wchar_t *fn)
 {
-	if (!_wcsnicmp(fn,L"uvox://",7)) return 1;
-	if (!_wcsnicmp(fn,L"icy://",6)) return 1;
-	if (!_wcsnicmp(fn,L"sc://",5)) return 1;
-	if (!_wcsnicmp(fn,L"shoutcast://",12)) return 1;
 	return 0;
 }
 

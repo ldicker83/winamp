@@ -117,7 +117,7 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;AAC_SUPPORT;WIN32;_WINDOWS;_USRDLL;UNICODE_INPUT_PLUGIN;DO_LAYER12;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -134,7 +134,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>comctl32.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -156,7 +156,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;AAC_SUPPORT;WIN64;_WINDOWS;_USRDLL;UNICODE_INPUT_PLUGIN;DO_LAYER12;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -173,7 +173,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>comctl32.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -197,7 +197,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Optimization>MinSpace</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;AAC_SUPPORT;WIN32;_WINDOWS;_USRDLL;UNICODE_INPUT_PLUGIN;DO_LAYER12;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -216,7 +216,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>comctl32.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -242,7 +242,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Optimization>MinSpace</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;AAC_SUPPORT;WIN64;_WINDOWS;_USRDLL;UNICODE_INPUT_PLUGIN;DO_LAYER12;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -261,7 +261,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <DelayLoadDLLs>comctl32.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -295,10 +295,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ProjectReference Include="..\..\..\nsutil\nsutil.vcxproj">
       <Project>{dabe6307-f8dd-416d-9dac-673e2decb73f}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\replicant\jnetlib\jnetlib.vcxproj">
-      <Project>{e105a0a2-7391-47c5-86ac-718003524c3d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\replicant\nu\nu.vcxproj">
+    <ProjectReference Include="..\..\..\nu\nu.vcxproj">
       <Project>{f1f5cd60-0d5b-4cea-9eeb-2f87ff9aa915}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Wasabi\Wasabi.vcxproj">
@@ -310,7 +307,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClInclude Include="..\..\..\Wasabi\api\service\svcs\svc_metatag.h" />
     <ClInclude Include="AACFrame.h" />
     <ClInclude Include="adts.h" />
-    <ClInclude Include="adts_vlb.h" />
     <ClInclude Include="AlbumArt.h" />
     <ClInclude Include="apev2.h" />
     <ClInclude Include="api__in_mp3.h" />
@@ -336,15 +332,12 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClInclude Include="RawMediaReader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stopper.h" />
-    <ClInclude Include="uvox_3901.h" />
-    <ClInclude Include="uvox_3902.h" />
     <ClInclude Include="WasabiMetadata.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\nu\listview.cpp" />
     <ClCompile Include="..\..\..\nu\RingBuffer.cpp" />
     <ClCompile Include="AACFrame.cpp" />
-    <ClCompile Include="adts_vlb.cpp" />
     <ClCompile Include="AlbumArt.cpp" />
     <ClCompile Include="apev2.cpp" />
     <ClCompile Include="config.cpp" />
@@ -374,9 +367,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClCompile Include="pdtimer.cpp" />
     <ClCompile Include="RawMediaReader.cpp" />
     <ClCompile Include="Stopper.cpp" />
-    <ClCompile Include="titlelist.cpp" />
-    <ClCompile Include="uvox_3901.cpp" />
-    <ClCompile Include="uvox_3902.cpp" />
     <ClCompile Include="WasabiMetadata.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1168,34 +1168,34 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 							l_menu_info.dwTypeData = d.cFileName;
 							l_menu_info.cch = (UINT)wcslen( d.cFileName );
 							if ( !a )
-								if ( !RemoveMenu( hMenu, l_menu_info.wID + 4 - 32768, MF_BYPOSITION ) )
+								if ( !RemoveMenu( hMenu, l_menu_info.wID + 3 - 32768, MF_BYPOSITION ) )
 									a = 1;
 
 							if ( !l_menu_info.dwItemData && !_wcsicmp( d.cFileName, MODERN_SKIN_NAME ) )
 							{
 								mod_got = 1;
-								InsertMenuItemW( hMenu, 4, TRUE, &l_menu_info );
+								InsertMenuItemW( hMenu, 3, TRUE, &l_menu_info );
 							}
 							else if ( !_wcsicmp( d.cFileName, BENTO_SKIN_NAME ) )
 							{
 								// place below classic + modern (if it exists)
 								bento_got = 1;
-								InsertMenuItemW( hMenu, 4 + mod_got, TRUE, &l_menu_info );
+								InsertMenuItemW( hMenu, 3 + mod_got, TRUE, &l_menu_info );
 							}
 							else if ( !_wcsicmp( d.cFileName, BIG_BENTO_SKIN_NAME ) )
 							{
 								// place below classic + modern + normal bento (if it exists)
-								InsertMenuItemW( hMenu, 4 + mod_got + bento_got, TRUE, &l_menu_info );
+								InsertMenuItemW( hMenu, 3 + mod_got + bento_got, TRUE, &l_menu_info );
 							}
 							else
-								InsertMenuItemW( hMenu, l_menu_info.wID + 4 - 32768, TRUE, &l_menu_info );
+								InsertMenuItemW( hMenu, l_menu_info.wID + 3 - 32768, TRUE, &l_menu_info );
 
 							l_menu_info.wID++;
 						}
 					} while ( l_menu_info.wID < 34700 && FindNextFileW( h, &d ) );
 					FindClose( h );
 					g_SkinTop = l_menu_info.wID;
-					while ( !a ) if ( !RemoveMenu( hMenu, l_menu_info.wID++ + 4 - 32768, MF_BYPOSITION ) ) a = 1;
+					while ( !a ) if ( !RemoveMenu( hMenu, l_menu_info.wID++ + 3 - 32768, MF_BYPOSITION ) ) a = 1;
 					if ( !checked ) CheckMenuItem( hMenu, 32767, MF_CHECKED );
 				}
 			}

@@ -569,7 +569,6 @@ extern HINSTANCE language_pack_instance;
 	*** play.c 
 	*/
 	void getNewFile(int, HWND, const wchar_t *);
-	LRESULT getNewLocation(int, HWND); // if the int param is -1, returns a HGLOBAL to the thing instead of acting on it
 	void StartPlaying();
 	void StopPlaying(int);
 	void PausePlaying();

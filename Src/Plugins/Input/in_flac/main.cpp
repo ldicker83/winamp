@@ -32,15 +32,12 @@
 #include "RawReader.h"
 #include <strsafe.h>
 #include "nswasabi/ReferenceCounted.h"
-#include "mkv_flac_decoder.h"
 
 api_config *AGAVE_API_CONFIG = 0;
 api_memmgr *WASABI_API_MEMMGR=0;
 AlbumArtFactory albumArtFactory;
 static RawMediaReaderService raw_media_reader_service;
 static SingletonServiceFactory<svc_raw_media_reader, RawMediaReaderService> raw_factory;
-static MKVDecoder mkv_service;
-static SingletonServiceFactory<svc_mkvdecoder, MKVDecoder> mkv_factory;
 // wasabi based services for localisation support
 api_language *WASABI_API_LNG = 0;
 HINSTANCE WASABI_API_LNG_HINST = 0, WASABI_API_ORIG_HINST = 0;
@@ -61,7 +58,6 @@ int Init()
 	killswitch = CreateEvent(0, TRUE, FALSE, 0);
 	plugin.service->service_register(&albumArtFactory);
 	raw_factory.Register(plugin.service, &raw_media_reader_service);
-	mkv_factory.Register(plugin.service, &mkv_service);
 
 	waServiceFactory *sf = (waServiceFactory *)plugin.service->service_getServiceByGuid(AgaveConfigGUID);
 	if (sf)	AGAVE_API_CONFIG= (api_config *)sf->getInterface();

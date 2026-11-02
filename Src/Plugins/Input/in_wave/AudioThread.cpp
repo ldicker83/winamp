@@ -4,7 +4,6 @@
 #include "config.h"
 #include "api__in_wave.h"
 #include <shlwapi.h>
-#include "VirtualIO.h"
 
 // {B6CB4A7C-A8D0-4c55-8E60-9F7A7A23DA0F}
 static const GUID playbackConfigGroupGUID =
@@ -25,7 +24,6 @@ static int      frameSize   = 0; // in bytes
 static int      endOfFile   = 0;
 static int      bits        = 0;
 static SF_INFO  info;
-static void    *reader      = 0;
 
 
 int CalcBits()
@@ -127,16 +125,7 @@ void CALLBACK APCStart( ULONG_PTR p_data )
 	const wchar_t *file = (const wchar_t *)p_data;
 
 	info.format = 0;
-	if ( PathIsURLW( file ) )
-	{
-		reader = CreateReader( file );
-		if ( reader )
-			sndFile = sf_open_virtual( &httpIO, SFM_READ, &info, reader );
-	}
-	else  // It's a local file
-	{
-		sndFile = sf_wchar_open( file, SFM_READ, &info );
-	}
+	sndFile = sf_wchar_open( file, SFM_READ, &info );
 
 	if ( !sndFile )
 	{
@@ -168,10 +157,6 @@ void CALLBACK APCStart( ULONG_PTR p_data )
 	if ( latency < 0 )
 	{
 		sf_close( sndFile );
-		if ( reader )
-			DestroyReader( reader );
-
-		reader  = 0;
 		sndFile = NULL;
 
 		if ( WaitForSingleObject( kill, 200 ) == WAIT_TIMEOUT )
@@ -210,10 +195,6 @@ void CALLBACK APCStop( ULONG_PTR p_data )
 	if ( sndFile )
 	{
 		sf_close( sndFile );
-		if ( reader )
-			DestroyReader( reader );
-
-		reader  = 0;
 		sndFile = NULL;
 
 	}

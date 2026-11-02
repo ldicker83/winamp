@@ -2,8 +2,6 @@
 #include "Metadata.h"
 #include "../Winamp/wa_ipc.h"
 #include "../nu/ns_wc.h"
-#include "uvox_3901.h"
-#include "uvox_3902.h"
 #include "Stopper.h"
 #include <shlwapi.h>
 #include "../Agave/Language/api_language.h"
@@ -80,54 +78,6 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 		if (!_wcsicmp(p, L"VLB")) { StringCchCopyW(dest, destlen, L"audio/vlb"); return 1; }
 		return 0;
 	}
-	else if (!_strnicmp(data, "uvox/", 5))
-	{
-		EnterCriticalSection(&streamInfoLock);
-		if (g_playing_file)
-		{
-			if (g_playing_file->uvox_3901) // check again now that we've acquired the lock
-			{
-				Ultravox3901 uvox_metadata;
-				if (uvox_metadata.Parse(g_playing_file->uvox_3901) != API_XML_FAILURE)
-				{
-					LeaveCriticalSection(&streamInfoLock);
-					return uvox_metadata.GetExtendedData(data, dest, (int)destlen);
-				}
-			}
-			else if (g_playing_file->uvox_3902)
-			{
-				Ultravox3902 uvox_metadata;
-				if (uvox_metadata.Parse(g_playing_file->uvox_3902) != API_XML_FAILURE)
-				{
-					LeaveCriticalSection(&streamInfoLock);
-					return uvox_metadata.GetExtendedData(data, dest, (int)destlen);
-				}
-			}
-		}
-		LeaveCriticalSection(&streamInfoLock);
-		return 0;
-	}
-	else if (_stricmp(data, "0x3901") == 0)
-	{
-		EnterCriticalSection(&streamInfoLock);
-		if (g_playing_file && g_playing_file->uvox_3901) // check again now that we've acquired the lock
-		{
-			if (dest == NULL)   // It's empty, he's looking for the size of the 0x3901
-			{
-				int size = MultiByteToWideChar(CP_UTF8, 0, g_playing_file->uvox_3901, -1, 0, 0);
-				LeaveCriticalSection(&streamInfoLock);
-				return size;
-			}
-			else
-			{
-				MultiByteToWideCharSZ(CP_UTF8, 0, g_playing_file->uvox_3901, -1, dest, (int)destlen);
-				LeaveCriticalSection(&streamInfoLock);
-				return 1;
-			}
-		}
-		LeaveCriticalSection(&streamInfoLock);
-		return 0;
-	}
 	else if (!_stricmp(data, "streamtype"))
 	{
 		if (lstrcmpW(lastfn, fn))
@@ -166,46 +116,6 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 		}
 		return 0;
 	}
-	else if (!_stricmp(data, "streamtitle"))
-	{
-		EnterCriticalSection(&streamInfoLock);
-		if (g_playing_file) // check again now that we've acquired the lock
-			ConvertTryUTF8(g_playing_file->stream_current_title, dest, destlen);
-		else
-			dest[0]=0;
-		LeaveCriticalSection(&streamInfoLock);
-		return 1;
-	}
-	else if (!_stricmp(data, "streamname"))
-	{
-		EnterCriticalSection(&streamInfoLock);
-		if (g_playing_file) // check again now that we've acquired the lock
-			ConvertTryUTF8(g_playing_file->stream_name, dest, destlen);
-		else
-			dest[0]=0;
-		LeaveCriticalSection(&streamInfoLock);
-		return 1;
-	}
-	else if (!_stricmp(data, "streamurl"))
-	{
-		EnterCriticalSection(&streamInfoLock);
-		if (g_playing_file) // check again now that we've acquired the lock
-			ConvertTryUTF8(g_playing_file->stream_url, dest, destlen);
-		else
-			dest[0]=0;
-		LeaveCriticalSection(&streamInfoLock);
-		return 1;
-	}	
-	else if (!_stricmp(data, "streamgenre"))
-	{
-		EnterCriticalSection(&streamInfoLock);
-		if (g_playing_file) // check again now that we've acquired the lock
-			ConvertTryUTF8(g_playing_file->stream_genre, dest, destlen);
-		else
-			dest[0]=0;
-		LeaveCriticalSection(&streamInfoLock);
-		return 1;
-	}
 	else if (!_stricmp(data, "streaminformation"))
  	{
  		EnterCriticalSection(&streamInfoLock);
@@ -218,9 +128,6 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
  	}
 
 	if (!fn || !fn[0]) return 0;
-
-	if (!_wcsnicmp(fn, L"uvox://", 7))
-		return 0;
 
 	if (g_playing_file && PathIsURL(fn) && !lstrcmpW(lastfn, fn))
 	{

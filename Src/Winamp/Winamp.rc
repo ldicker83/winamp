@@ -89,7 +89,6 @@ BEGIN
     CTEXT           "Copyright © 1997-2023 Winamp SA",IDC_STATIC,0,179,301,8,SS_NOTIFY
     CTEXT           "v%s %s - %s",IDC_ABOUTTEXT,0,188,301,8,SS_CENTERIMAGE
     RTEXT           "Visit ",IDC_STATIC,89,197,20,8
-    CONTROL         "www.winamp.com",IDC_WINAMPLINK,"Button",BS_OWNERDRAW | BS_CENTER | BS_VCENTER | BS_FLAT | WS_TABSTOP,108,195,61,11
     LTEXT           " for updates.",IDC_STATIC,168,197,45,8
 END
 
@@ -296,7 +295,6 @@ BEGIN
     PUSHBUTTON      "&Configure",IDC_CONF,5,228,50,13,WS_DISABLED
     PUSHBUTTON      "&About",IDC_ABOUT,59,228,50,13,WS_DISABLED
     PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTINPUT,113,228,62,13,WS_DISABLED
-    CONTROL         "Get plug-ins",IDC_PLUGINVERS,"Button",BS_OWNERDRAW | WS_TABSTOP,224,230,41,9
 END
 
 IDD_NEWOUTPUT DIALOGEX 0, 0, 272, 246
@@ -310,7 +308,6 @@ BEGIN
     PUSHBUTTON      "&Configure",IDC_CONF2,5,228,50,13,WS_DISABLED
     PUSHBUTTON      "&About",IDC_ABOUT2,59,228,50,13,WS_DISABLED
     PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTOUT,113,228,62,13,WS_DISABLED
-    CONTROL         "Get plug-ins",IDC_PLUGINVERS,"Button",BS_OWNERDRAW | WS_TABSTOP,224,230,41,9
 END
 
 IDD_NEWVIS DIALOGEX 0, 0, 272, 246
@@ -327,7 +324,6 @@ BEGIN
     PUSHBUTTON      "&Stop",IDC_VISSTOP,45,228,36,13
     PUSHBUTTON      "&Configure",IDC_VISCONF,85,228,48,13
     PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTVIS,137,228,62,13
-    CONTROL         "Get plug-ins",IDC_PLUGINVERS,"Button",BS_OWNERDRAW | WS_TABSTOP,224,230,41,9
 END
 
 IDD_NEWDSP DIALOGEX 0, 0, 272, 246
@@ -342,7 +338,6 @@ BEGIN
     COMBOBOX        IDC_DSPMOD,61,211,204,64,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&Configure active plug-in",IDC_DSPCONF,5,228,90,13,WS_DISABLED
     PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTDSP,99,228,62,13,WS_DISABLED
-    CONTROL         "Get plug-ins",IDC_PLUGINVERS,"Button",BS_OWNERDRAW | WS_TABSTOP,224,230,41,9
 END
 
 IDD_NEWGEN DIALOGEX 0, 0, 272, 246
@@ -355,7 +350,6 @@ BEGIN
     LISTBOX         IDC_GENLIB,5,26,259,198,LBS_SORT | LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&Configure selected plug-in",IDC_GENCONF,5,228,96,13,WS_DISABLED
     PUSHBUTTON      "Uninstall selected plug-in",IDC_UNINST,105,228,90,13,WS_DISABLED
-    CONTROL         "Get plug-ins",IDC_PLUGINVERS,"Button",BS_OWNERDRAW | WS_TABSTOP,224,230,41,9
 END
 
 IDD_NEWSKIN DIALOGEX 0, 0, 273, 246
@@ -374,7 +368,6 @@ BEGIN
     LTEXT           "To uninstall / rename a skin without switching skins, right click on the skin you wish to uninstall or rename.",IDC_STATIC,186,137,79,41
     LTEXT           "Current skin information:",IDC_STATIC,6,182,82,8
     EDITTEXT        IDC_EDIT1,6,194,174,45,ES_MULTILINE | ES_READONLY | WS_VSCROLL
-    CONTROL         "Get skins",IDC_WINAMPLINK,"Button",BS_OWNERDRAW | BS_CENTER | BS_VCENTER,224,230,41,9
 END
 
 IDD_CLASSIC_VIS DIALOGEX 0, 0, 260, 196
@@ -669,7 +662,6 @@ BEGIN
     LTEXT           "",IDC_LANG_INFO_STR,12,94,140,8
     LTEXT           "",IDC_LANG_ID_STR,163,94,35,8,0,WS_EX_RIGHT
     EDITTEXT        IDC_EDIT1,12,105,173,32,ES_MULTILINE | ES_READONLY | WS_VSCROLL
-    CONTROL         "Find more languages",IDC_WINAMPLINK,"Button",BS_OWNERDRAW | BS_CENTER | BS_VCENTER,189,128,70,9
     GROUPBOX        "Language Pack Directory",IDC_STATIC,5,147,260,31
     GROUPBOX        "Miscellaneous",IDC_STATIC,5,181,260,51
     CONTROL         "Show Language Packs in a sub-menu on the main right-click menu",IDC_SHOW_LNG_PACK,
@@ -686,16 +678,6 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     GROUPBOX        "General Preferences",IDC_STATIC,0,0,269,247
-    GROUPBOX        "Internet Connection Settings",IDC_STATIC,2,11,260,60
-    CONTROL         "Use proxy only for port 80 URLs",IDC_PROXY_ONLY_PORT_80,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,145,10,116,10
-    COMBOBOX        IDC_COMBO2,11,24,248,125,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "(optional) Specify HTTP proxy address: '[user:password@]server:port' ",IDC_STATIC,11,41,248,8
-    EDITTEXT        IDC_PROXYSTR,11,53,248,12,ES_AUTOHSCROLL | WS_DISABLED
-    CONTROL         "Check for new versions of Winamp at startup",IDC_NEWVERCHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,75,161,10
-    CONTROL         "Allow Winamp to report anonymous usage statistics",IDC_NEWVERCHECK2,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,102,181,10
     CONTROL         "Show splash screen at startup",IDC_PREFS_SPLASH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,115,113,10
     CONTROL         "Allow &multiple instances",IDC_MINST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,128,91,10
     LTEXT           "Show Winamp in:",IDC_STATIC,7,146,60,8
@@ -721,7 +703,6 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,5,222,177,10
     CONTROL         "Disable always on top while fullscreen applications are focused",IDC_DROPAOTFS,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,1,234,249,10
-    CONTROL         "Join RC Channel",IDC_NEWVERCHECK_RC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,88,161,10
 END
 
 IDD_FILEINFO DIALOGEX 0, 0, 366, 230
@@ -934,9 +915,7 @@ IDD_ABOUT_TRANSLATION DIALOGEX 0, 0, 301, 207
 STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | DS_CONTROL | DS_CENTER | WS_CHILD
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "Author's Homepage 65533",IDC_AUTHOR_HOMEPAGE,"Button",BS_OWNERDRAW | BS_CENTER | BS_VCENTER,209,186,92,9
     LTEXT           "Language packs by Winamp users are provided as a volunteer service to other Winamp users.",IDC_STATIC,6,7,288,38
-    CONTROL         "Author's Homepage 65532",IDC_AUTHOR_HOMEPAGE2,"Button",BS_OWNERDRAW | BS_CENTER | BS_VCENTER,109,186,92,9
 END
 
 IDD_CMDLINE DIALOGEX 0, 0, 430, 300
@@ -1315,7 +1294,6 @@ BEGIN
         POPUP "&Play"
         BEGIN
             MENUITEM "&File...   \tL",              WINAMP_FILE_PLAY
-            MENUITEM "&URL...\tCtrl+L",             WINAMP_FILE_LOC
             MENUITEM "&Folder...\tShift+L",         WINAMP_FILE_DIR
             MENUITEM SEPARATOR
             POPUP "&Bookmark"
@@ -1342,7 +1320,6 @@ BEGIN
             POPUP "Skins"
             BEGIN
                 MENUITEM "S&kin Browser...\tAlt+S",     WINAMP_SELSKIN
-                MENUITEM "<< Get more skins! >>",       WINAMP_GETMORESKINS
                 MENUITEM SEPARATOR
                 MENUITEM "Winamp Classic",              32767
             END
@@ -1386,12 +1363,10 @@ BEGIN
         POPUP "&Skins"
         BEGIN
             MENUITEM "S&kin Browser...\tAlt+S",     WINAMP_SELSKIN
-            MENUITEM "<< Get more skins! >>",       WINAMP_GETMORESKINS
             MENUITEM SEPARATOR
             MENUITEM "Winamp Classic",              32767
         END
         MENUITEM SEPARATOR
-        MENUITEM "Winamp &Help\tF1",            ID_HELP_HELPTOPICS
         MENUITEM SEPARATOR
         MENUITEM "E&xit\tAlt+F4",               WINAMP_FILE_QUIT
     END
@@ -1448,7 +1423,6 @@ BEGIN
         BEGIN
             MENUITEM "Add &file(s)\tL",             IDC_PLAYLIST_ADDMP3
             MENUITEM "Add f&older\tShift+L",        IDC_PLAYLIST_ADDDIR
-            MENUITEM "Add &URL\tCtrl+L",            IDC_PLAYLIST_ADDLOC
         END
         POPUP "Remove"
         BEGIN
@@ -1531,7 +1505,6 @@ BEGIN
         POPUP "Play Button"
         BEGIN
             MENUITEM "&Play/restart\tClick",        WINAMP_BUTTON2
-            MENUITEM "Open &URL...\tCtrl+Click",    WINAMP_BUTTON2_CTRL
             MENUITEM "Open &file...\tShift+Click",  WINAMP_BUTTON2_SHIFT
         END
         POPUP "Pause button"
@@ -1554,7 +1527,6 @@ BEGIN
         BEGIN
             MENUITEM "Open &file...\tClick",        WINAMP_FILE_PLAY
             MENUITEM "Open f&older...\tShift+Click", WINAMP_FILE_DIR
-            MENUITEM "Open &URL...\tCtrl+Click",    WINAMP_FILE_LOC
         END
         POPUP "Seek bar"
         BEGIN
@@ -1636,7 +1608,6 @@ BEGIN
     POPUP "File",                           65535,MFT_STRING,MFS_ENABLED
     BEGIN
         MENUITEM "Play &file...   \tL",         40029,MFT_STRING,MFS_ENABLED
-        MENUITEM "Play &URL...\tCtrl+L",        40185,MFT_STRING,MFS_ENABLED
         MENUITEM "Play &folder...\tShift+L",    40187,MFT_STRING,MFS_ENABLED
         POPUP "Play &bookmark",                 65535,MFT_STRING,MFS_ENABLED
         BEGIN
@@ -1647,9 +1618,6 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Open &playlist\tCtrl+O",      40202,MFT_STRING,MFS_ENABLED
         MENUITEM "&Save playlist\tCtrl+S",      40204,MFT_STRING,MFS_ENABLED
-        MENUITEM MFT_SEPARATOR
-        MENUITEM "&Add media to Library...",    40344,MFT_STRING,MFS_ENABLED
-        MENUITEM "Add current playlist to Library", ID_FILE_ADDCURRENTPLAYLISTTOLIBRARY,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "&View file info...\tAlt+3",   40188,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
@@ -1694,7 +1662,6 @@ BEGIN
         POPUP "&Skins",                         65535,MFT_STRING,MFS_ENABLED
         BEGIN
             MENUITEM "S&kin Browser...\tAlt+S",     40219,MFT_STRING,MFS_ENABLED
-            MENUITEM "<< Get more skins! >>",       40316,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
             MENUITEM "Winamp Classic",              32767,MFT_STRING,MFS_ENABLED
         END
@@ -1746,9 +1713,6 @@ BEGIN
     END
     POPUP "Help",                           65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "Winamp Help\tF1",             40347,MFT_STRING,MFS_ENABLED
-        MENUITEM "Send &Feedback",              40464,MFT_STRING,MFS_ENABLED
-        MENUITEM MFT_SEPARATOR
         MENUITEM "About &Winamp...\tCtrl+F1",   40041,MFT_STRING,MFS_ENABLED
     END
     POPUP "PE_File",                        65535,MFT_STRING,MFS_ENABLED
@@ -1797,9 +1761,6 @@ BEGIN
         MENUITEM "Import &current playlist",    40374,MFT_STRING,MFS_ENABLED
         MENUITEM "&Import playlist from file",  40360,MFT_STRING,MFS_ENABLED
         MENUITEM "&Export playlist",            40361,MFT_STRING,MFS_ENABLED
-        MENUITEM MFT_SEPARATOR
-        MENUITEM "&Add media to Library...",    40344,MFT_STRING,MFS_ENABLED
-        MENUITEM "Add current playlist to Library", ID_FILE_ADDCURRENTPLAYLISTTOLIBRARY,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "&Close Media Library\tAlt+L", 40380,MFT_STRING,MFS_ENABLED
     END
@@ -1909,9 +1870,6 @@ BEGIN
     VK_RIGHT,       WINAMP_FFWD5S,          VIRTKEY, NOINVERT
     "L",            WINAMP_FILE_DIR,        VIRTKEY, SHIFT, NOINVERT
     VK_INSERT,      WINAMP_FILE_DIR,        VIRTKEY, NOINVERT
-    "L",            WINAMP_FILE_LOC,        VIRTKEY, CONTROL, NOINVERT
-    VK_NUMPAD0,     WINAMP_FILE_LOC,        VIRTKEY, CONTROL, NOINVERT
-    "X",            WINAMP_FILE_LOC,        VIRTKEY, CONTROL, NOINVERT
     "R",            WINAMP_FILE_MANUALPLADVANCE, VIRTKEY, SHIFT, NOINVERT
     "L",            WINAMP_FILE_PLAY,       VIRTKEY, NOINVERT
     VK_NUMPAD0,     WINAMP_FILE_PLAY,       VIRTKEY, NOINVERT
@@ -1979,15 +1937,12 @@ BEGIN
     VK_SUBTRACT,    ID_PE_FONTSMALLER,      VIRTKEY, CONTROL, NOINVERT
     "R",            ID_PE_S_REV,            VIRTKEY, CONTROL, NOINVERT
     "A",            ID_PE_SELECTALL,        VIRTKEY, CONTROL, NOINVERT
-    "L",            IDC_PLAYLIST_ADDLOC,    VIRTKEY, CONTROL, NOINVERT
-    VK_NUMPAD0,     IDC_PLAYLIST_ADDLOC,    VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      IDC_PLAYLIST_ADDMP3,    VIRTKEY, CONTROL, NOINVERT
     VK_DELETE,      IDC_PLAYLIST_CROP,      VIRTKEY, CONTROL, NOINVERT
     "I",            IDC_SELECTINV,          VIRTKEY, CONTROL, NOINVERT
     "Z",            WINAMP_BUTTON1_CTRL,    VIRTKEY, CONTROL, NOINVERT
     "V",            WINAMP_BUTTON4_CTRL,    VIRTKEY, CONTROL, NOINVERT
     "B",            WINAMP_BUTTON5_CTRL,    VIRTKEY, CONTROL, NOINVERT
-    "X",            WINAMP_FILE_LOC,        VIRTKEY, CONTROL, NOINVERT
     "I",            ID_PE_BOOKMARK,         VIRTKEY, ALT, NOINVERT
     "3",            ID_PE_ID3,              VIRTKEY, ALT, NOINVERT
     VK_DOWN,        ID_PE_MOVEDOWN,         VIRTKEY, ALT, NOINVERT
@@ -2000,7 +1955,6 @@ BEGIN
     VK_DOWN,        ID_PE_SCDOWN,           VIRTKEY, SHIFT, NOINVERT
     VK_UP,          ID_PE_SCUP,             VIRTKEY, SHIFT, NOINVERT
     "L",            IDC_PLAYLIST_ADDDIR,    VIRTKEY, SHIFT, NOINVERT
-    VK_INSERT,      IDC_PLAYLIST_ADDLOC,    VIRTKEY, SHIFT, NOINVERT
     "Z",            WINAMP_BUTTON1_SHIFT,   VIRTKEY, SHIFT, NOINVERT
     "V",            WINAMP_BUTTON4_SHIFT,   VIRTKEY, SHIFT, NOINVERT
     "B",            WINAMP_BUTTON5_SHIFT,   VIRTKEY, SHIFT, NOINVERT
@@ -2053,12 +2007,10 @@ BEGIN
     "V",            WINAMP_BUTTON4_SHIFT,   VIRTKEY, SHIFT, NOINVERT
     "B",            WINAMP_BUTTON5,         VIRTKEY, NOINVERT
     "B",            WINAMP_BUTTON5_CTRL,    VIRTKEY, CONTROL, NOINVERT
-    "X",            WINAMP_FILE_LOC,        VIRTKEY, CONTROL, NOINVERT
     "X",            WINAMP_FILE_PLAY,       VIRTKEY, SHIFT, NOINVERT
     "J",            WINAMP_JUMPFILE,        VIRTKEY, NOINVERT
     VK_DECIMAL,     WINAMP_JUMPFILE,        VIRTKEY, NOINVERT
     "A",            WINAMP_OPTIONS_AOT,     VIRTKEY, CONTROL, NOINVERT
-    VK_RETURN,      WINAMP_VIDEO_TOGGLE_FS, VIRTKEY, ALT, NOINVERT
     VK_DOWN,        WINAMP_VOLUMEDOWN,      VIRTKEY, NOINVERT
     VK_UP,          WINAMP_VOLUMEUP,        VIRTKEY, NOINVERT
     "E",            WINAMP_OPTIONS_EASYMOVE, VIRTKEY, CONTROL, NOINVERT
@@ -2066,7 +2018,6 @@ END
 
 IDR_ACCELERATOR_GLOBAL ACCELERATORS
 BEGIN
-    VK_F1,          ID_HELP_HELPTOPICS,     VIRTKEY, NOINVERT
     "B",            WINAMP_BROWSER_ID,      VIRTKEY, ALT, NOINVERT
     VK_F4,          WINAMP_FILE_QUIT,       VIRTKEY, ALT, NOINVERT
     VK_F1,          WINAMP_HELP_ABOUT,      VIRTKEY, CONTROL, NOINVERT
@@ -2087,7 +2038,6 @@ BEGIN
     "W",            WINAMP_OPTIONS_WINDOWSHADE_GLOBAL, VIRTKEY, CONTROL, NOINVERT
     "K",            WINAMP_PLGSETUP,        VIRTKEY, CONTROL, NOINVERT
     "O",            WINAMP_PLGSETUP,        VIRTKEY, ALT, NOINVERT
-    VK_RETURN,      WINAMP_VIDEO_TOGGLE_FS, VIRTKEY, ALT, NOINVERT
     "K",            WINAMP_VISCONF,         VIRTKEY, ALT, NOINVERT
     "K",            WINAMP_VISPLUGIN,       VIRTKEY, SHIFT, CONTROL, NOINVERT
     "O",            ID_PE_OPEN,             VIRTKEY, CONTROL, NOINVERT
@@ -2118,7 +2068,6 @@ IDC_RESIZE              CURSOR                  "resource/resize.cur"
 // RCDATA
 //
 
-IDB_OSD                 RCDATA                  "resource\\OSD-Sprite-Controls.png"
 
 
 /////////////////////////////////////////////////////////////////////////////

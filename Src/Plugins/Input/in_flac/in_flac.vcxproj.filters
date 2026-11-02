@@ -28,9 +28,6 @@
     <ClCompile Include="Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mkv_flac_decoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Preferences.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,9 +58,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="QuickBuf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mkv_flac_decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Metadata.h">

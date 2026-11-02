@@ -9,24 +9,8 @@
 
 bool IsMyExtension(const wchar_t *filename)
 {
-	// check if it's the current stream and is playing and is SHOUTcast2
 	if (PathIsURLW(filename))
-	{
-		if (g_playing_file)
-		{
-			EnterCriticalSection(&streamInfoLock);
-			if (g_playing_file &&
-				(g_playing_file->uvox_artwork.uvox_stream_artwork || g_playing_file->uvox_artwork.uvox_playing_artwork) &&
-				!lstrcmpW(lastfn, filename)) // check again now that we've acquired the lock
-			{
-				LeaveCriticalSection(&streamInfoLock);
-				return true;
-			}
-			LeaveCriticalSection(&streamInfoLock);
-		}
-	}
-	// otherwise handle as normal embedded 
-	else
+		return false;
 	{
 		const wchar_t *extension = PathFindExtension(filename);
 		if (extension && *extension)
@@ -80,74 +64,9 @@ int ID3v2_AlbumArtProvider::GetAlbumArtData(const wchar_t *filename, const wchar
 					L"image/bmp",
 					L"image/gif"
 			};
-			if (!g_playing_file->uvox_artwork.uvox_stream_artwork)
-			{
 				int ret = g_playing_file->info.GetAlbumArt(type, bits, len, mimeType);
 				LeaveCriticalSection(&streamInfoLock);
 				return ret;
-			}
-			else
-			{
-				// will handle "playing" and "cover" - cover is the stream branding
-				// with "playing" used to provide song specific stream artwork
-				if (!_wcsicmp(type, L"playing"))
-				{
-					if (g_playing_file->uvox_artwork.uvox_playing_artwork_len > 0)
-					{
-						*len = g_playing_file->uvox_artwork.uvox_playing_artwork_len;
-						int type = g_playing_file->uvox_artwork.uvox_playing_artwork_type;
-						if(type >= 0 && type <= 3)
-						{
-							*mimeType = (wchar_t *)WASABI_API_MEMMGR->sysMalloc(12 * sizeof(wchar_t));
-							wcsncpy(*mimeType, mimeType[type], 12);
-						}
-						else
-						{
-							*mimeType = 0;
-						}
-
-						*bits = WASABI_API_MEMMGR->sysMalloc(*len);
-						memcpy(*bits, g_playing_file->uvox_artwork.uvox_playing_artwork, *len);
-
-						LeaveCriticalSection(&streamInfoLock);
-						return ALBUMARTPROVIDER_SUCCESS;
-					}
-					else
-					{
-						LeaveCriticalSection(&streamInfoLock);
-						return ALBUMARTPROVIDER_FAILURE;
-					}
-				}
-				else
-				{
-					if (g_playing_file->uvox_artwork.uvox_stream_artwork_len > 0)
-					{
-						*len = g_playing_file->uvox_artwork.uvox_stream_artwork_len;
-						
-						int type = g_playing_file->uvox_artwork.uvox_stream_artwork_type;
-						if(type >= 0 && type <= 3)
-						{
-							*mimeType = (wchar_t *)WASABI_API_MEMMGR->sysMalloc(12 * sizeof(wchar_t));
-							wcsncpy(*mimeType, mimeType[type], 12);
-						}
-						else
-						{
-							*mimeType = 0;
-						}
-
-						*bits = WASABI_API_MEMMGR->sysMalloc(*len);
-						memcpy(*bits, g_playing_file->uvox_artwork.uvox_stream_artwork, *len);
-
-						LeaveCriticalSection(&streamInfoLock);
-						return ALBUMARTPROVIDER_SUCCESS;
-					}
-					else
-					{
-						LeaveCriticalSection(&streamInfoLock);
-						return ALBUMARTPROVIDER_FAILURE;
-					}
-				}
-			}
 		}
 		LeaveCriticalSection(&streamInfoLock);
 	}

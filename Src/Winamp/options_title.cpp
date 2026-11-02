@@ -9,7 +9,6 @@
 #include "resource.h"
 #include "options.h"
 #include "api.h"
-#include <Wininet.h>
 #include "language.h"
 
 int atf_changed = 0, old_config_useexttitles = 0;

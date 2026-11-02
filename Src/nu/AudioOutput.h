@@ -288,7 +288,7 @@ namespace nu // namespace it since "AudioOutput" isn't a unique enough name
 		{
 			while (output->IsPlaying())
 			{
-				int ret = WaitOrAbort(10);
+				int ret = this->WaitOrAbort(10);
 				if (ret != 0)
 					return ret;
 
@@ -303,7 +303,7 @@ namespace nu // namespace it since "AudioOutput" isn't a unique enough name
 		{
 			while (output->CanWrite() < write_size_bytes)
 			{
-				int ret = WaitOrAbort(55);
+				int ret = this->WaitOrAbort(55);
 				if (ret != 0)
 					return ret;
 			}

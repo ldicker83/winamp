@@ -514,7 +514,7 @@ BOOL seq_base::do_ctrl(DWORD e)
 
 void seq_base::reset()
 {
-	int not,ch;
+	int note,ch;
 	for(ch=0;ch<16;ch++)
 	{
 		if (ctrl_tab[ch][0x40])
@@ -523,12 +523,12 @@ void seq_base::reset()
 			ctrl_tab[ch][0x40]=0;
 		}
 		if (ch==9) continue;
-		for(not=0;not<128;not++)
+		for(note=0;note<128;note++)
 		{
-			if (note_state(ch,not))
+			if (note_state(ch,note))
 			{
-				seq_shortmsg((not<<8)|0x80|ch);
-				note_off(ch,not);
+				seq_shortmsg((note<<8)|0x80|ch);
+				note_off(ch,note);
 			}
 		}
 	}

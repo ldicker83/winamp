@@ -1298,7 +1298,6 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					SetForegroundWindow(hwnd);
 					return 0;
 				case IDC_PLAYLIST_ADDLOC:
-					getNewLocation(0, hwnd);
 					{
 						RECT r = {0, 0, config_pe_width, config_pe_height - 37};
 						InvalidateRect(hwnd, &r, FALSE);

@@ -26,12 +26,17 @@ static int openmpt_nxfile_seek(void *stream, int64_t offset, int whence)
 		}
 		position += offset;
 	} else if (whence == OPENMPT_STREAM_SEEK_END) {
-		assert(0);
+		uint64_t length;
+		ns_error_t err = NXFileLength(f, &length);
+		if (err != NErr_Success) {
+			return -1;
+		}
+		position = length + offset;
 	} else {
 		return -1;
 	}
 	ns_error_t err = NXFileSeek(f, position);
-	if (err = NErr_Success) {
+	if (err == NErr_Success) {
 		return 0;
 	} else {
 		return -1;

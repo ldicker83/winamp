@@ -492,57 +492,10 @@ void CALLBACK APCSeek(ULONG_PTR data)
 	}
 }
 
-static const double prebuffer_seconds = 0.5;
-static bool DoBuffering(nx_file_t file)
-{
-	// TODO: check for disconnect, etc.
-
-		// anything less than half-a-second and we'll rebuffer.  but when we rebuffer, we'll get 2 seconds worth of audio
-	// also, every time we're forced to re-buffer, we'll double the buffer amount
-
-	uint64_t required;
-	if (averageBitrate > 0)
-	{
-		required = (uint64_t)((double)averageBitrate * 1000.0 * buffer_scale  * prebuffer_seconds  / 8.0);  
-	}
-	else /* no bitrate specified, let's assume 1000kbps */
-	{
-		required = (uint64_t)(1000.0 * 1000.0 * buffer_scale * prebuffer_seconds / 8.0);
-	}
-
-	uint64_t available;	
-	if (NXFileProgressiveDownloaderAvailable(file, required, &available) == NErr_True)
-		return true;
-																													
-	Buffering(0, 0);
-	bufferCount=lastoutputtime;
-	required *= 4;
-	buffer_scale *= 2.0;
-
-	while (NXFileProgressiveDownloaderAvailable(file, required, &available) == NErr_False)
-	{
-		int percent = (int)((double)available * 100.0 / (double)required);
-		if (percent <= 0)
-			percent=1;
-		if (percent > 99)
-			percent=99;
-		
-		Buffering(percent, 0);
-		if (WaitForSingleObject(killswitch, 10) == WAIT_OBJECT_0)
-		{
-			return false;
-		}
-	}
-		Buffering(100, 0);
-		bufferCount=0;
-		return true;	
-}
-
 extern HANDLE threadStarted;
 DWORD CALLBACK FLACThread(LPVOID param)
 {
 	buffer_scale=1.0;
-	bool streaming=false;
 	nx_file_t file;
 	FLACClientData state;
 	audio_output.Init(plugin.outMod);
@@ -570,22 +523,7 @@ DWORD CALLBACK FLACThread(LPVOID param)
 
 	int ret;
 		
-	if (NXPathIsURL(filename) == NErr_True)
-	{
-		// Display a window to request to download
-		// 
-		MessageBox(NULL, L"Cannot stream flac file, please download it", NULL, 0);
-		/*
-			char agent[256] = { 0 };
-			snprintf(agent, 256, "User-Agent: %S/%S", "Winamp", "5.9.1");
-			ret = NXFileOpenProgressiveDownloader(&file, filename, nx_file_FILE_read_binary, 0, agent); // TODO: calculate real user agent
-		*/
-		return NErr_Disabled;
-	}
-	else
-	{
-		ret = NXFileOpenFile(&file, filename, nx_file_FILE_read_binary);
-	}
+	ret = NXFileOpenFile(&file, filename, nx_file_FILE_read_binary);
 
 	if (ret != NErr_Success)
 	{
@@ -643,15 +581,6 @@ DWORD CALLBACK FLACThread(LPVOID param)
 	plugin.outMod->SetVolume(volume);
 	plugin.outMod->SetPan(pan);
 
-	if (streaming && !DoBuffering(file))
-	{
-		FLAC__stream_decoder_finish(decoder);
-		FLAC__stream_decoder_delete(decoder);
-		NXFileRelease(file);
-		NXURIRelease(filename);
-		
-		return 0;
-	}
 
 	if (m_force_seek != -1)
 		APCSeek((ULONG_PTR)m_force_seek);
@@ -673,15 +602,6 @@ DWORD CALLBACK FLACThread(LPVOID param)
 
 		case WAIT_TIMEOUT:
 			timeout = paused ? PAUSE_TIMEOUT : 0;
-				if (streaming && !DoBuffering(file))
-	{
-		FLAC__stream_decoder_finish(decoder);
-		FLAC__stream_decoder_delete(decoder);
-		NXFileRelease(file);
-		NXURIRelease(filename);
-		
-		return 0;
-	}
 
 			if (!paused)
 			{

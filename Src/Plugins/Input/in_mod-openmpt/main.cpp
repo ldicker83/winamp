@@ -54,9 +54,9 @@ static int Init()
 	char *next_token;
 	for (const char *extension = strtok_s((char *)extensions, ";", &next_token); extension; extension = strtok_s(NULL, ";", &next_token)) {
 		StringCbCopyExA(end, remaining, extension, &end, &remaining, 0);
-		const char *tracker = openmpt_get_tracker_name(extension);
+		char tracker[32] = {0};
+		StringCbPrintfA(tracker, sizeof(tracker), "%s Module", extension);
 		StringCbCopyExA(end+1, remaining-1, tracker, &end, &remaining, 0);
-		openmpt_free_string(tracker);
 		end++; remaining--;
 
 	}

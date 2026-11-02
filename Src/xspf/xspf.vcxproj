@@ -253,7 +253,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Plugins\General\gen_ml\ml_lib.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="XSPFHandler.cpp" />
     <ClCompile Include="XSPFHandlerFactory.cpp" />

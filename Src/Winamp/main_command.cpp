@@ -14,11 +14,6 @@
 #include "vis.h"
 EXTERN_C BOOL eggTyping;
 
-void showLibrary()
-{
-	SendMessageW(hMainWindow, WM_COMMAND, ID_FILE_SHOWLIBRARY, 0);
-}
-
 static void ToggleWindowShade_PL()
 {
 	if (config_pe_height == 14)
@@ -547,8 +542,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		if (g_exit_disabled) return 0;
 		SendMessageW(hwnd, WM_CLOSE, 0, 0);
 		return 1;
-	case WINAMP_FILE_LOC:          // open location
-		getNewLocation(1, DIALOG_PARENT(hwnd));
+	case WINAMP_FILE_LOC:
 		plEditRefresh();
 		return 1;
 	case WINAMP_FILE_PLAY:         // open file(s)

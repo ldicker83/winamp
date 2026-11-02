@@ -14,7 +14,6 @@
 #include "../nu/ns_wc.h"
 #include "../nu/AutoWide.h"
 #include "../nu/AutoCharFn.h"
-#include "VirtualIO.h"
 #include <strsafe.h>
 #include "../nu/Singleton.h"
 #include "RawReader.h"

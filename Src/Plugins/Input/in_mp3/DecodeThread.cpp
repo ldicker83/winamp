@@ -7,7 +7,8 @@
 #include "config.h"
 #include <shlwapi.h>
 #include "adts.h"
-#include "adts_vlb.h"
+#include "api__in_mp3.h"
+#include <api/service/waservicefactory.h>
 #include <foundation/error.h>
 
 // {19450308-90D7-4E45-8A9D-DC71E67123E2}
@@ -217,42 +218,6 @@ void DecodeLoop::SetupStream()
 		Sleep(50);
 
 	m_is_stream_seekable = file.IsStreamSeekable();
-	char *content_type = file.m_content_type;
-	if (content_type)
-	{
-		if (!_strnicmp(content_type, "misc/ultravox", 13))
-		{
-			switch (file.uvox_last_message)
-			{
-			case 0x8001:
-			case 0x8003:
-				isEAAC = 1;
-				isAac = 1;
-				break;
-
-			case 0x8000:
-				isAac = 1;
-				break;
-			}
-		}
-		else if (!_strnicmp(content_type, "audio/aac", 9))
-		{
-			isEAAC = 1;
-			isAac = 1;
-		}
-		else if (!_strnicmp(content_type, "audio/aacp", 10))
-		{
-			isEAAC = 1;
-			isAac = 1;
-		}
-		else if (!_strnicmp(content_type, "audio/apl", 10))
-		{
-			isEAAC = 1;
-			isAac = 1;
-		}
-	}
-
-	// todo: poll until connected to see if we get aac uvox frames or a content-type:aac header
 }
 
 DWORD DecodeLoop::OpenOutput(int numChannels, int sampleRate, int bitsPerSample)
@@ -269,23 +234,6 @@ DWORD DecodeLoop::OpenOutput(int numChannels, int sampleRate, int bitsPerSample)
 		return 0;
 	}
 	g_sndopened = 1;
-	if (maxlatency == 0 && file.IsStream() == 2) // can't use with disk writer
-	{
-		if (!killDecodeThread)
-		{
-			EnterCriticalSection(&g_lfnscs);
-			WASABI_API_LNGSTRING_BUF(IDS_CANNOT_WRITE_STREAMS_TO_DISK,lastfn_status,256);
-			LeaveCriticalSection(&g_lfnscs);
-			PostMessage(mod.hMainWindow, WM_USER, 0, IPC_UPDTITLE);
-		}
-		if (!killDecodeThread) Sleep(200);
-		if (!killDecodeThread) PostMessage(mod.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
-		g_bufferstat = 0;
-		g_closeaudio = 1;
-
-		return 0;
-	}
-
 	if (paused) mod.outMod->Pause(1);
 
 	// set the output plug-ins default volume.
@@ -539,11 +487,6 @@ DWORD DecodeLoop::OpenDecoder()
 
 				mod.UsesOutputPlug|=8;
 		}
-		if (!decoder)
-		{
-			decoder = new ADTS_VLB;
-			mod.UsesOutputPlug &= ~8;
-		}
 	}
 	else
 	{
@@ -632,11 +575,6 @@ DWORD DecodeLoop::Loop()
 
 	EnterCriticalSection(&streamInfoLock);
 	g_playing_file = &file;
-	if (file.uvox_3901)
-	{
-		PostMessage(mod.hMainWindow, WM_WA_IPC, (WPARAM) "0x3901", IPC_METADATA_CHANGED);
-			PostMessage(mod.hMainWindow, WM_WA_IPC, 0, IPC_UPDTITLE);
-	}
 	LeaveCriticalSection(&streamInfoLock);
 	
 

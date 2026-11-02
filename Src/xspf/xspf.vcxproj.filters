@@ -13,9 +13,6 @@
     <ClCompile Include="XSPFLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Plugins\General\gen_ml\ml_lib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XSPFLoader.h">

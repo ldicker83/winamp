@@ -33,15 +33,8 @@ extern "C" __declspec(dllexport)
 			return 0;
 		}
 		p = &fn[len - 3];
-		const char *tracker = openmpt_get_tracker_name(AutoChar(p));
-		if (tracker && *tracker) {
-			*dest = 0;
-			MultiByteToWideCharSZ(CP_UTF8, 0, tracker, -1, dest, (int)destlen);
-			openmpt_free_string(tracker);
-			return 1;
-		}
-		openmpt_free_string(tracker);
-		return 0;
+		StringCchPrintfW(dest, destlen, L"%s Module", p);
+		return 1;
 	} else {
 		if (!open_filename || _wcsicmp(open_filename,fn)) {
 			free(open_filename);

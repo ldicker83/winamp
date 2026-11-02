@@ -117,7 +117,7 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;IN_FLAC2_EXPORTS;UNICODE_INPUT_PLUGIN;_WIN32_WINNT=0x0601;WINVER=0x0601;_WIN32_IE=0x0A00;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;REPLICANT_INCLUDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -150,7 +150,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;IN_FLAC2_EXPORTS;UNICODE_INPUT_PLUGIN;_WIN32_WINNT=0x0601;WINVER=0x0601;_WIN32_IE=0x0A00;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;REPLICANT_INCLUDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -185,7 +185,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Optimization>MinSpace</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;IN_FLAC2_EXPORTS;UNICODE_INPUT_PLUGIN;_WIN32_WINNT=0x0601;WINVER=0x0601;_WIN32_IE=0x0A00;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;REPLICANT_INCLUDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -222,7 +222,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
       <Optimization>MinSpace</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..\replicant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN64;NDEBUG;_WINDOWS;_USRDLL;IN_FLAC2_EXPORTS;UNICODE_INPUT_PLUGIN;_WIN32_WINNT=0x0601;WINVER=0x0601;_WIN32_IE=0x0A00;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;REPLICANT_INCLUDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -254,7 +254,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\replicant\nx\nx.vcxproj">
+    <ProjectReference Include="..\..\..\nx\nx.vcxproj">
       <Project>{57c90706-b25d-4aca-9b33-95cdb2427c27}</Project>
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
@@ -274,7 +274,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClCompile Include="FLACFileCallbacks.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Metadata.cpp" />
-    <ClCompile Include="mkv_flac_decoder.cpp" />
     <ClCompile Include="Preferences.cpp" />
     <ClCompile Include="RawReader.cpp" />
     <ClCompile Include="Stopper.cpp" />
@@ -293,7 +292,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClInclude Include="FLACFileCallbacks.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Metadata.h" />
-    <ClInclude Include="mkv_flac_decoder.h" />
     <ClInclude Include="QuickBuf.h" />
     <ClInclude Include="RawReader.h" />
     <ClInclude Include="resource.h" />

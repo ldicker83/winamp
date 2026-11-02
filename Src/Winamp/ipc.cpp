@@ -893,7 +893,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_GETDSPDIRECTORYW:
 			return reinterpret_cast<LRESULT>(DSPDIR);
 		case IPC_OPENURLBOX:
-			return getNewLocation( -1, (HWND)data);
+			return 0;
 		//FG> 5/19/03 -- added an ipc call similar to WINAMP_FILE_PLAY but with a parent HWND param, like OPENURLBOX
 		case IPC_OPENFILEBOX:
 			getNewFile(1, (HWND)data, 0);

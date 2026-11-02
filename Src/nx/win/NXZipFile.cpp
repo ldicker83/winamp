@@ -155,6 +155,12 @@ static long ZCALLBACK unzip_nxfile_seek OF((voidpf opaque, voidpf stream, ZPOS64
 		return -1;
 	}
 }
+// minizip calls this after any short read, so it can't be left null
+static int ZCALLBACK unzip_nxfile_error OF((voidpf opaque, voidpf stream))
+{
+	return 0;
+}
+
 #if 0
     open64_file_func    zopen64_file;
     read_file_func      zread_file;
@@ -187,6 +193,7 @@ ns_error_t NXFileOpenZip(nx_file_t *out_file, nx_uri_t filename, nx_string_t ext
 		file_func.ztell64_file = unzip_nxfile_tell;
 		file_func.zseek64_file = unzip_nxfile_seek;
 		file_func.zclose_file = unzip_nxfile_close;
+		file_func.zerror_file = unzip_nxfile_error;
 
 	unzFile zip_file = unzOpen2_64(filename, &file_func);
 	if (zip_file == NULL) {

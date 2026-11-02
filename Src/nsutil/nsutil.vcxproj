@@ -133,7 +133,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ippcorel.lib;ippsemerged.lib;ippsmerged.lib;ippiemerged.lib;ippimerged.lib;ippccmerged.lib;ippccemerged.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ippcorel.lib;ippsemerged.lib;ippsmerged.lib;ippiemerged.lib;ippimerged.lib;ippccmerged.lib;ippccemerged.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -191,7 +191,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ippcorel.lib;ippsemerged.lib;ippsmerged.lib;ippiemerged.lib;ippimerged.lib;ippccmerged.lib;ippccemerged.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ippcorel.lib;ippsemerged.lib;ippsmerged.lib;ippiemerged.lib;ippimerged.lib;ippccmerged.lib;ippccemerged.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>..\external_dependencies\intel_ipp_6.1.1.035\ia32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcprt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

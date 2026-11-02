@@ -6,7 +6,6 @@
 // by convention, these follow the format WASABI_API_* or AGAVE_API_*
 // you are free to name it however you want, but this provides good consistency
 api_service *WASABI_API_SVC = 0; // the wasabi service manager (our gateway to other services)
-api_mldb *AGAVE_API_MLDB = 0; // media library API.  we'll retrieve this the first time we need it, because it will load after us
 api_tagz *AGAVE_API_TAGZ = 0;
 api_application *WASABI_API_APP = 0;
 // wasabi based services for localisation support
