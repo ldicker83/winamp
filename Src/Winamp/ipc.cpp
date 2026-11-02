@@ -607,7 +607,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_GET_HMENU:
 			if (data == -1) return reinterpret_cast<LRESULT>(top_menu);
 			if (data == 0) return reinterpret_cast<LRESULT>(main_menu);
-			if (data > 0 && data < 11) return reinterpret_cast<LRESULT>(GetSubMenu(v5_top_menu, data - 1));
+			if (data > 0 && data < 9) return reinterpret_cast<LRESULT>(GetSubMenu(v5_top_menu, data - 1));
 			return 0;
 		case IPC_GETUNCOMPRESSINTERFACE:
 			if (data == 0x10100000)

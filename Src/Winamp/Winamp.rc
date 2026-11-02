@@ -1728,19 +1728,6 @@ BEGIN
         MENUITEM "R&everse list\tCtrl+R",       40213,MFT_STRING,MFS_ENABLED
         MENUITEM "&Randomize list\tCtrl+Shift+R", 40212,MFT_STRING,MFS_ENABLED
     END
-    POPUP "ML_File",                        65535,MFT_STRING,MFS_ENABLED
-    BEGIN
-        MENUITEM "&New playlist\tShift+Ins",    40359,MFT_STRING,MFS_ENABLED
-        MENUITEM "Import &current playlist",    40374,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Import playlist from file",  40360,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Export playlist",            40361,MFT_STRING,MFS_ENABLED
-        MENUITEM MFT_SEPARATOR
-        MENUITEM "&Close Media Library\tAlt+L", 40380,MFT_STRING,MFS_ENABLED
-    END
-    POPUP "ML_View",                        65535,MFT_STRING,MFS_ENABLED
-    BEGIN
-        MENUITEM "Media Library &Preferences...", 40372,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
-    END
 END
 
 
