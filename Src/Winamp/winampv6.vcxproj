@@ -155,8 +155,6 @@
 xcopy /Y /D /S $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 xcopy /Y /D /S $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
-xcopy /Y /D /S ..\resources\languages\*.wlz ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Lang\
-
 xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
 xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
@@ -166,7 +164,7 @@ xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(C
 xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\DSP_SPS\"
 
 </Command>
-      <Message>Copy resources: whatsnew.txt file, languages, other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
+      <Message>Copy resources: whatsnew.txt file, other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
     </PostBuildEvent>
     <Manifest>
       <AdditionalManifestFiles>$(ProjectDir)manifest.xml</AdditionalManifestFiles>
@@ -246,8 +244,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <PostBuildEvent>
       <Command>xcopy /Y /D /S $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
-xcopy /Y /D /S ..\resources\languages\*.wlz ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Lang\
-
 xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
 xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
@@ -257,7 +253,7 @@ xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(C
 xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\DSP_SPS\"
 
 </Command>
-      <Message>Copy resources: whatsnew.txt file, languages, other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
+      <Message>Copy resources: whatsnew.txt file, other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
     </PostBuildEvent>
     <Manifest>
       <OutputManifestFile>$(OutDir)$(TargetName)$(TargetExt).embed.manifest</OutputManifestFile>
@@ -303,8 +299,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <PostBuildEvent>
       <Command>xcopy /Y /D /S $(OutDir)$(TargetName)$(TargetExt) ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
-xcopy /Y /D /S ..\resources\languages\*.wlz ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Lang\
-
 xcopy /Y /D /S ..\resources\data\whatsnew.txt ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\
 
 xcopy /Y /D /S "..\resources\license" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\license\"
@@ -314,7 +308,7 @@ xcopy /Y /D /S "..\resources\media" "..\..\Build\Winamp_$(PlatformShortName)_$(C
 xcopy /Y /D /S ..\resources\plugins\dsp_sps.dll ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\
 
 xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Plugins\DSP_SPS\"</Command>
-      <Message>Copy resources: whatsnew.txt file, languages, other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
+      <Message>Copy resources: whatsnew.txt file, other files to ..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
