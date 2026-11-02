@@ -1,6 +1,5 @@
 #include "pcm.h"
 #include <math.h>
-#include <ipps.h>
 #include <intrin.h>
 #include <mmintrin.h>
 

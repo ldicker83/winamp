@@ -1,20 +1,11 @@
-#ifdef _WIN64
-#include "../tools/staticlib/ipp_m7.h"
-#else 
-#include "../tools/staticlib/ipp_px.h"
-#endif
-
-#include <ippi.h>
-#include <ipps.h>
-#include <ippcc.h>
 #include "image.h"
-#include "iir.h"
-#include "resize.h"
 #include "alpha.h"
 #include "fft.h"
 #include "window.h"
 #include "pcm.h"
 #include "stats.h"
+#include <math.h>
+#include <stdlib.h>
 
 /* naming convension stuff:
 
@@ -25,259 +16,231 @@ U8 - uint8_t data
 destination pointer comes first
 */
 
-int nsutil_image_CopyFlipped_U8(uint8_t *destination_image, size_t destination_stride, const uint8_t *source_image, size_t source_stride, uint32_t width, uint32_t height)
+static inline uint8_t mul_div_255(unsigned int a, unsigned int b)
 {
-	IppiSize roi = { width, height };
-	ippiMirror_8u_C1R(source_image, source_stride, destination_image, destination_stride, roi, ippAxsHorizontal);
-	return 0;
+	return (uint8_t)(a * b / 255);
 }
-
-int nsutil_image_Copy_U8(uint8_t *destination_image, size_t destination_stride, const uint8_t *source_image, size_t source_stride, uint32_t width, uint32_t height)
-{
-	IppiSize roi = { width, height };
-	ippiCopy_8u_C1R(source_image, source_stride, destination_image, destination_stride, roi);
-	return 0;
-}
-
-int nsutil_image_Convert_RGB24_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, const uint8_t *source_image, size_t source_stride /* bytes! */, uint32_t width, uint32_t height)
-{
-	IppiSize roi = { width, height };
-	ippiCopy_8u_C3AC4R(source_image, source_stride, (Ipp8u *)destination_image, destination_stride, roi);
-	return 0;
-}
-
-int nsutil_image_ConvertFlipped_RGB24_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, const uint8_t *source_image, size_t source_stride /* bytes! */, uint32_t width, uint32_t height)
-{
-#if 1
-		IppiSize roi = { width, height };
-	ippiCopy_8u_C3AC4R(source_image, source_stride, (Ipp8u *)destination_image + destination_stride*(height-1), -destination_stride, roi);
-	return 0;
-#else
-		IppiSize roi = { width, 1 };
-		uint8_t *dest = (uint8_t *)destination_image;
-		source_image += source_stride * (height-1);
-		for (uint32_t i = 0;i != height;i++)
-		{
-			ippiCopy_8u_C3AC4R(source_image, source_stride, (Ipp8u *)dest, destination_stride, roi);
-			source_image -= source_stride;
-			dest += destination_stride;
-		}
-
-	return 0;
-#endif
-}
-
-/*
-struct nsutil_resize_context
-{
-	int buffer_size;
-	void *buffer;
-};
-*/
-
-static inline void MakeIppiRect(IppiRect &ippi_rect, const nsutil_rect *rect)
-{
-	ippi_rect.x = rect->left;
-	ippi_rect.y = rect->top;
-	ippi_rect.width = rect->right - rect->left;
-	ippi_rect.height = rect->bottom - rect->top;
-}
-/*
-int nsutil_resize_Init_RGB(nsutil_resize_t *_context, const nsutil_rect *destination_rect, const nsutil_rect *source_rect, int resize_algorithm)
-{
-	nsutil_resize_context *context = 0;
-	if (_context)
-	{
-		context = (nsutil_resize_context *)(*_context);
-	}
-	if (!context)
-	{
-		context = (nsutil_resize_context *)calloc(1, sizeof(nsutil_resize_context));
-	}
-
-	IppiRect srcRoi, dstRoi;
-	MakeIppiRect(srcRoi, source_rect);
-	MakeIppiRect(dstRoi, destination_rect);
-	int buffer_size=0;
-	ippiResizeGetBufSize(srcRoi, dstRoi, 1, resize_algorithm, &buffer_size);
-	if (buffer_size > context->buffer_size)
-	{
-		_aligned_free(context->buffer);
-		context->buffer = _aligned_malloc(buffer_size, 32);
-		context->buffer_size = buffer_size;
-	}
-	return 0;
-}
-
-int nsutil_resize_Filter_RGB(nsutil_resize_t _context, void *destination, size_t destination_stride, const nsutil_rect *destination_rect,
-														 const void *source, size_t source_stride, int source_width, int source_height, const nsutil_rect *source_rect,
-														 double dx, double dy, double x_offset, double y_offset, int resize_algorithm)
-{
-	nsutil_resize_context *context = (nsutil_resize_context *)_context;
-
-	IppiSize srcSize = { source_width, source_height };
-	IppiRect srcRoi, dstRoi;
-	MakeIppiRect(srcRoi, source_rect);
-	MakeIppiRect(dstRoi, destination_rect);
-	ippiResizeSqrPixel_8u_C1R((const Ipp8u *)source, srcSize, source_stride, srcRoi, 
-		(Ipp8u *)destination, destination_stride, dstRoi,
-		dx, dy, x_offset, y_offset,
-		resize_algorithm, (Ipp8u *)context->buffer);
-	return 0;
-}
-*/
 
 int nsutil_alpha_Premultiply_RGB32(void *image, size_t image_stride, int width, int height)
 {
-	IppiSize roiSize = { width, height };
-	ippiAlphaPremul_8u_AC4IR((Ipp8u *)image, image_stride, roiSize);
+	uint8_t *row = (uint8_t *)image;
+	for (int y = 0; y < height; y++, row += image_stride)
+	{
+		uint8_t *pixel = row;
+		for (int x = 0; x < width; x++, pixel += 4)
+		{
+			unsigned int alpha = pixel[3];
+			pixel[0] = mul_div_255(pixel[0], alpha);
+			pixel[1] = mul_div_255(pixel[1], alpha);
+			pixel[2] = mul_div_255(pixel[2], alpha);
+		}
+	}
 	return 0;
 }
 
 int nsutil_alpha_PremultiplyValue_RGB8(void *image, size_t image_stride, int width, int height, uint8_t alpha)
 {
-	IppiSize roiSize = { width, height };
-	ippiAlphaPremulC_8u_C1IR(alpha, (Ipp8u *)image, image_stride, roiSize);
+	uint8_t *row = (uint8_t *)image;
+	for (int y = 0; y < height; y++, row += image_stride)
+	{
+		for (int x = 0; x < width; x++)
+			row[x] = mul_div_255(row[x], alpha);
+	}
 	return 0;
 }
 
+/* Real FFT of 2^order samples, computed as a complex FFT of half that size.
+   The result is left in place, packed as R(0), R(N/2), R(1), I(1), R(2), I(2), ... and is not scaled. */
 struct nsutil_fft_struct_F32R
 {
-	IppsFFTSpec_R_32f *fft_spec;
-	Ipp8u *work_buffer;
+	int size;
+	float *twiddle; // re,im pairs of e^(-2*pi*i*k/size), for k < size/2
+	int *bit_reverse;
 };
-int nsutil_fft_Create_F32R(nsutil_fft_t *fft, int order, int accuracy)
+
+int nsutil_fft_Create_F32R(nsutil_fft_t *out_fft, int order, int /*accuracy*/)
 {
-	nsutil_fft_struct_F32R *ippi_fft = (nsutil_fft_struct_F32R *)calloc(1, sizeof(nsutil_fft_struct_F32R));
-	
-	ippsFFTInitAlloc_R_32f(&ippi_fft->fft_spec, order, IPP_FFT_NODIV_BY_ANY, (IppHintAlgorithm)accuracy);
-	int work_buffer_size;
-	ippsFFTGetBufSize_R_32f(ippi_fft->fft_spec, &work_buffer_size);
-	ippi_fft->work_buffer = (Ipp8u *)_aligned_malloc(work_buffer_size, 32);
-	*fft = ippi_fft;
+	if (order < 1 || order > 24)
+		return 1;
+
+	nsutil_fft_struct_F32R *fft = (nsutil_fft_struct_F32R *)calloc(1, sizeof(nsutil_fft_struct_F32R));
+	if (!fft)
+		return 1;
+
+	const int size = 1 << order, half = size / 2;
+	fft->size = size;
+	fft->twiddle = (float *)malloc(sizeof(float) * size);
+	fft->bit_reverse = (int *)malloc(sizeof(int) * half);
+	if (!fft->twiddle || !fft->bit_reverse)
+	{
+		nsutil_fft_Destroy_F32R(fft);
+		return 1;
+	}
+
+	for (int k = 0; k < half; k++)
+	{
+		const double angle = -2.0 * 3.14159265358979323846 * k / size;
+		fft->twiddle[k * 2] = (float)cos(angle);
+		fft->twiddle[k * 2 + 1] = (float)sin(angle);
+	}
+
+	for (int i = 0, reversed = 0; i < half; i++)
+	{
+		fft->bit_reverse[i] = reversed;
+		int bit = half >> 1;
+		while (bit && (reversed & bit))
+		{
+			reversed ^= bit;
+			bit >>= 1;
+		}
+		reversed |= bit;
+	}
+
+	*out_fft = fft;
 	return 0;
 }
 
-int nsutil_fft_Forward_F32R_IP(nsutil_fft_t fft, float *signal)
+int nsutil_fft_Forward_F32R_IP(nsutil_fft_t _fft, float *signal)
 {
-	nsutil_fft_struct_F32R *ippi_fft = (nsutil_fft_struct_F32R *)fft;
-	ippsFFTFwd_RToPerm_32f_I(signal, ippi_fft->fft_spec, ippi_fft->work_buffer);
+	const nsutil_fft_struct_F32R *fft = (const nsutil_fft_struct_F32R *)_fft;
+	const int size = fft->size, half = size / 2;
+	const float *twiddle = fft->twiddle;
+
+	for (int i = 0; i < half; i++)
+	{
+		const int j = fft->bit_reverse[i];
+		if (j > i)
+		{
+			float t = signal[i * 2]; signal[i * 2] = signal[j * 2]; signal[j * 2] = t;
+			t = signal[i * 2 + 1]; signal[i * 2 + 1] = signal[j * 2 + 1]; signal[j * 2 + 1] = t;
+		}
+	}
+
+	for (int span = 2; span <= half; span *= 2)
+	{
+		const int step = size / span;
+		for (int start = 0; start < half; start += span)
+		{
+			for (int j = 0; j < span / 2; j++)
+			{
+				float *a = &signal[(start + j) * 2], *b = &signal[(start + j + span / 2) * 2];
+				const float wr = twiddle[j * step * 2], wi = twiddle[j * step * 2 + 1];
+				const float tr = wr * b[0] - wi * b[1], ti = wr * b[1] + wi * b[0];
+				b[0] = a[0] - tr; b[1] = a[1] - ti;
+				a[0] += tr; a[1] += ti;
+			}
+		}
+	}
+
+	/* separate the half size result into the spectrum of the real input */
+	const float r0 = signal[0], i0 = signal[1];
+	signal[0] = r0 + i0;
+	signal[1] = r0 - i0;
+	for (int k = 1; k <= half / 2; k++)
+	{
+		const int m = half - k;
+		const float zr = signal[k * 2], zi = signal[k * 2 + 1], yr = signal[m * 2], yi = signal[m * 2 + 1];
+		const float er = (zr + yr) * 0.5f, ei = (zi - yi) * 0.5f;
+		const float or_ = (zi + yi) * 0.5f, oi = (yr - zr) * 0.5f;
+		const float wr = twiddle[k * 2], wi = twiddle[k * 2 + 1];
+		const float tr = wr * or_ - wi * oi, ti = wr * oi + wi * or_;
+		signal[k * 2] = er + tr;
+		signal[k * 2 + 1] = ei + ti;
+		signal[m * 2] = er - tr;
+		signal[m * 2 + 1] = ti - ei;
+	}
 	return 0;
 }
 
-int nsutil_fft_Destroy_F32R(nsutil_fft_t fft)
+int nsutil_fft_Destroy_F32R(nsutil_fft_t _fft)
 {
-	nsutil_fft_struct_F32R *ippi_fft = (nsutil_fft_struct_F32R *)fft;
-	ippsFFTFree_R_32f(ippi_fft->fft_spec);
-	_aligned_free(ippi_fft->work_buffer);
-	free(ippi_fft);
+	nsutil_fft_struct_F32R *fft = (nsutil_fft_struct_F32R *)_fft;
+	if (fft)
+	{
+		free(fft->twiddle);
+		free(fft->bit_reverse);
+		free(fft);
+	}
 	return 0;
 }
 
 int nsutil_window_Hann_F32_IP(float *signal, size_t number_of_samples)
 {
-	ippsWinHann_32f_I(signal, number_of_samples);
+	if (number_of_samples < 2)
+		return 0;
+
+	const double scale = 2.0 * 3.14159265358979323846 / (double)(number_of_samples - 1);
+	for (size_t i = 0; i < number_of_samples; i++)
+		signal[i] *= (float)(0.5 * (1.0 - cos(scale * (double)i)));
 	return 0;
 }
 
 int nsutil_window_FillHann_F32_IP(float *window, size_t number_of_samples)
 {
-	ippsSet_32f(1.0f, window, number_of_samples);
-	ippsWinHann_32f_I(window, number_of_samples);
-	return 0;
-}
-
-int nsutil_window_FillKaiser_F32_IP(float *window, float alpha, size_t number_of_samples)
-{
-	ippsSet_32f(1.0f, window, number_of_samples);
-	ippsWinKaiser_32f_I(window, number_of_samples, alpha);
-	return 0;
+	for (size_t i = 0; i < number_of_samples; i++)
+		window[i] = 1.0f;
+	return nsutil_window_Hann_F32_IP(window, number_of_samples);
 }
 
 int nsutil_window_Multiply_F32_IP(float *signal, const float *window, size_t number_of_samples)
 {
-	ippsMul_32f_I(window, signal, number_of_samples);
+	for (size_t i = 0; i < number_of_samples; i++)
+		signal[i] *= window[i];
 	return 0;
-}
-
-int nsutil_image_Recolor_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, uint32_t R, uint32_t G, uint32_t B, uint32_t width, uint32_t height)
-{
-	const Ipp32f twist[3][4] = 
-	{
-		{(float)B / 65536.0f, 0, 0, 0},
-		{0, (float)G / 65536.0f, 0, 0},
-		{0, 0, (float)R / 65536.0f, 0}
-	};
-	IppiSize roiSize = { width, height };
-	ippiColorTwist32f_8u_AC4IR((Ipp8u *)destination_image, destination_stride, roiSize, twist);
-	return 0;
-}
-
-int nsutil_image_Palette_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, const uint8_t *source_image, size_t source_stride /* bytes! */, uint32_t width, uint32_t height, const RGB32 *palette)
-{
-	IppiSize roiSize = { width, height };
-	ippiLUTPalette_8u32u_C1R(source_image, source_stride, (Ipp32u *)destination_image, destination_stride, roiSize, (const Ipp32u *)palette, 8);
-	return 0;
-}
-
-int nsutil_image_PaletteFlipped_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, const uint8_t *source_image, size_t source_stride /* bytes! */, uint32_t width, uint32_t height, const RGB32 *palette)
-{
-#if 1
-	IppiSize roiSize = { width, height };
-	ippiLUTPalette_8u32u_C1R(source_image, source_stride, (Ipp32u *) ((uint8_t *)destination_image + destination_stride*(height-1)), -destination_stride, roiSize, (const Ipp32u *)palette, 8);
-	return 0;
-#else
-	IppiSize roiSize = { width, 1 };
-	uint8_t *dest = (uint8_t *)destination_image;
-	source_image += source_stride * (height-1);
-	for (uint32_t i = 0;i != height;i++)
-	{
-		ippiLUTPalette_8u32u_C1R(source_image, source_stride, (Ipp32u *)dest, destination_stride, roiSize, (const Ipp32u *)palette, 8);
-		source_image -= source_stride;
-		dest += destination_stride;
-	}
-	return 0;
-#endif
 }
 
 int nsutil_image_FillRectAlpha_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, uint32_t width, uint32_t height, RGB32 color, int alpha)
 {
-
-	IppiSize roiSize = { width, height };
+	uint8_t *row = (uint8_t *)destination_image;
 
 	if (alpha == 255)
 	{
-		uint8_t c[3] = { 
-			(color&0xFF0000)  >> 16, 
-			(color&0xFF00) >> 8,
-			(color&0xFF)
+		const uint8_t c[3] = {
+			(uint8_t)((color & 0xFF0000) >> 16),
+			(uint8_t)((color & 0xFF00) >> 8),
+			(uint8_t)(color & 0xFF)
 		};
-		ippiSet_8u_AC4R(c, (uint8_t *)destination_image, destination_stride, roiSize);
+		for (uint32_t y = 0; y < height; y++, row += destination_stride)
+		{
+			uint8_t *pixel = row;
+			for (uint32_t x = 0; x < width; x++, pixel += 4)
+			{
+				pixel[0] = c[0];
+				pixel[1] = c[1];
+				pixel[2] = c[2];
+			}
+		}
 	}
 	else
 	{
-		uint8_t c[3] = { 
-			((color&0xFF0000) * alpha / 255) >> 16, 
-			((color&0xFF00) * alpha / 255) >> 8,
-			((color&0xFF) * alpha / 255)
+		const unsigned int c[3] = {
+			((color & 0xFF0000) * alpha / 255) >> 16,
+			((color & 0xFF00) * alpha / 255) >> 8,
+			((color & 0xFF) * alpha / 255)
 		};
-
-		ippiAlphaPremulC_8u_AC4IR((255-alpha), (uint8_t *)destination_image, destination_stride, roiSize);
-		ippiAddC_8u_AC4IRSfs(c, (uint8_t *)destination_image, destination_stride, roiSize, 0);
+		const unsigned int inverse = 255 - alpha;
+		for (uint32_t y = 0; y < height; y++, row += destination_stride)
+		{
+			uint8_t *pixel = row;
+			for (uint32_t x = 0; x < width; x++, pixel += 4)
+			{
+				for (int channel = 0; channel < 3; channel++)
+				{
+					const unsigned int value = mul_div_255(pixel[channel], inverse) + c[channel];
+					pixel[channel] = (uint8_t)(value > 255 ? 255 : value);
+				}
+				pixel[3] = (uint8_t)inverse;
+			}
+		}
 	}
 	return 0;
 }
 
 int nsutil_stats_RMS_F32(const float *buffer, size_t num_samples, float *rms)
 {
-	ippsNorm_L2_32f(buffer, num_samples, rms);
-	return 0;
-}
-
-int nsutil_image_Convert_YUV420_RGB32(RGB32 *destination_image, size_t destination_stride /* bytes! */, uint32_t width, uint32_t height, const uint8_t *planes[3], const size_t strides[3])
-{
-	IppiSize roiSize = { width, height };
-	int int_strides[3] = {strides[0], strides[1], strides[2] };
-	ippiYUV420ToRGB_8u_P3AC4R(planes, int_strides, (Ipp8u *)destination_image, destination_stride, roiSize);
+	double sum = 0.0;
+	for (size_t i = 0; i < num_samples; i++)
+		sum += (double)buffer[i] * (double)buffer[i];
+	*rms = (float)sqrt(sum);
 	return 0;
 }

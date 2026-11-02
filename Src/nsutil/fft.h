@@ -23,7 +23,7 @@ extern "C" {
 typedef void *nsutil_fft_t;
 NSUTIL_EXPORT int nsutil_fft_Create_F32R(nsutil_fft_t *fft, int order, int accuracy);
 NSUTIL_EXPORT int nsutil_fft_Forward_F32R_IP(nsutil_fft_t fft, float *signal);
-NSUTIL_EXPORT int nsutil_fft_Destroy_F32R(nsutil_fft_t *fft);
+NSUTIL_EXPORT int nsutil_fft_Destroy_F32R(nsutil_fft_t fft);
 
 #ifdef __cplusplus
 }
