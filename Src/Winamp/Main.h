@@ -722,6 +722,7 @@ extern HINSTANCE language_pack_instance;
 	void Skin_CleanupZip(void);
 	void Skin_CleanupAfterCrash(void);
 	BOOL Skin_Check_Modern_Support();
+BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	int Skin_GetRegionPointList(int eq, int **points, int **counts);
 	/* The indices of Skin_PLColors:
 	0 - text color - playlist

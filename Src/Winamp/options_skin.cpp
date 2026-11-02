@@ -87,7 +87,7 @@ int EnumerateSkins(ENUMSKINPROC fnEnumSkin, void *user)
 	{
 		do 
 		{
-			if (FillEnumRec(&es, d.cFileName, (FILE_ATTRIBUTE_DIRECTORY & d.dwFileAttributes), szName, sizeof(szName)/sizeof(wchar_t), (bActiveFound) ? NULL : pszActive))
+			if (!Skin_IsModern(d.cFileName, (FILE_ATTRIBUTE_DIRECTORY & d.dwFileAttributes)) && FillEnumRec(&es, d.cFileName, (FILE_ATTRIBUTE_DIRECTORY & d.dwFileAttributes), szName, sizeof(szName)/sizeof(wchar_t), (bActiveFound) ? NULL : pszActive))
 			{
 				if (es.bActive) bActiveFound = TRUE;
 				if (!fnEnumSkin(&es, user)) 

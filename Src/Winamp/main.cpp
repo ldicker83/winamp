@@ -1137,6 +1137,7 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					do
 					{
 						if ( !wcscmp( d.cFileName, L"." ) || !wcscmp( d.cFileName, L".." ) ) continue;
+						if ( Skin_IsModern( d.cFileName, d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ) continue;
 						if ( ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ||
 							 !_wcsicmp( extensionW( d.cFileName ), L"zip" ) ||
 							 !_wcsicmp( extensionW( d.cFileName ), L"wal" ) ||
