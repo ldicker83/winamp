@@ -144,30 +144,6 @@ CONFIG_EXT char config_bifont DEF_VAL(0); // bitmapped font (off by default)
 CONFIG_EXT char config_bifont_alt DEF_VAL(0); // non-bitmapped font alternative option (off by default)
 CONFIG_EXT char config_browserbrand[16] DEF_VAL("");
 
-/* --- video --- */
-CONFIG_EXT int config_video_wx DEF_VAL(26), config_video_wy DEF_VAL(145),
-config_video_open DEF_VAL(0),
-config_video_width DEF_VAL(275), config_video_height DEF_VAL(232),
-config_video_ratio1 DEF_VAL(4), config_video_ratio2 DEF_VAL(3),
-config_video_useratio;
-
-CONFIG_EXT int config_video_aspectadj DEF_VAL(1);
-CONFIG_EXT int config_video_updsize DEF_VAL(0);
-CONFIG_EXT int config_video_noss DEF_VAL(1);
-CONFIG_EXT int config_video_logo DEF_VAL(1);
-CONFIG_EXT int config_video_osd DEF_VAL(1);
-CONFIG_EXT int config_video_stopclose DEF_VAL(1);
-//CONFIG_EXT int config_video_auto_fs DEF_VAL(0); // plague> moved to WinampAttributes.h
-
-//#define EXPERIMENTAL_CONTRAST
-#ifdef EXPERIMENTAL_CONTRAST
-CONFIG_EXT int config_video_contrast DEF_VAL(128);
-CONFIG_EXT int config_video_brightness DEF_VAL(128);
-#endif
-
-CONFIG_EXT int config_video_remove_fs_on_stop DEF_VAL(1);
-CONFIG_EXT int config_video_fliprgb DEF_VAL(0);
-
 CONFIG_EXT int config_wav_do_header DEF_VAL(1);
 CONFIG_EXT int config_wav_convert DEF_VAL(0);
 CONFIG_EXT char config_wav_ext[8] DEF_VAL("WAV");

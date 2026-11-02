@@ -380,11 +380,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 					vis = config_pe_open;
 				}
 //else if (x == 3) { /*dockwnd = hMBWindow; vis = 0;*/ } // config_mb_open; }
-				else if ( x == 4 )
-				{
-					dockwnd = hVideoWindow;
-					vis = config_video_open;
-				}
 				else
 				{
 					if ( !p )
@@ -420,7 +415,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 				// changed for 5.58 to cope with x == 3 as this can otherwise cause
 				// one embedwnd to stay as the active window irrespective of doing
 				// additional ctrl+tab actions as it was not wanting to handle x==3
-				if (x == 3 || x > 4)
+				if (x >= 3)
 					p = p->link;
 			}
 		}

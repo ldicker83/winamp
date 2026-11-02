@@ -261,7 +261,6 @@ static int do_titlebar()
 					EstEQWindowRect(&a[1].r);a[1].open=config_eq_open;
 					EstPLWindowRect(&a[2].r);a[2].open=config_pe_open;
 					//EstMBWindowRect(&a[3].r);a[3].open=config_mb_open;
-					EstVidWindowRect(&a[4].r);a[4].open=config_video_open;
 
 					for (x = 5; x < cnt && p; x ++)
 					{
@@ -300,7 +299,6 @@ static int do_titlebar()
 						if (a[1].at) do_titlebar_clicking|=2;
 						if (a[2].at) do_titlebar_clicking|=4;
 						if (a[3].at) do_titlebar_clicking|=8;
-						if (a[4].at) do_titlebar_clicking|=16;
 						for (x = 5; x < cnt && a[x].isemb; x ++) 
 							a[x].isemb->attached = a[x].at;
 					}
@@ -321,19 +319,17 @@ static int do_titlebar()
 		case 0:
 			if (do_titlebar_clicking)
 			{
-				RECT eqr,plr,mwr,mbr,vwr,omwr;
+				RECT eqr,plr,mwr,mbr,omwr;
 				embedWindowState *p;
 				int skip_eq = GetParent(hEQWindow) != NULL;
 				//int skip_mb = 1;//GetParent(hMBWindow) != NULL;
 				int skip_pl = GetParent(hPLWindow) != NULL;
-				int skip_vw = GetParent(hVideoWindow) != NULL;
 
 				EnterCriticalSection(&embedcs);
 
 				EstEQWindowRect(&eqr);
 				//EstMBWindowRect(&mbr);
 				EstPLWindowRect(&plr);
-				EstVidWindowRect(&vwr);
 				EstMainWindowRect(&mwr);
 
 				omwr=mwr;
@@ -347,7 +343,6 @@ static int do_titlebar()
 					if (!skip_eq && config_eq_open && !(do_titlebar_clicking&2)) SnapWindowToWindow(&mwr,eqr);
 					if (!skip_pl && config_pe_open && !(do_titlebar_clicking&4)) SnapWindowToWindow(&mwr,plr);
 //					if (!skip_mb && config_mb_open && !(do_titlebar_clicking&8)) SnapWindowToWindow(&mwr,mbr);
-					if (!skip_vw && config_video_open && !(do_titlebar_clicking&16)) SnapWindowToWindow(&mwr,vwr);
 
 					while (state)
 					{
@@ -366,7 +361,6 @@ static int do_titlebar()
 					if (do_titlebar_clicking&2) MoveRect(&eqr,movex,movey);
 					if (do_titlebar_clicking&4) MoveRect(&plr,movex,movey);
 					if (do_titlebar_clicking&8) MoveRect(&mbr,movex,movey);
-					if (do_titlebar_clicking&16) MoveRect(&vwr,movex,movey);
 					while (state)
 					{
 						if (!HasParent(state->me) && state->attached) MoveRect(&state->r,movex,movey);
@@ -392,7 +386,6 @@ static int do_titlebar()
 							if (x == 0) {op = config_eq_open && !skip_eq; r=&eqr; }
 							else if (x == 1) { op = config_pe_open && !skip_pl; r=&plr; }
 //							else if (x == 2) { op = config_mb_open && !skip_mb; r=&mbr; }
-							else if (x == 3) { op = config_video_open && !skip_vw; r=&vwr; }
 							else
 							{
 								if (!p) break;
@@ -413,7 +406,6 @@ static int do_titlebar()
 								if (m & 2) MoveRect(&eqr,r->left-oldr.left,r->top-oldr.top);
 								if (m & 4) MoveRect(&plr,r->left-oldr.left,r->top-oldr.top);
 								if (m & 8) MoveRect(&mbr,r->left-oldr.left,r->top-oldr.top);
-								if (m & 16) MoveRect(&vwr,r->left-oldr.left,r->top-oldr.top);
 								while (p2)
 								{
 									if (&p2->r != r && p2->attached)
@@ -430,7 +422,6 @@ static int do_titlebar()
 						if (do_titlebar_clicking & 2) MoveRect(&eqr,mwr.left-omwr.left,mwr.top-omwr.top);
 						if (do_titlebar_clicking & 4) MoveRect(&plr,mwr.left-omwr.left,mwr.top-omwr.top);
 						if (do_titlebar_clicking & 8) MoveRect(&mbr,mwr.left-omwr.left,mwr.top-omwr.top);
-						if (do_titlebar_clicking & 16) MoveRect(&vwr,mwr.left-omwr.left,mwr.top-omwr.top);
 						p = embedwndlist;
 						while (p)
 						{
@@ -457,7 +448,6 @@ static int do_titlebar()
 							if (x == 0) { op = config_eq_open; r=&eqr; }
 							else if (x == 1) { op = config_pe_open; r=&plr; }
 //							else if (x == 2) { op = config_mb_open; r=&mbr; }
-							else if (x == 3) { op = config_video_open; r=&vwr; }
 							else
 							{
 								if (!p) break;
@@ -481,7 +471,6 @@ static int do_titlebar()
 									if (x2 == 0) { op2 = config_eq_open; r2=&eqr; }
 									else if (x2 == 1) { op2 = config_pe_open; r2=&plr; }
 //									else if (x2 == 2) { op2 = config_mb_open; r2=&mbr; }
-									else if (x2 == 3) { op2 = config_video_open; r2=&vwr; }
 									else
 									{
 										if (!p2) break;
@@ -501,7 +490,6 @@ static int do_titlebar()
 										if (m & 2) MoveRect(&eqr,mwr.left-omwr.left,mwr.top-omwr.top);
 										if (m & 4) MoveRect(&plr,mwr.left-omwr.left,mwr.top-omwr.top);
 										if (m & 8) MoveRect(&mbr,mwr.left-omwr.left,mwr.top-omwr.top);
-										if (m & 16) MoveRect(&vwr,mwr.left-omwr.left,mwr.top-omwr.top);
 										while (p3)
 										{
 											if (&p3->r != r && p3->attached)
@@ -522,7 +510,6 @@ static int do_titlebar()
 					int deferred_move_count = 1;
 					if (do_titlebar_clicking&2 && !skip_eq) deferred_move_count ++;// final EQ positioning
 					if (do_titlebar_clicking&4 && !skip_pl) deferred_move_count ++;// final PE positioning
-					if (do_titlebar_clicking&16 && !skip_vw) deferred_move_count ++;// final VW positioning
 
 					p = embedwndlist;
 					while (p)
@@ -542,11 +529,6 @@ static int do_titlebar()
 					{
 						SetPLWindowRect(&plr);
 						hdwp=DeferWindowPos(hdwp,hPLWindow,0,config_pe_wx,config_pe_wy,0,0,SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
-					}
-					if (do_titlebar_clicking&16 && !skip_vw) // final VW positioning
-					{
-						SetVidWindowRect(&vwr);
-						hdwp=DeferWindowPos(hdwp,hVideoWindow,0,config_video_wx,config_video_wy,0,0,SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
 					}
 
 					SetMainWindowRect(&mwr);

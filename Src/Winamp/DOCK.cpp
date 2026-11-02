@@ -46,14 +46,6 @@ void EstPLWindowRect( RECT *r )
 	r->bottom = config_pe_wy + config_pe_height;
 }
 
-void EstVidWindowRect( RECT *r )
-{
-	r->left   = config_video_wx;
-	r->top    = config_video_wy;
-	r->right  = config_video_wx + config_video_width;
-	r->bottom = config_video_wy + config_video_height;
-}
-
 void SetMainWindowRect(RECT *r)
 {
 	config_wx=r->left;
@@ -70,12 +62,6 @@ void SetPLWindowRect(RECT *r)
 {
 	config_pe_wx=r->left;
 	config_pe_wy=r->top;
-}
-
-void SetVidWindowRect(RECT *r)
-{
-	config_video_wx=r->left;
-	config_video_wy=r->top;
 }
 
 void MoveRect(RECT *r, int x, int y)

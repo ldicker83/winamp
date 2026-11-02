@@ -87,16 +87,10 @@ int Main_OnDisplayChange(HWND hwnd)
 	draw_songname(FileTitle,&ui_songposition,playing?in_getlength():PlayList_getcurrentlength());
 
 	// tell other windows
-	if (IsWindow(hVideoWindow))
-		SendMessageW(hVideoWindow, WM_DISPLAYCHANGE,0,0);
 	if (IsWindow(hEQWindow))
 		SendMessageW(hEQWindow, WM_DISPLAYCHANGE,0,0);
 	if (IsWindow(hPLWindow))
 		SendMessageW(hPLWindow, WM_DISPLAYCHANGE,0,0);
-	/*
-	if (IsWindow(hMBWindow))
-		SendMessageW(hVideoWindow, WM_DISPLAYCHANGE,0,0);
-	*/
 	if (IsWindow(hExternalVisWindow))
 		SendMessageW(hExternalVisWindow, WM_DISPLAYCHANGE,0,0);
 

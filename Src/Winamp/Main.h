@@ -173,8 +173,6 @@ extern HINSTANCE language_pack_instance;
 	void EstMainWindowRect(RECT *r);
 	void EstEQWindowRect(RECT *r);
 	void EstPLWindowRect(RECT *r);
-	void EstVidWindowRect(RECT *r);
-	void SetVidWindowRect(RECT *r);
 	void SetMainWindowRect(RECT *r);
 	void SetEQWindowRect(RECT *r);
 	void SetPLWindowRect(RECT *r);
@@ -421,8 +419,8 @@ extern HINSTANCE language_pack_instance;
 	extern char *audits[AUDITSIZE];
 	extern int audit_ptr;
 
-	extern HWND hTooltipWindow, hEQTooltipWindow, hVideoTooltipWindow, hPLTooltipWindow/*, hPL2TooltipWindow*/;
-	extern HWND hMainWindow, hEQWindow, hPLWindow, /*hMBWindow, */hVideoWindow;
+	extern HWND hTooltipWindow, hEQTooltipWindow, hPLTooltipWindow/*, hPL2TooltipWindow*/;
+	extern HWND hMainWindow, hEQWindow, hPLWindow/*, hMBWindow*/;
 	extern HINSTANCE hMainInstance;
 	extern HANDLE hMainThread;
 	extern DWORD mainThreadId;
@@ -697,7 +695,6 @@ extern HINSTANCE language_pack_instance;
 	void set_visopts(void);
 	void do_caption_autoscroll(void);
 	void set_pl_wnd_tooltip(void);
-	void set_vid_wnd_tooltip(void);
 
 	/***********************
 	*** shell.cpp 

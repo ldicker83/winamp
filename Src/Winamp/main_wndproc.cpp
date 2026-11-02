@@ -106,7 +106,6 @@ LRESULT Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 		if (config_pe_open && hPLWindow) ShowWindow(hPLWindow, SW_SHOWNA);
 		//if (config_mb_open&&hMBWindow) ShowWindow(hMBWindow,SW_SHOWNA);
 		if (config_eq_open && hEQWindow) ShowWindow(hEQWindow,SW_SHOWNA);
-		if (config_video_open && hVideoWindow) ShowWindow(hVideoWindow, SW_SHOWNA);
 		set_aot(0);
 //		Browser_toggleVisible(1);
 	}

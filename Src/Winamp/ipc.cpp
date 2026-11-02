@@ -455,13 +455,11 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			if (data == IPC_GETWND_EQ) return reinterpret_cast<LRESULT>(hEQWindow);
 			if (data == IPC_GETWND_PE) return reinterpret_cast<LRESULT>(hPLWindow);
 			//if (data == IPC_GETWND_MB) return reinterpret_cast<LRESULT>(hMBWindow);
-			//if (data == IPC_GETWND_VIDEO) return reinterpret_cast<LRESULT>(hVideoWindow);
 			return 0;
 		case IPC_ISWNDVISIBLE:
 			if (data == IPC_GETWND_EQ) return config_eq_open;
 			if (data == IPC_GETWND_PE) return config_pe_open;
 			//if (data == IPC_GETWND_MB) return config_mb_open;
-			//if (data == IPC_GETWND_VIDEO) return config_video_open;
 			return 0;
 		case IPC_GET_EXTLIST:
 			if (data == 1) return reinterpret_cast<LRESULT>(in_getfltstr());
@@ -618,7 +616,6 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			EnableWindow(hPLWindow, data != 0xdeadbeef);
 			EnableWindow(hEQWindow, data != 0xdeadbeef);
 			//EnableWindow(hMBWindow,data!=0xdeadbeef);
-			//EnableWindow(hVideoWindow,data!=0xdeadbeef);
 			return 0;
 		case IPC_RESTARTWINAMP:
 		case IPC_RESTARTSAFEWINAMP:

@@ -916,12 +916,6 @@ extern "C"
 			SnapWindowToWindow( outrc, rc );
 		}
 		
-		if ( config_video_open && hwndNoSnap != hVideoWindow )
-		{
-			GetWindowRect( hVideoWindow, &rc );
-			SnapWindowToWindow( outrc, rc );
-		}
-
 		EnterCriticalSection( &embedcs );
 		embedWindowState *state = embedwndlist;
 		while ( state )

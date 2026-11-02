@@ -354,9 +354,6 @@ void config_write(int i)
 	WI(replaygain_preferred_only);
 	_w_i("replaygain_non_rg_gain", (intptr_t)(config_replaygain_non_rg_gain.GetFloat()*1000.0f));
 	_w_i("replaygain_preamp", (intptr_t)(config_replaygain_preamp.GetFloat()*1000.0f));
-
-	//	WI(video_contrast);
-	//	WI(video_brightness);
 	WI(wav_do_header);
 	WI(wav_convert);
 	WS(wav_ext);
@@ -576,9 +573,6 @@ void config_read(int i)
 
 	RI(jtf_check);
 	RI(block_img);
-
-	//  RI(video_contrast);
-	//  RI(video_brightness);
 	RI(wav_do_header);
 	RI(wav_convert);
 	RS(wav_ext);

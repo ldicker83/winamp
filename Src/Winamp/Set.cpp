@@ -130,11 +130,6 @@ static void doMyDirtyShitholeDockingShit(HWND myWnd, RECT newr, int sedge)  // -
 				vis = config_pe_open;
 			}
 //else if (x == 3) { dockwnd=hMBWindow; vis=0; } //config_mb_open; }
-			else if ( x == 4 )
-			{
-				dockwnd = hVideoWindow;
-				vis = config_video_open;
-			}
 			else
 			{
 				if ( !p )
@@ -194,15 +189,6 @@ static void doMyDirtyShitholeDockingShit(HWND myWnd, RECT newr, int sedge)  // -
 						
 						EstPLWindowRect( &oldrect );
 					}
-					else if ( x == 4 )
-					{
-						if ( !whichedge )
-							config_video_wy = newr.bottom;
-						else
-							config_video_wx = newr.right;
-						
-						EstVidWindowRect( &oldrect );
-					}
 					else
 					{
 						int w = p->r.right - p->r.left;
@@ -223,7 +209,7 @@ static void doMyDirtyShitholeDockingShit(HWND myWnd, RECT newr, int sedge)  // -
 				}
 			}
 
-			if (x>4) p=p->link;      
+			if (x>=3) p=p->link;      
 		}
 
 		if (sedge >= 0) break;
@@ -265,12 +251,6 @@ static void doScreenDockMoveSubWindows(HWND myWnd, RECT newr, int whichedge)
 			EstPLWindowRect( &newrect );
 		}
 //else if (x == 3) { dockwnd=hMBWindow; vis=0;/*config_mb_open; */ EstMBWindowRect(&newrect); }
-		else if ( x == 4 )
-		{
-			dockwnd = hVideoWindow;
-			vis = config_video_open;
-			EstVidWindowRect( &newrect );
-		}
 		else
 		{
 			if ( !p )
@@ -332,15 +312,6 @@ static void doScreenDockMoveSubWindows(HWND myWnd, RECT newr, int whichedge)
 					
 					EstPLWindowRect( &oldrect );
 				}
-				else if ( x == 4 )
-				{
-					if ( !whichedge )
-						config_video_wy = newr.top - h;
-					else
-						config_video_wx = newr.left - w;
-					
-					EstVidWindowRect( &oldrect );
-				}
 				else
 				{
 					int w = p->r.right - p->r.left;
@@ -361,7 +332,7 @@ static void doScreenDockMoveSubWindows(HWND myWnd, RECT newr, int whichedge)
 			}
 		}
 
-		if (x>4) p=p->link;      
+		if (x>=3) p=p->link;      
 	}
 }
 
@@ -401,12 +372,6 @@ static void doScreenDock()
 				EstPLWindowRect( &newrect );
 			}
 //else if (x == 3) { dockwnd=hMBWindow; vis=0; /*config_mb_open; */ EstMBWindowRect(&newrect); }
-			else if ( x == 4 )
-			{
-				dockwnd = hVideoWindow;
-				vis = config_video_open;
-				EstVidWindowRect( &newrect );
-			}
 			else
 			{
 				if ( !p )
@@ -475,15 +440,6 @@ static void doScreenDock()
 					EstPLWindowRect( &oldrect );
 				}
 //				else if (x == 3) { if (!whichedge) config_mb_wy = newrect.top; else config_mb_wx = newrect.left; EstMBWindowRect(&oldrect); }
-				else if ( x == 4 )
-				{
-					if ( !whichedge )
-						config_video_wy = newrect.top;
-					else
-						config_video_wx = newrect.left;
-					
-					EstVidWindowRect( &oldrect );
-				}
 				else
 				{
 					int w = p->r.right - p->r.left;
@@ -505,7 +461,7 @@ static void doScreenDock()
 				}
 			}
 
-			if (x>4) p=p->link;      
+			if (x>=3) p=p->link;      
 		}
 	}
 }
@@ -631,66 +587,6 @@ void set_eq_wnd_tooltip()
 		}
 
 		b=config_ttips;
-	}
-}
-
-void set_vid_wnd_tooltip()
-{
-	if (hVideoTooltipWindow)
-	{
-		static int d=0;
-		TOOLINFOW ti = {0};
-		RECT r_main;
-		EstVidWindowRect(&r_main);
-		ti.cbSize = sizeof(ti);
-		ti.uFlags = TTF_SUBCLASS;
-		ti.hwnd = hVideoWindow;
-		ti.rect = r_main;
-
-		ti.uId = (UINT_PTR)hVideoTooltipWindow;
-		ti.lpszText = (wchar_t*)LPSTR_TEXTCALLBACK;
-		if (d) SendMessageW(hVideoTooltipWindow,TTM_DELTOOLW,0,(LPARAM) &ti);
-		if (config_ttips) SendMessageW(hVideoTooltipWindow,TTM_ADDTOOLW,0,(LPARAM) &ti);
-
-		{
-			RECT rs[]={{0,3,0,12},{9,0,24,0},{25,0,40,0},{41,0,56,0},{57,0,72,0},{73,0,89,0}};
-	
-			rs[0].left = config_video_width-11;
-			rs[0].right = config_video_width-2;
-
-			rs[1].top = rs[2].top = rs[3].top = rs[4].top = rs[5].top = config_video_height-29;
-			rs[1].bottom = rs[2].bottom = rs[3].bottom = rs[4].bottom = rs[5].bottom = config_video_height-11;
-
-			wchar_t buf[2048], *p=buf;
-			getStringW(IDS_VID_TOOLTIPS,buf,2048);
-			for (int x=0; x < sizeof(rs)/sizeof(rs[0]); x++)
-			{
-				if(!x)
-				{
-					// re-use the main tooltip text and handle the 'toggle windowshade' and 'close' buttons as applicable
-					wchar_t buf2[2048], *p2=buf2;
-					getStringW(IDS_TOOLTIPS,buf2,2048);
-					for(int i = 0; i < 3; i++){
-						ti.lpszText=p2;
-						while (p2 && *p2 && *p2 != L'|') p2++;
-						if (p2) *p2++=0;
-					}
-				}
-				else
-				{
-					ti.lpszText=p;
-					while (p && *p && *p != L'|') p++;
-					if (p) *p++=0;
-				}
-				ti.uId = x;
-
-				ti.rect = rs[x];
-				if (d) SendMessageW(hVideoTooltipWindow,TTM_DELTOOLW,0,(LPARAM) &ti);
-				if (config_ttips) SendMessageW(hVideoTooltipWindow,TTM_ADDTOOLW,0,(LPARAM) &ti);
-			}
-		}
-
-		d=config_ttips;
 	}
 }
 
@@ -935,7 +831,6 @@ void set_aot(int dodockingstuff)
 	}
 
 	set_eq_wnd_tooltip();
-	set_vid_wnd_tooltip();
 	set_pl_wnd_tooltip();
 	set_main_wnd_tooltip();
 
@@ -1002,24 +897,6 @@ void set_aot(int dodockingstuff)
 				config_pe_wy = r.top + 10; //r.bottom - 10;
 		}
 
-		if (config_video_open)
-		{
-			RECT thisr;
-			EstVidWindowRect( &thisr );
-			getViewport( &r, NULL, 0, &thisr );
-
-			if ( config_video_wx + ( thisr.right - thisr.left - 10 ) < r.left )
-				config_video_wx = r.left - ( thisr.right - thisr.left - 10 );
-
-			if ( config_video_wy + ( thisr.bottom - thisr.top - 10 ) < r.top )
-				config_video_wy = r.top - ( thisr.bottom - thisr.top - 10 );
-
-			if (config_video_wx > r.right - 10)
-				config_video_wx = r.left + 10; //r.right - 10;
-
-			if (config_video_wy > r.bottom - 10)
-				config_video_wy = r.top + 10; // r.bottom - 10;
-		}
 		EnterCriticalSection(&embedcs);
 		{
 			embedWindowState *p=embedwndlist;
@@ -1098,12 +975,6 @@ void set_aot(int dodockingstuff)
 			EstMBWindowRect(&r);
 			hwdp=DeferWindowPos(hwdp,hMBWindow, 0, r.left, r.top, r.right-r.left, r.bottom-r.top, SWP_DRAWFRAME|SWP_NOACTIVATE|SWP_NOZORDER);
 		}*/
-
-		if (hVideoWindow && !GetParent(hVideoWindow))
-		{
-			EstVidWindowRect(&r);
-			hwdp=DeferWindowPos(hwdp,hVideoWindow, 0, r.left, r.top, r.right-r.left, r.bottom-r.top, SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOZORDER);
-		}
 
 		// traverse the embed windows
 		EnterCriticalSection(&embedcs);

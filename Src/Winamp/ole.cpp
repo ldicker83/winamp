@@ -379,7 +379,6 @@ extern "C"
 		OleInitialize(NULL);
 		RegisterDragDrop(hMainWindow, &m_target);
 		RegisterDragDrop(hPLWindow, &m_target);
-		if (hVideoWindow) RegisterDragDrop(hVideoWindow, &m_target);
 
 		// {46986115-84D6-459c-8F95-52DD653E532E}
 		static const GUID playGuid =
@@ -408,7 +407,6 @@ extern "C"
 
 	void Ole_uninitDragDrop()
 	{
-		if (hVideoWindow) RevokeDragDrop(hVideoWindow);
 		RevokeDragDrop(hPLWindow);
 		RevokeDragDrop(hMainWindow);
 
