@@ -319,7 +319,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			//insertDialogs(hwnd,4,h,&pluginids);
 			//SendMessageW(hwnd,TVM_EXPAND,TVE_EXPAND,(long)h);
 			//h=_additem(hwnd,TVI_ROOT,getStringW(IDS_PREFS_OPTIONS,NULL,0),1,20);
-			if (g_has_video_plugin || (g_no_video_loaded == 1)) _additem(hwnd, h, getStringW(IDS_PREFS_VIDEO, NULL, 0), 0, 24);
 
 			_additem(hwnd, h, getStringW(IDS_LOCALIZATION, NULL, 0), 0, 25);
 
@@ -415,8 +414,7 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 						case 21: id = IDD_NEWTITLE; proc = TitleProc; break;
 						case 22: id = IDD_PREFS_CLASSICSKIN; proc = classicSkinProc; break;
 						case 23: id = IDD_NEWSHUFFLEOPTS; proc = PlaybackOptionsProc; break; // playlist
-						case 24: id = IDD_NEWVIDEOOPTS; proc = VideoProc; break;
-						case 25: id = IDD_NEWLANG; proc = LangProc; break;
+												case 25: id = IDD_NEWLANG; proc = LangProc; break;
 						case 30: id = IDD_NEWPLUG; proc = PlugProc; break;
 						case 31: id = IDD_NEWINPUT; proc = InputProc; break;
 						case 32: id = IDD_NEWOUTPUT; proc = OutputProc; break;

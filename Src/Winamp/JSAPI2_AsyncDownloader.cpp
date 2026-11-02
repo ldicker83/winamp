@@ -10,6 +10,7 @@
 #include "resource.h"
 #include "../Plugins/General/gen_ml/ml.h"
 #include <api/service/svcs/svc_imgload.h>
+#include <api/service/waservicefactory.h>
 #include "JSAPI2_CallbackManager.h"
 
 #define SCRIPT_E_REPORTED 	0x80020101

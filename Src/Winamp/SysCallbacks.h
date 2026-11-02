@@ -21,7 +21,7 @@ public:
 protected:
 	RECVS_DISPATCH;
 private:
-	//Nullsoft::Utility::LockGuard callbackGuard;
+	Nullsoft::Utility::LockGuard callbackGuard;
 	typedef std::vector<SysCallback*> CallbackList;
 	typedef std::map<int, CallbackList*> EventMap;
 	EventMap callback_map;

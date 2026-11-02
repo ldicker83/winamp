@@ -8,7 +8,6 @@
 #include "Main.h"
 #include <api.h>
 
-#include "VideoFeedFactory.h"
 #include "TagProvider.h"
 #include "Singleton.h"
 #include "Random.h"
@@ -17,33 +16,22 @@
 #include "ExplorerFindFile.h"
 #include "../config/config.h"
 #include "JSAPI2_Security.h"
-#include "GammaManagerAPI.h"
-#include "PaletteManager.h"
-#include "../nu/ServiceWatcher.h"
 #include "JSAPI2_Creator.h"
 #include "stats.h"
 #include "../nu/Singleton.h"
 #include "handler.h"
 
-ServiceWatcher serviceWatcher;
-
 api_playlistmanager *playlistManager=0;
 api_playlists *AGAVE_API_PLAYLISTS=0;
 api_language *WASABI_API_LNG=0;
 api_downloadManager *WAC_API_DOWNLOADMANAGER=0;
-api_skin *WASABI_API_SKIN=0;
-api_amgsucks *AGAVE_API_AMGSUCKS=0;
 api_albumart *AGAVE_API_ALBUMART=0;
 // ----- Services -----
 api_service *serviceManager = 0;
-VideoTextFeed *videoTextFeed = 0;
-PlaylistTextFeed *playlistTextFeed = 0;
 TagProvider *tagProvider = 0;
 
 SysCallbacks *sysCallbacks = 0;
 MemoryManager *memoryManager = 0;
-GammaManagerAPI *gammaManager = 0;
-PaletteManager *paletteManager = 0;
 Metadata *metadata = 0;
 Application *application = 0;
 DecodeFile *decodeFile = 0;
@@ -58,8 +46,6 @@ ExplorerFindFile *explorerFindFileManager = 0;
 
 
 // ----- Service Factories -----
-static VideoTextFeedFactory *videoTextFeedFactory = 0;
-static PlaylistTextFeedFactory *playlistTextFeedFactory = 0;
 //TagProviderFactory *tagProviderFactory = 0;
 
 static Singleton2<api_syscb, SysCallbacks> syscbsvc;
@@ -81,8 +67,6 @@ public:
 		ExplorerFindFileFactory(explorerFindFileManager),
 		urlManagerFactory(AGAVE_API_URLMANAGER),
 		jsapi2_securityFactory(&JSAPI2::security, true),
-		gammaManagerFactory(gammaManager),
-		paletteManagerFactory(paletteManager),
 		threadPoolFactory(WASABI_API_THREADPOOL),
 		winampFactory(WASABI_API_WINAMP)
 	{
@@ -106,8 +90,6 @@ public:
 	Singleton<api_explorerfindfile, ExplorerFindFile> ExplorerFindFileFactory;
 	Singleton<api_urlmanager, URLManager>             urlManagerFactory;
 	Singleton<JSAPI2::api_security, JSAPI2::Security> jsapi2_securityFactory;
-	Singleton<api_colorthemes, GammaManagerAPI>       gammaManagerFactory;
-	Singleton<api_palette, PaletteManager>            paletteManagerFactory;
 	Singleton<api_threadpool, ThreadPool>             threadPoolFactory;
 	Singleton<api_winamp, WinampApi>                  winampFactory;
 	
@@ -135,20 +117,8 @@ void Wasabi_Load()
 
 		services = new WinampServices();
 
-		videoTextFeed = new VideoTextFeed;
-		serviceManager->service_register(videoTextFeedFactory = new VideoTextFeedFactory);
-
-		playlistTextFeed = new PlaylistTextFeed;
-		serviceManager->service_register(playlistTextFeedFactory = new PlaylistTextFeedFactory);
-
 		tagProvider = new TagProvider;
 		//serviceManager->service_register(tagProviderFactory = new TagProviderFactory);
-
-		// watch for services that might be loaded later by plugins
-		serviceWatcher.WatchWith(serviceManager);
-		serviceWatcher.WatchFor(&WASABI_API_SKIN, skinApiServiceGuid);
-		// register for service callbacks in case any of these don't exist yet
-		WASABI_API_SYSCB->syscb_registerCallback(&serviceWatcher);
 
 		Wasabi::loaded = true;
 	}
@@ -161,29 +131,12 @@ void Wasabi_Unload()
 		//delete textFeeds;
 		//textFeeds=0;
 
-		serviceWatcher.StopWatching();
-		serviceWatcher.Clear();
-
 		// serviceManager->service_deregister(tagProviderFactory);
-		serviceManager->service_deregister(videoTextFeedFactory);
-		serviceManager->service_deregister(playlistTextFeedFactory);
 
 		// delete tagProviderFactory; tagProviderFactory = 0;
-		delete videoTextFeedFactory;
-		videoTextFeedFactory = 0;
-		
-		delete playlistTextFeedFactory;
-		playlistTextFeedFactory = 0;
-
 		delete tagProvider;
 		tagProvider = 0;
 		
-		delete videoTextFeed;
-		videoTextFeed = 0;
-		
-		delete playlistTextFeed;
-		playlistTextFeed = 0;
-
 		WASABI_API_THREADPOOL->Kill();
 
 		delete services;
@@ -218,9 +171,6 @@ void Wasabi_FindSystemServices()
 	if (sf)
 		WAC_API_DOWNLOADMANAGER = (api_downloadManager *)sf->getInterface();
 
-	sf = WASABI_API_SVC->service_getServiceByGuid(amgSucksGUID);
-	if (sf)
-		AGAVE_API_AMGSUCKS = (api_amgsucks *)sf->getInterface();
 
 	sf = WASABI_API_SVC->service_getServiceByGuid(api_playlistsGUID);
 	if (sf)
@@ -258,21 +208,6 @@ void Wasabi_ForgetSystemServices()
 		WAC_API_DOWNLOADMANAGER = 0;
 	}
 
-	if (WASABI_API_SKIN)
-	{
-		sf = WASABI_API_SVC->service_getServiceByGuid(skinApiServiceGuid);
-		if (sf)
-			sf->releaseInterface(WASABI_API_SKIN);
-		WASABI_API_SKIN = 0;
-	}
-
-	if (AGAVE_API_AMGSUCKS)
-	{
-		sf = WASABI_API_SVC->service_getServiceByGuid(amgSucksGUID);
-		if (sf)
-			sf->releaseInterface(AGAVE_API_AMGSUCKS);
-		AGAVE_API_AMGSUCKS = 0;
-	}
 
 	if (AGAVE_API_PLAYLISTS)
 	{

@@ -33,7 +33,7 @@ wchar_t *GetLastCharacterW(wchar_t *string);
 const char *GetLastCharacterc(const char *string);
 const wchar_t *GetLastCharactercW(const wchar_t *string);
 
-wchar_t *scanstr_backW(wchar_t *str, wchar_t *toscan, wchar_t *defval);
+wchar_t *scanstr_backW(wchar_t *str, const wchar_t *toscan, wchar_t *defval);
 const wchar_t *scanstr_backcW(const wchar_t *str, const wchar_t *toscan, const wchar_t *defval);
 char *scanstr_back(char *str, const char *toscan, char *defval);
 char *scanstr_backc(const char *str, char *toscan, char *defval);

@@ -131,6 +131,7 @@
       <HeaderFileName />
     </Midl>
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
@@ -239,6 +240,7 @@ xcopy /Y /D /S "..\..\..\resources\libraries\lame_enc.dll" "..\..\..\..\Build\Wi
       <HeaderFileName />
     </Midl>
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..;..\..\..\Wasabi;..\..\..\Winamp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_USRDLL;USELAME;LAMEDLL_EXPORTS;WINVER=0x601;WIN32_LEAN_AND_MEAN;_DEBUG;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>

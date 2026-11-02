@@ -143,7 +143,6 @@ void StartPlaying()
 			if (*adcurtain == 'a')
 			{
 				// 'a' means it's an Ad, so pop out of fullscreen.
-				if ( videoIsFullscreen() ) videoForceFullscreenOff();
 				adcurtain = CharNextA(adcurtain); // get past the a in ahttp://....
 			}
 		}

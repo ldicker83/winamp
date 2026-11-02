@@ -2,7 +2,6 @@
 #include "api.h"
 #include "WinampAttributes.h"
 #include "InternetConfigGroup.h"
-#include "VideoConfigGroup.h"
 #include "PlaybackConfigGroup.h"
 #include "EQConfigGroup.h"
 #include "DeveloperConfigGroup.h"
@@ -10,16 +9,6 @@
 #include "../config/config.h"
 extern Config config;
 
-/* --- Video --- */
-VideoConfigGroup videoConfigGroup;
-_bool config_video_overlays(true);
-_bool config_video_yv12(true);
-_bool config_video_vsync2(true);
-_bool config_video_ddraw(true);
-_bool config_video_gdiplus(false);
-_mutable_bool config_video_autoopen(true);
-_mutable_bool config_video_autoclose(true);
-_mutable_bool config_video_auto_fs(false);
 
 /* --- Internet --- */
 InternetConfigGroup internetConfigGroup;
@@ -57,7 +46,6 @@ _bool config_accessibility_modalflash(true);
 void RegisterConfigGroups()
 {
 	config.RegisterGroup(&internetConfigGroup);
-	config.RegisterGroup(&videoConfigGroup);
 	config.RegisterGroup(&playbackConfigGroup);
 	config.RegisterGroup(&eqConfigGroup);
 	config.RegisterGroup(&developerConfigGroup);

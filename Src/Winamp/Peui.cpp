@@ -563,11 +563,7 @@ static void do_lb(HWND hwnd)
 
 static void do_titlebar(HWND hwnd) 
 {
-#ifdef FFSKIN
-	if ((GetParent(hwnd) == NULL) && (which_cap == TITLE_CAP || (!which_cap && (config_easymove || mouse_y < 14)))) 
-#else
 	if (which_cap == TITLE_CAP || (!which_cap && (config_easymove || mouse_y < 14))) 
-#endif
 	{
 		static int clickx, clicky;
 		switch (mouse_type)

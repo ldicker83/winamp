@@ -194,7 +194,6 @@ static void _reg_associated_filetypes(int force)
 {
 	wchar_t ext_list[16384] = {0}, *p = ext_list;
 	wchar_t *c_list = in_getextlistW();
-	void _r_sW(const char *name, wchar_t *data, int mlen);
 	_r_sW("config_extlist", ext_list, ARRAYSIZE(ext_list));
 
 	int something_regged=0;

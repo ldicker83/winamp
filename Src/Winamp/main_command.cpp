@@ -362,7 +362,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		}
 #endif
 		if (config_eq_open) InvalidateRect(hEQWindow, NULL, FALSE);
-		if (config_video_open) InvalidateRect(hVideoWindow, NULL, FALSE);
 		// plugin wnds get the WM_DISPLAYCHANGE which is all they need
 		return 1;
 	case WINAMP_SELSKIN:
@@ -700,9 +699,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		// if we get a 2 then it came from gen_ff so that we can work around a docking/position issue
 		pleditDlg(hwnd,codeNotify==2);
 		return 1;
-	case WINAMP_OPTIONS_VIDEO:
-		config_video_open ? HideVideoWindow(1) : ShowVideoWindow(0);
-		return 1;
 	case WINAMP_OPTIONS_TOGTIME:
 		config_timeleftmode = !config_timeleftmode;
 		CheckMenuItem(main_menu, WINAMP_OPTIONS_ELAPSED, config_timeleftmode ? MF_UNCHECKED : MF_CHECKED);
@@ -806,9 +802,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		else
 			minimize_hack_winamp = 0;
 		ShowWindow(hMainWindow, SW_MINIMIZE);
-		return 1;
-	case WINAMP_VIDEO_TOGGLE_FS:
-		videoToggleFullscreen();
 		return 1;
 	case ID_MLFILE_NEWPLAYLIST:
 		{

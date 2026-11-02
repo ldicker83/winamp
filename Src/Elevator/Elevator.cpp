@@ -19,7 +19,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	if (lpCmdLine == NULL || !*lpCmdLine)
 	{
 		MSGBOXPARAMSW msgbx = {sizeof(MSGBOXPARAMS),0};
-		msgbx.lpszText = L"Winamp Elevator\nCopyright © 2008-2014 Winamp SA";
+		msgbx.lpszText = L"Winamp Elevator\nCopyright ï¿½ 2008-2014 Winamp SA";
 		msgbx.lpszCaption = L"About...";
 		msgbx.lpszIcon = MAKEINTRESOURCEW(IDI_ICON1);
 		msgbx.hInstance = GetModuleHandle(0);
@@ -79,7 +79,7 @@ void UnLock()
 static BOOL GetAccessPermissionsForLUAServer(SECURITY_DESCRIPTOR **ppSD)
 {
 // Local call permissions to IU, SY
-    LPWSTR lpszSDDL = L"O:BAG:BAD:(A;;0x3;;;IU)(A;;0x3;;;SY)";
+    LPCWSTR lpszSDDL = L"O:BAG:BAD:(A;;0x3;;;IU)(A;;0x3;;;SY)";
     SECURITY_DESCRIPTOR *pSD;
     *ppSD = NULL;
 
@@ -113,7 +113,7 @@ done:
 static BOOL GetLaunchActPermissionsWithIL (SECURITY_DESCRIPTOR **ppSD)
 {
 	// Allow World Local Launch/Activation permissions. Label the SD for LOW IL Execute UP
-	LPWSTR lpszSDDL = L"O:BAG:BAD:(A;;0xb;;;WD)S:(ML;;NX;;;LW)";
+	LPCWSTR lpszSDDL = L"O:BAG:BAD:(A;;0xb;;;WD)S:(ML;;NX;;;LW)";
 	SECURITY_DESCRIPTOR *pSD;
     if (ConvertStringSecurityDescriptorToSecurityDescriptorW(lpszSDDL, SDDL_REVISION_1, (PSECURITY_DESCRIPTOR *)&pSD, NULL))
     {

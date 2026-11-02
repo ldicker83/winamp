@@ -2,7 +2,6 @@
 #include <ocidl.h>
 #include "main.h"
 #include "../nu/ns_wc.h"
-#include "setup/setup.h"
 #include "api.h"
 #include "JSAPI.h"
 #include "draw.h"
@@ -11,4 +10,3 @@
 #include "language.h"
 #include "wa_ipc.h"
 #include "playlist.h"
-#include "videooutput.h"

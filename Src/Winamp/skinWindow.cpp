@@ -1227,17 +1227,7 @@ static void SkinnedWindow_OnSysCommand(SKINNEDWND *pWnd, UINT uCmd, LPARAM param
 static LRESULT SkinnedWindow_OnSetText(SKINNEDWND *pWnd, LPCWSTR pszText)
 {
 	LRESULT result = CallWndProc(pWnd, WM_SETTEXT, 0, (LPARAM)pszText);
-	ifc_window *wnd = pWnd->embedData.wasabi_window;
-	if (NULL != wnd)
-	{
-		ifc_window *parent = wnd->getRootParent();
-		if (NULL == parent) parent = wnd;
-		parent->setWindowTitle(pszText);
-	}
-	else
-	{
-		SetWindowPos(pWnd->hwnd, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-	}
+	SetWindowPos(pWnd->hwnd, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 	return result;
 }
 

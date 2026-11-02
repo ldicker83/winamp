@@ -49,7 +49,7 @@ static bool NeedElevation()
 	return !IsUserAnAdmin();
 }
 
-//static Nullsoft::Utility::LockGuard registrarGuard;
+static Nullsoft::Utility::LockGuard registrarGuard;
 static const GUID ftr_guid = { 0x3B29AB5C, 0x52CB, 0x4a36, { 0x93,0x14,0xE3,0xFE,0xE0,0xBA,0x74,0x68 } };
 static IFileTypeRegistrar *masterRegistrar;
 static FileTypeRegistrar builtIn;
@@ -57,7 +57,7 @@ bool usingBuiltIn = false;
 
 int GetRegistrar(IFileTypeRegistrar **registrar, BOOL use_fallback)
 {
-	//Nullsoft::Utility::AutoLock autolock(registrarGuard);
+	Nullsoft::Utility::AutoLock autolock(registrarGuard);
 	// attempt to re-get an elevated object as needed
 	// i.e. if user selects no but wants to try again
 	//		then we need to try going elevated again
@@ -116,7 +116,7 @@ int GetRegistrar(IFileTypeRegistrar **registrar, BOOL use_fallback)
 
 void RemoveRegistrar()
 {
-	//Nullsoft::Utility::AutoLock autolock(registrarGuard);
+	Nullsoft::Utility::AutoLock autolock(registrarGuard);
 	if (masterRegistrar) masterRegistrar->Release();
 	masterRegistrar = 0;
 	usingBuiltIn = false;
@@ -152,27 +152,27 @@ void _r_s(const std::string& name, char *data, int mlen)
 #define RS(x) (_r_s(#x,config_##x,sizeof(config_##x)))
 #define RS_NP(x) (_r_s(#x,x,sizeof(x)))
 
-void _r_sW(const char *name, wchar_t *data, int mlen)
+void _r_sW(const std::string& name, wchar_t *data, int mlen)
 {
 	char utf8_data[2048] = {0};
 	char default_data[2048] = {0};
 	WideCharToMultiByteSZ(config_utf8?CP_UTF8:CP_ACP, 0, data, -1, default_data, 2048,0,0);
-	GetPrivateProfileStringA(app_name, name, default_data, utf8_data, 2048, INI_FILEA);
+	GetPrivateProfileStringA(app_name, name.c_str(), default_data, utf8_data, 2048, INI_FILEA);
 	MultiByteToWideCharSZ(config_utf8?CP_UTF8:CP_ACP, 0, utf8_data, -1, data, mlen);
 }
 #define RSW(x) (_r_sW(#x,config_##x,sizeof(config_##x)/sizeof(wchar_t)))
 #define RSW_NP(x) (_r_sW(#x,x,sizeof(x)/sizeof(wchar_t)))
 
-void _w_s(char *name, char *data)
+void _w_s(const std::string& name, const char *data)
 {
-	WritePrivateProfileStringA(app_name, name, AutoChar(AutoWide(data), CP_UTF8), INI_FILEA);
+	WritePrivateProfileStringA(app_name, name.c_str(), AutoChar(AutoWide(data), CP_UTF8), INI_FILEA);
 }
 #define WS(x) (_w_s(#x,config_##x))
 #define WS_NP(x) (_w_s(#x,x))
 
-void _w_sW(const char *name, const wchar_t *data)
+void _w_sW(const std::string& name, const wchar_t *data)
 {
-	WritePrivateProfileStringA(app_name, name, AutoChar(data, CP_UTF8), INI_FILEA); // TODO: don't want autowide here
+	WritePrivateProfileStringA(app_name, name.c_str(), AutoChar(data, CP_UTF8), INI_FILEA); // TODO: don't want autowide here
 }
 #define WSW(x) (_w_sW(#x,config_##x))
 #define WSW_NP(x) (_w_sW(#x,x))
@@ -329,14 +329,6 @@ void config_write(int i)
 	WI(si_open);
 	*/
 
-	WI(video_wx);
-	WI(video_wy);
-	WI(video_open);
-	WI(video_width);
-	WI(video_height);
-	WI(video_ratio1);
-	WI(video_ratio2);
-	WI(video_useratio);
 	WI(windowshade);
 	WI(preamp);
 	WI(pilp);
@@ -352,20 +344,6 @@ void config_write(int i)
 			eq_tab[5], eq_tab[6], eq_tab[7], eq_tab[8], eq_tab[9]);
 		WS(eq_data);
 	}
-	WI(video_vsync2);
-	WI(video_aspectadj);
-	WI(video_overlays);
-	WI(video_gdiplus);
-	WI(video_ddraw);
-	WI(video_updsize);
-	WI(video_autoopen);
-	WI(video_autoclose);
-	WI(video_noss);
-	WI(video_logo);
-	WI(video_osd);
-	WI(video_yv12);
-	WI(video_stopclose);
-	WI(video_auto_fs);
 
 	WI(playback_thread_priority);
 	WI(audio_bits);
@@ -381,8 +359,6 @@ void config_write(int i)
 
 	//	WI(video_contrast);
 	//	WI(video_brightness);
-	WI(video_fliprgb);
-	WI(video_remove_fs_on_stop);
 	WI(wav_do_header);
 	WI(wav_convert);
 	WS(wav_ext);
@@ -512,14 +488,6 @@ void config_read(int i)
 	RI(si_open);
 	*/
 
-	RI(video_wx);
-	RI(video_wy);
-	RI(video_open);
-	RI(video_width);
-	RI(video_height);
-	RI(video_ratio1);
-	RI(video_ratio2);
-	RI(video_useratio);
 	RI(windowshade);
 	RI(preamp);
 	RI(pilp);
@@ -581,20 +549,6 @@ void config_read(int i)
 	RI(newverchk_rc);
 	RI(user_consent_join_channels);
 	RI(embedwnd_freesize);
-	RB(video_vsync2);
-	RI(video_aspectadj);
-	RB(video_overlays);
-	RB(video_gdiplus);
-	RB(video_ddraw);
-	RI(video_updsize);
-	RB(video_autoopen);
-	RB(video_autoclose);
-	RI(video_noss);
-	RI(video_logo);
-	RI(video_osd);
-	RB(video_yv12);
-	RI(video_stopclose);
-	RB(video_auto_fs);//RI(video_auto_fs); plague> changed to RB
 	RI(dotitlenum);
 	RI(dotasknum);
 	RI(plscrollsize);
@@ -627,8 +581,6 @@ void config_read(int i)
 
 	//  RI(video_contrast);
 	//  RI(video_brightness);
-	RI(video_fliprgb);
-	RI(video_remove_fs_on_stop);
 	RI(wav_do_header);
 	RI(wav_convert);
 	RS(wav_ext);

@@ -10,12 +10,6 @@
 #include "api.h"
 #include "../nu/AutoChar.h"
 
-#include "./setup/svc_setup.h"
-#include <api/service/waservicefactorybase.h>
-#include "./setup/postsetup.h"
-#define APSTUDIO_READONLY_SYMBOLS
-#include "./setup/setup_resource.h"
-#include "./setup/setupfactory.h"
 
 void DoInstall(int is_install)
 {
@@ -25,73 +19,7 @@ void DoInstall(int is_install)
 	//16=set needreg=1
 	//32=dircontextmenus
 	//64=playlisttype
-	//128=run setup wizard
 
-	if (is_install&128)
-	{
-		HRESULT hr(S_FALSE);
-		HWND hwndStatus(NULL), hwndWA(NULL);
-
-		waServiceFactory *psf = WASABI_API_SVC->service_getServiceByGuid(UID_SVC_SETUP);
-		if (psf) 
-		{
-			svc_setup *pSvc = (svc_setup*)psf->getInterface();
-			if (pSvc)
-			{
-				Setup_RegisterDefault();
-				Setup_RegisterPlugins();
-		
-				hr = pSvc->Start(hMainWindow);
-						
-				if (S_OK == hr) 
-				{
-					pSvc->CreateStatusWnd(&hwndStatus);
-					if (hwndStatus)
-					{
-						ShowWindow(hwndStatus, SW_SHOWNORMAL);
-						UpdateWindow(hwndStatus);
-					}
-					pSvc->Save(hwndStatus);
-					pSvc->ExecJobs(hwndStatus);
-				}
-				pSvc->Release();
-			}
-			WASABI_API_SVC->service_deregister(psf);
-		}
-
-		if (S_OK == hr && hwndStatus)
-		{
-			SetDlgItemTextW(hwndStatus, IDC_LBL_STATUS, getStringW(IDS_STATUS_RUNWA, NULL, 0));
-		}
-
-		out_deinit();
-		in_deinit();
-		w5s_deinit();
-		
-		if (S_OK == hr)
-		{
-			DWORD attr = GetFileAttributesW(INI_FILE);
-			if(attr & FILE_ATTRIBUTE_READONLY)
-			{
-				SetFileAttributesW(INI_FILE,(attr - FILE_ATTRIBUTE_READONLY));
-			}
-
-			char szWAParam[MAX_PATH] = {0};
-			WritePrivateProfileStringW(L"WinampReg", L"NeedReg", L"0", INI_FILE);
-			GetPrivateProfileStringA("SETUP", "WAParam", "", szWAParam, sizeof(szWAParam)/sizeof(char), INI_FILEA);
-			WritePrivateProfileStringW(L"SETUP", NULL, NULL, INI_FILE);
-			PathQuoteSpacesA(szWAParam);
-			StartWinamp((NULL != hwndStatus), &hwndWA, szWAParam);	
-		}
-
-		Wasabi_Unload();
-
-		if (hwndStatus) DestroyWindow(hwndStatus);
-		if (hwndWA && IsWindow(hwndWA)) SetForegroundWindow(hwndWA);
-		RemoveRegistrar();
-		ExitProcess(0);
-		return;
-	}
 
 	config_setup_filetypes(0);
 	config_registermediaplayer(1);
@@ -112,7 +40,6 @@ void DoInstall(int is_install)
 
 	if (is_install&(4 | 2 | 64)) // audio or video or both
 	{
-		extern void _w_sW(const char *name, const wchar_t *data);
 		wchar_t ext_list[16384] = {0};
 
 		if (is_install&(4 | 2))

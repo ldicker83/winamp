@@ -13,7 +13,6 @@ extern "C"
 	extern int g_has_deleted_current;
 };
 #include "shlobj.h"
-#include "../Plugins/General/gen_ff/ff_ipc.h"
 
  bool refuseDrops = false;
 class DropTarget: public IDropTarget
@@ -109,13 +108,11 @@ public:
 			}
 			if (par) wnd = par;
 
-			if (wnd == hMainWindow || IsChild(hMainWindow, wnd) 
-				|| (HWND)SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)wnd, IPC_FF_GETCONTENTWND) == hMainWindow)
+			if (wnd == hMainWindow || IsChild(hMainWindow, wnd))
 			{
 				is_main = 1;
 			}
-			else if (wnd == hPLWindow || IsChild(hPLWindow, wnd) || GetParent(hPLWindow) && IsChild(wnd, hPLWindow) ||
-			         (pledit_poopie = (HWND)SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)wnd, IPC_FF_GETCONTENTWND)) == hPLWindow)
+			else if (wnd == hPLWindow || IsChild(hPLWindow, wnd) || GetParent(hPLWindow) && IsChild(wnd, hPLWindow))
 			{
 				is_pe = 1;
 				if (pledit_poopie) pl_forceappend = 1; // if we got here because we're hosting the pledit, but not actually

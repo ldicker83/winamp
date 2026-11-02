@@ -24,7 +24,7 @@ struct Counter
 	waServiceFactory *owner;
 };
 
-ServiceManager::ServiceManager() : serviceGuard(512)
+ServiceManager::ServiceManager()
 {}
 
 int ServiceManager::service_register( waServiceFactory *svc )

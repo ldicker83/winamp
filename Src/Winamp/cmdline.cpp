@@ -139,7 +139,6 @@ void ParseParametersExpired(wchar_t *lpszCmdParam)
 	{
 		char ext_list[8192] = {0};
 		char *a = ext_list;
-		void _r_s(char *name, char *data, int mlen);
 		CoInitialize(0);
 		setup_config();
 		Wasabi_Load();
@@ -327,7 +326,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 		{
 			wchar_t ext_list[16384] = {0};
 			wchar_t *a = ext_list;
-			void _r_sW(const char *name, wchar_t *data, int mlen);
 			CoInitialize(0);
 			setup_config();
 			Wasabi_Load();
@@ -1018,7 +1016,6 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 		StringCchCopyW(buf, MAX_PATH, (!mode ? SKINDIR : LANGDIR));
 		PathCombineW(buf2, buf, outname);
 
-		void _r_sW(const char *name, wchar_t *data, int mlen);
 		_r_sW((!mode ? "skin" : "langpack"), current, MAX_PATH);
 
 		bool name_match = !_wcsicmp(outname, current);

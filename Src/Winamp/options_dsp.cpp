@@ -453,7 +453,6 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 							}
 							else if ( ret == DSP_PLUGIN_UNINSTALL_REBOOT )
 							{
-								extern void _w_s( char *name, char *data );
 								wchar_t buf[ 1024 ] = { 0 };
 								GetModuleFileNameW( hLib, buf, MAX_PATH );
 								_w_sW( "remove_genplug", buf );

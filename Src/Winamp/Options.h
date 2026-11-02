@@ -18,7 +18,6 @@ INT_PTR CALLBACK PlaybackProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 INT_PTR CALLBACK DspProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-INT_PTR CALLBACK VideoProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK PlaybackOptionsProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK TitleProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);

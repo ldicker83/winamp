@@ -119,6 +119,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..;..\..\..\;..\..\..\wasabi;..\..\..\agave;..\..\..\ombrowser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WINVER=0x0601;_WINDOWS;_USRDLL;TEST_EXPORTS;_DEBUG;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -198,6 +199,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..;..\..\..\;..\..\..\wasabi;..\..\..\agave;..\..\..\ombrowser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

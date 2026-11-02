@@ -12,7 +12,6 @@
 #include "resource.h"
 
 #include "../Plugins/General/gen_ml/ml.h"
-#include "../Plugins/General/gen_ff/ff_ipc.h"
 #include "../nu/ns_wc.h"
 #include "menuv5.h"
 #include "vis.h"
@@ -97,20 +96,86 @@ LRESULT wa_register_ipc(WPARAM data)
 
 // used to delay / filter out quick IPC_SETDIALOGBOXPARENT messages
 // to try to prevent the aero-peek buttons failing / part loading
-#define AEROPEEK 0xC0DE+4
+#define AEROPEEK (0xC0DE + 4)
 VOID CALLBACK DialogBoxParentChanged(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	KillTimer(hwnd, idEvent);
 	OnTaskbarButtonCreated(FALSE);
 }
 
+static HMODULE d3dx_lib = NULL;
+
+HMODULE FindD3DX9()
+{
+	if (d3dx_lib)
+		return d3dx_lib;
+
+	HMODULE d3dx9 = NULL;
+	HANDLE hFind;
+	WIN32_FIND_DATAW pfiledata;
+	wchar_t systemDir[MAX_PATH] = {0};
+	wchar_t libPath[MAX_PATH] = {0};
+	GetSystemDirectoryW(systemDir, MAX_PATH);
+	StringCchCatW(systemDir, MAX_PATH,L"\\d3dx9_");
+	StringCchCopyW(libPath, MAX_PATH, systemDir);
+	StringCchCatW(systemDir, MAX_PATH,L"*.dll");
+
+	hFind = FindFirstFileW(systemDir,&pfiledata);
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		BOOL more = true;
+		int iHighVersion = 0;
+		while (more)
+		{
+			wchar_t *start = wcsrchr(pfiledata.cFileName,L'_') + 1;
+			int version = _wtoi(start);
+			if (version <= 42 && version > iHighVersion)
+				iHighVersion = version;
+			more = FindNextFileW(hFind,&pfiledata);
+		}
+
+		FindClose(hFind);
+		if (iHighVersion >= 24)
+		{
+			wchar_t finalD3DX9LibPath[MAX_PATH] = {0};
+			StringCchPrintfW(finalD3DX9LibPath,MAX_PATH,L"%s%d%s",libPath,iHighVersion,L".dll");
+
+			d3dx9 = LoadLibraryW(finalD3DX9LibPath);
+		}
+	}
+
+	return d3dx9;
+}
+
 // IPC handler (for frontends and ourself)
 LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 {
-	LRESULT returnValue = 0;
-	if (VideoIPCProcedure(which, data, &returnValue))
-		return returnValue;
-
+	// Plugins may ask about video. Unknown IPCs fall through to "return 1" below, which a caller
+	// of IPC_GET_IVIDEOOUTPUT would treat as a pointer, so answer these explicitly.
+	switch (which)
+	{
+		case IPC_GET_IVIDEOOUTPUT:
+		case IPC_HAS_VIDEO_SUPPORT:
+		case IPC_IS_PLAYING_VIDEO:
+		case IPC_GETNUMVIDEOTRACKS:
+		case IPC_GETVIDEOTRACK:
+		case IPC_SETVIDEOTRACK:
+		case IPC_SETAUDIOTRACK:
+		case IPC_GETAUDIOTRACK:
+		case IPC_GETSTOPONVIDEOCLOSE:
+		case IPC_SETSTOPONVIDEOCLOSE:
+		case IPC_GETVIDEORESIZE:
+		case IPC_SETVIDEORESIZE:
+			return 0;
+		case IPC_GETNUMAUDIOTRACKS:
+			return 1;
+		case IPC_GETINFO:
+			if (data == 3)
+				return 0;
+			if (data == 4)
+				return reinterpret_cast<LRESULT>(L"");
+			break;
+	}
 	static int ldata;
 	static char fn[FILENAME_SIZE];
 	static wchar_t fnW[FILENAME_SIZE];
@@ -144,7 +209,6 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				}
 				break;
 			}
-		case IPC_FF_ONCOLORTHEMECHANGED:
 		case IPC_SKIN_CHANGED:
 			{
 				WADlg_init(hMainWindow);
@@ -292,8 +356,6 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				return FormatTitle(hts);
 			}
 			// hookable
-			return 0;
-		case IPC_FF_ISMAINWND:
 			return 0;
 		case IPC_ISVISRUNNING:
 			return vis_running();
@@ -1556,14 +1618,6 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			config_jtf_check = data;
 			_w_i("jtf_check", config_jtf_check);
 			return 0;
-		case IPC_UPDATE_URL:
-			{
-				ReplyMessage(0);
-				char *url=(char *)data;
-				UpdateWindow_Show(url);
-				free(url);
-				return 0;
-			}
 		case IPC_GETPLAYITEM_START:
 			return PlayList_GetItem_Start(PlayList_getPosition());
 		case IPC_GETPLAYITEM_END:

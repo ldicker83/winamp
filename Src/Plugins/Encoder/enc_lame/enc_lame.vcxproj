@@ -119,6 +119,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\Wasabi;..\..\..\external_dependencies\vcpkg\$(PlatformShortName)-windows-static\include\lame</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_USRDLL;_BLADEDLL;NSV_CODER_MP3_EXPORTS;WINDOWS_IGNORE_PACKING_MISMATCH;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -189,6 +190,7 @@ if exist ..\..\..\resources\libraries\lame_enc.dll xcopy /Y /D ..\..\..\resource
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>

@@ -11,7 +11,6 @@
 #include "../nu/AutoChar.h"
 
 //extern Browser *browser;
-extern UpdateBrowser *updateBrowser;
 enum
 {
     DISP_BROWSER_SETSIZE = 777,
@@ -57,13 +56,6 @@ HRESULT BrowserCOM::Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD wFlags, D
 	switch (dispid)
 	{
 
-		case DISP_BROWSER_SETUPDATESIZE:
-				if (pdispparams->cArgs == 2 && updateBrowser)
-		{
-			updateBrowser->Resized(pdispparams->rgvarg[1].lVal, pdispparams->rgvarg[0].lVal);
-			return S_OK;
-		}
-		break;
 
 
 	}

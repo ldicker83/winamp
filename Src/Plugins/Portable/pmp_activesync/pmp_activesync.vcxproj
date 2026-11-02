@@ -116,6 +116,7 @@
       <HeaderFileName />
     </Midl>
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\replicant;activesync\Inc;..\..\..\Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_USRDLL;ML_ex_EXPORTS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -231,6 +232,7 @@ xcopy /Y /D $(IntDir)*.pdb ..\..\..\..\Build\Winamp_$(PlatformShortName)_$(Confi
       <HeaderFileName />
     </Midl>
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\..\..\replicant;activesync\Inc;..\..\..\Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -113,10 +113,6 @@ void stats_write(void)
 		since we'll have a reliable way to get color themes (gen_ff hasn't loaded yet when versioncheck runs)
 		and it's a more accurate picture of the skin the user was using
 		*/
-	const wchar_t *colorTheme = 0;
-	if (WASABI_API_COLORTHEMES)
-		colorTheme = WASABI_API_COLORTHEMES->getGammaSet();
-	stats.SetString("colortheme", colorTheme);
 	stats.SetString("skin", config_skin);
 
 	stats.IncrementStat(Stats::LAUNCHES);

@@ -1,4 +1,12 @@
-﻿#include "main.h"
+﻿#include <windows.h>
+#include <strsafe.h>
+#include "plush/plush.h"
+#include "buildType.h"
+#include "resource.h"
+
+extern int playing;
+extern volatile int sa_curmode;
+extern HINSTANCE hMainInstance;
 
 #define LAND_SIZE 500
 #define LAND_DIV 12

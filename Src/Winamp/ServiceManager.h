@@ -35,7 +35,7 @@ protected:
 	RECVS_DISPATCH;
 	
 private:
-	//Nullsoft::Utility::LockGuard serviceGuard;
+	Nullsoft::Utility::LockGuard serviceGuard;
 	typedef std::vector<waServiceFactory *> ServiceList;
 	ServiceList services;
 	std::vector<Counter *> locks;

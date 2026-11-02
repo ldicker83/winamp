@@ -75,7 +75,6 @@ static void draw_pe_infostr(HDC hdcout, wchar_t *str)
 	StringCchCopyW(playlistStr, 18, str); // use 18 instead of 19 to keep the last byte null terminated
 	AutoChar narrowStr(str);
 	SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)(char *)narrowStr, IPC_CB_PEINFOTEXT);
-	playlistTextFeed->UpdateText(playlistStr, 19);
 
 	if (!pe_init)
 		return;

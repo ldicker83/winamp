@@ -21,7 +21,6 @@
 #include "../Plugins/General/gen_ml/ml.h"
 #include "wa_dlg.h"
 #include "strutil.h"
-#include "./setup/setupfactory.h"
 #include "./commandLink.h"
 #include "AppRefCount.h"
 #include <unknwn.h>
@@ -181,37 +180,6 @@ void BuildAppName()
 {
 	StringCchCopyW( szAppName, 64, L"Winamp v1.x" );
 	StringCchPrintfW( caption, CAPTION_SIZE, L"%S %S", app_name, app_version_string );
-}
-
-static void CALLBACK DisplayUserConsentMessageBox( HWND hwnd, UINT uMsg, UINT_PTR eventId, DWORD time )
-{
-	KillTimer( hMainWindow, USER_CONSENT_EVENT_ID );
-	if ( config_user_consent_join_channels != -1 )
-	{
-		return;
-	}
-
-	wchar_t titleStr[ 32 ] = { 0 };
-	int msgboxID = MessageBoxW(
-		NULL,
-		WASABI_API_LNGSTRINGW( IDS_RC_CHANNEL_MESSAGE ),
-		WASABI_API_LNGSTRINGW_BUF( IDS_RC_CHANNEL_TITLE, titleStr, 32 ),
-		MB_ICONEXCLAMATION | MB_YESNO | MB_DEFBUTTON1
-	);
-
-	switch ( msgboxID )
-	{
-		case IDYES:
-			config_user_consent_join_channels = 1;
-			config_newverchk_rc = 1;
-			config_newverchk = 1;
-			break;
-		case IDNO:
-			config_user_consent_join_channels = 0;
-			config_newverchk_rc = 0;
-			config_newverchk = 1;
-			break;
-	}
 }
 
 // creates (but does not show) main window
@@ -462,7 +430,6 @@ static int PassToOtherWinamp( wchar_t *lpszCmdParam, HWND hwnd_other, int bAdd, 
 }
 
 DWORD CALLBACK MainThread( LPVOID param );
-extern wchar_t vidoutbuf_save[ 1024 ];
 static LPWSTR lpszCmdParam = 0;
 static int bAdd = 0, bBookmark = 0,
 bHandle = 0, bCommand = 0,
@@ -746,8 +713,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	playlistStr[ 0 ] = 0;
 	playlistStr[ 18 ] = 0; // keep the last byte null terminated (and don't overwrite) so we can be smoewhat thread-safe (may have junk data, but it won't read outside the array)
 
-	vidoutbuf_save[ 0 ] = 0;
-	vidoutbuf_save[ 1023 ] = 0; // keep the last byte null terminated (and don't overwrite) so we can be smoewhat thread-safe (may have junk data, but it won't read outside the array)
 
 	mainThreadId = GetCurrentThreadId();
 	DuplicateHandle( GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &hMainThread, 0, FALSE, DUPLICATE_SAME_ACCESS );
@@ -770,12 +735,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	if ( !skip_crasher )
 		load_gen_crasher();
 
-
-	if ( ( 128 & is_install ) || ( !g_noreg && GetPrivateProfileIntW( L"WinampReg", L"NeedReg", 1, INI_FILE ) ) )
-	{
-		is_install = 128; //  nothing else
-		Setup_RegisterService();
-	}
 
 	draw_firstinit();
 
@@ -958,13 +917,9 @@ DWORD CALLBACK MainThread( LPVOID param )
 		}
 	}
 
-	//disable video menu if no video plugins are present or configured as disabled
-	if ( !g_has_video_plugin )
-	{
-		RemoveMenu( main_menu, WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
-		RemoveMenu( GetSubMenu( v5_top_menu, 3 ), WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
-		g_mm_optionsbase_adj -= 1;
-	}
+	RemoveMenu( main_menu, WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
+	RemoveMenu( GetSubMenu( v5_top_menu, 3 ), WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
+	g_mm_optionsbase_adj -= 1;
 
 	set_aot( 0 ); // in case our gen plugins did anything fun
 	set_priority();
@@ -990,7 +945,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 
 	WADlg_init( hMainWindow );
 
-	SetTimer( hMainWindow, USER_CONSENT_EVENT_ID, 5000, DisplayUserConsentMessageBox );
 
 #ifdef BENSKI_TEST_WM_PRINTCLIENT
 	SetTimer( hMainWindow, 9999, 10000, 0 );
@@ -1050,7 +1004,7 @@ extern librarySendToMenuStruct mainSendTo = { 0 };
 
 // used to delay / filter out quick IPC_SETDIALOGBOXPARENT messages
 // to try to prevent the aero-peek buttons failing / part loading
-#define AEROPEEKLOAD 0xC0DE+5
+#define AEROPEEKLOAD (0xC0DE + 5)
 VOID CALLBACK TaskButtonCreated( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
 	KillTimer( hwnd, idEvent );
@@ -1707,11 +1661,6 @@ static LRESULT Main_OnSysCommand( HWND hwnd, UINT cmd, int x, int y )
 	//  char buf[512];
 	//  wsprintf(buf,"got WM_SYSCOMMAND %08x\n",cmd);
 	//  OutputDebugString(buf);
-	// video
-	if ( ( ( cmd & 0xfff0 ) == SC_SCREENSAVE || ( cmd & 0xfff0 ) == SC_MONITORPOWER ) && config_video_noss && video_isVideoPlaying() )
-	{
-		return -1;
-	}
 
 	if ( !Main_OnCommand( hwnd, cmd, (HWND)x, (UINT)y ) )
 		FORWARD_WM_SYSCOMMAND( hwnd, cmd, x, y, DefWindowProcW );

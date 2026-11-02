@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 #include <ocidl.h>
-#include "replicant/foundation/guid.h"
+#include "foundation/guid.h"
 
 
 class DataStoreCOM : public IDispatch

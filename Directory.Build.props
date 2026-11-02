@@ -1,0 +1,9 @@
+<Project>
+  <!-- Legacy code assigns string literals to non-const pointers throughout. C++20 implies /permissive-,
+       which rejects that, so opt out of just that one check rather than conformance as a whole. -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalOptions>/Zc:strictStrings- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

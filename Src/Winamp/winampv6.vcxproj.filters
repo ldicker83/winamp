@@ -16,9 +16,6 @@
     <ClCompile Include="..\Agave\Metadata\api_metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="api_videopreferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -127,9 +124,6 @@
     <ClCompile Include="draw_sa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="draw_vw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dsp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,12 +160,6 @@
     <ClCompile Include="ExternalCOM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FeedBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="feeds.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Fft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -187,12 +175,6 @@
     <ClCompile Include="fullscreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GammaFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GammaManagerAPI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="gen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -206,9 +188,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Http.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\httpgrab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HTTPRetrieveFile.cpp">
@@ -230,9 +209,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ipc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IVideoD3DOSD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="jnetcom.cpp">
@@ -295,9 +271,6 @@
     <ClCompile Include="lang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="setup\langutil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LazyServiceFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -305,9 +278,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="linklist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\loadimage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="M3u.cpp">
@@ -332,9 +302,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main_mouse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="options_video.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ole.cpp">
@@ -394,9 +361,6 @@
     <ClCompile Include="MoreItems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="metrics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -433,9 +397,6 @@
     <ClCompile Include="OutputPluginAudioStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PaletteManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ParamList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -467,9 +428,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plush\plush.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\postsetup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="precomp.cpp">
@@ -529,37 +487,10 @@
     <ClCompile Include="Set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="setup\setup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\setupfactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SHELL.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="setup\sjob_register.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinBitmapElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinColorElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SkinCOM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinCursorElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinElementAlias.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\skininfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Wasabi\api\skin\skinitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Skins.cpp">
@@ -569,21 +500,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="skinWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\spage_assoc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\spage_connect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\spage_feedback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\spage_lang.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="setup\spage_skin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SPLASH.cpp">
@@ -640,43 +556,10 @@
     <ClCompile Include="UnsignedAttribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="updateService.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="updateServicePopup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UpdateWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="urlmanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VersionCheck.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vid_d3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vid_ddraw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vid_none.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vid_overlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vid_subs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="video.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="video_ipc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XMLString.cpp">
@@ -710,27 +593,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="videoui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoPreferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoOutputChildDDraw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoOutputChild.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoOutput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoOSD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoConfigGroup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="../Plugins/Library/ml_bookmarks\bookmark.cpp">
@@ -834,19 +696,7 @@
     <ClInclude Include="ExternalCOM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FeedBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="feeds.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FFT.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GammaFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GammaManagerAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="handler.h">
@@ -855,28 +705,16 @@
     <ClInclude Include="..\nu\HTMLContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="setup\httpgrab.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Wasabi\api\application\ifc_messageprocessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Agave\Metadata\ifc_metadataReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="setup\ifc_setupjob.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\ifc_setuppage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InternetConfigGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ipc_pe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IVideoD3DOSD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IWasabiDispatchable.h">
@@ -948,13 +786,7 @@
     <ClInclude Include="language.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="setup\langutil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LazyServiceFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\loadimage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Main.h">
@@ -981,9 +813,6 @@
     <ClInclude Include="OutputPluginAudioStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PaletteManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ParamList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -991,9 +820,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Playlist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\postsetup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="precomp.h">
@@ -1008,9 +834,6 @@
     <ClInclude Include="ResamplingReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="setup\resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1020,55 +843,16 @@
     <ClInclude Include="ServiceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="setup\setup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\setup_api.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\setupfactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\setupcommon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\setup_resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\sjob_register.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinBitmapElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SkinColorElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SkinCOM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinCursorElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinElementAlias.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\skininfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="skinWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="skinWindowIPC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\spage_assoc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\spage_skin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stats.h">
@@ -1078,9 +862,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Agave\Metadata\svc_metatag.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setup\svc_setup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SysCallbacks.h">
@@ -1110,25 +891,7 @@
     <ClInclude Include="TIMING.H">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="updateService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="urlmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vid_d3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vid_ddraw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vid_none.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vid_overlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vid_subs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XMLString.h">
@@ -1156,30 +919,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wa_ipc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoOutputChildDDraw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoOutputChild.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoOutput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoOSD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoFeedFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoConfigGroup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoAspectAdjuster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main.hpp">
@@ -1215,9 +954,6 @@
     <ClInclude Include="api_audiostream.h">
       <Filter>Header Files\api</Filter>
     </ClInclude>
-    <ClInclude Include="..\Wasabi\api\skin\api_colorthemes.h">
-      <Filter>Header Files\api</Filter>
-    </ClInclude>
     <ClInclude Include="api_decodefile.h">
       <Filter>Header Files\api</Filter>
     </ClInclude>
@@ -1242,16 +978,10 @@
     <ClInclude Include="api_stats.h">
       <Filter>Header Files\api</Filter>
     </ClInclude>
-    <ClInclude Include="..\Wasabi\api\skin\feeds\api_textfeed.h">
-      <Filter>Header Files\api</Filter>
-    </ClInclude>
     <ClInclude Include="..\nu\threadpool\api_threadpool.h">
       <Filter>Header Files\api</Filter>
     </ClInclude>
     <ClInclude Include="api_urlmanager.h">
-      <Filter>Header Files\api</Filter>
-    </ClInclude>
-    <ClInclude Include="api_videopreferences.h">
       <Filter>Header Files\api</Filter>
     </ClInclude>
     <ClInclude Include="api_winamp.h">
@@ -1273,9 +1003,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="setup\setup.rc">
-      <Filter>Ressource Files</Filter>
-    </ResourceCompile>
     <ResourceCompile Include="Winamp.rc">
       <Filter>Ressource Files</Filter>
     </ResourceCompile>
@@ -1296,9 +1023,6 @@
       <Filter>Image Files</Filter>
     </Image>
     <Image Include="resource\cbuttons.bmp">
-      <Filter>Image Files</Filter>
-    </Image>
-    <Image Include="setup\checkbox.bmp">
       <Filter>Image Files</Filter>
     </Image>
     <Image Include="resource\djegg.bmp">
@@ -1358,15 +1082,6 @@
     <Image Include="resource\icon13.ico">
       <Filter>Image Files</Filter>
     </Image>
-    <Image Include="setup\headerstrip.bmp">
-      <Filter>Image Files</Filter>
-    </Image>
-    <Image Include="setup\navitemstrip.bmp">
-      <Filter>Image Files</Filter>
-    </Image>
-    <Image Include="setup\navstrip.bmp">
-      <Filter>Image Files</Filter>
-    </Image>
     <Image Include="resource\numbers.bmp">
       <Filter>Image Files</Filter>
     </Image>
@@ -1389,15 +1104,6 @@
       <Filter>Image Files</Filter>
     </Image>
     <Image Include="resource\POSBAR.BMP">
-      <Filter>Image Files</Filter>
-    </Image>
-    <Image Include="setup\preview_classic.png">
-      <Filter>Image Files</Filter>
-    </Image>
-    <Image Include="setup\preview_no.png">
-      <Filter>Image Files</Filter>
-    </Image>
-    <Image Include="setup\smokingllama.png">
       <Filter>Image Files</Filter>
     </Image>
     <Image Include="resource\shufrep.bmp">

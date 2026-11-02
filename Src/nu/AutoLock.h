@@ -372,6 +372,10 @@ namespace nu
 			LockGuard_t *guard;
 		};
 }
+namespace Nullsoft
+{
+	namespace Utility = ::nu;
+}
 #endif
 
 #endif

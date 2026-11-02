@@ -115,6 +115,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..\..\..\Wasabi;..\..\..\replicant;..;..\..\..\;..\..\..\external_dependencies\libdiscid-0.6.2\include;..\..\..\gracenote;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;IN_CDDA2_EXPORTS;UNICODE_INPUT_PLUGIN;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x601;IGNORE_API_GRACENOTE;IGNORE_PRIMO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -188,6 +189,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>

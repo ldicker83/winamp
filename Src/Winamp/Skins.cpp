@@ -162,6 +162,7 @@ static void make_skin_dir(void)
 						do
 						{
 							char filename[MAX_PATH], *fn, *p;
+							int success = 0;
 							if (isNT)
 								SetEvent(asyncIO.hEvent);
 							unzGetCurrentFileInfo(f, NULL, filename, sizeof(filename), NULL, 0, NULL, 0);
@@ -201,7 +202,7 @@ static void make_skin_dir(void)
 								p = extension(++fn);
 								if (!_stricmp(p, "txt") || !_stricmp(p, "cur") || !_stricmp(p, "bmp") || !_stricmp(p, "ini"))
 								{
-									int success = 0;
+									success = 0;
 									if (unzOpenCurrentFile(f) == UNZ_OK)
 									{
 										HANDLE fp;
@@ -498,103 +499,6 @@ static void Skin_LoadCursors( void )
 	}
 }
 
-#define COLOR_ERROR (0xff00ff)
-
-static ARGB32 parseColor( const char *color, int *error )
-{
-	*error = 0;
-
-	if ( color == NULL || *color == '\0' )
-	{
-		*error = 1;
-		
-		return COLOR_ERROR;
-	}
-
-	if ( strchr( color, ',' ) )
-	{
-		int r = 0, g = 0, b = 0;
-
-		if ( sscanf( color, "%d,%d,%d", &r, &g, &b ) != 3 )
-		{
-			*error = 1;
-			
-			return COLOR_ERROR;
-		}
-
-		return RGB( r, g, b ); // our colors are reversed internally
-	}
-
-	if ( *color == '#' )
-	{
-		int r = 0, g = 0, b = 0;
-
-		if ( sscanf( color, "#%02x%02x%02x", &r, &g, &b ) != 3 )
-		{
-			*error = 1;
-			
-			return COLOR_ERROR;
-		}
-
-		return RGB( r, g, b );
-	}
-
-	*error = 1;
-
-	return COLOR_ERROR;
-}
-
-static void Skin_LoadFreeformColors( const wchar_t *fn )
-{
-	WASABI_API_PALETTE->Reset();
-	FILE *f = _wfopen( fn, L"rt" );
-
-	if ( f )
-	{
-		char buffer[ 1024 ] = { 0 };
-
-		if ( fgets( buffer, 1024, f ) )
-		{
-			size_t len = strlen( buffer );
-
-			if ( buffer[ len - 1 ] == '\n' )
-				buffer[ len - 1 ] = 0;
-
-			if ( !strcmp( buffer, "[colors]" ) )
-			{
-				WASABI_API_PALETTE->StartTransaction();
-
-				while ( !feof( f ) )
-				{
-					fgets( buffer, 1024, f );
-
-					char *equal_pt = strchr( buffer, '=' );
-
-					if ( equal_pt )
-					{
-						*equal_pt = 0;
-						int error = 0;
-						ARGB32 color = parseColor( equal_pt + 1, &error );
-
-						if ( !error )
-						{
-							wchar_t utf8_expand[ 1024 ] = { 0 };
-
-							MultiByteToWideCharSZ( CP_UTF8, 0, buffer, -1, utf8_expand, 1024 );
-
-							WASABI_API_PALETTE->AddColor( utf8_expand, color );
-						}
-					}
-				}
-
-				WASABI_API_PALETTE->EndTransaction();
-			}
-		}
-
-		fclose( f );
-	}
-}
-
 BOOL Skin_Check_Modern_Support()
 {
 	wchar_t fn[ MAX_PATH ] = { 0 };
@@ -669,24 +573,6 @@ void Skin_Load(void)
 	Skin_PLFont[0] = 0;
 	Skin_PLFontW[0] = 0;
 	Skin_UseGenNums = !config_skin[0];
-
-	// load default freeform colors
-	if (!config_skin[0])
-	{
-		WASABI_API_PALETTE->Reset();
-		WASABI_API_PALETTE->StartTransaction();
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.background.selected", RGB(0x75, 0x74, 0x8B));
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.background", RGB(0x38, 0x37, 0x57));
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.text", RGB(0xFF, 0xFF, 0xFF));
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.text.selected", RGB(0xFF, 0xFF, 0xFF));
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.text.inactive", RGB(0x73, 0x73, 0x89));
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.frame", RGB(0x75, 0x74, 0x8B));
-		WASABI_API_PALETTE->AddColor(L"wasabi.popupmenu.separator", RGB(0x75, 0x74, 0x8B));
-		WASABI_API_PALETTE->AddColor(L"wasabi.tooltip.background", RGB(0x38, 0x37, 0x57));
-		WASABI_API_PALETTE->AddColor(L"wasabi.tooltip.text", RGB(0xFF, 0xFF, 0xFF));
-		WASABI_API_PALETTE->AddColor(L"wasabi.tooltip.frame", RGB(0x75, 0x74, 0x8B));
-		WASABI_API_PALETTE->EndTransaction();
-	}
 
 	if (skin_directory[0])
 	{
@@ -868,8 +754,6 @@ s4:
 		// used to allow for the gen.bmp numbers support in 5.64 - need skin to say as too many have junk where it's taken from
 		Skin_UseGenNums = GetPrivateProfileIntW(L"Misc", L"UseGenNums", 0, fn);
 
-		PathCombineW(fn, skin_directory, L"colors.ini");
-		Skin_LoadFreeformColors(fn);
 	}
 	Skin_LoadCursors();
 }

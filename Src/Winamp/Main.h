@@ -271,19 +271,6 @@ extern HINSTANCE language_pack_instance;
 	void draw_pe_iobut(int which); // -1 = none, 0 = load, 1=save, 2=clear
 
 	/*****************
-	*** draw_vw.c 
-	*/
-	extern int vw_init;
-	void draw_vw_init();
-	void draw_vw_kill();
-	void draw_vw_tbar(int state);
-	void draw_vw(HDC hdcout);
-	void draw_paint_vw(HWND hwnd);
-	void draw_vw_tbutton(int b3);
-	void draw_vw_mbuts(int whichb);
-	void draw_vw_info(wchar_t *t, int erase);
-
-	/*****************
 	*** dsp.c 
 	*/
 	void dsp_init(void);
@@ -888,26 +875,6 @@ extern HINSTANCE language_pack_instance;
 	extern int g_video_curaudiotrack;
 	void Browser_Create();
 	void Browser_Destroy();
-	extern wchar_t vidoutbuf_save[1024];
-	extern int is_fullscreen_video;
-	int ShowVideoWindow(int init_state);
-	void HideVideoWindow(int autoStop);
-	LRESULT CALLBACK video_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-	int video_isVideoPlaying();
-	int videoIsFullscreen();
-	void videoToggleFullscreen();
-	void videoForceFullscreenOff();
-	HWND video_Create();
-
-	/***************
-	*** video_ipc.cpp
-	*/
-	int WINAPI VideoIPCProcedure(int which, WPARAM data, LRESULT *returnValue);
-
-	/***
-	** videoui.c
-	*/
-	void videoui_handlemouseevent(int x, int y, int type, int stats);
 
 	/***********************
 	*** vis.c 
@@ -1068,8 +1035,7 @@ extern HINSTANCE language_pack_instance;
 	void readwrite_client_uid(int isWrite, wchar_t uid_str[64]);
 	BOOL read_compatmode();
 
-	extern char metric_plugin_list[];
-	char *export_sa_get_deprecated();
+		char *export_sa_get_deprecated();
 	char *export_sa_get(char data[75*2 + 8]);
 	void export_sa_setreq(int);
 	extern HWND jump_hwnd, jump_hwnd2;
@@ -1090,7 +1056,7 @@ extern HINSTANCE language_pack_instance;
 	void vis_init();
 	void resizeMediaWnd (HWND hwnd);
 	extern int g_skinloadedmanually;
-	int writeEQfile_init(wchar_t *file, char *name, unsigned char *tab);
+	int writeEQfile_init(wchar_t *file, const std::string &name, unsigned char *tab);
 	extern int playlist_open(HWND hwnd);
 	extern int setPlRating(int rating);
 	extern int setCurrentRating(int rating);

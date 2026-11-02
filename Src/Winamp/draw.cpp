@@ -465,7 +465,6 @@ void draw_init()
 	sa_kill = 0;
 	draw_pe_init();
 	draw_eq_init();
-	draw_vw_init();
 	LeaveCriticalSection(&g_srcdccs);
 }
 

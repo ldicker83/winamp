@@ -196,7 +196,10 @@ static INT_PTR CALLBACK CfgProc1(HWND wnd,UINT msg,WPARAM wp,LPARAM lp)
 	case WM_INITDIALOG:
 		SendDlgItemMessageW(wnd,IDC_HW_MIX,BM_SETCHECK,cfg_hw_mix,0);
 		SendDlgItemMessageW(wnd,IDC_CREATE_PRIMARY,BM_SETCHECK,cfg_createprimary,0);
-		cfgSetDevice(wnd,&(GUID)cfg_dev2,0);
+		{
+			GUID dev = cfg_dev2;
+			cfgSetDevice(wnd,&dev,0);
+		}
 		{
 			DsDevEnum dev_enum;
 			if (dev_enum.FindDefault())

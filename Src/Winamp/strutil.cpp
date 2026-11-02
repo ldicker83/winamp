@@ -311,23 +311,23 @@ const wchar_t *GetLastCharactercW(const wchar_t *string)
 	return CharPrevW(string, string+lstrlenW(string));
 }
 
-wchar_t *scanstr_backW(wchar_t *str, wchar_t *toscan, wchar_t *defval)
+wchar_t *scanstr_backW(wchar_t *str, const wchar_t *toscan, wchar_t *defval)
 {
 	wchar_t *s = GetLastCharacterW(str);
 	if (!s || !str[0]) return defval;
 	if (!toscan || !toscan[0]) return defval; 
 	for (;;)
 	{
-		wchar_t *t = toscan;
+		const wchar_t *t = toscan;
 		while (t && *t)
 		{
 			if (*t == *s) return s;
 			t = CharNextW(t);
 		}
-		t = CharPrevW(str, s);
-		if (t == s)
+		wchar_t *prev = CharPrevW(str, s);
+		if (prev == s)
 			return defval;
-		s = t;
+		s = prev;
 	}
 }
 
@@ -358,16 +358,16 @@ char *scanstr_back(char *str, const char *toscan, char *defval)
 	if (!toscan || !toscan[0]) return defval; 
 	for (;;)
 	{
-		char *t = toscan;
+		const char *t = toscan;
 		while (t && *t)
 		{
 			if (*t == *s) return s;
 			t = CharNextA(t);
 		}
-		t = CharPrevA(str, s);
-		if (t == s)
+		char *prev = CharPrevA(str, s);
+		if (prev == s)
 			return defval;
-		s = t;
+		s = prev;
 	}
 }
 

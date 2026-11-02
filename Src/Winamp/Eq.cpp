@@ -902,7 +902,7 @@ int writeEQfile_init(wchar_t *file, const std::string& name, unsigned char *tab)
 	return 0;
 }
 
-static int writeEQfile(wchar_t *file, char *name)
+static int writeEQfile(wchar_t *file, const std::string &name)
 {
 	char s[2048] = {0};
 	DWORD a = 0;
@@ -924,13 +924,13 @@ static int writeEQfile(wchar_t *file, char *name)
 			SetFilePointer(hFile, 0, NULL, FILE_END);
 			break;
 		}
-		if (!_stricmp(name, s))
+		if (!_stricmp(name.c_str(), s))
 		{
 			SetFilePointer(hFile, -(signed)a, NULL, FILE_CURRENT);
 			break;
 		}
 	}
-	StringCchCopyExA(s, _MAX_FNAME+1, name, 0, 0, STRSAFE_FILL_BEHIND_NULL);
+	StringCchCopyExA(s, _MAX_FNAME+1, name.c_str(), 0, 0, STRSAFE_FILL_BEHIND_NULL);
 	memcpy(s + _MAX_FNAME + 1, eq_tab, sizeof(eq_tab));
 	memcpy(s + _MAX_FNAME + 1 + sizeof(eq_tab), &config_preamp, sizeof(config_preamp));
 	a = 0; WriteFile(hFile, s, _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp), &a, NULL);
@@ -938,7 +938,7 @@ static int writeEQfile(wchar_t *file, char *name)
 	return 0;
 }
 
-static int readEQfile(wchar_t *file, char *name)
+static int readEQfile(wchar_t *file, const std::string &name)
 {
 	char s[2048] = {0};
 	DWORD a = 0;
@@ -959,7 +959,7 @@ static int readEQfile(wchar_t *file, char *name)
 			CloseHandle(hFile);
 			return 1;
 		}
-		if (!_stricmp(name, s))
+		if (!_stricmp(name.c_str(), s))
 			break;
 	}
 	CloseHandle(hFile);

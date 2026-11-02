@@ -1,7 +1,7 @@
 #ifndef NULLSOFT_IN_MP3_CONFIG_H
 #define NULLSOFT_IN_MP3_CONFIG_H
 
-#include <bfc/platform/guid.h>
+#include "../../../foundation/guid.h"
 enum
 {
   WRITE_UTF16 = 0,

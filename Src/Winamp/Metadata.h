@@ -26,7 +26,7 @@ protected:
 private:
 	// this is hella slow but it'll get the ball rolling on implementing this
 	std::vector<wchar_t*> keys;
-	//Nullsoft::Utility::LockGuard keyGuard;
+	Nullsoft::Utility::LockGuard keyGuard;
 };
 
 extern Metadata *metadata;

@@ -5,12 +5,10 @@
 #include "wa_dlg.h"
 #include "api.h"
 #include "../nu/AutoWide.h"
-#include <tataki/color/skinclr.h>
 #include <api/service/waservicefactory.h>
 
 JSAPI2::SkinAPI::SkinAPI(const wchar_t *_key, JSAPI::ifc_info *_info)
 {
-	Tataki::Init(serviceManager); // we might need it, go ahead and init here
 	info = _info;
 	key = _key;
 	refCount = 1;
@@ -18,7 +16,6 @@ JSAPI2::SkinAPI::SkinAPI(const wchar_t *_key, JSAPI::ifc_info *_info)
 
 JSAPI2::SkinAPI::~SkinAPI()
 {
-	Tataki::Quit();
 }
 
 enum
@@ -113,18 +110,7 @@ HRESULT JSAPI2::SkinAPI::GetSkinColor(WORD wFlags, DISPPARAMS FAR *pdispparams, 
 
 	JSAPI_INIT_RESULT(pvarResult, VT_BSTR);
 
-	ARGB32 color;
-	if (SkinColor::TryGetColor(&color, JSAPI_PARAM(pdispparams, 1).bstrVal))
-	{
-		color = ((color >> 16) & 0xff | (color & 0xff00) | ((color << 16) & 0xff0000));
-		wchar_t colorString[8] = {0};
-		StringCchPrintfW(colorString, 8, L"#%06X", color);
-		JSAPI_SET_RESULT(pvarResult, bstrVal, SysAllocString(colorString));
-	}
-	else
-	{
-		JSAPI_EMPTY_RESULT(pvarResult);
-	}
+	JSAPI_EMPTY_RESULT(pvarResult);
 
 	return S_OK;
 }

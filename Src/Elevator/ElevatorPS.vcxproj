@@ -124,6 +124,7 @@
 	  </Command>
     </PreBuildEvent>
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x601;REGISTER_PROXY_DLL;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
@@ -199,6 +200,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
 	  </Command>
     </PreBuildEvent>
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x601;REGISTER_PROXY_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

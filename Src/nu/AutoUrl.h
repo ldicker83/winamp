@@ -5,29 +5,10 @@
 #include "AutoChar.h"
 
 /* benski> i'm sure there's a nice optimized way of doing this, but I need to implement it _right now_ */
-#define HEXCASE(d) case 0x##d: return #@d
 inline char quickhex(unsigned char in)
 {
-	switch (in)
-	{
-		HEXCASE(0);
-		HEXCASE(1);
-		HEXCASE(2);
-		HEXCASE(3);
-		HEXCASE(4);
-		HEXCASE(5);
-		HEXCASE(6);
-		HEXCASE(7);
-		HEXCASE(8);
-		HEXCASE(9);
-		HEXCASE(A);
-		HEXCASE(B);
-		HEXCASE(C);
-		HEXCASE(D);
-		HEXCASE(E);
-		HEXCASE(F);
-
-	}
+	if (in < 16)
+		return "0123456789ABCDEF"[in];
 	return 0;
 }
 

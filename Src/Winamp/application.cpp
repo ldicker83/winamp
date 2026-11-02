@@ -18,7 +18,7 @@
 static UINT WINAMP_WM_DIRECT_MOUSE_WHEEL = WM_NULL;
 static ATOM DIRECT_MOUSE_WHEEL_CONVERT_TO_MOUSE_WHEEL = 0;
 
-static BOOL DirectMouseWheel_RegisterMessage()
+BOOL DirectMouseWheel_RegisterMessage()
 {
 	WINAMP_WM_DIRECT_MOUSE_WHEEL = RegisterWindowMessageW(L"WINAMP_WM_DIRECT_MOUSE_WHEEL");
 	if (WM_NULL == WINAMP_WM_DIRECT_MOUSE_WHEEL)

@@ -12,7 +12,6 @@
 #include "../nu/AutoWide.h"
 
 static int dc_pos=0;
-extern int is_fullscreen_video;
 extern int g_fsapp;
 
 static BOOL HasParent(HWND hwnd)
@@ -198,7 +197,7 @@ static void doMyDirtyShitholeDockingShit(HWND myWnd, RECT newr, int sedge)  // -
 						
 						EstPLWindowRect( &oldrect );
 					}
-					else if ( x == 4 && !is_fullscreen_video )
+					else if ( x == 4 )
 					{
 						if ( !whichedge )
 							config_video_wy = newr.bottom;
@@ -336,7 +335,7 @@ static void doScreenDockMoveSubWindows(HWND myWnd, RECT newr, int whichedge)
 					
 					EstPLWindowRect( &oldrect );
 				}
-				else if ( x == 4 && !is_fullscreen_video )
+				else if ( x == 4 )
 				{
 					if ( !whichedge )
 						config_video_wy = newr.top - h;
@@ -479,7 +478,7 @@ static void doScreenDock()
 					EstPLWindowRect( &oldrect );
 				}
 //				else if (x == 3) { if (!whichedge) config_mb_wy = newrect.top; else config_mb_wx = newrect.left; EstMBWindowRect(&oldrect); }
-				else if ( x == 4 && !is_fullscreen_video )
+				else if ( x == 4 )
 				{
 					if ( !whichedge )
 						config_video_wy = newrect.top;
@@ -1006,7 +1005,7 @@ void set_aot(int dodockingstuff)
 				config_pe_wy = r.top + 10; //r.bottom - 10;
 		}
 
-		if (config_video_open && !is_fullscreen_video)
+		if (config_video_open)
 		{
 			RECT thisr;
 			EstVidWindowRect( &thisr );
@@ -1103,7 +1102,7 @@ void set_aot(int dodockingstuff)
 			hwdp=DeferWindowPos(hwdp,hMBWindow, 0, r.left, r.top, r.right-r.left, r.bottom-r.top, SWP_DRAWFRAME|SWP_NOACTIVATE|SWP_NOZORDER);
 		}*/
 
-		if (hVideoWindow && !GetParent(hVideoWindow) && !is_fullscreen_video)
+		if (hVideoWindow && !GetParent(hVideoWindow))
 		{
 			EstVidWindowRect(&r);
 			hwdp=DeferWindowPos(hwdp,hVideoWindow, 0, r.left, r.top, r.right-r.left, r.bottom-r.top, SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOZORDER);

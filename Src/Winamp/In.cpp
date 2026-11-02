@@ -162,38 +162,8 @@ static void LoadInputPlugin(const wchar_t* filename)
 
 	in_modules.push_back(mod);
 
-	if ( mod->SetInfo )
-	{
-		char* p = (char*)mod->SetInfo;
-		if ( p && *p )
-		{
-			StringCchCatA(metric_plugin_list, 512, ":");
-			StringCchCatA(metric_plugin_list, 512, p);
-		}
-	}
-
 	mod->SetInfo = setinfo;
 
-	if ( !g_has_video_plugin )
-	{
-		int (*gefiW)(const wchar_t* fn, const char* data, wchar_t* dest, int destlen);
-		gefiW = (int(__cdecl*)(const wchar_t*, const char*, wchar_t*, int))GetProcAddress(hLib, "winampGetExtendedFileInfoW");
-		if ( gefiW )
-		{
-			wchar_t dest[16] = { 0 };
-			gefiW(L"", "type", dest, 16);
-			if ( _wtoi(dest) == 1 ) g_has_video_plugin = 1;
-		}
-
-		int (*gefi)(const char* fn, const char* data, char* dest, int destlen);
-		gefi = (int(__cdecl*)(const char*, const char*, char*, int))GetProcAddress(hLib, "winampGetExtendedFileInfo");
-		if ( gefi )
-		{
-			char dest[16] = { 0 };
-			gefi("", "type", dest, 16);
-			if ( atoi(dest) == 1 ) g_has_video_plugin = 1;
-		}
-	}
 }
 
 int in_init()
@@ -222,8 +192,6 @@ int in_init()
 		} while ( FindNextFileW(h, &d) );
 		FindClose(h);
 	}
-
-	if ( (g_no_video_loaded = _r_i("no_video", 0)) ) g_has_video_plugin = 0;
 
 	return TRUE;
 }

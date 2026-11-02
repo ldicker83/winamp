@@ -20,7 +20,7 @@ using namespace Nullsoft::Utility;
 std::random_device rd;
 std::mt19937 g(rd());
 
-LockGuard playlistGuard(512);
+LockGuard playlistGuard;
 
 #define MALLOC_CHUNK 512
 

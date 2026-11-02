@@ -67,7 +67,7 @@ void EndFullscreenAppMonitor()
 void OnFullscreenApp()
 {
 	// ignore this event if the window going fullscreen is a winamp window
-	if (!is_fullscreen_video && !vis_fullscreen)
+	if (!vis_fullscreen)
 	{
 		if (g_restoreaot_timer_set)
 		{
@@ -84,7 +84,7 @@ void OnFullscreenApp()
 
 void OnCancelFullscreenApp()
 {
-	if (!is_fullscreen_video && !vis_fullscreen)
+	if (!vis_fullscreen)
 	{
 		if (g_dropaot_timer_set)
 		{

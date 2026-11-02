@@ -40,10 +40,6 @@ BOOL InitApplication(HINSTANCE hInstance)  // register Winamp's window class, re
 		return 0;
 
 
-	wc.lpfnWndProc   = video_WndProc;
-	wc.lpszClassName = L"Winamp Video";
-	if (!RegisterClassW(&wc))
-		return 0;
 
 #ifdef WA2
 #ifndef NETSCAPE
@@ -131,12 +127,6 @@ void main_Create()
 	SendMessageW(hEQTooltipWindow, TTM_SETDELAYTIME, TTDT_RESHOW, 1000);
 
 
-	hVideoTooltipWindow = CreateWindowW(TOOLTIPS_CLASSW, (LPCWSTR)NULL, TTS_ALWAYSTIP | TTS_NOPREFIX,
-										CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-										hVideoWindow, NULL, hMainInstance, NULL);
-	SendMessageW(hVideoTooltipWindow, TTM_SETDELAYTIME, TTDT_INITIAL, 125);
-	SendMessageW(hVideoTooltipWindow, TTM_SETDELAYTIME, TTDT_AUTOPOP, 2000);
-	SendMessageW(hVideoTooltipWindow, TTM_SETDELAYTIME, TTDT_RESHOW, 1000);
 
 	hPLTooltipWindow = CreateWindowW(TOOLTIPS_CLASSW, (LPCWSTR)NULL, TTS_ALWAYSTIP | TTS_NOPREFIX,
 									 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -202,7 +192,6 @@ void main_Create()
 	CheckMenuItem(main_menu, WINAMP_OPTIONS_EASYMOVE, config_easymove ? MF_CHECKED : MF_UNCHECKED);
 	CheckMenuItem(main_menu, WINAMP_FILE_SHUFFLE, config_shuffle ? MF_CHECKED : MF_UNCHECKED);
 	CheckMenuItem(main_menu, WINAMP_FILE_REPEAT, config_repeat ? MF_CHECKED : MF_UNCHECKED);
-	CheckMenuItem(GetSubMenu(GetSubMenu(top_menu, 3), 13), ID_VIDEOWND_VERTICALLYFLIP, (config_video_fliprgb ? MF_CHECKED: MF_UNCHECKED));
 	if (!config_timeleftmode)
 		CheckMenuItem(main_menu, WINAMP_OPTIONS_ELAPSED, MF_CHECKED);
 	else
@@ -229,8 +218,6 @@ void main_Create()
 	if (config_shuffle) PlayList_randpos( -BIGINT);
 	dsp_init();
 
-	newversioncheck();
-
 	SetTimer(hMainWindow, STATS_TIMER, 1000, NULL);
 }
 
@@ -250,9 +237,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) // create the main Winamp w
 	                    config_pe_wx, config_pe_wy, 0, 0,  // WM_CREATE will size it
 	                    hMainWindow, NULL, hInstance, NULL)) return FALSE;
 
-	if (!video_Create())
-		return FALSE;
-
 	hPLVisWindow = CreateWindowExW(0, L"WinampVis", L"", WS_CHILD,
 	                              0, 0, 0, 0,
 	                              hPLWindow, NULL, hMainInstance, NULL);
@@ -270,11 +254,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) // create the main Winamp w
 	{
 		config_pe_open = 0;
 		pleditDlg(hMainWindow,sc);
-	}
-	if (config_video_open)
-	{
-		config_video_open = 0;
-		ShowVideoWindow(sc);
 	}
 	//	MessageBox(NULL,"p5","0",0);
 	if (!config_mw_open)

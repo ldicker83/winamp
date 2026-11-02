@@ -220,7 +220,6 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 								if (pr)ret=pr(in_modules[lvi.lParam]->hDllInstance,hwndDlg,0);
 								if (ret == IN_PLUGIN_UNINSTALL_REBOOT)
 								{
-									extern void _w_s(char *name, char *data);
 									char buf[1024] = {0};
 									GetModuleFileNameA(in_modules[lvi.lParam]->hDllInstance,buf,sizeof(buf));
 									_w_s("remove_genplug",buf);

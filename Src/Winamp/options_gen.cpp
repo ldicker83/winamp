@@ -222,7 +222,6 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 								if (ret == GEN_PLUGIN_UNINSTALL_REBOOT)
 								{
-									extern void _w_s(char *name, char *data);
 									wchar_t buf[MAX_PATH] = {0};
 									GetModuleFileNameW(gen_plugins[lvi.lParam]->hDllInstance, buf, MAX_PATH);
 									_w_sW("remove_genplug", buf);

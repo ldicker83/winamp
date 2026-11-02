@@ -86,21 +86,19 @@ public:
   int addKey(plistKey *key) { if (!keys.haveItem(key)) keys.addItem(key); return keys.getNumItems(); }
   virtual void setData(plistData *d) { if (d->getType() != PLISTDATA_KEY) return; keys.addItem((plistKey*)d); }
   int delKey(const wchar_t *name, int dodelete=1) { 
-    foreach(keys)
-      if (WCSCASEEQLSAFE(name, keys.getfor()->getName())) {
-        if (dodelete) delete keys.getfor();
-        keys.removeByPos(foreach_index);
+    for (int i = 0; i < keys.getNumItems(); i++)
+      if (WCSCASEEQLSAFE(name, keys.enumItem(i)->getName())) {
+        if (dodelete) delete keys.enumItem(i);
+        keys.removeByPos(i);
         break;
       }
-    endfor;
     return keys.getNumItems();
   }
   plistKey *getKey(const wchar_t *name) const {
-    foreach(keys)
-      if (WCSCASEEQLSAFE(name, keys.getfor()->getName())) {
-        return keys.getfor();
+    for (int i = 0; i < keys.getNumItems(); i++)
+      if (WCSCASEEQLSAFE(name, keys.enumItem(i)->getName())) {
+        return keys.enumItem(i);
       }
-    endfor;
     return NULL;
   }
   virtual const wchar_t *getString() const { return L""; }

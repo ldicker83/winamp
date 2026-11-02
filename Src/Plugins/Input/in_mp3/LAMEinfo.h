@@ -73,7 +73,7 @@ public:
 	bool IsCRC();
 	bool IsCopyright();
 	bool IsOriginal();
-	int MPEGFrame::GetSamplesPerFrame() const;
+	int GetSamplesPerFrame() const;
 	
 	enum
 	{

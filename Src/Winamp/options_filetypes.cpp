@@ -171,7 +171,6 @@ INT_PTR CALLBACK FtypeProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 		return 0;
 		case WM_DESTROY:
 		{
-			extern void _w_s(char *name, char *data);
 			HWND hwnd=GetDlgItem(hwndDlg,IDC_FTYPE_LIST);
 			int top = SendMessageW(hwnd,LB_GETCOUNT,0,0);
 

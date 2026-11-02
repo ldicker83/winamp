@@ -6,15 +6,6 @@
 // internet
 extern _bool config_proxy80;
 
-// video
-extern _bool config_video_overlays;
-extern _bool config_video_yv12;
-extern _bool config_video_vsync2;
-extern _bool config_video_ddraw;
-extern _bool config_video_gdiplus;
-extern _mutable_bool config_video_autoopen;
-extern _mutable_bool config_video_autoclose;
-extern _mutable_bool config_video_auto_fs;
 
 // audio
 extern _unsigned config_audio_bits;
