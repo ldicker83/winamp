@@ -418,8 +418,6 @@ extern HINSTANCE language_pack_instance;
 	extern int last_brate, g_need_titleupd, g_need_infoupd;
 	extern int g_stopaftercur;
 	extern int g_has_deleted_current;
-
-	extern int g_has_video_plugin, g_no_video_loaded;
 	extern char *audits[AUDITSIZE];
 	extern int audit_ptr;
 
@@ -850,8 +848,6 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	/***************
 	*** video.cpp
 	*/
-	extern int g_video_numaudiotracks;
-	extern int g_video_curaudiotrack;
 
 	/***********************
 	*** vis.c 

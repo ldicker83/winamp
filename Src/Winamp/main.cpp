@@ -83,8 +83,6 @@ g_submenus_options = 0, g_submenus_lang = 0,
 g_submenus_play = 0;
 
 int     g_submenus_lang_id = 0;
-int     g_video_numaudiotracks = 1;
-int     g_video_curaudiotrack = 0;
 
 int     bStartPlaying = 0;
 int     paused = 0;
@@ -102,8 +100,6 @@ int     g_SkinTop, g_BookmarkTop, g_LangTop;
 int     g_mm_optionsbase_adj = 0;       //used by IPC_ADJUST_OPTIONSMENUPOS
 int     g_mm_ffwindowsbase_adj = 0;       //used by IPC_ADJUST_FFWINDOWSMENUPOS
 int     g_mm_ffoptionsbase_adj = 0;       //used by IPC_ADJUST_FFOPTIONSMENUPOS
-int     g_has_video_plugin = 0;
-int     g_no_video_loaded = 0;       //filled in by in_init
 
 char    playlist_custom_font[ 128 ] = { 0 };
 wchar_t playlist_custom_fontW[ 128 ] = { 0 };
