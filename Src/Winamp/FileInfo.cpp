@@ -2015,14 +2015,7 @@ again:
 
 					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_DIRECTOR,			IDC_EDIT_DIRECTOR,			L"director");
 					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_PRODUCER,			IDC_EDIT_PRODUCER,			L"producer");
-					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_PODCAST_CHANNEL,	IDC_EDIT_PODCAST_CHANNEL,	L"podcastchannel");
 
-#define CHECK_AND_COPY_EXTENDED_PC(IDCHECK, field, name) \
-						wchar_t blah[2048] = {0}; StringCchPrintfW(blah, 2048, L"%d", (IsDlgButtonChecked(hwndParent, IDCHECK) == BST_CHECKED));\
-						wchar_t *oldData = getRecordExtendedItem(song, name);\
-						if (wcscmp(MAKESAFE(oldData), blah)) { setRecordExtendedItem(song, name, blah); }
-
-					CHECK_AND_COPY_EXTENDED_PC(IDC_CHECK_PODCAST,	MAINTABLE_ID_ISPODCAST,	L"ispodcast");
 
 					if (IsDlgButtonChecked(hwndParent, IDC_CHECK_TRACK))
 					{
@@ -2181,7 +2174,7 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			wchar_t *last_artist = NULL, *last_title = NULL, *last_album = NULL, *last_genre = NULL,
 					*last_comment = NULL, *last_albumartist = NULL, *last_composer = NULL,
-					*last_publisher = NULL, *last_ispodcast = NULL, *last_podcastchannel = NULL;
+					*last_publisher = NULL;
 			const wchar_t *last_category = NULL, *last_director = NULL, *last_producer = NULL;
 			int last_year = -1, last_track = -1, last_disc = -1, last_discs = -1, last_tracks = -1,
 				last_bpm = -1, last_rating = -1, disable_artist = 0, disable_title = 0,
@@ -2189,7 +2182,7 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				disable_comment = 0, disable_disc = 0, disable_albumartist = 0, disable_composer = 0,
 				disable_publisher = 0, disable_discs = 0, disable_tracks = 0, disable_category = 0,
 				disable_director = 0, disable_producer = 0, disable_bpm = 0, disable_rating = 0,
-				disable_ispodcast = 0, disable_podcastchannel = 0, nb = 0;
+				nb = 0;
 
 				ShowWindow(GetDlgItem(hwndDlg, 1052), SW_HIDE);
 
@@ -2250,8 +2243,6 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 										SAVE_LAST_STR_EXTENDED(last_director, L"director", disable_director);
 										SAVE_LAST_STR_EXTENDED(last_producer, L"producer", disable_producer);
-										SAVE_LAST_STR_EXTENDED(last_podcastchannel, L"podcastchannel", disable_podcastchannel);
-										SAVE_LAST_STR_EXTENDED(last_ispodcast, L"ispodcast", disable_ispodcast);
 										nb++;
 										query->ml = 1;
 										query->idx = i;
@@ -2352,8 +2343,6 @@ non_ml:
 									}
 
 									// not available in non-ml setups
-									/*SAVE_LAST_STR_EXTENDED(last_podcastchannel, L"podcastchannel", disable_podcastchannel);
-									SAVE_LAST_STR_EXTENDED(last_ispodcast, L"ispodcast", disable_ispodcast);*/
 									nb++;
 									query->ml = 0;
 									query->idx = i;
@@ -2376,11 +2365,6 @@ non_ml:
 			if (!disable_category && last_category) SetDlgItemTextW(hwndDlg, IDC_EDIT_CATEGORY, last_category);
 			if (!disable_director && last_director) SetDlgItemTextW(hwndDlg, IDC_EDIT_DIRECTOR, last_director);
 			if (!disable_producer && last_producer) SetDlgItemTextW(hwndDlg, IDC_EDIT_PRODUCER, last_producer);
-			if (!disable_podcastchannel && last_podcastchannel) SetDlgItemTextW(hwndDlg, IDC_EDIT_PODCAST_CHANNEL, last_podcastchannel);
-			if (!disable_ispodcast && last_ispodcast)
-			{
-				CheckDlgButton(hwndDlg, IDC_CHECK_PODCAST, (_wtoi(last_ispodcast) == 1 ? BST_CHECKED : BST_UNCHECKED));
-			}
 			if (!disable_year && last_year > 0)
 			{
 				wchar_t tmp[64] = {0};
@@ -2454,7 +2438,6 @@ non_ml:
 				case IDC_CHECK_CATEGORY: HANDLE_CONTROL(IDC_EDIT_CATEGORY, IDC_CHECK_CATEGORY); break;
 				case IDC_CHECK_DIRECTOR: HANDLE_CONTROL(IDC_EDIT_DIRECTOR, IDC_CHECK_DIRECTOR); break;
 				case IDC_CHECK_PRODUCER: HANDLE_CONTROL(IDC_EDIT_PRODUCER, IDC_CHECK_PRODUCER); break;
-				case IDC_CHECK_PODCAST_CHANNEL: HANDLE_CONTROL(IDC_EDIT_PODCAST_CHANNEL, IDC_CHECK_PODCAST_CHANNEL); break;
 				case IDC_CHECK_BPM: HANDLE_CONTROL(IDC_EDIT_BPM, IDC_CHECK_BPM); break;
 				case IDC_CHECK_RATING: HANDLE_CONTROL(IDC_COMBO_RATING, IDC_CHECK_RATING); break;
 				case IDOK:
@@ -2489,7 +2472,6 @@ non_ml:
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_CATEGORY, IDC_CHECK_CATEGORY)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_DIRECTOR, IDC_CHECK_DIRECTOR)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_PRODUCER, IDC_CHECK_PRODUCER)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_PODCAST_CHANNEL, IDC_CHECK_PODCAST_CHANNEL)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_BPM, IDC_CHECK_BPM)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_COMBO_RATING, IDC_CHECK_RATING)) break;
 		}

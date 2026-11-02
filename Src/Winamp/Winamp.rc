@@ -957,7 +957,7 @@ BEGIN
     CTEXT           "Unable to load the selected Winamp preference page.\n\nIf using a language pack, first check for an updated Winamp release (if not already using the current release) and then try to obtain an updated version from the language pack author.",IDC_STATIC,34,99,203,48
 END
 
-IDD_EDIT_INFO DIALOGEX 0, 0, 307, 283
+IDD_EDIT_INFO DIALOGEX 0, 0, 307, 251
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Item Metadata"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
@@ -995,14 +995,10 @@ BEGIN
     EDITTEXT        IDC_EDIT_DIRECTOR,71,186,223,14,ES_AUTOHSCROLL | WS_DISABLED
     CONTROL         "Producer",IDC_CHECK_PRODUCER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,206,54,10
     EDITTEXT        IDC_EDIT_PRODUCER,71,204,223,14,ES_AUTOHSCROLL | WS_DISABLED
-    GROUPBOX        "Podcasts",IDC_STATIC,12,223,283,32
-    CONTROL         "Is Podcast",IDC_CHECK_PODCAST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,236,49,10
-    CONTROL         "Channel",IDC_CHECK_PODCAST_CHANNEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,83,236,42,10
-    EDITTEXT        IDC_EDIT_PODCAST_CHANNEL,129,234,160,14,ES_AUTOHSCROLL | WS_DISABLED
     CONTROL         "Update file tag(s) if supported by the tagging format",1052,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,266,187,10
-    DEFPUSHBUTTON   "Update",IDOK,197,264,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,251,264,50,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,234,187,10
+    DEFPUSHBUTTON   "Update",IDOK,197,232,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,251,232,50,14
 END
 
 IDD_ADDSTUFF DIALOGEX 0, 0, 186, 61
@@ -1256,7 +1252,7 @@ BEGIN
         LEFTMARGIN, 6
         RIGHTMARGIN, 301
         TOPMARGIN, 4
-        BOTTOMMARGIN, 278
+        BOTTOMMARGIN, 246
     END
 
     IDD_ADDSTUFF, DIALOG
