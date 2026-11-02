@@ -5,7 +5,6 @@
 #include "../nu/Singleton.h"
 #include "BMPLoader.h"
 #include "BMPWriter.h"
-#include "avi_decoder.h"
 
 WA5_BMP wa5_bmp;
 
@@ -23,8 +22,6 @@ MyFactory<BMPLoader, svc_imageLoader> bmpLoadFactory(bmpLoaderGUID);
 api_service *WASABI_API_SVC    = 0;
 api_memmgr  *WASABI_API_MEMMGR = 0;
 
-static AVIDecoderCreator aviCreator;
-static SingletonServiceFactory<svc_avidecoder, AVIDecoderCreator> aviFactory;
 
 void WA5_BMP::RegisterServices(api_service *service)
 {
@@ -36,7 +33,6 @@ void WA5_BMP::RegisterServices(api_service *service)
 
 	WASABI_API_SVC->service_register(&bmpLoadFactory);
 	WASABI_API_SVC->service_register(&bmpWriteFactory);
-	aviFactory.Register(WASABI_API_SVC, &aviCreator);
 }
 
 int WA5_BMP::RegisterServicesSafeModeOk()
@@ -48,7 +44,6 @@ void WA5_BMP::DeregisterServices(api_service *service)
 {
 	service->service_deregister(&bmpWriteFactory);
 	service->service_deregister(&bmpLoadFactory);
-	aviFactory.Deregister(WASABI_API_SVC);
 
 	waServiceFactory *sf = WASABI_API_SVC->service_getServiceByGuid(memMgrApiServiceGuid);
 	if (sf) sf->releaseInterface(memoryManager);

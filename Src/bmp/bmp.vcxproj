@@ -109,6 +109,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BMP_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -155,6 +156,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../Wasabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -229,11 +231,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="..\Wasabi\api\service\svcs\svc_imgload.h" />
     <ClInclude Include="..\Wasabi\api\service\svcs\svc_imgwrite.h" />
     <ClInclude Include="api__bmp.h" />
-    <ClInclude Include="avi_decoder.h" />
-    <ClInclude Include="avi_rgb_decoder.h" />
-    <ClInclude Include="avi_rle_decoder.h" />
-    <ClInclude Include="avi_tscc_decoder.h" />
-    <ClInclude Include="avi_yuv_decoder.h" />
     <ClInclude Include="BMPLoader.h" />
     <ClInclude Include="BMPWriter.h" />
     <ClInclude Include="MyFactory.h" />
@@ -242,11 +239,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="wa5_bmp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="avi_decoder.cpp" />
-    <ClCompile Include="avi_rgb_decoder.cpp" />
-    <ClCompile Include="avi_rle_decoder.cpp" />
-    <ClCompile Include="avi_tscc_decoder.cpp" />
-    <ClCompile Include="avi_yuv_decoder.cpp" />
     <ClCompile Include="BMPLoader.cpp" />
     <ClCompile Include="BMPWriter.cpp" />
     <ClCompile Include="rle.cpp" />
