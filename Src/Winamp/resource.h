@@ -538,9 +538,7 @@
 #define IDC_EQ5                         1023
 #define IDC_EDIT_COMPOSER               1023
 #define IDC_EQ6                         1024
-#define IDC_CHECK_CATEGORY              1024
 #define IDC_EQ7                         1025
-#define IDC_EDIT_CATEGORY               1025
 #define IDC_EQ8                         1026
 #define IDC_CHECK_BPM                   1026
 #define IDC_EQ9                         1027
@@ -927,13 +925,9 @@
 #define IDC_STATIC_DISC                 1341
 #define IDC_STATIC_BPM                  1342
 #define IDC_STATIC_TITLE                1343
-#define IDC_CHECK_DIRECTOR              1343
 #define IDC_STATIC_ARTIST               1344
-#define IDC_EDIT_DIRECTOR               1344
 #define IDC_STATIC_ALBUM                1345
-#define IDC_CHECK_PRODUCER              1345
 #define IDC_STATIC_ALBUM_ARTIST         1346
-#define IDC_EDIT_PRODUCER               1346
 #define IDC_STATIC_YEAR                 1347
 #define IDC_CHECK_PODCAST               1347
 #define IDC_STATIC_GENRE                1348

@@ -1544,18 +1544,6 @@ void CHECK_AND_COPY(itemRecordW *song, HWND hwndParent, int IDCHECK, int ID, wch
 	}
 }
 
-static void CHECK_AND_COPY_EXTENDED(itemRecordW *song, HWND hwndParent, int IDCHECK, int ID, const wchar_t *name)
-{
-	if (IsDlgButtonChecked(hwndParent, IDCHECK)) {
-		wchar_t blah[2048]; 
-		GetDlgItemTextW(hwndParent, ID, blah, 2048);
-		wchar_t *oldData = getRecordExtendedItem(song, name);
-		if (wcscmp(MAKESAFE(oldData), blah)) {
-			setRecordExtendedItem(song, name, blah);
-		}
-	}
-}
-
 static INT_PTR CALLBACK updateFiles_dialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -1609,10 +1597,7 @@ again:
 					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_ALBUMARTIST, IDC_EDIT_ALBUMARTIST, song->albumartist);
 					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_PUBLISHER,   IDC_EDIT_PUBLISHER, song->publisher);
 					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_COMPOSER,    IDC_EDIT_COMPOSER, song->composer);
-					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_CATEGORY,    IDC_EDIT_CATEGORY, song->category);
 
-					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_DIRECTOR,			IDC_EDIT_DIRECTOR,			L"director");
-					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_PRODUCER,			IDC_EDIT_PRODUCER,			L"producer");
 
 
 					if (IsDlgButtonChecked(hwndParent, IDC_CHECK_TRACK))
@@ -1723,9 +1708,6 @@ retry:
 							in_set_extended_fileinfoW(song->filename, L"albumartist", song->albumartist);
 							in_set_extended_fileinfoW(song->filename, L"publisher", song->publisher);
 							in_set_extended_fileinfoW(song->filename, L"composer", song->composer);
-							in_set_extended_fileinfoW(song->filename, L"category", song->category);
-							in_set_extended_fileinfoW(song->filename, L"director", getRecordExtendedItem(song, L"director"));
-							in_set_extended_fileinfoW(song->filename, L"producer", getRecordExtendedItem(song, L"producer"));
 
 							if (in_write_extended_fileinfo() == 0)
 							{
@@ -1773,13 +1755,12 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			wchar_t *last_artist = NULL, *last_title = NULL, *last_album = NULL, *last_genre = NULL,
 					*last_comment = NULL, *last_albumartist = NULL, *last_composer = NULL,
 					*last_publisher = NULL;
-			const wchar_t *last_category = NULL, *last_director = NULL, *last_producer = NULL;
 			int last_year = -1, last_track = -1, last_disc = -1, last_discs = -1, last_tracks = -1,
 				last_bpm = -1, last_rating = -1, disable_artist = 0, disable_title = 0,
 				disable_album = 0, disable_genre = 0, disable_year = 0, disable_track = 0,
 				disable_comment = 0, disable_disc = 0, disable_albumartist = 0, disable_composer = 0,
-				disable_publisher = 0, disable_discs = 0, disable_tracks = 0, disable_category = 0,
-				disable_director = 0, disable_producer = 0, disable_bpm = 0, disable_rating = 0,
+				disable_publisher = 0, disable_discs = 0, disable_tracks = 0,
+				disable_bpm = 0, disable_rating = 0,
 				nb = 0;
 
 				ShowWindow(GetDlgItem(hwndDlg, 1052), SW_HIDE);
@@ -1835,12 +1816,8 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 										SAVE_LAST_STR(last_albumartist, query->item.results.Items[0].albumartist, disable_albumartist);
 										SAVE_LAST_STR(last_composer, query->item.results.Items[0].composer, disable_composer);
 										SAVE_LAST_STR(last_publisher, query->item.results.Items[0].publisher, disable_publisher);
-										SAVE_LAST_STR(last_category, query->item.results.Items[0].category, disable_category);
 
-#define SAVE_LAST_STR_EXTENDED(last, name, disable) if (!disable) { wchar_t *check = getRecordExtendedItem(&query->item.results.Items[0], name); if (check && check[0]) { if (!last) last = check; else if (wcscmp(check, last)) disable = 1; }};
 
-										SAVE_LAST_STR_EXTENDED(last_director, L"director", disable_director);
-										SAVE_LAST_STR_EXTENDED(last_producer, L"producer", disable_producer);
 										nb++;
 										query->ml = 1;
 										query->idx = i;
@@ -1922,23 +1899,7 @@ non_ml:
 										query->item.results.Items[0].publisher = _wcsdup(pszBuffer);
 									SAVE_LAST_STR(last_publisher, query->item.results.Items[0].publisher, disable_publisher);
 
-									if (in_get_extended_fileinfoW(fn, L"category", pszBuffer, TEXTBUFFER_MAX))
-										query->item.results.Items[0].category = _wcsdup(pszBuffer);
-									SAVE_LAST_STR(last_category, query->item.results.Items[0].category, disable_category);
 
-#define SAVE_LAST_STR_EXTENDED(last, name, disable) if (!disable) { wchar_t *check = getRecordExtendedItem(&query->item.results.Items[0], name); if (check && check[0]) { if (!last) last = check; else if (wcscmp(check, last)) disable = 1; }};
-
-									if (in_get_extended_fileinfoW(fn, L"director", pszBuffer, TEXTBUFFER_MAX))
-									{
-										setRecordExtendedItem(&query->item.results.Items[0], L"director", pszBuffer);
-										SAVE_LAST_STR_EXTENDED(last_director, L"director", disable_director);
-									}
-
-									if (in_get_extended_fileinfoW(fn, L"producer", pszBuffer, TEXTBUFFER_MAX))
-									{
-										setRecordExtendedItem(&query->item.results.Items[0], L"producer", pszBuffer);
-										SAVE_LAST_STR_EXTENDED(last_producer, L"producer", disable_producer);
-									}
 
 									// not available in non-ml setups
 									nb++;
@@ -1960,9 +1921,6 @@ non_ml:
 			if (!disable_composer && last_composer) SetDlgItemTextW(hwndDlg, IDC_EDIT_COMPOSER, last_composer);
 			if (!disable_publisher && last_publisher) SetDlgItemTextW(hwndDlg, IDC_EDIT_PUBLISHER, last_publisher);
 			if (!disable_genre && last_genre) SetDlgItemTextW(hwndDlg, IDC_EDIT_GENRE, last_genre);
-			if (!disable_category && last_category) SetDlgItemTextW(hwndDlg, IDC_EDIT_CATEGORY, last_category);
-			if (!disable_director && last_director) SetDlgItemTextW(hwndDlg, IDC_EDIT_DIRECTOR, last_director);
-			if (!disable_producer && last_producer) SetDlgItemTextW(hwndDlg, IDC_EDIT_PRODUCER, last_producer);
 			if (!disable_year && last_year > 0)
 			{
 				wchar_t tmp[64] = {0};
@@ -2033,9 +1991,6 @@ non_ml:
 				case IDC_CHECK_DISC: HANDLE_CONTROL(IDC_EDIT_DISC, IDC_CHECK_DISC); break;
 				case IDC_CHECK_GENRE: HANDLE_CONTROL(IDC_EDIT_GENRE, IDC_CHECK_GENRE); break;
 				case IDC_CHECK_YEAR: HANDLE_CONTROL(IDC_EDIT_YEAR, IDC_CHECK_YEAR); break;
-				case IDC_CHECK_CATEGORY: HANDLE_CONTROL(IDC_EDIT_CATEGORY, IDC_CHECK_CATEGORY); break;
-				case IDC_CHECK_DIRECTOR: HANDLE_CONTROL(IDC_EDIT_DIRECTOR, IDC_CHECK_DIRECTOR); break;
-				case IDC_CHECK_PRODUCER: HANDLE_CONTROL(IDC_EDIT_PRODUCER, IDC_CHECK_PRODUCER); break;
 				case IDC_CHECK_BPM: HANDLE_CONTROL(IDC_EDIT_BPM, IDC_CHECK_BPM); break;
 				case IDC_CHECK_RATING: HANDLE_CONTROL(IDC_COMBO_RATING, IDC_CHECK_RATING); break;
 				case IDOK:
@@ -2067,9 +2022,6 @@ non_ml:
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_GENRE, IDC_CHECK_GENRE)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_YEAR, IDC_CHECK_YEAR)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_DISC, IDC_CHECK_DISC)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_CATEGORY, IDC_CHECK_CATEGORY)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_DIRECTOR, IDC_CHECK_DIRECTOR)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_PRODUCER, IDC_CHECK_PRODUCER)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_BPM, IDC_CHECK_BPM)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_COMBO_RATING, IDC_CHECK_RATING)) break;
 		}
