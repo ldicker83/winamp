@@ -175,7 +175,6 @@ Comment or uncomment the following directives according to the needs of your app
   #define WASABI_API_CONFIG      api
   #define WASABI_API_FONT        api
   #define WASABI_API_MEMMGR      api
-  #define WASABI_API_XML         api
   #define WASABI_API_MEDIACORE   api
   #define WASABI_API_MAKIDEBUG   debugApi
 
