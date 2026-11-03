@@ -155,9 +155,7 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 
 				if (id != -1)
 				{
-					cur_wnd = CreateDialogW(language_pack_instance, MAKEINTRESOURCEW(id), hwndDlg, (DLGPROC)proc);
-					// handles cases where there's no localised info page in a language pack / under en-us
-					if(!IsWindow(cur_wnd)) cur_wnd = LPCreateDialogW(id, hwndDlg, (DLGPROC)proc);
+					cur_wnd = LPCreateDialogW(id, hwndDlg, (DLGPROC)proc);
 
 					{
 						RECT r;
@@ -240,7 +238,7 @@ static BOOL CALLBACK tipsProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lPar
 			DWORD size = 0;
 			if (!hResource)
 			{
-				hResource = langManager->LoadResourceFromFileW(language_pack_instance, hMainInstance,TEXT("TEXT"), TEXT("TIPSTEXT"),&size);
+				hResource = langManager->LoadResourceFromFileW(hMainInstance, hMainInstance,TEXT("TEXT"), TEXT("TIPSTEXT"),&size);
 				hResourceSize = size;
 			}
 			p = (char*)hResource;

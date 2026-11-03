@@ -267,7 +267,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			{
 				return reinterpret_cast<LRESULT>(langManager->GetLanguageIdentifier(HIWORD(data)));
 			}
-			return reinterpret_cast<LRESULT>(language_pack_instance);
+			return reinterpret_cast<LRESULT>(hMainInstance);
 		case IPC_SET_PE_WIDTHHEIGHT:
 			{
 				POINT *pt = (POINT *)data;

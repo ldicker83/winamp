@@ -47,7 +47,6 @@ extern "C"
 	//#define MAX_PATH 512
 #define OFFSCREEN_Y_POS -30000
 #define MAX_URL 4096
-extern HINSTANCE language_pack_instance;
 #define UPDATE_DISPLAY_TIMER 38
 #define STATS_TIMER 64
 

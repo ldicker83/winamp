@@ -195,8 +195,7 @@ LRESULT CALLBACK EQ_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				SetWindowLong(hwnd, GWL_STYLE, GetWindowLongW(hwnd, GWL_STYLE)&~(WS_CAPTION));
 				SetWindowPos(hEQWindow, 0, config_eq_wx, config_eq_wy, w, h, SWP_NOACTIVATE | SWP_NOZORDER | SWP_HIDEWINDOW);
 
-				HACCEL hAccel = LoadAcceleratorsW(language_pack_instance, MAKEINTRESOURCEW(IDR_ACCELERATOR_EQ));
-				if (!hAccel && language_pack_instance != hMainInstance) hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_EQ));
+				HACCEL hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_EQ));
 				if (hAccel) WASABI_API_APP->app_addAccelerators(hwnd, &hAccel, 1, TRANSLATE_MODE_NORMAL);
 			}
 			if (NULL != WASABI_API_APP) WASABI_API_APP->app_registerGlobalWindow(hwnd);

@@ -15,7 +15,6 @@
 #define TREE_DEVICES 10000
 #define TREE_QUERIES 1000
 
-extern HINSTANCE language_pack_instance;
 
 
 void ensureInScreen(HMENU menu, int *x, int *y, int *flag, int width, int height);

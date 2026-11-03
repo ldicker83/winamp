@@ -72,7 +72,6 @@ HWND hMainWindow = NULL;			// main window
 HWND hEQWindow, hPLWindow, /*hMBWindow, */hExternalVisWindow = NULL;
 
 HWND g_dialog_box_parent = NULL; // used by IPC_SETDIALOGBOXPARENT (FG, 5/19/03)
-HINSTANCE language_pack_instance;
 HINSTANCE hMainInstance;	// program instance
 HANDLE hMainThread; // main thread handle
 DWORD mainThreadId; // main thread ID
@@ -573,8 +572,6 @@ VOID CALLBACK PrefsShowProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTim
 
 DWORD CALLBACK MainThread( LPVOID param )
 {
-	language_pack_instance = hMainInstance;
-
 	playlistStr[ 0 ] = 0;
 	playlistStr[ 18 ] = 0; // keep the last byte null terminated (and don't overwrite) so we can be smoewhat thread-safe (may have junk data, but it won't read outside the array)
 

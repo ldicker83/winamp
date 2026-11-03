@@ -31,7 +31,7 @@ static void CheckLangThread()
 
 char *getString(UINT uID, char *str, size_t maxlen)
 {
-	return langManager->GetString(language_pack_instance,hMainInstance, uID, str, maxlen);
+	return langManager->GetString(hMainInstance, hMainInstance, uID, str, maxlen);
 }
 
 int LPMessageBox(HWND parent, UINT idMessage, UINT idTitle, UINT type)
@@ -69,7 +69,7 @@ char* Language::GetString(HINSTANCE hinst, HINSTANCE owner, UINT uID, char *str,
 
 wchar_t *getStringW(UINT uID, wchar_t *str, size_t maxlen)
 {
-	return langManager->GetStringW(language_pack_instance,hMainInstance, uID, str, maxlen);
+	return langManager->GetStringW(hMainInstance, hMainInstance, uID, str, maxlen);
 }
 
 wchar_t* Language::GetStringW(HINSTANCE hinst, HINSTANCE owner, UINT uID, wchar_t *str, size_t maxlen)
@@ -245,22 +245,22 @@ INT_PTR Language::LDialogBoxParamW( HINSTANCE localised, HINSTANCE original, UIN
 
 HWND LPCreateDialogParam( int id, HWND parent, DLGPROC proc, LPARAM param )
 {
-	return langManager->CreateLDialogParam( language_pack_instance, hMainInstance, id, parent, proc, param );
+	return langManager->CreateLDialogParam(hMainInstance, hMainInstance, id, parent, proc, param );
 }
 
 HWND LPCreateDialogParamW( int id, HWND parent, DLGPROC proc, LPARAM param )
 {
-	return langManager->CreateLDialogParamW( language_pack_instance, hMainInstance, id, parent, proc, param );
+	return langManager->CreateLDialogParamW(hMainInstance, hMainInstance, id, parent, proc, param );
 }
 
 INT_PTR LPDialogBoxParam( int id, HWND parent, DLGPROC proc, LPARAM param )
 {
-	return langManager->LDialogBoxParam( language_pack_instance, hMainInstance, id, parent, proc, param );
+	return langManager->LDialogBoxParam(hMainInstance, hMainInstance, id, parent, proc, param );
 }
 
 INT_PTR LPDialogBoxParamW( int id, HWND parent, DLGPROC proc, LPARAM param )
 {
-	return langManager->LDialogBoxParamW( language_pack_instance, hMainInstance, id, parent, proc, param );
+	return langManager->LDialogBoxParamW(hMainInstance, hMainInstance, id, parent, proc, param );
 }
 
 HMENU Language::LoadLMenu( HINSTANCE localised, HINSTANCE original, UINT id )
@@ -405,7 +405,7 @@ wchar_t* Language::FormattedSizeString(wchar_t *pszDest, int cchDest, __int64 si
 
 HMENU LPLoadMenu(UINT id)
 {
-	return langManager->LoadLMenu(language_pack_instance, hMainInstance, id);
+	return langManager->LoadLMenu(hMainInstance, hMainInstance, id);
 }
 
 
