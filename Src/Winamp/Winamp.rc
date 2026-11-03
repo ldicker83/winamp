@@ -433,7 +433,7 @@ BEGIN
     LTEXT           "Playlist font size, in pixels:",IDC_PLFONTSIZE_TEXT,12,36,88,8
     EDITTEXT        IDC_PLFONTSIZE,101,34,30,12,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,130,34,11,14
-    CONTROL         "Use skin or language pack font",IDC_NOCUSTOMFONT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,48,115,10
+    CONTROL         "Use skin font",IDC_NOCUSTOMFONT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,48,115,10
     LTEXT           "Use font:",IDC_STATIC_CUSTOMFONT,12,63,30,8
     COMBOBOX        IDC_CUSTOMFONT,46,61,135,163,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Text Direction:",IDC_STATIC,12,80,47,8
@@ -1783,15 +1783,12 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LOCALIZED_HOMEPAGE  "http://www.winamp.com"
     65534                   "en-US"
     65535                   "{A0099AA7-F980-45cf-818D-64EAA9F4EF4B}"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_LANG_INSTALL_PROMPT "Are you sure that you want to install this Winamp Language Pack?\n\nWe recommend that you only install language packs from sources that\nyou trust. If you do not trust the source of this language pack, click No.\t"
-    IDS_LANG_INSTALL_HEADER "Winamp Language Pack Install"
     IDS_PLEDIT_NOFILE_WSHADE "<no file>"
     IDS_CLASSIC_SKIN_NAME   "Winamp Classic"
     IDS_CLASSIC_BASE_SKIN_VERSION "Winamp base skin v%s"
@@ -2111,7 +2108,6 @@ BEGIN
     IDS_WINAMP_PLAYLIST_FILE "Winamp playlist file"
     IDS_WINAMP_EXTENSION_INSTALLATION_FILE 
                             "Winamp extension installation file"
-    IDS_WINAMP_LANGUAGE_INSTALLATION_FILE "Winamp language installation file"
     IDS_WINAMP_FILE_INSTALL "Install"
     IDS_WIN7TOOLBAR_TOOLTIP_PREVIOUS "Previous"
     IDS_WIN7TOOLBAR_TOOLTIP_PLAY "Play"
@@ -2151,13 +2147,12 @@ BEGIN
     IDS_ORIGIN_FRONT_MATCH  "front.* match"
     IDS_ORIGIN_ARTWORK_MATCH "artwork.* match"
     IDS_SKINS_INSTALL_ERROR "There was an error whilst installing the skin. Error code: %s\r\n\r\nFrom: %s\r\nTo: %s"
-    IDS_LANG_INSTALL_ERROR  "There was an error whilst installing the language pack. Error code: %s\r\n\r\nFrom: %s\r\nTo: %s"
     IDS_PREFS_SAFE_MODE     "Winamp Preferences   [SAFE MODE]"
     IDS_START_SAFE_MODE     "Winamp Starting In Safe Mode"
     IDS_FAILED_SAFE_MODE    "Winamp Unable To Start In Safe Mode"
     IDS_FAILED_SAFE_MODE_MSG 
                             "Winamp is already running and 'safe mode' cannot be properly started. Ensure all instances of Winamp have been closed before trying again."
-    IDS_SAFE_MODE_ALL       "Winamp will now be run in 'safe mode' which prevents the loading of\n3rd party plug-ins including all detected Visualisation, DSP and\nMedia Library plug-ins as well as Language Packs."
+    IDS_SAFE_MODE_ALL       "Winamp will now be run in 'safe mode' which prevents the loading of\n3rd party plug-ins including all detected Visualisation, DSP and\nMedia Library plug-ins."
     IDS_SAFE_MODE_NORMAL    "Winamp will now be run in 'safe mode' which prevents the loading of\n3rd party plug-ins including all detected Visualisation and DSP plug-ins\nas well as Language Packs."
     IDS_RESTART_NORMAL      "Restart In\nFull Mode"
 END

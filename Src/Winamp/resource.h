@@ -351,8 +351,6 @@
 #define IDS_BALANCE_RIGHT               365
 #define IDS_TITLE_ON_STOP               366
 #define IDS_TITLE_ON_PAUSE              367
-#define IDS_LANG_INSTALL_PROMPT         368
-#define IDS_LANG_INSTALL_HEADER         369
 #define IDS_PLEDIT_NOFILE_WSHADE        370
 #define IDS_CLASSIC_SKIN_NAME           372
 #define IDS_CLASSIC_BASE_SKIN_VERSION   373
@@ -387,7 +385,6 @@
 #define IDS_WINAMP_MEDIA_FILE           425
 #define IDS_WINAMP_PLAYLIST_FILE        426
 #define IDS_WINAMP_EXTENSION_INSTALLATION_FILE 427
-#define IDS_WINAMP_LANGUAGE_INSTALLATION_FILE 428
 #define IDS_STRING429                   429
 #define IDS_WINAMP_FILE_INSTALL         429
 #define IDS_WIN7TOOLBAR_TOOLTIP_PREVIOUS 430
@@ -415,7 +412,6 @@
 #define IDS_ORIGIN_FRONT_MATCH          468
 #define IDS_ORIGIN_ARTWORK_MATCH        469
 #define IDS_SKINS_INSTALL_ERROR         470
-#define IDS_LANG_INSTALL_ERROR          471
 #define IDS_PREFS_SAFE_MODE             472
 #define IDS_START_SAFE_MODE             474
 #define IDS_FAILED_SAFE_MODE            475
@@ -767,7 +763,6 @@
 #define IDC_COMBO2                      1209
 #define IDC_EDIT5                       1209
 #define IDC_REGSTATUS                   1209
-#define IDC_BUTTON2                     1211
 #define IDC_ALLOW                       1211
 #define IDC_SET_DEF_PROGRAM             1211
 #define IDC_NEWVERCHECK                 1212
@@ -966,9 +961,7 @@
 #define IDC_REPLAY_ADJ                  1392
 #define IDI_ICON5                       1392
 #define IDI_TBICON5                     1392
-#define IDC_AUTHOR_HOMEPAGE             1393
 #define IDD_WIN8_FTYPES                 1394
-#define IDC_AUTHOR_HOMEPAGE2            1394
 #define IDC_REGNAME                     1394
 #define IDC_REGGROUP1                   1395
 #define IDD_SILENCE_DETECT              1395
@@ -1236,7 +1229,6 @@
 #define ID_PE_FFOD                      40468
 #define ID_PE_FONTRESET                 40469
 #define ID_PE_EDIT_SEL                  40470
-#define IDS_LOCALIZED_HOMEPAGE          65531
 
 // Next default values for new objects
 // 
