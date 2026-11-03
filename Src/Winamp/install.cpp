@@ -100,7 +100,6 @@ void DoInstall(int is_install)
 
 	config_register(L"wsz", 1);
 	config_register(L"wal", 1);
-	config_register(L"wlz", 1);
 	config_write(0);
 	out_deinit();
 	in_deinit();

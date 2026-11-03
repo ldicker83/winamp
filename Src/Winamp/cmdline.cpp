@@ -955,15 +955,15 @@ void parseCmdLine(wchar_t *cmdline, HWND hwnd)
 	}
 } // parseCmdLine()
 
-wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mode)
+wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit)
 { 
 	wchar_t buf[32] = {0};
 	*exit=0;
 	lstrcpynW(buf, extensionW(lpszCmdParam), 32);
 	if (wcsstr(buf, L"\"")) wcsstr(buf, L"\"")[0] = 0;
 
-	// process .wsz/.wal file or .wlz (depending on the mode enabled)
-	if ((!mode && (!_wcsicmp(buf, L"wsz") || !_wcsicmp(buf, L"wal"))) || (mode && !_wcsicmp(buf, L"wlz")))
+	// process .wsz/.wal file
+	if (!_wcsicmp(buf, L"wsz") || !_wcsicmp(buf, L"wal"))
 	{
 		wchar_t *p = lpszCmdParam, buf[MAX_PATH] = {0}, buf2[MAX_PATH] = {0},
 					 outname[MAX_PATH] = {0}, current[MAX_PATH] = {0};
@@ -973,10 +973,10 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 
 		// this is roughly equivalent to PathUndecorate, which we can't use because it requires IE 5.0+
 		StringCchCopyW(outname, MAX_PATH, PathFindFileNameW(p));
-		StringCchCopyW(buf, MAX_PATH, (!mode ? SKINDIR : LANGDIR));
+		StringCchCopyW(buf, MAX_PATH, SKINDIR);
 		PathCombineW(buf2, buf, outname);
 
-		_r_sW((!mode ? "skin" : "langpack"), current, MAX_PATH);
+		_r_sW("skin", current, MAX_PATH);
 
 		bool name_match = !_wcsicmp(outname, current);
 		bool file_match = !_wcsicmp(p, buf2);
@@ -985,11 +985,9 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 		{
 			// prompt if the user is ok to install (subject to user preferences)
 			int ret = IDYES;
-			if (!mode ? config_skin_prompt : config_wlz_prompt)
+			if (config_skin_prompt)
 			{
-				ret = LPMessageBox(NULL, (!mode ? IDS_SKINS_INSTALL_PROMPT : IDS_LANG_INSTALL_PROMPT),
-										 (!mode ? IDS_SKINS_INSTALL_HEADER :IDS_LANG_INSTALL_HEADER),
-										 MB_YESNO | MB_ICONQUESTION);
+				ret = LPMessageBox(NULL, IDS_SKINS_INSTALL_PROMPT, IDS_SKINS_INSTALL_HEADER, MB_YESNO | MB_ICONQUESTION);
 			}
 
 			if (ret != IDYES)
@@ -1010,18 +1008,10 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 				tmp = outname + lstrlenW(outname);
 				size_t tmpsize = MAX_PATH - (tmp - outname);
 				while (tmp >= outname && *tmp != L'[') tmp--;
-				if(!mode)
-				{
 					if (tmp >= outname && tmp[1] && !_wcsicmp(tmp + 2, L"].wsz")) 
 						StringCchCopyW(tmp, tmpsize, L".wsz");
 					if (tmp >= outname && tmp[1] && !_wcsicmp(tmp + 2, L"].wal")) 
 						StringCchCopyW(tmp, tmpsize, L".wal");
-				}
-				else
-				{
-					if (tmp >= outname && tmp[1] && !_wcsicmp(tmp + 2, L"].wlz")) 
-						StringCchCopyW(tmp, tmpsize, L".wlz");
-				}
 			}
 
 			IFileTypeRegistrar *registrar=0;
@@ -1030,8 +1020,8 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 				if (FAILED(registrar->InstallItem(p, buf, outname)))
 				{
 					wchar_t buffer[MAX_PATH*3] = {0};
-					StringCchPrintfW(buffer,sizeof(buffer),getStringW((!mode?IDS_SKINS_INSTALL_ERROR:IDS_LANG_INSTALL_ERROR),NULL,0),outname,p,buf);
-					MessageBoxW(NULL, buffer, getStringW(!mode?IDS_SKINS_INSTALL_HEADER:IDS_LANG_INSTALL_HEADER,NULL,0), MB_OK | MB_ICONEXCLAMATION);
+					StringCchPrintfW(buffer,sizeof(buffer),getStringW(IDS_SKINS_INSTALL_ERROR,NULL,0),outname,p,buf);
+					MessageBoxW(NULL, buffer, getStringW(IDS_SKINS_INSTALL_HEADER,NULL,0), MB_OK | MB_ICONEXCLAMATION);
 				}
 				registrar->Release();
 			}
@@ -1039,8 +1029,6 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 
 		if (hwnd_other)
 		{
-			if(!mode)
-			{
 				_w_sW("skin", outname);
 				COPYDATASTRUCT cds;
 				cds.dwData = IPC_SETSKINW;
@@ -1049,26 +1037,12 @@ wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mo
 				SendMessageW(hwnd_other, WM_COPYDATA, (WPARAM)NULL, (LPARAM)&cds);
 				ShowWindow(hwnd_other, SW_RESTORE);
 				SetForegroundWindow(hwnd_other);
-			}
-			else
-			{
-				// since we can't reliably unload resources on the fly, force a restart
-				_w_sW("langpack", outname);
-				PostMessageW(hwnd_other,WM_USER,0,IPC_RESTARTWINAMP);
-			}
 			*exit=1;
 		}
 		else
 		{
-			if(!mode)
-			{
 				g_skinloadedmanually = 1;
 				_w_sW("skin", outname);
-			}
-			else
-			{
-				_w_sW("langpack", outname);
-			}
 		}
 		lpszCmdParam = L"";
 	}

@@ -277,77 +277,7 @@ static int PassToOtherWinamp( wchar_t *lpszCmdParam, HWND hwnd_other, int bAdd, 
 		int skinExit = 0;
 		int bC = 0;
 		HANDLE hSem = NULL;
-		HINSTANCE existingWLZ = 0, templng = 0;
-		DWORD_PTR vn = 0;
-
-		// check if we're using a language pack with the already open winamp process
-		// and if so then we're going to use the winamp.lng from it on the messagebox
-		// only if we had a success and the other winamp returned the correct value
-		// within the timeout period (can't be having it lock up so revert if needed)
-		if ( SendMessageTimeout( hwnd_other, WM_WA_IPC, 1, IPC_GETLANGUAGEPACKINSTANCE, SMTO_NORMAL, 5000, &vn ) && !vn )
-		{
-			DWORD processid = 0;
-			HANDLE hwaProcess = NULL;
-			SIZE_T bread = 0;
-			wchar_t lng_path_copy[ MAX_PATH ] = { 0 }, dirmask[ MAX_PATH ] = { 0 }, gs[ 40 ] = { 0 };
-			WIN32_FIND_DATAW d = { 0 };
-
-			GetWindowThreadProcessId( hwnd_other, &processid );
-			hwaProcess = OpenProcess( PROCESS_VM_READ, FALSE, processid );
-			ReadProcessMemory( hwaProcess, (wchar_t *)SendMessageW( hwnd_other, WM_WA_IPC, 3, IPC_GETLANGUAGEPACKINSTANCE ), lng_path_copy, MAX_PATH, &bread );
-			CloseHandle( hwaProcess );
-
-			getGUIDstr( WinampLangGUID, gs );
-			PathCombineW( dirmask, lng_path_copy, L"*.lng" );
-			HANDLE h = FindFirstFileW( dirmask, &d );
-			if ( h != INVALID_HANDLE_VALUE )
-			{
-				do
-				{
-					PathCombineW( dirmask, lng_path_copy, d.cFileName );
-					templng = LoadLibraryExW( dirmask, NULL, LOAD_LIBRARY_AS_IMAGE_RESOURCE | LOAD_LIBRARY_AS_DATAFILE );
-					if ( !templng ) templng = LoadLibraryW( dirmask );
-					if ( templng )
-					{
-						wchar_t s[ 39 ] = { 0 };
-						if ( LoadStringW( templng, LANG_DLL_GUID_STRING_ID, s, 39 ) )
-						{
-							if ( !_wcsnicmp( gs, s, 38 ) )
-							{
-								existingWLZ = Lang_FakeWinampLangHInst( templng );
-							}
-							else
-								FreeLibrary( templng );
-						}
-						else
-							FreeLibrary( templng );
-					}
-				} while ( FindNextFileW( h, &d ) );
-				FindClose( h );
-			}
-		}
-
 		lpszCmdParam = CheckSkin( lpszCmdParam, hwnd_other, &skinExit );
-		if ( skinExit )
-		{
-			// restore the language pack settings now that we've done the override and clean up as needed
-			if ( existingWLZ )
-			{
-				Lang_FakeWinampLangHInst( existingWLZ );
-				FreeLibrary( templng );
-			}
-			return TRUE;
-		}
-
-		skinExit = 0;
-		lpszCmdParam = CheckLang( lpszCmdParam, hwnd_other, &skinExit );
-		// restore the language pack settings now that we've done the override and clean up as needed
-		if ( existingWLZ )
-		{
-			Lang_FakeWinampLangHInst( existingWLZ );
-			FreeLibrary( templng );
-		}
-
 		if ( skinExit )
 			return TRUE;
 
@@ -678,17 +608,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 
 	Skin_CleanupAfterCrash();
 	Lang_CleanupAfterCrash();
-
-	{
-		int langExit = 0;
-		lpszCmdParam = CheckLang( lpszCmdParam, 0, &langExit );
-		if ( langExit )
-		{
-			Lang_EndLangSupport();
-			Lang_CleanupZip();
-			return TRUE;
-		}
-	}
 
 	if ( !g_safeMode )
 	{

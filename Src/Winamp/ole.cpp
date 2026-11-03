@@ -275,7 +275,6 @@ public:
 					else
 					{
 						int skinLoad = -2;
-						int langLoad = -2;
 						RECT r;
 						GetWindowRect(wnd, &r);
 						LPDROPFILES d = (LPDROPFILES)GlobalLock(medium.hGlobal);
@@ -287,14 +286,13 @@ public:
 
 						GlobalUnlock(d);
 						
-						// check for the file being a skin or language pack
+						// check for the file being a skin
 						// being dropped so we can intercept and not add it
 						// into the pledit but can instead prompt for install
 						DragQueryFileW((HDROP)medium.hGlobal, 0, temp, FILENAME_SIZE);
 						CheckSkin(temp, hMainWindow, &skinLoad);
-						CheckLang(temp, hMainWindow, &langLoad);
 
-						if(!skinLoad && !langLoad)
+						if(!skinLoad)
 						{
 							PostMessageW(wnd, WM_DROPFILES, (WPARAM)medium.hGlobal, 0);
 						}

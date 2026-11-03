@@ -24,8 +24,6 @@
 #define WINAMP_PLAYLISTW WIDEN(REGISTRY_PREFIX) L".PlayList"
 #define WINAMP_SKINZIP REGISTRY_PREFIX ".SkinZip"
 #define WINAMP_SKINZIPW WIDEN(REGISTRY_PREFIX) L".SkinZip"
-#define WINAMP_LANGZIP REGISTRY_PREFIX ".LangZip"
-#define WINAMP_LANGZIPW WIDEN(REGISTRY_PREFIX) L".LangZip"
 #define WINAMP_PLAY REGISTRY_PREFIX ".Play"
 #define WINAMP_PLAYW WIDEN(REGISTRY_PREFIX) L".Play"
 #define WINAMP_ENQUEUE REGISTRY_PREFIX ".Enqueue"
@@ -78,7 +76,6 @@ CONFIG_EXT int config_pe_fontsize DEF_VAL(PE_FONTSIZE);
 CONFIG_EXT int config_pe_direction DEF_VAL(PE_DIRECTION_LTR);
 CONFIG_EXT wchar_t config_langpack[MAX_PATH] DEF_VAL(L""), config_langpack2[MAX_PATH] DEF_VAL(L""), lang_directory[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT int config_skin_prompt DEF_VAL(1);
-CONFIG_EXT int config_wlz_prompt DEF_VAL(1);
 CONFIG_EXT char config_inet_mode DEF_VAL(0);
 CONFIG_EXT char config_defext[32] DEF_VAL("mp3");
 CONFIG_EXT wchar_t config_titlefmt[1024] DEF_VAL(L"[%artist% - ]$if2(%title%,$filepart(%filename%))");

@@ -1024,9 +1024,7 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	void reg_associated_filetypes(int force);
 	wchar_t *FindNextCommand(wchar_t *cmdLine);
 	void parseCmdLine(wchar_t *cmdline, HWND hwnd);
-	wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mode);
-	#define CheckSkin(lpszCmdParam, hwnd_other, exit) CheckFileBase(lpszCmdParam, hwnd_other, exit, 0)
-	#define CheckLang(lpszCmdParam, hwnd_other, exit) CheckFileBase(lpszCmdParam, hwnd_other, exit, 1)
+	wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit);
 
 	void LoadPathsIni();
 	LRESULT Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);

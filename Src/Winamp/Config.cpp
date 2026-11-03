@@ -667,10 +667,6 @@ int config_isregistered(wchar_t *ext)
 			{
 				if(!lstrcmpiW(WINAMP_SKINZIPW, app)){ rval = 1; }
 			}
-			else if (!_wcsicmp(ext, L"wlz"))
-			{
-				if(!lstrcmpiW(WINAMP_LANGZIPW, app)){ rval = 1; }
-			}
 			else
 			{
 				wchar_t str[64] = {0};
@@ -712,8 +708,7 @@ int config_isregistered(wchar_t *ext)
 		{
 			if (vt != REG_SZ || (wcsncmp(b, WINAMP_FILEW, wcslen(WINAMP_FILEW)) &&
 								 wcscmp(b, WINAMP_PLAYLISTW) &&
-								 wcscmp(b, WINAMP_SKINZIPW) &&
-								 wcscmp(b, WINAMP_LANGZIPW))) rval = 0;
+								 wcscmp(b, WINAMP_SKINZIPW))) rval = 0;
 			else rval = 1;
 		}
 		else rval = 0;
@@ -752,8 +747,6 @@ void config_register(wchar_t *ext, int reg)
 			which_str = WINAMP_PLAYLISTW;
 		else if (!_wcsicmp(ext, L"wsz") || !_wcsicmp(ext, L"wal") || !_wcsicmp(ext, L"wpz"))
 			which_str = WINAMP_SKINZIPW;
-		else if (!_wcsicmp(ext, L"wlz"))
-			which_str = WINAMP_LANGZIPW;
 		else
 		{
 			StringCchPrintfW(family_str, 256, L"%s.%s", WINAMP_FILEW, ext);
@@ -786,12 +779,6 @@ void config_register(wchar_t *ext, int reg)
 			wchar_t programname[MAX_PATH] = {0};
 			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
 			regmimetype(L"interface/x-winamp-skin", programname, L".wsz", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"wlz"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"interface/x-winamp-lang", programname, L".wlz", 0);
 		}
 		if (reg && !_wcsicmp(ext, L"pls"))
 		{
