@@ -10,7 +10,6 @@
 #define IDS_PLAYLIST                    5
 #define IDS_MPCPL_PLAYLIST              6
 #define IDS_FPL_PLAYLIST                7
-#define IDS_XSPF_PLAYLIST               8
 #define IDC_ALLOW_ALWAYS                1001
 #define IDC_ALLOW                       1002
 #define IDC_BUTTON3                     1003

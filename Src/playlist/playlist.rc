@@ -66,7 +66,6 @@ BEGIN
     IDS_PLAYLIST            "Playlist"
     IDS_MPCPL_PLAYLIST      "Media Player Classic Playlist (MPCPL)"
     IDS_FPL_PLAYLIST        "Foobar2000 Playlist (FPL)"
-    IDS_XSPF_PLAYLIST       "XML Shareable Playlist Format"
 END
 
 #endif    // English (U.S.) resources
