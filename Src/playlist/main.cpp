@@ -3,19 +3,15 @@
 
 #include "factory_Handler.h"
 #include "factory_playlistmanager.h"
-#include "factory_playlists.h"
 #include "../Winamp/api_random.h"
-#include "Playlists.h"
 #include "plstring.h"
 #include "../nu/ServiceWatcher.h"
 
-extern Playlists playlists;
 int (*warand)(void) = 0;
 
 M3UHandlerFactory       m3uHandlerFactory;
 PLSHandlerFactory       plsHandlerFactory;
 PlaylistManagerFactory  playlistManagerFactory;
-PlaylistsFactory        playlistsFactory;
 ServiceWatcher          serviceWatcher;
 PlaylistComponent       playlistComponent;
 
@@ -69,7 +65,6 @@ void PlaylistComponent::RegisterServices( api_service *service )
 	WASABI_API_SVC->service_register( &m3uHandlerFactory );
 	WASABI_API_SVC->service_register( &plsHandlerFactory );
 	WASABI_API_SVC->service_register( &playlistManagerFactory );
-	WASABI_API_SVC->service_register( &playlistsFactory );
 
 	WASABI_API_LNG = GetService<api_language>( languageApiGUID );
 	// need to have this initialised before we try to do anything with localisation features
@@ -86,9 +81,6 @@ int PlaylistComponent::RegisterServicesSafeModeOk()
 
 void PlaylistComponent::DeregisterServices( api_service *service )
 {
-	playlists.Flush();
-
-	service->service_deregister( &playlistsFactory );
 	service->service_deregister( &playlistManagerFactory );
 	service->service_deregister( &m3uHandlerFactory );
 	service->service_deregister( &plsHandlerFactory );

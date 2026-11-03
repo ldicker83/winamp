@@ -36,9 +36,6 @@ extern api_albumart *albumArtApi;
 extern api_playlistmanager *playlistManager;
 #define AGAVE_API_PLAYLISTMANAGER playlistManager
 
-#include "../playlist/api_playlists.h"
-extern api_playlists *playlistsManager;
-#define AGAVE_API_PLAYLISTS playlistsManager
 
 
 

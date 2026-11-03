@@ -436,7 +436,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="main_wndproc.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="menuv5.cpp" />
-    <ClCompile Include="MergePlaylist.cpp" />
     <ClCompile Include="Metadata.cpp" />
     <ClCompile Include="MoreItems.cpp" />
     <ClCompile Include="ole.cpp" />
@@ -599,7 +598,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="Main.h" />
     <ClInclude Include="main.hpp" />
     <ClInclude Include="MemoryManager.h" />
-    <ClInclude Include="MergePlaylist.h" />
     <ClInclude Include="Metadata.h" />
     <ClInclude Include="MoreItems.h" />
     <ClInclude Include="Options.h" />

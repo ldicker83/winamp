@@ -253,9 +253,6 @@
     <ClCompile Include="Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MergePlaylist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="menuv5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -562,9 +559,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MemoryManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MergePlaylist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Metadata.h">

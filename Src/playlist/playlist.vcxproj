@@ -250,7 +250,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="..\Winamp\strutil.cpp" />
     <ClCompile Include="factory_Handler.cpp" />
     <ClCompile Include="factory_playlistmanager.cpp" />
-    <ClCompile Include="factory_playlists.cpp" />
     <ClCompile Include="Handler.cpp" />
     <ClCompile Include="M3U8Writer.cpp" />
     <ClCompile Include="M3ULoader.cpp" />
@@ -259,8 +258,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="Playlist.cpp" />
     <ClCompile Include="PlaylistCounter.cpp" />
     <ClCompile Include="PlaylistManager.cpp" />
-    <ClCompile Include="Playlists.cpp" />
-    <ClCompile Include="PlaylistsXML.cpp" />
     <ClCompile Include="PLSLoader.cpp" />
     <ClCompile Include="plstring.cpp" />
     <ClCompile Include="PLSWriter.cpp" />
@@ -271,10 +268,8 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="..\Winamp\strutil.h" />
     <ClInclude Include="api__playlist.h" />
     <ClInclude Include="api_playlistmanager.h" />
-    <ClInclude Include="api_playlists.h" />
     <ClInclude Include="factory_Handler.h" />
     <ClInclude Include="factory_playlistmanager.h" />
-    <ClInclude Include="factory_playlists.h" />
     <ClInclude Include="Handler.h" />
     <ClInclude Include="ifc_playlist.h" />
     <ClInclude Include="ifc_playlistloader.h" />
@@ -284,8 +279,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="main.h" />
     <ClInclude Include="PlaylistCounter.h" />
     <ClInclude Include="PlaylistManager.h" />
-    <ClInclude Include="Playlists.h" />
-    <ClInclude Include="PlaylistsXML.h" />
     <ClInclude Include="PlaylistWriter.h" />
     <ClInclude Include="PLSLoader.h" />
     <ClInclude Include="plstring.h" />

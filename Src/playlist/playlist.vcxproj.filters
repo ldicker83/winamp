@@ -7,9 +7,6 @@
     <ClCompile Include="factory_playlistmanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="factory_playlists.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,12 +32,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlaylistManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Playlists.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlaylistsXML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PLSLoader.cpp">
@@ -93,16 +84,10 @@
     <ClInclude Include="api_playlistmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="api_playlists.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="factory_Handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="factory_playlistmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="factory_playlists.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Handler.h">
@@ -133,12 +118,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlaylistManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Playlists.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlaylistsXML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlaylistWriter.h">
