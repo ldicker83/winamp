@@ -17,7 +17,7 @@
 #include "../nu/ns_wc.h"
 #include "../nu/AutoLock.h"
 #include "../nu/AutoCharFn.h"
-#include "../Elevator/FileTypeRegistrar.h"
+#include "FileTypeRegistrar.h"
 #include "main.hpp"
 #include <shobjidl.h>
 

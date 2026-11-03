@@ -34,11 +34,7 @@ extern "C"
 #include "../nu/trace.h"
 #ifndef NO_INPLACE_RESOLVE
 
-#if defined(_WIN64)
- #include "../Elevator/IFileTypeRegistrar_64.h"
-#else
- #include "../Elevator/IFileTypeRegistrar_32.h"
-#endif
+#include "IFileTypeRegistrar.h"
 
 #endif
 	/* configuration */

@@ -331,12 +331,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\Elevator\Elevator.vcxproj">
-      <Project>{977153bf-8420-4c8d-aa25-592faedb6cba}</Project>
-      <IncludeIsGuid>true</IncludeIsGuid>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\playlist\playlist.vcxproj">
       <Project>{b2c0f048-c7fa-4864-b5b3-75e69458ba9e}</Project>
       <IncludeIsGuid>true</IncludeIsGuid>
@@ -358,7 +352,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)1.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)1.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\Elevator\FileTypeRegistrar.cpp" />
+    <ClCompile Include="FileTypeRegistrar.cpp" />
     <ClCompile Include="..\nu\ServiceWatcher.cpp" />
     <ClCompile Include="..\nu\threadpool\ThreadFunctions.cpp" />
     <ClCompile Include="..\nu\threadpool\ThreadID.cpp" />

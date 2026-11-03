@@ -1,10 +1,6 @@
 #pragma once
 
-#if defined(_WIN64)
- #include "IFileTypeRegistrar_64.h"
-#else
- #include "IFileTypeRegistrar_32.h"
-#endif
+#include "IFileTypeRegistrar.h"
 
 class FileTypeRegistrar : public IFileTypeRegistrar
 {
