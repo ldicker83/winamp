@@ -1,5 +1,5 @@
 #pragma once
-#include "../xml/ifc_xmlreaderparams.h"
+#include <api/service/svcs/ifc_xmlreaderparams.h>
 #include <vector>
 
 class ParamList : public ifc_xmlreaderparams

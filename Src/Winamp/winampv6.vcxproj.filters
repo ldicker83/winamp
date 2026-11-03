@@ -280,9 +280,6 @@
     <ClCompile Include="OutputPluginAudioStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParamList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="paths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -433,9 +430,6 @@
     <ClCompile Include="util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XMLString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="wpz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -573,9 +567,6 @@
     <ClInclude Include="OutputPluginAudioStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParamList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlaybackConfigGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -640,9 +631,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TIMING.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XMLString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wintheme.h">
