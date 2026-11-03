@@ -991,47 +991,12 @@ void setup_config(void)
 		{
 			StringCchCopyW(SKINDIR, MAX_PATH, bW);
 		}
-
-		ZeroMemory(bW, sizeof(bW));
-		_r_sW("LangDir", bW, MAX_PATH);
-		pW = bW;
-		while (pW && (*pW == L' ' || *pW == L'\t')) pW++;
-		if (pW && *pW)
-		{
-			StringCchCopyW(LANGDIR, MAX_PATH, bW);
-		}
 	}
 
 	// create a skin temp directory, too
 	wchar_t buf[MAX_PATH] = {0};
 	GetTempPathW(MAX_PATH, buf);
 	GetTempFileNameW(buf, L"WAS", GetTickCount(), SKINTEMPDIR);
-
-	// create a lang temp directory, too by
-	// trying to use part of the wlz's name
-	// so it's easier to see when debugging
-	// e.g. W<lang>XXXX.tmp otherwise it'll
-	// revert back to the older WLZXXXX.tmp
-	config_load_langpack_var();
-	if (wcstok(config_langpack, L"-"))
-	{
-		wchar_t *p = wcstok(NULL, L"-");
-		if (p)
-		{
-			wchar_t buf2[4] = {0};
-			StringCchPrintfW(buf2, 4, L"W%s", p);
-			CharUpperBuffW(buf2, 4);
-			GetTempFileNameW(buf, buf2, GetTickCount(), LANGTEMPDIR);
-		}
-		else
-		{
-			GetTempFileNameW(buf, L"WLZ", GetTickCount(), LANGTEMPDIR);
-		}
-	}
-	else
-	{
-		GetTempFileNameW(buf, L"WLZ", GetTickCount(), LANGTEMPDIR);
-	}
 
 	RI(minst);
 }
@@ -1091,16 +1056,6 @@ BOOL config_regcdplayer(int reg, int mode)
 	return FALSE;
 }
 
-void config_load_langpack_var(void)
-{
-	RSW(langpack);
-}
-
-void config_save_langpack_var(void)
-{
-	WSW(langpack);
-}
-
 void config_agent_add(void)
 {
 	if (config_no_registry) return;
@@ -1118,7 +1073,6 @@ void config_agent_add(void)
 		registrar->Release();
 	}
 
-	Lang_LocaliseAgentOnTheFly(TRUE);
 }
 
 void config_agent_remove(void)
@@ -1137,7 +1091,6 @@ void config_agent_remove(void)
 		registrar->Release();
 	}
 
-	Lang_LocaliseAgentOnTheFly(FALSE);
 }
 
 BOOL config_register_capability(wchar_t *ext, int mode)

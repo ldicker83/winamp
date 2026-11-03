@@ -277,6 +277,7 @@ static int PassToOtherWinamp( wchar_t *lpszCmdParam, HWND hwnd_other, int bAdd, 
 		int skinExit = 0;
 		int bC = 0;
 		HANDLE hSem = NULL;
+
 		lpszCmdParam = CheckSkin( lpszCmdParam, hwnd_other, &skinExit );
 		if ( skinExit )
 			return TRUE;
@@ -607,13 +608,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	CommandLink_RegisterClass( hMainInstance );
 
 	Skin_CleanupAfterCrash();
-	Lang_CleanupAfterCrash();
-
-	if ( !g_safeMode )
-	{
-		language_pack_instance = Lang_InitLangSupport( hMainInstance, WinampLangGUID );
-		Lang_FollowUserDecimalLocale();
-	}
 
 	if ( bBookmark )
 	{

@@ -259,30 +259,10 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			return reinterpret_cast<LRESULT>(config_outname);
 		case IPC_GETLANGUAGEPACKINSTANCE:
 			// changed to check on LOWORD(data) in 5.51+ since we can take extra params in hiword for data==5
-			if (LOWORD(data) == 1) return (language_pack_instance == hMainInstance);
+			if (LOWORD(data) == 1) return 1;
 			else if (LOWORD(data) == 2) return reinterpret_cast<LRESULT>(LANGDIR);
-			else if (LOWORD(data) == 3) return reinterpret_cast<LRESULT>(lang_directory);
-			else if (LOWORD(data) == 4)
-			{
-				static wchar_t lngfilename[MAX_PATH] = {0};
-				// cache the result once done - no point in re-generating it when not needed
-				if(!lngfilename[0])
-				{
-					if(config_langpack[0])
-					{
-						// strip off the lng/wlz from the file so it matches with the config display
-						lstrcpynW(lngfilename, config_langpack, MAX_PATH);
-						wchar_t* p = extensionW(lngfilename);
-						if(p) *CharPrevW(lngfilename, p) = 0;
-					}
-					else
-					{
-						// otherwise set it to the default
-						lstrcpynW(lngfilename, L"English (US)", MAX_PATH);
-					}
-				}
-				return reinterpret_cast<LRESULT>(lngfilename);
-			}
+			else if (LOWORD(data) == 3) return reinterpret_cast<LRESULT>(L"");
+			else if (LOWORD(data) == 4) return reinterpret_cast<LRESULT>(L"English (US)");
 			else if (LOWORD(data) == 5)
 			{
 				return reinterpret_cast<LRESULT>(langManager->GetLanguageIdentifier(HIWORD(data)));

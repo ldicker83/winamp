@@ -63,7 +63,6 @@ CONFIG_EXT wchar_t DSPDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t SKINDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t DEMOMP3[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t SKINTEMPDIR[MAX_PATH] DEF_VAL(L"");
-CONFIG_EXT wchar_t LANGTEMPDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t BOOKMARKFILE[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t BOOKMARKFILE8[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t LANGDIR[MAX_PATH] DEF_VAL(L"");
@@ -74,7 +73,6 @@ CONFIG_EXT int config_pe_fontsize DEF_VAL(PE_FONTSIZE);
 #define PE_DIRECTION_LTR 1
 #define PE_DIRECTION_RTL 2
 CONFIG_EXT int config_pe_direction DEF_VAL(PE_DIRECTION_LTR);
-CONFIG_EXT wchar_t config_langpack[MAX_PATH] DEF_VAL(L""), config_langpack2[MAX_PATH] DEF_VAL(L""), lang_directory[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT int config_skin_prompt DEF_VAL(1);
 CONFIG_EXT char config_inet_mode DEF_VAL(0);
 CONFIG_EXT char config_defext[32] DEF_VAL("mp3");

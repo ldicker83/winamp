@@ -947,7 +947,6 @@
 #define IDB_OSD                         1377
 #define IDC_TRUST_CHECK                 1378
 #define IDD_DIALOG1                     1378
-#define IDD_ABOUT_TRANSLATION           1378
 #define IDC_JSAPI2_ALL                  1379
 #define IDC_JSAPI2_THIS                 1380
 #define IDC_JSAPI2_ONCE                 1381

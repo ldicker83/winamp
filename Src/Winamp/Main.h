@@ -135,8 +135,6 @@ extern HINSTANCE language_pack_instance;
 	void config_setinidir(const wchar_t *inidir);
 	void config_setm3udir(const wchar_t *m3udir);
 	void config_setm3ubase(const wchar_t *m3ubase);
-	void config_load_langpack_var(void);
-	void config_save_langpack_var(void);
 	int config_isdircontext(void);
 	BOOL config_setup_filetype(const wchar_t *winamp_file, const wchar_t *name, BOOL use_fallback);
 	BOOL config_adddircontext(BOOL use_fallback);
@@ -796,15 +794,6 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	/***************
 	*** lang.cpp
 	*/
-	HINSTANCE Lang_InitLangSupport(HINSTANCE, const GUID);
-	void Lang_FollowUserDecimalLocale(void);
-	void Lang_CleanupZip(void);
-	void Lang_CleanupAfterCrash(void);
-	void Lang_EndLangSupport(void);
-	HINSTANCE Lang_FakeWinampLangHInst(HINSTANCE adjustedHInst);
-	void Lang_LocaliseAgentOnTheFly(BOOL refresh);
-
-	int extract_wlz_to_dir(wchar_t* readme_only_wlz_extraction, BOOL *skip);
 	char *getString(UINT uID, char *str, size_t maxlen);
 	wchar_t *getGUIDstr(const GUID, wchar_t *target);
 
