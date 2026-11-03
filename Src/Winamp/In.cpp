@@ -554,7 +554,7 @@ char* in_getfltstr()
 	getString(IDS_ALLTYPES, p, size);
 	p = p + lstrlenA(p) + 1;
 	wchar_t playlistString[1024] = { 0 };
-	playlistManager->GetFilterList(playlistString, 1024);
+	playlistManager->GetExtensionList(playlistString, 1024);
 	WideCharToMultiByteSZ(CP_ACP, 0, playlistString, -1, p, (int)size, 0, 0);
 	for ( x = 0; x < in_modules.size(); x++ )
 	{
@@ -579,10 +579,11 @@ char* in_getfltstr()
 		AddFilterString(p, size, in_modules[in_mod]->FileExtensions);
 
 	p = p + lstrlenA(p) + 1;
-	getString(IDS_PLAYLISTSTRING, p, size - (p - buf));
+	char playlistExt[1024] = { 0 };
+	WideCharToMultiByteSZ(CP_ACP, 0, playlistString, -1, playlistExt, 1024, 0, 0);
+	StringCchPrintfA(p, size - (p - buf), getString(IDS_PLAYLISTSTRING_NEW, NULL, 0), playlistExt);
 	p += lstrlenA(p) + 1;
-	playlistManager->GetFilterList(playlistString, 1024);
-	WideCharToMultiByteSZ(CP_ACP, 0, playlistString, -1, p, (int)size, 0, 0);
+	StringCchCopyA(p, size - (p - buf), playlistExt);
 	p += lstrlenA(p) + 1;
 	for ( x = 0; x < in_modules.size(); x++ )
 	{
