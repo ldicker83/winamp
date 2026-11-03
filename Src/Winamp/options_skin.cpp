@@ -427,7 +427,6 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				DirectMouseWheel_EnableConvertToMouseWheel(listWindow, TRUE);
 			}
 			CheckDlgButton(hwndDlg, IDC_SKIN_INSTALL_PROMPT, config_skin_prompt);
-			link_startsubclass(hwndDlg, IDC_WINAMPLINK);
 		}
 		case WM_USER+50:
 		{

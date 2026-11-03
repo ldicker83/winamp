@@ -659,7 +659,6 @@
 #define IDC_SM                          1140
 #define IDC_PLUGINLINK                  1141
 #define IDC_SM2                         1141
-#define IDC_WINAMPLINK                  1142
 #define IDC_PLUGINLINK2                 1142
 #define IDC_SM3                         1142
 #define IDC_AFTERSEEK                   1144
