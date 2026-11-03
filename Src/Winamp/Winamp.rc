@@ -768,7 +768,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    CTEXT           "Unable to load the selected Winamp preference page.\n\nIf using a language pack, first check for an updated Winamp release (if not already using the current release) and then try to obtain an updated version from the language pack author.",IDC_STATIC,34,99,203,48
+    CTEXT           "Unable to load the selected Winamp preference page.",IDC_STATIC,34,99,203,48
 END
 
 IDD_EDIT_INFO DIALOGEX 0, 0, 307, 199
@@ -2153,7 +2153,7 @@ BEGIN
     IDS_FAILED_SAFE_MODE_MSG 
                             "Winamp is already running and 'safe mode' cannot be properly started. Ensure all instances of Winamp have been closed before trying again."
     IDS_SAFE_MODE_ALL       "Winamp will now be run in 'safe mode' which prevents the loading of\n3rd party plug-ins including all detected Visualisation, DSP and\nMedia Library plug-ins."
-    IDS_SAFE_MODE_NORMAL    "Winamp will now be run in 'safe mode' which prevents the loading of\n3rd party plug-ins including all detected Visualisation and DSP plug-ins\nas well as Language Packs."
+    IDS_SAFE_MODE_NORMAL    "Winamp will now be run in 'safe mode' which prevents the loading of\n3rd party plug-ins including all detected Visualisation and DSP plug-ins."
     IDS_RESTART_NORMAL      "Restart In\nFull Mode"
 END
 
