@@ -7,8 +7,6 @@
 #define IDS_PLS_PLAYLIST                2
 #define IDS_ALL_PLAYLIST_TYPES          4
 #define IDS_PLAYLIST                    5
-#define IDS_MPCPL_PLAYLIST              6
-#define IDS_FPL_PLAYLIST                7
 #define IDC_ALLOW_ALWAYS                1001
 #define IDC_ALLOW                       1002
 #define IDC_BUTTON3                     1003
