@@ -297,7 +297,7 @@ static void SkinDeleteSkin(HWND hwndDlg, LRESULT x)
 		{
 			PathCombineW(buf, SKINDIR, skin);
 			IFileTypeRegistrar *registrar=0;
-			if (GetRegistrar(&registrar, true) == 0 && registrar)
+			if (GetRegistrar(&registrar) == 0 && registrar)
 			{
 				registrar->DeleteItem(buf);
 				registrar->CleanupDirectory(buf);
@@ -361,7 +361,7 @@ static void SkinRenameSkin(HWND hwndDlg, LRESULT x, int* timer_active)
 			}
 
 			IFileTypeRegistrar *registrar=0;
-			if (GetRegistrar(&registrar, true) == 0 && registrar)
+			if (GetRegistrar(&registrar) == 0 && registrar)
 			{
 				if (SUCCEEDED(registrar->RenameItem(oldname,newname, FALSE)))
 				{
@@ -583,7 +583,7 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							if(MessageBoxW(hwndDlg, message, getStringW(IDS_SKIN_DIR_MOVE,NULL,0),MB_YESNO|MB_ICONQUESTION)==IDYES)
 							{
 							IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar, true) == 0 && registrar)
+								if (GetRegistrar(&registrar) == 0 && registrar)
 								{
 									registrar->MoveDirectoryContents(orig,SKINDIR);
 									registrar->Release();

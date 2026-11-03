@@ -238,7 +238,7 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 									gen_plugins[lvi.lParam]=0;
 
 									IFileTypeRegistrar *registrar=0;
-									if (GetRegistrar(&registrar, true) == 0 && registrar)
+									if (GetRegistrar(&registrar) == 0 && registrar)
 									{
 										if (registrar->DeleteItem(buf) != S_OK)
 										{
@@ -274,7 +274,7 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 								}
 
 								IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar, true) == 0 && registrar)
+								if (GetRegistrar(&registrar) == 0 && registrar)
 								{
 									if (registrar->DeleteItem(base) != S_OK)
 									{

@@ -34,11 +34,7 @@ extern "C"
 #include "../nu/trace.h"
 #ifndef NO_INPLACE_RESOLVE
 
-#if defined(_WIN64)
- #include "../Elevator/IFileTypeRegistrar_64.h"
-#else
- #include "../Elevator/IFileTypeRegistrar_32.h"
-#endif
+#include "IFileTypeRegistrar.h"
 
 #endif
 	/* configuration */
@@ -118,7 +114,7 @@ extern "C"
 	*/ 
 	// configuration variables/with defaults
 	#ifndef NO_INPLACE_RESOLVE
-	int GetRegistrar(IFileTypeRegistrar **registrar, BOOL use_fallback);
+	int GetRegistrar(IFileTypeRegistrar **registrar);
 	#endif
 	void init_config();
 	void setup_config(void);
@@ -144,7 +140,6 @@ extern "C"
 	void config_agent_add(void);
 	void config_agent_remove(void);
 	void regmimetype(const wchar_t *mtype, const wchar_t *programname, const wchar_t *ext, int nsonly);
-	void RemoveRegistrar();
 
 	/***********************
 	*** convert.cpp

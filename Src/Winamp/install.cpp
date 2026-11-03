@@ -105,6 +105,5 @@ void DoInstall(int is_install)
 	in_deinit();
 	w5s_deinit();
 	Wasabi_Unload();
-	RemoveRegistrar();
 	ExitProcess(0);
 }

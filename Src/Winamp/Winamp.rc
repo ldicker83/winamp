@@ -2191,7 +2191,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_P_FILE_ASSOC_FAILURE 
-                            "Unable to apply the requested file association changes.\n\nIf you selected 'No' or cancelled the UAC prompt (if one was shown), re-select the 'File Types' preference page and make any changes needed again ensuring you select 'Yes' or enter the correct Administrator details required to allow this action to be completed."
+                            "Unable to apply the requested file association changes.\n\nChanging file associations may require running Winamp as Administrator."
     IDS_P_NO_MOUSEWHEEL     "Enabling this option will prevent the mouse wheel from changing the current volume which can still be done via the keyboard or directly clicking and then moving the volume slider."
     IDS_P_PLUG_SAFEMODEALWAYS 
                             "Enable this to always run Winamp in Safe Mode without the 'nag' screen and the risk from issues that can arise by using 3rd party plug-ins."

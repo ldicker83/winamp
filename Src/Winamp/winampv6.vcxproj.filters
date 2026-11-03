@@ -133,7 +133,7 @@
     <ClCompile Include="FileInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Elevator\FileTypeRegistrar.cpp">
+    <ClCompile Include="FileTypeRegistrar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FloatAttribute.cpp">

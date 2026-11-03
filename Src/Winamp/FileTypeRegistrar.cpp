@@ -6,10 +6,6 @@
 #define _STD_USING
 //#include "../nu/cast64.h"
 #include <strsafe.h>
-#ifdef ELEVATOR_SCOPE
-void Lock();
-void UnLock();
-#endif
 
 #if defined(_SYSINFOAPI_H_) && defined(NOT_BUILD_WINDOWS_DEPRECATE) && (_WIN32_WINNT >= 0x0501)
 #include <VersionHelpers.h>
@@ -40,18 +36,12 @@ HRESULT FileTypeRegistrar::QueryInterface(REFIID riid, LPVOID FAR *ppvObj)
 
 ULONG FileTypeRegistrar::AddRef(void)
 {
-#ifdef ELEVATOR_SCOPE
-	Lock();
-#endif
 	return ++refCount;
 }
 
 ULONG FileTypeRegistrar::Release(void)
 {
 	ULONG retCount=--refCount;
-#ifdef ELEVATOR_SCOPE
-	UnLock();
-#endif
 	return retCount;
 }
 

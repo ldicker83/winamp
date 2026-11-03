@@ -614,7 +614,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 		{
 			w5s_deinit();
 			Wasabi_Unload();
-			RemoveRegistrar();
 			CoUninitialize();
 			ExitProcess( 0 );
 		}
@@ -623,7 +622,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 		in_deinit();
 		w5s_deinit();
 		Wasabi_Unload();
-		RemoveRegistrar();
 		CoUninitialize();
 		ExitProcess( 0 );
 	}
@@ -644,7 +642,7 @@ DWORD CALLBACK MainThread( LPVOID param )
 		if ( buf[ 0 ] )
 		{
 			IFileTypeRegistrar *registrar = 0;
-			if ( GetRegistrar( &registrar, true ) == 0 && registrar )
+			if ( GetRegistrar( &registrar ) == 0 && registrar )
 			{
 				registrar->DeleteItem( buf );
 				registrar->Release();
@@ -665,7 +663,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	{
 		w5s_deinit();
 		Wasabi_Unload();
-		RemoveRegistrar();
 		CoUninitialize();
 		ExitProcess( 0 );
 	}
@@ -801,8 +798,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 
 		CreateProcessA( NULL, buf, NULL, NULL, FALSE, 0, NULL, NULL, (LPSTARTUPINFOA)&si, &pi );
 	}
-
-	RemoveRegistrar();
 	Wasabi_Unload();
 	CoUninitialize();
 	return exitParam;

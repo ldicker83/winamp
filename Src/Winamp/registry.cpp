@@ -19,7 +19,7 @@ BOOL config_registermediaplayer(DWORD accessEnabled)
 		return TRUE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, (accessEnabled != 2)) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t programname[MAX_PATH] = {0};
 		GetModuleFileNameW(hMainInstance,programname,MAX_PATH);
@@ -52,7 +52,7 @@ BOOL config_adddircontext(BOOL use_fallback)
 	if (!GetModuleFileNameW(hMainInstance,programname,MAX_PATH)) return FALSE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, !use_fallback) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t str[MAX_PATH+128] = {0}, langbuf[1024] = {0};
 		StringCchPrintfW(str,MAX_PATH+128,L"\"%s\" \"%%1\"",programname);
@@ -86,7 +86,7 @@ BOOL config_setup_filetype(const wchar_t *winamp_file, const wchar_t *name, BOOL
 	if (!GetModuleFileNameW(hMainInstance,programname,MAX_PATH)) return FALSE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, use_fallback) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t str[MAX_PATH+32] = {0}, langbuf[1024] = {0};
 		registrar->SetupFileType(programname, winamp_file, name, config_whichicon, config_addtolist?L"Enqueue":L"Play", L"");
@@ -121,7 +121,7 @@ BOOL config_setup_filetypes(int mode)
 		return FALSE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, !mode) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t str[MAX_PATH+32] = {0}, langbuf[1024] = {0};
 		// droptarget stuff for windows XP
@@ -176,7 +176,7 @@ void config_regdvdplayer(void)
 		return;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, true) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		registrar->RegisterDVDPlayer(winampPath, config_whichicon, L"Winamp.DVD", L"Winamp", L"Nullsoft Winamp", L"Play in Winamp");
 		registrar->Release();

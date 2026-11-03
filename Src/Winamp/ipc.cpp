@@ -1530,7 +1530,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_GET_FILEREGISTRAR_OBJECT:
 			{
 				IFileTypeRegistrar *registrar = 0;
-				if (GetRegistrar(&registrar, !data) == 0 && registrar)
+				if (GetRegistrar(&registrar) == 0 && registrar)
 					return (LRESULT)registrar;
 				return 0;
 			}

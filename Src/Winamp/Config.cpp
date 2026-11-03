@@ -17,109 +17,17 @@
 #include "../nu/ns_wc.h"
 #include "../nu/AutoLock.h"
 #include "../nu/AutoCharFn.h"
-#include "../Elevator/FileTypeRegistrar.h"
+#include "FileTypeRegistrar.h"
 #include "main.hpp"
 #include <shobjidl.h>
 
-#if (_MSC_VER < 1500)
-typedef struct tagBIND_OPTS3 : tagBIND_OPTS2
-{
-	HWND hwnd;
-} BIND_OPTS3, * LPBIND_OPTS3;
-#endif
-static HRESULT CoCreateInstanceAsAdmin(HWND hwnd, REFCLSID rclsid, REFIID riid, void ** ppv)
-{
-	BIND_OPTS3 bo;
-	WCHAR wszCLSID[50] = {0};
-	WCHAR wszMonikerName[300] = {0};
-
-	StringFromGUID2(rclsid, wszCLSID, sizeof(wszCLSID)/sizeof(wszCLSID[0])); 
-	HRESULT hr = StringCchPrintfW(wszMonikerName, sizeof(wszMonikerName)/sizeof(wszMonikerName[0]), L"Elevation:Administrator!new:%s", wszCLSID);
-	if (FAILED(hr))
-		return hr;
-	memset(&bo, 0, sizeof(bo));
-	bo.cbStruct = sizeof(bo);
-	bo.hwnd = hwnd;
-	bo.dwClassContext  = CLSCTX_LOCAL_SERVER;
-	return CoGetObject(wszMonikerName, &bo, riid, ppv);
-}
-
-static bool NeedElevation()
-{
-	return !IsUserAnAdmin();
-}
-
-static Nullsoft::Utility::LockGuard registrarGuard;
-static const GUID ftr_guid = { 0x3B29AB5C, 0x52CB, 0x4a36, { 0x93,0x14,0xE3,0xFE,0xE0,0xBA,0x74,0x68 } };
-static IFileTypeRegistrar *masterRegistrar;
 static FileTypeRegistrar builtIn;
-bool usingBuiltIn = false;
 
-int GetRegistrar(IFileTypeRegistrar **registrar, BOOL use_fallback)
+int GetRegistrar(IFileTypeRegistrar **registrar)
 {
-	Nullsoft::Utility::AutoLock autolock(registrarGuard);
-	// attempt to re-get an elevated object as needed
-	// i.e. if user selects no but wants to try again
-	//		then we need to try going elevated again
-	if (!masterRegistrar || usingBuiltIn)
-	{
-#if 1 // benski> on Vista, we need this object to run out-of-process so it can be elevated to Administrator
-		// without elevating Winamp itself - see http://msdn2.microsoft.com/en-us/ms679687.aspx
-		OSVERSIONINFO version = {0};
-		version.dwOSVersionInfoSize = sizeof(version);
-		if (!GetVersionEx(&version)) ZeroMemory(&version, sizeof(OSVERSIONINFO));
-		if (version.dwMajorVersion >= 6 && NeedElevation()) // Vista
-		{
-			IFileTypeRegistrar *registrar = 0;
-			HRESULT hr = CoCreateInstanceAsAdmin(0, ftr_guid, __uuidof(IFileTypeRegistrar), (void**)&registrar);
-			if (SUCCEEDED(hr) && registrar)
-			{
-				if (masterRegistrar) masterRegistrar->Release();
-				masterRegistrar = registrar;
-				usingBuiltIn = false;
-			}
-			else
-			{
-				if (!use_fallback)
-				{
-					if (registrar) registrar->Release();
-					if (masterRegistrar) masterRegistrar->Release();
-					registrar = masterRegistrar = 0;
-					usingBuiltIn = false;
-					return 1;
-				}
-			}
-		}
-#if 0
-		else /* benski> on earlier OS's just for testing purposes, we'll get rid of this totally once the COM stuff is worked out */
-		{
-			CoCreateInstance(ftr_guid, NULL, CLSCTX_LOCAL_SERVER, __uuidof(IFileTypeRegistrar), (void**)&masterRegistrar);
-		}
-#endif
-#endif
-	}
-
-	if (!masterRegistrar) /* wasn't registered? we'll use our internal version (but it won't work well on Vista+) */
-	{
-		masterRegistrar = &builtIn;
-		usingBuiltIn = true;
-	}
-
-	if (masterRegistrar)
-	{
-		*registrar = masterRegistrar;
-		masterRegistrar->AddRef();
-		return 0;
-	}
-	return 1;
-}
-
-void RemoveRegistrar()
-{
-	Nullsoft::Utility::AutoLock autolock(registrarGuard);
-	if (masterRegistrar) masterRegistrar->Release();
-	masterRegistrar = 0;
-	usingBuiltIn = false;
+	*registrar = &builtIn;
+	builtIn.AddRef();
+	return 0;
 }
 
 int _r_i(const std::string& name, int def)
@@ -739,7 +647,7 @@ void config_register(wchar_t *ext, int reg)
 	if (!allowed_extension(ext)) return ; //windows=gay
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, true) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t family_str[256] = {0};
 
@@ -839,7 +747,7 @@ void regmimetype(const wchar_t *mtype, const wchar_t *programname, const wchar_t
 		return ;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, true) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		registrar->RegisterMIMEType(mtype, programname, ext, nsonly);
 		registrar->Release();
@@ -1007,7 +915,7 @@ BOOL config_removedircontext(BOOL use_fallback)
 		return TRUE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, !use_fallback) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		registrar->RemoveDirectoryContext(WINAMP_PLAYW);
 		registrar->RemoveDirectoryContext(WINAMP_ENQUEUEW);
@@ -1040,7 +948,7 @@ BOOL config_regcdplayer(int reg, int mode)
 	if (config_no_registry) return TRUE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, !mode) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t programName[MAX_PATH] = {0};
 		if (GetModuleFileNameW(hMainInstance, programName, MAX_PATH))
@@ -1061,7 +969,7 @@ void config_agent_add(void)
 	if (config_no_registry) return;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, true) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		wchar_t exe_name[MAX_PATH + 2] = {0};
 		GetModuleFileNameW(hMainInstance, exe_name, sizeof(exe_name)/sizeof(wchar_t));
@@ -1080,7 +988,7 @@ void config_agent_remove(void)
 	if (config_no_registry) return ;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, true) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		HWND hwnd = FindWindowW(L"WinampAgentMain", NULL);
 		if (hwnd)
@@ -1098,7 +1006,7 @@ BOOL config_register_capability(wchar_t *ext, int mode)
 	if (config_no_registry) return TRUE;
 
 	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar, !mode) == 0 && registrar)
+	if (GetRegistrar(&registrar) == 0 && registrar)
 	{
 		WCHAR szApplication[128] = {0}, szExtension[64] = {0}, szProgId[256] = {0};
 		size_t required = MultiByteToWideCharSZ(CP_ACP, 0, app_name, -1, NULL, 0);

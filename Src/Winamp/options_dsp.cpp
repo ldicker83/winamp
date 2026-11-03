@@ -438,7 +438,7 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 							if ( ret == DSP_PLUGIN_UNINSTALL_NOW )
 							{
 								IFileTypeRegistrar *registrar = 0;
-								if ( GetRegistrar( &registrar, true ) == 0 && registrar )
+								if ( GetRegistrar( &registrar ) == 0 && registrar )
 								{
 									if ( registrar->DeleteItem( buf ) != S_OK )
 									{
@@ -463,7 +463,7 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 						else
 						{
 							IFileTypeRegistrar *registrar = 0;
-							if ( GetRegistrar( &registrar, true ) == 0 && registrar )
+							if ( GetRegistrar( &registrar ) == 0 && registrar )
 							{
 								if ( registrar->DeleteItem( b ) != S_OK )
 								{
