@@ -354,9 +354,6 @@ void config_write(int i)
 	WI(replaygain_preferred_only);
 	_w_i("replaygain_non_rg_gain", (intptr_t)(config_replaygain_non_rg_gain.GetFloat()*1000.0f));
 	_w_i("replaygain_preamp", (intptr_t)(config_replaygain_preamp.GetFloat()*1000.0f));
-
-	//	WI(video_contrast);
-	//	WI(video_brightness);
 	WI(wav_do_header);
 	WI(wav_convert);
 	WS(wav_ext);
@@ -368,7 +365,6 @@ void config_write(int i)
 	WI(last_fileinfo_page);
 	WSW(artwork_filter);
 	WI(zeropadplnum);
-	WI(wlz_menu);
 	WI(accessibility_modalbeep);
 	WI(accessibility_modalflash);
 
@@ -576,9 +572,6 @@ void config_read(int i)
 
 	RI(jtf_check);
 	RI(block_img);
-
-	//  RI(video_contrast);
-	//  RI(video_brightness);
 	RI(wav_do_header);
 	RI(wav_convert);
 	RS(wav_ext);
@@ -593,7 +586,6 @@ void config_read(int i)
 	RSW(visplugin_name);
 	RSW(dspplugin_name);
 	RI(zeropadplnum);
-	RI(wlz_menu);
 	RB(accessibility_modalbeep);
 	RB(accessibility_modalflash);
 
@@ -675,10 +667,6 @@ int config_isregistered(wchar_t *ext)
 			{
 				if(!lstrcmpiW(WINAMP_SKINZIPW, app)){ rval = 1; }
 			}
-			else if (!_wcsicmp(ext, L"wlz"))
-			{
-				if(!lstrcmpiW(WINAMP_LANGZIPW, app)){ rval = 1; }
-			}
 			else
 			{
 				wchar_t str[64] = {0};
@@ -720,8 +708,7 @@ int config_isregistered(wchar_t *ext)
 		{
 			if (vt != REG_SZ || (wcsncmp(b, WINAMP_FILEW, wcslen(WINAMP_FILEW)) &&
 								 wcscmp(b, WINAMP_PLAYLISTW) &&
-								 wcscmp(b, WINAMP_SKINZIPW) &&
-								 wcscmp(b, WINAMP_LANGZIPW))) rval = 0;
+								 wcscmp(b, WINAMP_SKINZIPW))) rval = 0;
 			else rval = 1;
 		}
 		else rval = 0;
@@ -760,8 +747,6 @@ void config_register(wchar_t *ext, int reg)
 			which_str = WINAMP_PLAYLISTW;
 		else if (!_wcsicmp(ext, L"wsz") || !_wcsicmp(ext, L"wal") || !_wcsicmp(ext, L"wpz"))
 			which_str = WINAMP_SKINZIPW;
-		else if (!_wcsicmp(ext, L"wlz"))
-			which_str = WINAMP_LANGZIPW;
 		else
 		{
 			StringCchPrintfW(family_str, 256, L"%s.%s", WINAMP_FILEW, ext);
@@ -794,12 +779,6 @@ void config_register(wchar_t *ext, int reg)
 			wchar_t programname[MAX_PATH] = {0};
 			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
 			regmimetype(L"interface/x-winamp-skin", programname, L".wsz", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"wlz"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"interface/x-winamp-lang", programname, L".wlz", 0);
 		}
 		if (reg && !_wcsicmp(ext, L"pls"))
 		{
@@ -1012,47 +991,12 @@ void setup_config(void)
 		{
 			StringCchCopyW(SKINDIR, MAX_PATH, bW);
 		}
-
-		ZeroMemory(bW, sizeof(bW));
-		_r_sW("LangDir", bW, MAX_PATH);
-		pW = bW;
-		while (pW && (*pW == L' ' || *pW == L'\t')) pW++;
-		if (pW && *pW)
-		{
-			StringCchCopyW(LANGDIR, MAX_PATH, bW);
-		}
 	}
 
 	// create a skin temp directory, too
 	wchar_t buf[MAX_PATH] = {0};
 	GetTempPathW(MAX_PATH, buf);
 	GetTempFileNameW(buf, L"WAS", GetTickCount(), SKINTEMPDIR);
-
-	// create a lang temp directory, too by
-	// trying to use part of the wlz's name
-	// so it's easier to see when debugging
-	// e.g. W<lang>XXXX.tmp otherwise it'll
-	// revert back to the older WLZXXXX.tmp
-	config_load_langpack_var();
-	if (wcstok(config_langpack, L"-"))
-	{
-		wchar_t *p = wcstok(NULL, L"-");
-		if (p)
-		{
-			wchar_t buf2[4] = {0};
-			StringCchPrintfW(buf2, 4, L"W%s", p);
-			CharUpperBuffW(buf2, 4);
-			GetTempFileNameW(buf, buf2, GetTickCount(), LANGTEMPDIR);
-		}
-		else
-		{
-			GetTempFileNameW(buf, L"WLZ", GetTickCount(), LANGTEMPDIR);
-		}
-	}
-	else
-	{
-		GetTempFileNameW(buf, L"WLZ", GetTickCount(), LANGTEMPDIR);
-	}
 
 	RI(minst);
 }
@@ -1112,16 +1056,6 @@ BOOL config_regcdplayer(int reg, int mode)
 	return FALSE;
 }
 
-void config_load_langpack_var(void)
-{
-	RSW(langpack);
-}
-
-void config_save_langpack_var(void)
-{
-	WSW(langpack);
-}
-
 void config_agent_add(void)
 {
 	if (config_no_registry) return;
@@ -1139,7 +1073,6 @@ void config_agent_add(void)
 		registrar->Release();
 	}
 
-	Lang_LocaliseAgentOnTheFly(TRUE);
 }
 
 void config_agent_remove(void)
@@ -1158,7 +1091,6 @@ void config_agent_remove(void)
 		registrar->Release();
 	}
 
-	Lang_LocaliseAgentOnTheFly(FALSE);
 }
 
 BOOL config_register_capability(wchar_t *ext, int mode)

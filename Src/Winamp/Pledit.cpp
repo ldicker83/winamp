@@ -610,8 +610,7 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				SetWindowLong(hwnd, GWL_STYLE, GetWindowLongW(hwnd, GWL_STYLE)&~(WS_CAPTION));
 				SetWindowPos(hwnd, 0, config_pe_wx, config_pe_wy, config_pe_width, config_pe_height, SWP_NOACTIVATE | SWP_NOZORDER);
 
-				HACCEL hAccel = LoadAcceleratorsW(language_pack_instance, MAKEINTRESOURCEW(IDR_ACCELERATOR_PL));
-				if (!hAccel && language_pack_instance != hMainInstance) hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_PL));
+				HACCEL hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_PL));
 				if (hAccel) WASABI_API_APP->app_addAccelerators(hwnd, &hAccel, 1, TRANSLATE_MODE_NORMAL);
 			}
 
@@ -1296,12 +1295,6 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					}
 					SetFocus(hwnd);
 					SetForegroundWindow(hwnd);
-					return 0;
-				case IDC_PLAYLIST_ADDLOC:
-					{
-						RECT r = {0, 0, config_pe_width, config_pe_height - 37};
-						InvalidateRect(hwnd, &r, FALSE);
-					}
 					return 0;
 				case IDC_PLAYLIST_ADDDIR:
 				{

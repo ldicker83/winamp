@@ -75,9 +75,7 @@ int Main_OnButton2(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			FileName[0] = 0;
 			PlayList_getcurrent(FileName, FileTitle, FileTitleNum);
 		}
-		if (id == WINAMP_BUTTON2_CTRL)
-			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_LOC, 0);
-		else if (!FileName[0] || id == WINAMP_BUTTON2_SHIFT)
+		if (!FileName[0] || id == WINAMP_BUTTON2_SHIFT)
 		{
 			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_PLAY, 0);
 		}
@@ -88,9 +86,7 @@ int Main_OnButton2(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	}
 	else
 	{
-		if (id == WINAMP_BUTTON2_CTRL)
-			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_LOC, 0);
-		else if (id == WINAMP_BUTTON2_SHIFT)
+		if (id == WINAMP_BUTTON2_SHIFT)
 			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_PLAY, 0);
 		else if (paused) UnPausePlaying();
 		else

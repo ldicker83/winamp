@@ -15,7 +15,6 @@
 #define TREE_DEVICES 10000
 #define TREE_QUERIES 1000
 
-extern HINSTANCE language_pack_instance;
 
 
 void ensureInScreen(HMENU menu, int *x, int *y, int *flag, int width, int height);
@@ -310,7 +309,6 @@ int V5_Windows_Menu(HWND hwnd, int x, int y, int width, int height)
 	int flag = TPM_LEFTALIGN;
 	CheckMenuItem(windows_menu, WINAMP_OPTIONS_PLEDIT, config_pe_open ? MF_CHECKED : MF_UNCHECKED);
 	CheckMenuItem(windows_menu, WINAMP_VISPLUGIN, vis_running() ? MF_CHECKED : MF_UNCHECKED);
-	if (g_has_video_plugin) CheckMenuItem(windows_menu, WINAMP_OPTIONS_VIDEO, config_video_open ? MF_CHECKED : MF_UNCHECKED);
 	ensureInScreen(windows_menu, &x, &y, &flag, width, height);
 	DoTrackPopup(windows_menu, flag, x, y, hwnd);
 	return 1;

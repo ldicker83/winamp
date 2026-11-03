@@ -21,12 +21,10 @@ LRESULT Main_OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hMainWindow = hwnd;
 	DisableVistaPreview();
 
-	HACCEL hAccel = LoadAcceleratorsW(language_pack_instance, MAKEINTRESOURCEW(IDR_ACCELERATOR_GLOBAL));
-	if (!hAccel && language_pack_instance != hMainInstance) hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_GLOBAL));
+	HACCEL hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_GLOBAL));
 	if (hAccel) WASABI_API_APP->app_addAccelerators(hwnd, &hAccel, 1, TRANSLATE_MODE_GLOBAL);
 
-	hAccel = LoadAcceleratorsW(language_pack_instance, MAKEINTRESOURCEW(IDR_ACCELERATOR_MAIN));
-	if (!hAccel && language_pack_instance != hMainInstance) hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_MAIN));
+	hAccel = LoadAcceleratorsW(hMainInstance, MAKEINTRESOURCEW(IDR_ACCELERATOR_MAIN));
 	if (hAccel) WASABI_API_APP->app_addAccelerators(hwnd, &hAccel, 1, TRANSLATE_MODE_NORMAL);
 
 	WASABI_API_APP->app_registerGlobalWindow(hwnd);
@@ -41,9 +39,7 @@ LRESULT Main_OnWASystray(HWND hwnd, int id)
 	switch (id)
 	{
 	case WM_LBUTTONUP:
-		if (GetAsyncKeyState(VK_CONTROL) & (1 << 15))
-			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_LOC, 0);
-		else if (GetAsyncKeyState(VK_SHIFT) & (1 << 15))
+		if (GetAsyncKeyState(VK_SHIFT) & (1 << 15))
 			SendMessageW(hwnd, WM_COMMAND, WINAMP_FILE_PLAY, 0);
 		else if (!IsWindowVisible(hwnd))
 		{
@@ -108,7 +104,6 @@ LRESULT Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 		if (config_pe_open && hPLWindow) ShowWindow(hPLWindow, SW_SHOWNA);
 		//if (config_mb_open&&hMBWindow) ShowWindow(hMBWindow,SW_SHOWNA);
 		if (config_eq_open && hEQWindow) ShowWindow(hEQWindow,SW_SHOWNA);
-		if (config_video_open && hVideoWindow) ShowWindow(hVideoWindow, SW_SHOWNA);
 		set_aot(0);
 //		Browser_toggleVisible(1);
 	}

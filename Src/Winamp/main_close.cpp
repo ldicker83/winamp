@@ -69,7 +69,7 @@ void Main_OnEndSession(HWND hwnd, BOOL fEnding)
 
 		if (!hwnd && systray_intray) systray_restore();
 
-		hEQWindow=hPLWindow=/*hMBWindow=*/hVideoWindow=0;	
+		hEQWindow=hPLWindow=/*hMBWindow=*/0;	
 		hVisWindow=0;
 		hPLVisWindow=0;	
 
@@ -96,16 +96,5 @@ void Main_OnEndSession(HWND hwnd, BOOL fEnding)
 		if (hwnd) unload_genplugins();
 		out_deinit();
 		in_deinit();
-
-		Lang_EndLangSupport();
-		Lang_CleanupZip();
-
-		// if we're working on a delayed saving of language pack change then now
-		if(config_langpack2[0]){
-			// if < is the buffer contents then we're setting it back to the base support
-			if(config_langpack2[0] == '<') config_langpack2[0] = 0;
-			lstrcpynW(config_langpack,config_langpack2,MAX_PATH);
-			config_save_langpack_var();
-		}
 	}
 }

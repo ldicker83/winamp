@@ -10,11 +10,6 @@
 #include <api/service/waservicefactory.h>
 #include <api/service/svcs/svc_imgload.h>
 #include "language.h"
-#ifndef IGNORE_API_GRACENOTE
-#ifndef _WIN64
-#include "../gracenote/api_gracenote.h"
-#endif
-#endif
 #include "../Agave/Language/api_language.h"
 #include "decodefile.h"
 #include "../nu/AutoLock.h"
@@ -312,9 +307,7 @@ const wchar_t * strfields[] =
 	L"publisher",
 	L"disc",
 	L"track",
-	L"bpm",
-	L"GracenoteFileID",
-	L"GracenoteExtData"
+	L"bpm"
 };
 
 const int strfieldctrls[] =
@@ -330,9 +323,7 @@ const int strfieldctrls[] =
 	IDC_PUBLISHER,
 	IDC_DISC,
 	IDC_TRACK,
-	IDC_BPM,
-	IDC_GN_FILEID,
-	IDC_GN_EXTDATA
+	IDC_BPM
 };
 
 const int staticstrfieldctrls[] =
@@ -382,294 +373,6 @@ const wchar_t * streamStrfields[] =
  	IDC_STATIC_PLAY_URL,
  	0,
  };
-#ifndef IGNORE_API_GRACENOTE
-#ifndef _WIN64
-static IConnectionPoint *GetConnectionPoint(IUnknown *punk, REFIID riid)
-{
-	if (!punk)
-		return 0;
-
-	IConnectionPointContainer *pcpc;
-	IConnectionPoint *pcp = 0;
-
-	HRESULT hr = punk->QueryInterface(IID_IConnectionPointContainer, (void **) & pcpc);
-	if (SUCCEEDED(hr))
-	{
-		pcpc->FindConnectionPoint(riid, &pcp);
-		pcpc->Release();
-	}
-	punk->Release();
-	return pcp;
-}
-
-class autoTagListen : public _ICDDBMusicIDManagerEvents
-{
-public:
-	autoTagListen(api_gracenote* gn,	ICDDBMusicIDManager3 *musicid, wchar_t *_gracenoteFileId) : hwndDlg(0), h(0), gn(gn),musicid(musicid), done(0), abort(0), gracenoteFileId(_gracenoteFileId)
-	{
-	}
-
-	HRESULT OnTrackIDStatusUpdate(CddbMusicIDStatus Status, BSTR filename, long* _Abort)
-	{
-		if (abort) *_Abort=1;
-		/*switch(Status)
-		{
-		case STATUS_MUSICID_Error:
-		case STATUS_MUSICID_ProcessingFile:
-		case STATUS_MUSICID_LookingUpWaveForm:
-		case STATUS_MUSICID_LookingUpText:
-		case STATUS_MUSICID_CheckForAbort:
-		case STATUS_ALBUMID_Querying:
-		case STATUS_ALBUMID_Queried:
-		case STATUS_ALBUMID_Processing:
-		case STATUS_ALBUMID_Processed:
-		case STATUS_MUSICID_AnalyzingWaveForm:
-		case STATUS_ALBUMID_QueryingWF:
-		}*/
-		// do shit
-		return S_OK;
-	}
-	HRESULT OnTrackIDComplete(LONG match_code, ICddbFileInfo* pInfoIn, ICddbFileInfoList* pListOut)
-	{
-		done = 1;
-		if (match_code <= 1)
-		{
-			if (!abort)
-			{
-				wchar_t title[16] = {0};
-				MessageBoxW(h, getStringW(IDS_NO_MATCH_FOUND, NULL, 0),
-							getStringW(IDS_FAILED, title, 16), MB_ICONWARNING);
-			}
-			EndDialog(hwndDlg,0);
-			return S_OK;
-		}
-
-		long num = 0;
-		pListOut->get_Count(&num);
-		if (!num) return S_OK;
-		ICddbFileInfoPtr infotag = NULL;
-		pListOut->GetFileInfo(1,&infotag);
-
-		if (infotag)
-		{
-			wchar_t buf[2048] = {0};
-			BSTR bstr = buf;
-
-			ICddbFileTagPtr tag = NULL;
-			ICddbDisc2Ptr disc = NULL;
-			ICddbDisc2_5Ptr disc2_5 = NULL;
-			ICddbFileTag2_5Ptr tag2_5 = NULL;
-
-			infotag->get_Tag(&tag);
-			infotag->get_Disc(&disc);
-
-			if (tag)
-			{
-				tag->QueryInterface(&tag2_5);
-				disc->QueryInterface(&disc2_5);
-
-#define PUTINFO(id, ctrl) if (tag) { tag->get_ ## id ## (&bstr); SetDlgItemTextW(h, ctrl, bstr); }
-#define PUTINFO2(id, ctrl) if (tag2_5) { tag2_5->get_ ## id ## (&bstr); SetDlgItemTextW(h, ctrl, bstr); }
-				PUTINFO(LeadArtist, IDC_ARTIST);
-				PUTINFO(Album, IDC_ALBUM);
-				PUTINFO(Title, IDC_TITLE);
-				PUTINFO(Album, IDC_ALBUM);
-
-				if (disc2_5 == NULL
-					|| (FAILED(disc2_5->get_V2GenreStringPrimaryByLevel(3, &bstr))
-						&& FAILED(disc2_5->get_V2GenreStringPrimaryByLevel(2, &bstr))
-						&& FAILED(disc2_5->get_V2GenreStringPrimaryByLevel(1, &bstr))
-						&& FAILED(disc2_5->get_V2GenreStringPrimary(&bstr)))
-				   )
-				{
-					PUTINFO(Genre, IDC_GENRE);
-				}
-				else
-				{
-					SetDlgItemTextW(h,IDC_GENRE,bstr);
-				}
-			}
-
-			// sending this will ensure that the genre is applied other than in the metadata page
-			SendMessageW(GetParent(h),WM_USER,(WPARAM)strfields[5],(LPARAM)bstr);
-
-			PUTINFO(Year, IDC_YEAR);
-			PUTINFO(Label, IDC_PUBLISHER);
-			PUTINFO(BeatsPerMinute, IDC_BPM);
-			PUTINFO(TrackPosition, IDC_TRACK);
-			PUTINFO(PartOfSet, IDC_DISC);
-			PUTINFO2(Composer, IDC_COMPOSER);
-			PUTINFO2(DiscArtist, IDC_ALBUM_ARTIST);
-			PUTINFO(FileId, IDC_GN_FILEID);
-			PUTINFO2(ExtDataSerialized, IDC_GN_EXTDATA);
-
-#undef PUTINFO
-#undef PUTINFO2
-			// CRASH POINT
-			// This is the starting cause of crashing in the cddb stuff
-			// Without this or with a manual AddRef() before and it'll work ok
-			//infotag->Release();
-		}
-		EndDialog(hwndDlg,0);
-		return S_OK;
-	}
-	HRESULT FillTag(ICddbFileInfo *info, BSTR filename)
-	{
-		if (info)
-		{
-#define PUTINFO(id, ctrl) GetDlgItemTextW(h, ctrl, buf, 2048); if(buf[0]) if (infotag) { infotag->put_ ## id ## (buf); }
-#define PUTINFO2(id, ctrl) GetDlgItemTextW(h, ctrl, buf, 2048); if(buf[0]) if (tag2_5) { tag2_5->put_ ## id ## (buf); }
-
-			ICddbID3TagPtr infotag = NULL;
-			infotag.CreateInstance(CLSID_CddbID3Tag);
-			ICddbFileTag2_5Ptr tag2_5 = NULL;
-			infotag->QueryInterface(&tag2_5);
-			wchar_t buf[2048] = {0};
-
-			PUTINFO(LeadArtist, IDC_ARTIST);
-			PUTINFO(Album, IDC_ALBUM);
-			PUTINFO(Title, IDC_TITLE);
-			PUTINFO(Album, IDC_ALBUM);
-			PUTINFO(Genre, IDC_GENRE);
-			PUTINFO(Year, IDC_YEAR);
-			PUTINFO(Label, IDC_PUBLISHER);
-			PUTINFO(BeatsPerMinute, IDC_BPM);
-			PUTINFO(TrackPosition, IDC_TRACK);
-			PUTINFO(PartOfSet, IDC_DISC);
-			PUTINFO2(Composer, IDC_COMPOSER);
-			PUTINFO2(DiscArtist, IDC_ALBUM_ARTIST);
-
-			in_get_extended_fileinfoW(filename,L"length",buf,2048);
-			tag2_5->put_LengthMS(buf);
-
-			if (gracenoteFileId && *gracenoteFileId)
-				infotag->put_FileId(gracenoteFileId);
-
-#undef PUTINFO
-#undef PUTINFO2
-			info->put_Tag(infotag);
-		}
-		return S_OK;
-	}
-
-	STDMETHODIMP STDMETHODCALLTYPE QueryInterface(REFIID riid, PVOID *ppvObject)
-	{
-		if (!ppvObject)
-			return E_POINTER;
-
-		else if (IsEqualIID(riid, __uuidof(_ICDDBMusicIDManagerEvents)))
-			*ppvObject = (_ICDDBMusicIDManagerEvents *)this;
-		else if (IsEqualIID(riid, IID_IDispatch))
-			*ppvObject = (IDispatch *)this;
-		else if (IsEqualIID(riid, IID_IUnknown))
-			*ppvObject = this;
-		else
-		{
-			*ppvObject = NULL;
-			return E_NOINTERFACE;
-		}
-
-		AddRef();
-		return S_OK;
-	}
-	ULONG STDMETHODCALLTYPE AddRef(void)
-	{
-		return 1;
-	}
-	ULONG STDMETHODCALLTYPE Release(void)
-	{
-		return 0;
-	}
-	HRESULT STDMETHODCALLTYPE Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD wFlags, DISPPARAMS FAR *pdispparams, VARIANT FAR *pvarResult, EXCEPINFO FAR * pexecinfo, unsigned int FAR *puArgErr)
-	{
-		switch (dispid)
-		{
-		case 1: // OnTrackIDStatusUpdate, params: CddbMusicIDStatus Status, BSTR filename, long* Abort
-		{
-			long *abort = pdispparams->rgvarg[0].plVal;
-			BSTR filename = pdispparams->rgvarg[1].bstrVal;
-			CddbMusicIDStatus status = (CddbMusicIDStatus)pdispparams->rgvarg[2].lVal;
-			return OnTrackIDStatusUpdate(status,filename,abort);
-		}
-		case 3: // OnTrackIDComplete, params: LONG match_code, ICddbFileInfo* pInfoIn, ICddbFileInfoList* pListOut
-		{
-			IDispatch *disp1 =pdispparams->rgvarg[0].pdispVal;
-			IDispatch *disp2 =pdispparams->rgvarg[1].pdispVal;
-			long match_code = pdispparams->rgvarg[2].lVal;
-
-			ICddbFileInfoPtr pInfoIn;
-			ICddbFileInfoListPtr matchList;
-			disp1->QueryInterface(&matchList);
-			disp2->QueryInterface(&pInfoIn);
-
-			return OnTrackIDComplete(match_code,pInfoIn,matchList);
-		}
-		case 10: // OnGetFingerprintInfo
-		{
-			long *abort = pdispparams->rgvarg[0].plVal;
-			IDispatch *disp = pdispparams->rgvarg[1].pdispVal;
-			BSTR filename = pdispparams->rgvarg[2].bstrVal;
-			ICddbFileInfo *info;
-			disp->QueryInterface(&info);
-			extern DecodeFile *decodeFile;
-			return gn->CreateFingerprint(musicid, decodeFile, info, filename, abort);
-		}
-		break;
-		case 11: // OnGetTagInfo
-		{
-			//long *Abort = pdispparams->rgvarg[0].plVal;
-			IDispatch *disp = pdispparams->rgvarg[1].pdispVal;
-			BSTR filename = pdispparams->rgvarg[2].bstrVal;
-
-			ICddbFileInfo *info;
-			disp->QueryInterface(&info);
-			return FillTag(info, filename);
-		}
-		break;
-		}
-		return DISP_E_MEMBERNOTFOUND;
-	}
-	HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID riid, OLECHAR FAR* FAR* rgszNames, unsigned int cNames, LCID lcid, DISPID FAR* rgdispid)
-	{
-		*rgdispid = DISPID_UNKNOWN; return DISP_E_UNKNOWNNAME;
-	}
-	HRESULT STDMETHODCALLTYPE GetTypeInfo(unsigned int itinfo, LCID lcid, ITypeInfo FAR* FAR* pptinfo)
-	{
-		return E_NOTIMPL;
-	}
-	HRESULT STDMETHODCALLTYPE GetTypeInfoCount(unsigned int FAR * pctinfo)
-	{
-		return E_NOTIMPL;
-	}
-
-	HWND hwndDlg,h;
-	api_gracenote* gn;
-	ICDDBMusicIDManager3 *musicid;
-	int done;
-	long abort;
-	wchar_t *gracenoteFileId;
-};
-
-static INT_PTR CALLBACK FileInfo_Autotagging(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch (uMsg)
-	{
-	case WM_INITDIALOG:
-	{
-		// have the close button disabled otherwise it might cause confusion
-		EnableMenuItem(GetSystemMenu(hwndDlg, 0), SC_CLOSE, MF_BYCOMMAND|MF_GRAYED);
-		SetWindowLong(hwndDlg,GWLP_USERDATA,lParam);
-		autoTagListen * p = (autoTagListen *)lParam;
-		p->hwndDlg = hwndDlg;
-		if (p->done) EndDialog(hwndDlg,0);
-	}
-	break;
-	}
-	return 0;
-}
-#endif
-#endif
-
 LPCWSTR RepairMutlilineString(LPWSTR pszBuffer, INT cchBufferMax)
 {
 	if (NULL == pszBuffer || cchBufferMax < 1)
@@ -787,39 +490,6 @@ static INT_PTR CALLBACK FileInfo_Metadata(HWND hwndDlg, UINT uMsg, WPARAM wParam
 			SetTimer(hwndDlg, 1, 1000, 0);
 		}
 
-		// test for the musicid feature not being available and remove
-		// the autotag button as required (useful for lite installs)
-		#ifndef IGNORE_API_GRACENOTE
-		waServiceFactory *factory = WASABI_API_SVC?WASABI_API_SVC->service_getServiceByGuid(gracenoteApiGUID):0;
-		api_gracenote* gn = NULL;
-		int remove = FALSE;
-		if(factory){
-			gn = (api_gracenote *)factory->getInterface();
-			if(gn){
-				ICDDBMusicIDManager3 *musicid = gn->GetMusicID();
-				if(musicid){
-					musicid->Shutdown();
-					musicid->Release();
-				}
-				else{
-					remove = TRUE;
-				}
-				factory->releaseInterface(gn);
-			}
-			else{
-				remove = TRUE;
-			}
-		}
-		#else
-		int remove = TRUE;
-		#endif
-
-		// remove or disable the button based on what has been
-		// installed or the internet access levels configured
-		if (remove)
-		{
-			DestroyWindow(GetDlgItem(hwndDlg,IDC_AUTOTAG));
-		}
 	}
 	break;
 		case WM_TIMER:
@@ -857,78 +527,6 @@ static INT_PTR CALLBACK FileInfo_Metadata(HWND hwndDlg, UINT uMsg, WPARAM wParam
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-#ifndef IGNORE_API_GRACENOTE
-#ifndef _WIN64
-		case IDC_AUTOTAG:
-		{
-			ICDDBMusicIDManager3 *musicid = NULL;
-			waServiceFactory *factory = WASABI_API_SVC?WASABI_API_SVC->service_getServiceByGuid(gracenoteApiGUID):0;
-			api_gracenote* gn = NULL;
-			if (factory)
-			{
-				gn = (api_gracenote *)factory->getInterface();
-				if (gn)
-				{
-					musicid = gn->GetMusicID();
-				}
-			}
-			if (!musicid)
-			{
-				wchar_t title[32] = {0};
-				if (gn)
-				{
-					if (factory)
-					{
-						factory->releaseInterface(gn);
-					}
-					gn = NULL;
-				}
-				MessageBoxW(hwndDlg, getStringW(IDS_GRACENOTE_TOOLS_NOT_INSTALLED, NULL, 0),
-				            getStringW(IDS_ERROR, title, 32),0);
-				break;
-			}
-			// we have the musicid pointer, so lets try and tag this mother.
-			info_params * p = (info_params *)GetWindowLongPtrW(GetParent(hwndDlg),GWLP_USERDATA);
-			
-			if (NULL == p  || NULL == p->filename || L'\0' == p->filename)
-				break;
-
-			// first, see if there's a pre-existing gracenote file id
-			wchar_t fileid[1024]=L"";
-			extendedFileInfoStructW gracenote_info;
-			gracenote_info.filename = p->filename;
-			gracenote_info.metadata = L"GracenoteFileID";
-			gracenote_info.ret = fileid;
-			gracenote_info.retlen = 1024;
-			if (0 == SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&gracenote_info, IPC_GET_EXTENDED_FILE_INFOW_HOOKABLE))
-				fileid[0] = L'\0';
-
-			ICddbFileInfoPtr info = 0;
-			info.CreateInstance(CLSID_CddbFileInfo);
-			info->put_Filename((wchar_t*)p->filename);
-			ICddbFileInfoList *dummy=0;
-			long match_code=666;
-			IConnectionPoint *icp = GetConnectionPoint(musicid, DIID__ICDDBMusicIDManagerEvents);
-
-			DWORD m_dwCookie = 0;
-			autoTagListen listen(gn,musicid, fileid);
-			listen.h = hwndDlg;
-			if (icp) icp->Advise(static_cast<IDispatch *>(&listen), &m_dwCookie);
-
-			musicid->TrackID(info, MUSICID_LOOKUP_ASYNC|MUSICID_RETURN_SINGLE|MUSICID_GET_TAG_FROM_APP|MUSICID_GET_FP_FROM_APP|MUSICID_PREFER_WF_MATCHES, &match_code, &dummy);
-			if (dummy)
-				dummy->Release();
-
-			LPDialogBoxParamW(IDD_AUTOTAGGING,hwndDlg,FileInfo_Autotagging,(LPARAM)&listen);
-
-			musicid->Shutdown();
-			musicid->Release();
-			factory->releaseInterface(gn);
-		}
-		break;
-#endif
-#endif
-
 		case IDOK:
 			if (!GetPropW(GetParent(hwndDlg),L"INBUILT_NOWRITEINFO"))
 			{
@@ -1946,18 +1544,6 @@ void CHECK_AND_COPY(itemRecordW *song, HWND hwndParent, int IDCHECK, int ID, wch
 	}
 }
 
-static void CHECK_AND_COPY_EXTENDED(itemRecordW *song, HWND hwndParent, int IDCHECK, int ID, const wchar_t *name)
-{
-	if (IsDlgButtonChecked(hwndParent, IDCHECK)) {
-		wchar_t blah[2048]; 
-		GetDlgItemTextW(hwndParent, ID, blah, 2048);
-		wchar_t *oldData = getRecordExtendedItem(song, name);
-		if (wcscmp(MAKESAFE(oldData), blah)) {
-			setRecordExtendedItem(song, name, blah);
-		}
-	}
-}
-
 static INT_PTR CALLBACK updateFiles_dialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -2011,18 +1597,8 @@ again:
 					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_ALBUMARTIST, IDC_EDIT_ALBUMARTIST, song->albumartist);
 					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_PUBLISHER,   IDC_EDIT_PUBLISHER, song->publisher);
 					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_COMPOSER,    IDC_EDIT_COMPOSER, song->composer);
-					CHECK_AND_COPY(song, hwndParent, IDC_CHECK_CATEGORY,    IDC_EDIT_CATEGORY, song->category);
 
-					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_DIRECTOR,			IDC_EDIT_DIRECTOR,			L"director");
-					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_PRODUCER,			IDC_EDIT_PRODUCER,			L"producer");
-					CHECK_AND_COPY_EXTENDED(song, hwndParent, IDC_CHECK_PODCAST_CHANNEL,	IDC_EDIT_PODCAST_CHANNEL,	L"podcastchannel");
 
-#define CHECK_AND_COPY_EXTENDED_PC(IDCHECK, field, name) \
-						wchar_t blah[2048] = {0}; StringCchPrintfW(blah, 2048, L"%d", (IsDlgButtonChecked(hwndParent, IDCHECK) == BST_CHECKED));\
-						wchar_t *oldData = getRecordExtendedItem(song, name);\
-						if (wcscmp(MAKESAFE(oldData), blah)) { setRecordExtendedItem(song, name, blah); }
-
-					CHECK_AND_COPY_EXTENDED_PC(IDC_CHECK_PODCAST,	MAINTABLE_ID_ISPODCAST,	L"ispodcast");
 
 					if (IsDlgButtonChecked(hwndParent, IDC_CHECK_TRACK))
 					{
@@ -2132,9 +1708,6 @@ retry:
 							in_set_extended_fileinfoW(song->filename, L"albumartist", song->albumartist);
 							in_set_extended_fileinfoW(song->filename, L"publisher", song->publisher);
 							in_set_extended_fileinfoW(song->filename, L"composer", song->composer);
-							in_set_extended_fileinfoW(song->filename, L"category", song->category);
-							in_set_extended_fileinfoW(song->filename, L"director", getRecordExtendedItem(song, L"director"));
-							in_set_extended_fileinfoW(song->filename, L"producer", getRecordExtendedItem(song, L"producer"));
 
 							if (in_write_extended_fileinfo() == 0)
 							{
@@ -2181,15 +1754,14 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			wchar_t *last_artist = NULL, *last_title = NULL, *last_album = NULL, *last_genre = NULL,
 					*last_comment = NULL, *last_albumartist = NULL, *last_composer = NULL,
-					*last_publisher = NULL, *last_ispodcast = NULL, *last_podcastchannel = NULL;
-			const wchar_t *last_category = NULL, *last_director = NULL, *last_producer = NULL;
+					*last_publisher = NULL;
 			int last_year = -1, last_track = -1, last_disc = -1, last_discs = -1, last_tracks = -1,
 				last_bpm = -1, last_rating = -1, disable_artist = 0, disable_title = 0,
 				disable_album = 0, disable_genre = 0, disable_year = 0, disable_track = 0,
 				disable_comment = 0, disable_disc = 0, disable_albumartist = 0, disable_composer = 0,
-				disable_publisher = 0, disable_discs = 0, disable_tracks = 0, disable_category = 0,
-				disable_director = 0, disable_producer = 0, disable_bpm = 0, disable_rating = 0,
-				disable_ispodcast = 0, disable_podcastchannel = 0, nb = 0;
+				disable_publisher = 0, disable_discs = 0, disable_tracks = 0,
+				disable_bpm = 0, disable_rating = 0,
+				nb = 0;
 
 				ShowWindow(GetDlgItem(hwndDlg, 1052), SW_HIDE);
 
@@ -2244,14 +1816,8 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 										SAVE_LAST_STR(last_albumartist, query->item.results.Items[0].albumartist, disable_albumartist);
 										SAVE_LAST_STR(last_composer, query->item.results.Items[0].composer, disable_composer);
 										SAVE_LAST_STR(last_publisher, query->item.results.Items[0].publisher, disable_publisher);
-										SAVE_LAST_STR(last_category, query->item.results.Items[0].category, disable_category);
 
-#define SAVE_LAST_STR_EXTENDED(last, name, disable) if (!disable) { wchar_t *check = getRecordExtendedItem(&query->item.results.Items[0], name); if (check && check[0]) { if (!last) last = check; else if (wcscmp(check, last)) disable = 1; }};
 
-										SAVE_LAST_STR_EXTENDED(last_director, L"director", disable_director);
-										SAVE_LAST_STR_EXTENDED(last_producer, L"producer", disable_producer);
-										SAVE_LAST_STR_EXTENDED(last_podcastchannel, L"podcastchannel", disable_podcastchannel);
-										SAVE_LAST_STR_EXTENDED(last_ispodcast, L"ispodcast", disable_ispodcast);
 										nb++;
 										query->ml = 1;
 										query->idx = i;
@@ -2333,27 +1899,9 @@ non_ml:
 										query->item.results.Items[0].publisher = _wcsdup(pszBuffer);
 									SAVE_LAST_STR(last_publisher, query->item.results.Items[0].publisher, disable_publisher);
 
-									if (in_get_extended_fileinfoW(fn, L"category", pszBuffer, TEXTBUFFER_MAX))
-										query->item.results.Items[0].category = _wcsdup(pszBuffer);
-									SAVE_LAST_STR(last_category, query->item.results.Items[0].category, disable_category);
 
-#define SAVE_LAST_STR_EXTENDED(last, name, disable) if (!disable) { wchar_t *check = getRecordExtendedItem(&query->item.results.Items[0], name); if (check && check[0]) { if (!last) last = check; else if (wcscmp(check, last)) disable = 1; }};
-
-									if (in_get_extended_fileinfoW(fn, L"director", pszBuffer, TEXTBUFFER_MAX))
-									{
-										setRecordExtendedItem(&query->item.results.Items[0], L"director", pszBuffer);
-										SAVE_LAST_STR_EXTENDED(last_director, L"director", disable_director);
-									}
-
-									if (in_get_extended_fileinfoW(fn, L"producer", pszBuffer, TEXTBUFFER_MAX))
-									{
-										setRecordExtendedItem(&query->item.results.Items[0], L"producer", pszBuffer);
-										SAVE_LAST_STR_EXTENDED(last_producer, L"producer", disable_producer);
-									}
 
 									// not available in non-ml setups
-									/*SAVE_LAST_STR_EXTENDED(last_podcastchannel, L"podcastchannel", disable_podcastchannel);
-									SAVE_LAST_STR_EXTENDED(last_ispodcast, L"ispodcast", disable_ispodcast);*/
 									nb++;
 									query->ml = 0;
 									query->idx = i;
@@ -2373,14 +1921,6 @@ non_ml:
 			if (!disable_composer && last_composer) SetDlgItemTextW(hwndDlg, IDC_EDIT_COMPOSER, last_composer);
 			if (!disable_publisher && last_publisher) SetDlgItemTextW(hwndDlg, IDC_EDIT_PUBLISHER, last_publisher);
 			if (!disable_genre && last_genre) SetDlgItemTextW(hwndDlg, IDC_EDIT_GENRE, last_genre);
-			if (!disable_category && last_category) SetDlgItemTextW(hwndDlg, IDC_EDIT_CATEGORY, last_category);
-			if (!disable_director && last_director) SetDlgItemTextW(hwndDlg, IDC_EDIT_DIRECTOR, last_director);
-			if (!disable_producer && last_producer) SetDlgItemTextW(hwndDlg, IDC_EDIT_PRODUCER, last_producer);
-			if (!disable_podcastchannel && last_podcastchannel) SetDlgItemTextW(hwndDlg, IDC_EDIT_PODCAST_CHANNEL, last_podcastchannel);
-			if (!disable_ispodcast && last_ispodcast)
-			{
-				CheckDlgButton(hwndDlg, IDC_CHECK_PODCAST, (_wtoi(last_ispodcast) == 1 ? BST_CHECKED : BST_UNCHECKED));
-			}
 			if (!disable_year && last_year > 0)
 			{
 				wchar_t tmp[64] = {0};
@@ -2451,10 +1991,6 @@ non_ml:
 				case IDC_CHECK_DISC: HANDLE_CONTROL(IDC_EDIT_DISC, IDC_CHECK_DISC); break;
 				case IDC_CHECK_GENRE: HANDLE_CONTROL(IDC_EDIT_GENRE, IDC_CHECK_GENRE); break;
 				case IDC_CHECK_YEAR: HANDLE_CONTROL(IDC_EDIT_YEAR, IDC_CHECK_YEAR); break;
-				case IDC_CHECK_CATEGORY: HANDLE_CONTROL(IDC_EDIT_CATEGORY, IDC_CHECK_CATEGORY); break;
-				case IDC_CHECK_DIRECTOR: HANDLE_CONTROL(IDC_EDIT_DIRECTOR, IDC_CHECK_DIRECTOR); break;
-				case IDC_CHECK_PRODUCER: HANDLE_CONTROL(IDC_EDIT_PRODUCER, IDC_CHECK_PRODUCER); break;
-				case IDC_CHECK_PODCAST_CHANNEL: HANDLE_CONTROL(IDC_EDIT_PODCAST_CHANNEL, IDC_CHECK_PODCAST_CHANNEL); break;
 				case IDC_CHECK_BPM: HANDLE_CONTROL(IDC_EDIT_BPM, IDC_CHECK_BPM); break;
 				case IDC_CHECK_RATING: HANDLE_CONTROL(IDC_COMBO_RATING, IDC_CHECK_RATING); break;
 				case IDOK:
@@ -2486,10 +2022,6 @@ non_ml:
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_GENRE, IDC_CHECK_GENRE)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_YEAR, IDC_CHECK_YEAR)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_DISC, IDC_CHECK_DISC)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_CATEGORY, IDC_CHECK_CATEGORY)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_DIRECTOR, IDC_CHECK_DIRECTOR)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_PRODUCER, IDC_CHECK_PRODUCER)) break;
-			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_PODCAST_CHANNEL, IDC_CHECK_PODCAST_CHANNEL)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_EDIT_BPM, IDC_CHECK_BPM)) break;
 			if (checkEditInfoClick(hwndDlg, p2, IDC_COMBO_RATING, IDC_CHECK_RATING)) break;
 		}

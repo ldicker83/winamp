@@ -34,9 +34,6 @@ void Play(const wchar_t *playstring)
 
 	in_play = 1;
 
-	g_video_numaudiotracks = 1;
-	g_video_curaudiotrack = 0;
-
 	g_stopaftercur = 0;
 	CheckMenuItem(main_menu, WINAMP_BUTTON4_CTRL, MF_UNCHECKED);
 	CheckMenuItem(GetSubMenu(top_menu, 3), WINAMP_BUTTON4_CTRL, MF_UNCHECKED);
@@ -197,8 +194,6 @@ void StopPlaying(int g_quit)
 	{
 		paused = 0;
 		playing = 0;
-		g_video_numaudiotracks = 1;
-		g_video_curaudiotrack = 0;
 		in_close();
 	}
 

@@ -14,9 +14,6 @@ int V5_PE_File_Menu(HWND hwnd, int x, int y, int width, int height);
 int V5_PE_Playlist_Menu(HWND hwnd, int x, int y, int width, int height);
 int V5_PE_Sort_Menu(HWND hwnd, int x, int y, int width, int height);
 int V5_PE_Help_Menu(HWND hwnd, int x, int y, int width, int height);
-int V5_ML_File_Menu(HWND hwnd, int x, int y, int width, int height);
-int V5_ML_View_Menu(HWND hwnd, int x, int y, int width, int height);
-int V5_ML_Help_Menu(HWND hwnd, int x, int y, int width, int height);
 int V5_PE_ListOfPlaylists_Menu(int x, int y);
 #ifdef __cplusplus
 }

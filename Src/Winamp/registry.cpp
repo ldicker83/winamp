@@ -152,14 +152,7 @@ BOOL config_setup_filetypes(int mode)
 		StringCchPrintfW(str,MAX_PATH+32,L"\"%s\" \"%%1\"",programname);
 		registrar->SetupShell(str, WINAMP_SKINZIPW, getStringW(IDS_WINAMP_FILE_INSTALL,langbuf,1024), L"Install", L"");
 
-		/* Register language file type */
-		registrar->RegisterTypeShell(programname, WINAMP_LANGZIPW, getStringW(IDS_WINAMP_LANGUAGE_INSTALLATION_FILE,NULL,0), config_whichicon, L"Install");
-
-		StringCchPrintfW(str,MAX_PATH+32,L"\"%s\" \"%%1\"",programname);
-		registrar->SetupShell(str, WINAMP_LANGZIPW, getStringW(IDS_WINAMP_FILE_INSTALL,langbuf,1024), L"Install", L"");
-
 		regmimetype(L"interface/x-winamp-skin", programname, L".wsz", 0);
-		regmimetype(L"interface/x-winamp-lang", programname, L".wlz", 0);
 
 		StringCchPrintfW(str,MAX_PATH+32,L"\"%s\" /HANDLE \"%%1\"",programname);
 		wchar_t icon[MAX_PATH+32] = {0};

@@ -353,7 +353,7 @@ void Application::app_unregisterGlobalWindow(HWND hwnd)
 bool Application::FilterMessage(MSG *msg) // returns 1 if you should Dispatch the message, will handle TranslateMessage for you
 {
 	if (msg->hwnd != NULL && msg->hwnd != hMainWindow && msg->hwnd != hEQWindow // && msg.hwnd != hMBWindow
-	    && msg->hwnd != hPLWindow && msg->hwnd != hVideoWindow)
+	    && msg->hwnd != hPLWindow)
 	{
 		HWND hWndParent = NULL;
 		HWND temphwnd = msg->hwnd;

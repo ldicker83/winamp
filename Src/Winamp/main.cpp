@@ -61,32 +61,25 @@ int no_notify_play = 0;
 int last_no_notify_play = 0;
 int main_delta_carryover = 0;
 int g_restartonquit = 0;
-char g_audiocdletter[ 4 ] = { 0 };
-int g_audiocdletters = 0;
 const char app_name[] = "Winamp", app_version[] = APP_VERSION, app_version_string[] = APP_VERSION_STRING; // application name and version strings
 int g_fullstop;
 //char *app_date = __DATE__;
 const std::string app_date{ __DATE__ };
 int g_stopaftercur;
 int is_install;
-HWND hTooltipWindow, hEQTooltipWindow, hVideoTooltipWindow, hPLTooltipWindow;
+HWND hTooltipWindow, hEQTooltipWindow, hPLTooltipWindow;
 HWND hMainWindow = NULL;			// main window
-HWND hEQWindow, hPLWindow, /*hMBWindow, */hVideoWindow, hExternalVisWindow = NULL;
+HWND hEQWindow, hPLWindow, /*hMBWindow, */hExternalVisWindow = NULL;
 
 HWND g_dialog_box_parent = NULL; // used by IPC_SETDIALOGBOXPARENT (FG, 5/19/03)
-HINSTANCE language_pack_instance;
 HINSTANCE hMainInstance;	// program instance
 HANDLE hMainThread; // main thread handle
 DWORD mainThreadId; // main thread ID
 HMENU main_menu = 0, top_menu = 0, g_submenus_bookmarks1 = 0,
 g_submenus_bookmarks2 = 0, g_submenus_skins1 = 0,
 g_submenus_skins2 = 0, g_submenus_vis = 0,
-g_submenus_options = 0, g_submenus_lang = 0,
+g_submenus_options = 0,
 g_submenus_play = 0;
-
-int     g_submenus_lang_id = 0;
-int     g_video_numaudiotracks = 1;
-int     g_video_curaudiotrack = 0;
 
 int     bStartPlaying = 0;
 int     paused = 0;
@@ -100,12 +93,10 @@ int     g_srate, g_brate, g_nch, g_srate_exact;
 int     last_brate = -1;
 int     g_need_titleupd = 0;
 int     g_need_infoupd = 0;
-int     g_SkinTop, g_BookmarkTop, g_LangTop;
+int     g_SkinTop, g_BookmarkTop;
 int     g_mm_optionsbase_adj = 0;       //used by IPC_ADJUST_OPTIONSMENUPOS
 int     g_mm_ffwindowsbase_adj = 0;       //used by IPC_ADJUST_FFWINDOWSMENUPOS
 int     g_mm_ffoptionsbase_adj = 0;       //used by IPC_ADJUST_FFOPTIONSMENUPOS
-int     g_has_video_plugin = 0;
-int     g_no_video_loaded = 0;       //filled in by in_init
 
 char    playlist_custom_font[ 128 ] = { 0 };
 wchar_t playlist_custom_fontW[ 128 ] = { 0 };
@@ -285,77 +276,8 @@ static int PassToOtherWinamp( wchar_t *lpszCmdParam, HWND hwnd_other, int bAdd, 
 		int skinExit = 0;
 		int bC = 0;
 		HANDLE hSem = NULL;
-		HINSTANCE existingWLZ = 0, templng = 0;
-		DWORD_PTR vn = 0;
-
-		// check if we're using a language pack with the already open winamp process
-		// and if so then we're going to use the winamp.lng from it on the messagebox
-		// only if we had a success and the other winamp returned the correct value
-		// within the timeout period (can't be having it lock up so revert if needed)
-		if ( SendMessageTimeout( hwnd_other, WM_WA_IPC, 1, IPC_GETLANGUAGEPACKINSTANCE, SMTO_NORMAL, 5000, &vn ) && !vn )
-		{
-			DWORD processid = 0;
-			HANDLE hwaProcess = NULL;
-			SIZE_T bread = 0;
-			wchar_t lng_path_copy[ MAX_PATH ] = { 0 }, dirmask[ MAX_PATH ] = { 0 }, gs[ 40 ] = { 0 };
-			WIN32_FIND_DATAW d = { 0 };
-
-			GetWindowThreadProcessId( hwnd_other, &processid );
-			hwaProcess = OpenProcess( PROCESS_VM_READ, FALSE, processid );
-			ReadProcessMemory( hwaProcess, (wchar_t *)SendMessageW( hwnd_other, WM_WA_IPC, 3, IPC_GETLANGUAGEPACKINSTANCE ), lng_path_copy, MAX_PATH, &bread );
-			CloseHandle( hwaProcess );
-
-			getGUIDstr( WinampLangGUID, gs );
-			PathCombineW( dirmask, lng_path_copy, L"*.lng" );
-			HANDLE h = FindFirstFileW( dirmask, &d );
-			if ( h != INVALID_HANDLE_VALUE )
-			{
-				do
-				{
-					PathCombineW( dirmask, lng_path_copy, d.cFileName );
-					templng = LoadLibraryExW( dirmask, NULL, LOAD_LIBRARY_AS_IMAGE_RESOURCE | LOAD_LIBRARY_AS_DATAFILE );
-					if ( !templng ) templng = LoadLibraryW( dirmask );
-					if ( templng )
-					{
-						wchar_t s[ 39 ] = { 0 };
-						if ( LoadStringW( templng, LANG_DLL_GUID_STRING_ID, s, 39 ) )
-						{
-							if ( !_wcsnicmp( gs, s, 38 ) )
-							{
-								existingWLZ = Lang_FakeWinampLangHInst( templng );
-							}
-							else
-								FreeLibrary( templng );
-						}
-						else
-							FreeLibrary( templng );
-					}
-				} while ( FindNextFileW( h, &d ) );
-				FindClose( h );
-			}
-		}
 
 		lpszCmdParam = CheckSkin( lpszCmdParam, hwnd_other, &skinExit );
-		if ( skinExit )
-		{
-			// restore the language pack settings now that we've done the override and clean up as needed
-			if ( existingWLZ )
-			{
-				Lang_FakeWinampLangHInst( existingWLZ );
-				FreeLibrary( templng );
-			}
-			return TRUE;
-		}
-
-		skinExit = 0;
-		lpszCmdParam = CheckLang( lpszCmdParam, hwnd_other, &skinExit );
-		// restore the language pack settings now that we've done the override and clean up as needed
-		if ( existingWLZ )
-		{
-			Lang_FakeWinampLangHInst( existingWLZ );
-			FreeLibrary( templng );
-		}
-
 		if ( skinExit )
 			return TRUE;
 
@@ -650,8 +572,6 @@ VOID CALLBACK PrefsShowProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTim
 
 DWORD CALLBACK MainThread( LPVOID param )
 {
-	language_pack_instance = hMainInstance;
-
 	playlistStr[ 0 ] = 0;
 	playlistStr[ 18 ] = 0; // keep the last byte null terminated (and don't overwrite) so we can be smoewhat thread-safe (may have junk data, but it won't read outside the array)
 
@@ -685,24 +605,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 	CommandLink_RegisterClass( hMainInstance );
 
 	Skin_CleanupAfterCrash();
-	Lang_CleanupAfterCrash();
-
-	{
-		int langExit = 0;
-		lpszCmdParam = CheckLang( lpszCmdParam, 0, &langExit );
-		if ( langExit )
-		{
-			Lang_EndLangSupport();
-			Lang_CleanupZip();
-			return TRUE;
-		}
-	}
-
-	if ( !g_safeMode )
-	{
-		language_pack_instance = Lang_InitLangSupport( hMainInstance, WinampLangGUID );
-		Lang_FollowUserDecimalLocale();
-	}
 
 	if ( bBookmark )
 	{
@@ -840,10 +742,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 		}
 	}
 
-	RemoveMenu( main_menu, WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
-	RemoveMenu( GetSubMenu( v5_top_menu, 3 ), WINAMP_OPTIONS_VIDEO, MF_BYCOMMAND );
-	g_mm_optionsbase_adj -= 1;
-
 	set_aot( 0 ); // in case our gen plugins did anything fun
 	set_priority();
 
@@ -930,63 +828,6 @@ VOID CALLBACK TaskButtonCreated( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD d
 	OnTaskbarButtonCreated( TRUE );
 }
 
-void UpdateAudioCDMenus( HMENU hmenu )
-{
-	wchar_t buf[ 32 ] = { 0 };
-	if ( IsMenu( hmenu ) && in_get_extended_fileinfoW( L"cda://", L"ext_cdda", buf, ARRAYSIZE( buf ) ) && buf[ 0 ] == L'1' )
-	{
-		for ( int i = 0; i < 5; i++ )
-		{
-			DeleteMenu( hmenu, ID_MAIN_PLAY_AUDIOCD + i, MF_BYCOMMAND );
-		}
-
-		MENUITEMINFOW i = { sizeof( i ), MIIM_TYPE | MIIM_DATA | MIIM_ID, MFT_STRING, };
-		i.wID = ID_MAIN_PLAY_AUDIOCD;
-
-		DWORD drives = GetLogicalDrives();
-		g_audiocdletters = 0;
-
-		int need_sep = 1;
-		for ( int drivemask = 0; drivemask < 32; drivemask++ )
-		{
-			if ( drives & ( 1 << drivemask ) )
-			{
-				int old_error_mode = SetErrorMode( SEM_FAILCRITICALERRORS );
-				wchar_t str[ 64 ] = { 0 }, tmp[ 64 ] = { 0 }, vol_buf[ 40 ] = { 0 }, empty[ 64 ] = { 0 };
-				DWORD system_flags = 0, max_file_len = 0;
-				char c = ( 'A' + drivemask );
-				StringCchPrintfW( str, 64, L"%c:\\", c );
-
-				if ( GetDriveTypeW( str ) == DRIVE_CDROM )
-				{
-					if ( need_sep )
-					{
-						MENUITEMINFO i2 = { sizeof( i2 ), MIIM_TYPE | MIIM_ID, MFT_SEPARATOR, };
-						i2.wID = ID_MAIN_PLAY_AUDIOCD_SEP;
-						InsertMenuItem( hmenu, 4, TRUE, &i2 );
-						need_sep = 0;
-					}
-
-					GetVolumeInformationW( str, vol_buf, ARRAYSIZE( vol_buf ), 0, &max_file_len, &system_flags, 0, 0 );
-					SetErrorMode( old_error_mode );
-
-					StringCchPrintfW( str, 256, getStringW( IDS_AUDIO_CD, tmp, 64 ), c, ( vol_buf[ 0 ] ? vol_buf : getStringW( IDS_EMPTY, empty, 64 ) ) );
-
-					g_audiocdletter[ g_audiocdletters ] = c;
-					i.dwTypeData = str;
-					i.cch = (UINT)wcslen( str );
-					InsertMenuItemW( hmenu, 4 + g_audiocdletters, TRUE, &i );
-					i.wID++;
-
-					g_audiocdletters++;
-					if ( g_audiocdletters == 4 )
-						break;
-				}
-			}
-		}
-	}
-}
-
 // Main Winamp window procedure
 // we use message crackers when available, write our own for the ones that aren't
 LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -1045,10 +886,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				l_menu_info.cch = (UINT)wcslen( l_menu_info.dwTypeData );
 				SetMenuItemInfoW( main_menu, 0, TRUE, &l_menu_info );
 				EnableMenuItem( main_menu, WINAMP_FILE_QUIT, MF_BYCOMMAND | ( g_exit_disabled ? MF_GRAYED : MF_ENABLED ) );
-			}
-			else if ( hMenu == g_submenus_play )
-			{
-				UpdateAudioCDMenus( g_submenus_play );
 			}
 			else if ( hMenu == g_submenus_bookmarks1 || hMenu == g_submenus_bookmarks2 )
 			{
@@ -1137,6 +974,7 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					do
 					{
 						if ( !wcscmp( d.cFileName, L"." ) || !wcscmp( d.cFileName, L".." ) ) continue;
+						if ( Skin_IsModern( d.cFileName, d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ) continue;
 						if ( ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ||
 							 !_wcsicmp( extensionW( d.cFileName ), L"zip" ) ||
 							 !_wcsicmp( extensionW( d.cFileName ), L"wal" ) ||
@@ -1197,91 +1035,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					g_SkinTop = l_menu_info.wID;
 					while ( !a ) if ( !RemoveMenu( hMenu, l_menu_info.wID++ + 3 - 32768, MF_BYPOSITION ) ) a = 1;
 					if ( !checked ) CheckMenuItem( hMenu, 32767, MF_CHECKED );
-				}
-			}
-			else if ( ( hMenu == g_submenus_lang ) && config_wlz_menu )
-			{
-				MENUITEMINFOW l_menu_info = { sizeof( l_menu_info ), };
-				HANDLE h;
-				WIN32_FIND_DATAW d = { 0 };
-				wchar_t dirmask[ MAX_PATH ] = { 0 };
-
-				l_menu_info.fMask = MIIM_TYPE | MIIM_DATA | MIIM_ID | MIIM_STATE;
-				l_menu_info.fType = MFT_STRING;
-				l_menu_info.wID = 34700;
-				PathCombineW( dirmask, LANGDIR, L"*" );
-
-				l_menu_info.dwTypeData = L"English (US)";
-				l_menu_info.cch = (UINT)wcslen( l_menu_info.dwTypeData );
-				InsertMenuItemW( hMenu, l_menu_info.wID - 34700, TRUE, &l_menu_info );
-				l_menu_info.wID++;
-
-				CheckMenuItem( hMenu, 34700, ( !config_langpack[ 0 ] ? MF_CHECKED : MF_UNCHECKED ) );
-
-				h = FindFirstFileW( dirmask, &d );
-				if ( h != INVALID_HANDLE_VALUE )
-				{
-					int a = 0, checked = 0;
-					do
-					{
-						if ( !wcscmp( d.cFileName, L"." ) || !wcscmp( d.cFileName, L".." ) ) continue;
-
-						if ( ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"zip" ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"wlz" ) )
-						{
-
-							if ( !_wcsicmp( config_langpack, d.cFileName ) )
-							{
-								l_menu_info.fState = MFS_CHECKED | MFS_ENABLED;
-								checked = 1;
-							}
-							else
-							{
-								l_menu_info.fState = MFS_UNCHECKED | MFS_ENABLED;
-							}
-
-							if ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
-							{
-								wchar_t check[ MAX_PATH ] = { 0 };
-								PathCombineW( check, LANGDIR, d.cFileName );
-								PathCombineW( check, check, L"winamp.lng" );
-
-								if ( !PathFileExistsW( check ) )
-									continue;
-
-								l_menu_info.dwItemData = 0;
-							}
-							else
-							{
-								if ( !_wcsicmp( extensionW( d.cFileName ), L"zip" ) )
-									l_menu_info.dwItemData = 1;
-								else
-									l_menu_info.dwItemData = 2;
-
-								extensionW( d.cFileName )[ -1 ] = 0;
-							}
-
-							l_menu_info.dwTypeData = d.cFileName;
-							l_menu_info.cch = (UINT)wcslen( d.cFileName );
-
-							if ( !a )
-								if ( !RemoveMenu( hMenu, l_menu_info.wID - 34700, MF_BYPOSITION ) )
-									a = 1;
-
-							InsertMenuItemW( hMenu, l_menu_info.wID - 34700, TRUE, &l_menu_info );
-							l_menu_info.wID++;
-						}
-					} while ( l_menu_info.wID < 34800 && FindNextFileW( h, &d ) );
-
-					FindClose( h );
-					g_LangTop = l_menu_info.wID;
-					while ( !a )
-						if ( !RemoveMenu( hMenu, l_menu_info.wID++ - 34700, MF_BYPOSITION ) )
-							a = 1;
-
-					if ( !checked )
-						CheckMenuItem( hMenu, 34700, MF_CHECKED );
 				}
 			}
 			break;
@@ -1402,8 +1155,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				else if ( config_eq_open )
 					SetForegroundWindow( hEQWindow );
 				// else if (config_mb_open) SetForegroundWindow(hMBWindow);
-				else if ( config_video_open )
-					SetForegroundWindow( hVideoWindow );
 				else
 				{
 					EnterCriticalSection( &embedcs );
@@ -1435,8 +1186,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				else if ( config_eq_open )
 					SetForegroundWindow( hEQWindow );
 				// else if (config_mb_open) SetForegroundWindow(hMBWindow);
-				else if ( config_video_open )
-					SetForegroundWindow( hVideoWindow );
 				else
 				{
 					EnterCriticalSection( &embedcs );

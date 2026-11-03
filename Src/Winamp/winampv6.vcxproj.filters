@@ -226,9 +226,6 @@
     <ClCompile Include="options_in.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="options_lang.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="options_output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

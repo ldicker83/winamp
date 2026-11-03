@@ -177,30 +177,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		return 1;
 	}
 
-	if (LOWORD(wID) >= 34700 && LOWORD(wID) < g_LangTop && config_wlz_menu)
-	{
-		wchar_t curfilename[MAX_PATH]={0};
-		int id = LOWORD(wID);
-		if (id >= 34701)
-		{
-			MENUITEMINFOW mi = {sizeof(mi), MIIM_DATA | MIIM_TYPE, MFT_STRING};
-			mi.dwTypeData = curfilename;
-			mi.cch = MAX_PATH;
-			GetMenuItemInfoW(main_menu, id, FALSE, &mi);
-
-			if (mi.dwItemData == 1)
-				StringCchCatW(curfilename, MAX_PATH, L".zip");
-			else if (mi.dwItemData == 2)
-				StringCchCatW(curfilename, MAX_PATH, L".wlz");
-		}
-
-		if (_wcsicmp(config_langpack, curfilename))
-		{
-			LangSwitchToLangPrompt(hMainWindow, curfilename);
-		}
-		return 1;
-	}
-
 	switch (LOWORD(wID))
 	{
 	case ID_VIS_NEXT:
@@ -224,21 +200,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 	case IDM_EQ_DELPRE:
 	case IDM_EQ_DELMP3:
 		return SendMessageW(hEQWindow, WM_COMMAND, LOWORD(wID), 0);
-	case ID_MAIN_PLAY_AUDIOCD:
-	case ID_MAIN_PLAY_AUDIOCD2:
-	case ID_MAIN_PLAY_AUDIOCD3:
-	case ID_MAIN_PLAY_AUDIOCD4:
-		if (g_audiocdletter[LOWORD(wID) - ID_MAIN_PLAY_AUDIOCD])
-		{
-			wchar_t s[32] = {0};
-			StopPlaying(0);
-			StringCchPrintfW(s, 32, L"cda://%c", g_audiocdletter[LOWORD(wID) - ID_MAIN_PLAY_AUDIOCD]);
-			PlayList_delete();
-			PlayList_appendthing(s, 0, 0);
-			BeginPlayback();
-			plEditRefresh();
-		}
-		return 1;
 	case ID_PE_OPEN:
 		{
 			if (!playlist_open(g_dialog_box_parent ? g_dialog_box_parent : hMainWindow)) break;
@@ -395,11 +356,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 					vis = config_pe_open;
 				}
 //else if (x == 3) { /*dockwnd = hMBWindow; vis = 0;*/ } // config_mb_open; }
-				else if ( x == 4 )
-				{
-					dockwnd = hVideoWindow;
-					vis = config_video_open;
-				}
 				else
 				{
 					if ( !p )
@@ -435,7 +391,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 				// changed for 5.58 to cope with x == 3 as this can otherwise cause
 				// one embedwnd to stay as the active window irrespective of doing
 				// additional ctrl+tab actions as it was not wanting to handle x==3
-				if (x == 3 || x > 4)
+				if (x >= 3)
 					p = p->link;
 			}
 		}
@@ -541,9 +497,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 	case WINAMP_FILE_QUIT:          // keyboard Alt-X or menu option
 		if (g_exit_disabled) return 0;
 		SendMessageW(hwnd, WM_CLOSE, 0, 0);
-		return 1;
-	case WINAMP_FILE_LOC:
-		plEditRefresh();
 		return 1;
 	case WINAMP_FILE_PLAY:         // open file(s)
 		getNewFile(1,        /*NULL*/DIALOG_PARENT(hwnd), 0);

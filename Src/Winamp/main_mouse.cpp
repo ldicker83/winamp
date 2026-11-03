@@ -107,7 +107,6 @@ int Main_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 		(config_windowshade && x >= 215 && y >= 3 && x < 225 && y < 12))
 	{
 		hmenu = GetSubMenu(GetSubMenu(top_menu,3),7);
-		UpdateAudioCDMenus(hmenu);
 	}
 	else if (playing && (in_mod && in_mod->is_seekable) && x >= 18 && y >= 73 && x < 263 && y < 81)
 	{

@@ -499,6 +499,18 @@ static void Skin_LoadCursors( void )
 	}
 }
 
+// .wal is a modern-only format, and only modern skin folders have a skin.xml
+BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory)
+{
+	if (!is_directory)
+		return !_wcsicmp(extensionW((wchar_t *)name), L"wal");
+
+	wchar_t path[MAX_PATH] = {0};
+	PathCombineW(path, SKINDIR, name);
+	PathAppendW(path, L"skin.xml");
+	return PathFileExistsW(path);
+}
+
 BOOL Skin_Check_Modern_Support()
 {
 	wchar_t fn[ MAX_PATH ] = { 0 };

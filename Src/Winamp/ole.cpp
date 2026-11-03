@@ -275,7 +275,6 @@ public:
 					else
 					{
 						int skinLoad = -2;
-						int langLoad = -2;
 						RECT r;
 						GetWindowRect(wnd, &r);
 						LPDROPFILES d = (LPDROPFILES)GlobalLock(medium.hGlobal);
@@ -287,14 +286,13 @@ public:
 
 						GlobalUnlock(d);
 						
-						// check for the file being a skin or language pack
+						// check for the file being a skin
 						// being dropped so we can intercept and not add it
 						// into the pledit but can instead prompt for install
 						DragQueryFileW((HDROP)medium.hGlobal, 0, temp, FILENAME_SIZE);
 						CheckSkin(temp, hMainWindow, &skinLoad);
-						CheckLang(temp, hMainWindow, &langLoad);
 
-						if(!skinLoad && !langLoad)
+						if(!skinLoad)
 						{
 							PostMessageW(wnd, WM_DROPFILES, (WPARAM)medium.hGlobal, 0);
 						}
@@ -379,7 +377,6 @@ extern "C"
 		OleInitialize(NULL);
 		RegisterDragDrop(hMainWindow, &m_target);
 		RegisterDragDrop(hPLWindow, &m_target);
-		if (hVideoWindow) RegisterDragDrop(hVideoWindow, &m_target);
 
 		// {46986115-84D6-459c-8F95-52DD653E532E}
 		static const GUID playGuid =
@@ -408,7 +405,6 @@ extern "C"
 
 	void Ole_uninitDragDrop()
 	{
-		if (hVideoWindow) RevokeDragDrop(hVideoWindow);
 		RevokeDragDrop(hPLWindow);
 		RevokeDragDrop(hMainWindow);
 

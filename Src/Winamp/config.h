@@ -24,8 +24,6 @@
 #define WINAMP_PLAYLISTW WIDEN(REGISTRY_PREFIX) L".PlayList"
 #define WINAMP_SKINZIP REGISTRY_PREFIX ".SkinZip"
 #define WINAMP_SKINZIPW WIDEN(REGISTRY_PREFIX) L".SkinZip"
-#define WINAMP_LANGZIP REGISTRY_PREFIX ".LangZip"
-#define WINAMP_LANGZIPW WIDEN(REGISTRY_PREFIX) L".LangZip"
 #define WINAMP_PLAY REGISTRY_PREFIX ".Play"
 #define WINAMP_PLAYW WIDEN(REGISTRY_PREFIX) L".Play"
 #define WINAMP_ENQUEUE REGISTRY_PREFIX ".Enqueue"
@@ -65,7 +63,6 @@ CONFIG_EXT wchar_t DSPDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t SKINDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t DEMOMP3[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t SKINTEMPDIR[MAX_PATH] DEF_VAL(L"");
-CONFIG_EXT wchar_t LANGTEMPDIR[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t BOOKMARKFILE[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t BOOKMARKFILE8[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT wchar_t LANGDIR[MAX_PATH] DEF_VAL(L"");
@@ -76,10 +73,7 @@ CONFIG_EXT int config_pe_fontsize DEF_VAL(PE_FONTSIZE);
 #define PE_DIRECTION_LTR 1
 #define PE_DIRECTION_RTL 2
 CONFIG_EXT int config_pe_direction DEF_VAL(PE_DIRECTION_LTR);
-CONFIG_EXT wchar_t config_langpack[MAX_PATH] DEF_VAL(L""), config_langpack2[MAX_PATH] DEF_VAL(L""), lang_directory[MAX_PATH] DEF_VAL(L"");
-CONFIG_EXT unsigned char config_wlz_menu DEF_VAL(0);
 CONFIG_EXT int config_skin_prompt DEF_VAL(1);
-CONFIG_EXT int config_wlz_prompt DEF_VAL(1);
 CONFIG_EXT char config_inet_mode DEF_VAL(0);
 CONFIG_EXT char config_defext[32] DEF_VAL("mp3");
 CONFIG_EXT wchar_t config_titlefmt[1024] DEF_VAL(L"[%artist% - ]$if2(%title%,$filepart(%filename%))");
@@ -143,30 +137,6 @@ CONFIG_EXT char config_check_ft_startup DEF_VAL(0), config_updated_ft_startup DE
 CONFIG_EXT char config_bifont DEF_VAL(0); // bitmapped font (off by default)
 CONFIG_EXT char config_bifont_alt DEF_VAL(0); // non-bitmapped font alternative option (off by default)
 CONFIG_EXT char config_browserbrand[16] DEF_VAL("");
-
-/* --- video --- */
-CONFIG_EXT int config_video_wx DEF_VAL(26), config_video_wy DEF_VAL(145),
-config_video_open DEF_VAL(0),
-config_video_width DEF_VAL(275), config_video_height DEF_VAL(232),
-config_video_ratio1 DEF_VAL(4), config_video_ratio2 DEF_VAL(3),
-config_video_useratio;
-
-CONFIG_EXT int config_video_aspectadj DEF_VAL(1);
-CONFIG_EXT int config_video_updsize DEF_VAL(0);
-CONFIG_EXT int config_video_noss DEF_VAL(1);
-CONFIG_EXT int config_video_logo DEF_VAL(1);
-CONFIG_EXT int config_video_osd DEF_VAL(1);
-CONFIG_EXT int config_video_stopclose DEF_VAL(1);
-//CONFIG_EXT int config_video_auto_fs DEF_VAL(0); // plague> moved to WinampAttributes.h
-
-//#define EXPERIMENTAL_CONTRAST
-#ifdef EXPERIMENTAL_CONTRAST
-CONFIG_EXT int config_video_contrast DEF_VAL(128);
-CONFIG_EXT int config_video_brightness DEF_VAL(128);
-#endif
-
-CONFIG_EXT int config_video_remove_fs_on_stop DEF_VAL(1);
-CONFIG_EXT int config_video_fliprgb DEF_VAL(0);
 
 CONFIG_EXT int config_wav_do_header DEF_VAL(1);
 CONFIG_EXT int config_wav_convert DEF_VAL(0);

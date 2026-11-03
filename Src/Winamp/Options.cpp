@@ -320,7 +320,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			//SendMessageW(hwnd,TVM_EXPAND,TVE_EXPAND,(long)h);
 			//h=_additem(hwnd,TVI_ROOT,getStringW(IDS_PREFS_OPTIONS,NULL,0),1,20);
 
-			_additem(hwnd, h, getStringW(IDS_LOCALIZATION, NULL, 0), 0, 25);
 
 			insertDialogs(hwnd, 0, h, &pluginids);
 
@@ -414,7 +413,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 						case 21: id = IDD_NEWTITLE; proc = TitleProc; break;
 						case 22: id = IDD_PREFS_CLASSICSKIN; proc = classicSkinProc; break;
 						case 23: id = IDD_NEWSHUFFLEOPTS; proc = PlaybackOptionsProc; break; // playlist
-												case 25: id = IDD_NEWLANG; proc = LangProc; break;
 						case 30: id = IDD_NEWPLUG; proc = PlugProc; break;
 						case 31: id = IDD_NEWINPUT; proc = InputProc; break;
 						case 32: id = IDD_NEWOUTPUT; proc = OutputProc; break;
@@ -455,32 +453,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 						RECT r;
 						if (!hinst) cur_wnd = LPCreateDialogW(id, hwndDlg, (WNDPROC)proc);
 						else cur_wnd = CreateDialogParamW(hinst, MAKEINTRESOURCEW(id), hwndDlg, proc, param);
-
-						extern int prev_wlz_ex_state;
-						if (!IsWindow(cur_wnd) && prev_wlz_ex_state)
-						{
-							// will attempt to find a in-dll version of the resource
-							// if the version from the language pack was not loaded
-							wchar_t filename[MAX_PATH] = {0};
-							if (GetModuleFileNameW(hinst, filename, MAX_PATH))
-							{
-								PathRemoveExtensionW(filename);
-								PathAddExtensionW(filename, L".dll");
-								wchar_t *f = scanstr_backW(filename, L"\\/", filename);
-								if (f && *f)
-								{
-									if (*f == '\\' || *f == '/') f = CharNextW(f);
-								}
-								if (f && *f)
-								{
-									HINSTANCE fallback = GetModuleHandleW(f);
-									if (fallback != GetModuleHandle(NULL))
-									{
-										cur_wnd = CreateDialogParamW(fallback, MAKEINTRESOURCEW(id), hwndDlg, proc, param);
-									}
-								}
-							}
-						}
 
 						// if we get here then show a non-localised fallback page
 						if (!IsWindow(cur_wnd))

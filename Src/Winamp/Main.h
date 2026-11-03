@@ -47,7 +47,6 @@ extern "C"
 	//#define MAX_PATH 512
 #define OFFSCREEN_Y_POS -30000
 #define MAX_URL 4096
-extern HINSTANCE language_pack_instance;
 #define UPDATE_DISPLAY_TIMER 38
 #define STATS_TIMER 64
 
@@ -65,7 +64,7 @@ extern HINSTANCE language_pack_instance;
 	extern const char app_name[], app_version[], app_version_string[];
 #define BIGINT 1000000000
 
-#define MAINMENU_OPTIONS_BASE (11+g_mm_optionsbase_adj)
+#define MAINMENU_OPTIONS_BASE (10+g_mm_optionsbase_adj)
 #define WINDOWMENU_FFWINDOWS_BASE (3+g_mm_ffwindowsbase_adj)
 
 #define HIDDEN_TRAP -33
@@ -135,8 +134,6 @@ extern HINSTANCE language_pack_instance;
 	void config_setinidir(const wchar_t *inidir);
 	void config_setm3udir(const wchar_t *m3udir);
 	void config_setm3ubase(const wchar_t *m3ubase);
-	void config_load_langpack_var(void);
-	void config_save_langpack_var(void);
 	int config_isdircontext(void);
 	BOOL config_setup_filetype(const wchar_t *winamp_file, const wchar_t *name, BOOL use_fallback);
 	BOOL config_adddircontext(BOOL use_fallback);
@@ -173,8 +170,6 @@ extern HINSTANCE language_pack_instance;
 	void EstMainWindowRect(RECT *r);
 	void EstEQWindowRect(RECT *r);
 	void EstPLWindowRect(RECT *r);
-	void EstVidWindowRect(RECT *r);
-	void SetVidWindowRect(RECT *r);
 	void SetMainWindowRect(RECT *r);
 	void SetEQWindowRect(RECT *r);
 	void SetPLWindowRect(RECT *r);
@@ -386,12 +381,9 @@ extern HINSTANCE language_pack_instance;
 	extern UINT songChangeBroadcastMessage;
 	extern HMENU main_menu, top_menu, systray_menu, g_submenus_bookmarks1,
 				 g_submenus_bookmarks2, g_submenus_skins1, g_submenus_skins2,
-				 g_submenus_vis, g_submenus_options, g_submenus_lang,
+				 g_submenus_vis, g_submenus_options,
 				 g_submenus_play, v5_top_menu;
 	extern int unique_loword_command;
-	extern int g_submenus_lang_id;
-	extern char g_audiocdletter[];
-	extern int g_audiocdletters;
 	extern int g_dropaot_timer_set;
 	extern int is_install;
 	extern int g_fsapp;
@@ -399,7 +391,6 @@ extern HINSTANCE language_pack_instance;
 	extern int bNoHwndOther;
 	extern int g_safeMode;
 	void tealike_crappy_code(unsigned long v[2], unsigned long k[4]);
-	void UpdateAudioCDMenus(HMENU hmenu);
 	void MoveOffscreen(HWND hwnd);
 	void ResolveEnvironmentVariables(wchar_t *string, size_t stringSize);
 	extern int g_main_created;
@@ -421,13 +412,11 @@ extern HINSTANCE language_pack_instance;
 	extern int last_brate, g_need_titleupd, g_need_infoupd;
 	extern int g_stopaftercur;
 	extern int g_has_deleted_current;
-
-	extern int g_has_video_plugin, g_no_video_loaded;
 	extern char *audits[AUDITSIZE];
 	extern int audit_ptr;
 
-	extern HWND hTooltipWindow, hEQTooltipWindow, hVideoTooltipWindow, hPLTooltipWindow/*, hPL2TooltipWindow*/;
-	extern HWND hMainWindow, hEQWindow, hPLWindow, /*hMBWindow, */hVideoWindow;
+	extern HWND hTooltipWindow, hEQTooltipWindow, hPLTooltipWindow/*, hPL2TooltipWindow*/;
+	extern HWND hMainWindow, hEQWindow, hPLWindow/*, hMBWindow*/;
 	extern HINSTANCE hMainInstance;
 	extern HANDLE hMainThread;
 	extern DWORD mainThreadId;
@@ -531,23 +520,6 @@ extern HINSTANCE language_pack_instance;
 	/***************
 	*** options_general.cpp
 	*/
-	typedef struct _ENUMLANG
-	{
-		const wchar_t	*pszFileName;
-		const wchar_t	*pszName;
-		int				nType;
-		int				bActive;
-	} ENUMLANG;
-
-	//#define LANG_FILETYPE_LNG	1	// DEPRECATED: no longer a supported type
-	#define LANG_FILETYPE_WLZ	2
-	#define LANG_FILETYPE_EMBED	3
-	#define LANG_FILETYPE_ZIP	4	// added 5.66
-	#define LANG_FILETYPE_DIR	0	// added 5.66
-	
-	typedef int (CALLBACK *ENUMLANGPROC)(ENUMLANG* /*pel*/, void * /*user*/); // return 0 to stop enumeration
-	int EnumerateLanguages(ENUMLANGPROC fnEnumLang, void *user);
-	void LangSwitchToLangPrompt(HWND hwndDlg, wchar_t* newLang);
 	/***************
 	*** out.c 
 	*/
@@ -702,7 +674,6 @@ extern HINSTANCE language_pack_instance;
 	void set_visopts(void);
 	void do_caption_autoscroll(void);
 	void set_pl_wnd_tooltip(void);
-	void set_vid_wnd_tooltip(void);
 
 	/***********************
 	*** shell.cpp 
@@ -722,6 +693,7 @@ extern HINSTANCE language_pack_instance;
 	void Skin_CleanupZip(void);
 	void Skin_CleanupAfterCrash(void);
 	BOOL Skin_Check_Modern_Support();
+BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	int Skin_GetRegionPointList(int eq, int **points, int **counts);
 	/* The indices of Skin_PLColors:
 	0 - text color - playlist
@@ -821,15 +793,6 @@ extern HINSTANCE language_pack_instance;
 	/***************
 	*** lang.cpp
 	*/
-	HINSTANCE Lang_InitLangSupport(HINSTANCE, const GUID);
-	void Lang_FollowUserDecimalLocale(void);
-	void Lang_CleanupZip(void);
-	void Lang_CleanupAfterCrash(void);
-	void Lang_EndLangSupport(void);
-	HINSTANCE Lang_FakeWinampLangHInst(HINSTANCE adjustedHInst);
-	void Lang_LocaliseAgentOnTheFly(BOOL refresh);
-
-	int extract_wlz_to_dir(wchar_t* readme_only_wlz_extraction, BOOL *skip);
 	char *getString(UINT uID, char *str, size_t maxlen);
 	wchar_t *getGUIDstr(const GUID, wchar_t *target);
 
@@ -852,8 +815,6 @@ extern HINSTANCE language_pack_instance;
 	/***************
 	*** video.cpp
 	*/
-	extern int g_video_numaudiotracks;
-	extern int g_video_curaudiotrack;
 
 	/***********************
 	*** vis.c 
@@ -1051,13 +1012,11 @@ extern HINSTANCE language_pack_instance;
 	void reg_associated_filetypes(int force);
 	wchar_t *FindNextCommand(wchar_t *cmdLine);
 	void parseCmdLine(wchar_t *cmdline, HWND hwnd);
-	wchar_t *CheckFileBase(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit, int mode);
-	#define CheckSkin(lpszCmdParam, hwnd_other, exit) CheckFileBase(lpszCmdParam, hwnd_other, exit, 0)
-	#define CheckLang(lpszCmdParam, hwnd_other, exit) CheckFileBase(lpszCmdParam, hwnd_other, exit, 1)
+	wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit);
 
 	void LoadPathsIni();
 	LRESULT Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
-	extern int g_BookmarkTop, g_SkinTop, g_LangTop;
+	extern int g_BookmarkTop, g_SkinTop;
 	void RegisterConfigGroups();
 	void CopyExtendedFileInfo(const wchar_t *source, const wchar_t *destination);
 

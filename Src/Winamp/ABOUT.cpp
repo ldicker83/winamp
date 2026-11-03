@@ -25,7 +25,6 @@ static BOOL CALLBACK tipsProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lPar
 static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 static BOOL CALLBACK creditProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
-static BOOL CALLBACK translationProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 
 static unsigned const char sq_table[]=
@@ -109,14 +108,11 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 		{
 			int t=about_lastpage;
 			about_lastpage=-1;
-			// make sure not to show the localised page if not under a language pack
-			if (t==4 && config_langpack[0]) SendMessageW(hwndDlg, WM_COMMAND, IDC_BUTTON2, 0);
-			else if (t==3) SendMessageW(hwndDlg, WM_COMMAND, IDC_BUTTON6, 0);
+			if (t==3) SendMessageW(hwndDlg, WM_COMMAND, IDC_BUTTON6, 0);
 			else if (t==2) SendMessageW(hwndDlg, WM_COMMAND, IDC_BUTTON5, 0);
 			else if (t==1) SendMessageW(hwndDlg, WM_COMMAND, IDC_BUTTON4, 0);
 			else
 			{
-				if (t==4) t = 0;
 				SendMessageW(hwndDlg, WM_COMMAND, IDC_BUTTON3, 0);
 			}
 		}
@@ -133,7 +129,6 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 		case IDC_BUTTON4:
 		case IDC_BUTTON5:
 		case IDC_BUTTON6:
-		case IDC_BUTTON2:
 			{
 				int id=-1;
 				int t = 0;
@@ -142,7 +137,6 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 				if (LOWORD(wParam)==IDC_BUTTON4) t=1;
 				if (LOWORD(wParam)==IDC_BUTTON5) t=2;
 				if (LOWORD(wParam)==IDC_BUTTON6) t=3;
-				if (LOWORD(wParam)==IDC_BUTTON2) t=4;
 				if (t == about_lastpage) return 0;
 				about_lastpage=t;
 				switch (t)
@@ -151,7 +145,6 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 					case 1: id=IDD_NEWABOUT2;	proc=creditProc; break;
 					case 2: id=IDD_NEWABOUT3;	proc=tipsProc; break;
 					case 3: id=IDD_NEWABOUT4;	proc=whatsnewProc; break;
-					case 4: id=IDD_ABOUT_TRANSLATION; proc=translationProc; break;
 				}
 
 				if (IsWindow(cur_wnd)) 
@@ -162,9 +155,7 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 
 				if (id != -1)
 				{
-					cur_wnd = CreateDialogW(language_pack_instance, MAKEINTRESOURCEW(id), hwndDlg, (DLGPROC)proc);
-					// handles cases where there's no localised info page in a language pack / under en-us
-					if(!IsWindow(cur_wnd)) cur_wnd = LPCreateDialogW(id, hwndDlg, (DLGPROC)proc);
+					cur_wnd = LPCreateDialogW(id, hwndDlg, (DLGPROC)proc);
 
 					{
 						RECT r;
@@ -210,7 +201,6 @@ static LRESULT WINAPI aboutProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 			else if (di->CtlID==IDC_BUTTON4 && about_lastpage==1) sel=1;
 			else if (di->CtlID==IDC_BUTTON5 && about_lastpage==2) sel=1;
 			else if (di->CtlID==IDC_BUTTON6 && about_lastpage==3) sel=1;
-			else if (di->CtlID==IDC_BUTTON2 && about_lastpage==4) sel=1;
 
 			if (di->CtlID != IDC_BUTTON6)
 			{
@@ -248,7 +238,7 @@ static BOOL CALLBACK tipsProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lPar
 			DWORD size = 0;
 			if (!hResource)
 			{
-				hResource = langManager->LoadResourceFromFileW(language_pack_instance, hMainInstance,TEXT("TEXT"), TEXT("TIPSTEXT"),&size);
+				hResource = langManager->LoadResourceFromFileW(hMainInstance, hMainInstance,TEXT("TEXT"), TEXT("TIPSTEXT"),&size);
 				hResourceSize = size;
 			}
 			p = (char*)hResource;
@@ -432,17 +422,8 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 				SendDlgItemMessage(hwndDlg, IDC_TIPS, EM_SETLIMITTEXT, 0, 0);
 
-				// attempt to pull a localised whatsnew.txt
-				// before reverting to the english default
-				if (lang_directory[0])
-				{
-					lstrcpynW(fn,lang_directory,MAX_PATH);
-				}
-				else
-				{
-					GetModuleFileNameW(NULL,fn,MAX_PATH);
-					PathRemoveFileSpecW(fn);
-				}
+				GetModuleFileNameW(NULL,fn,MAX_PATH);
+				PathRemoveFileSpecW(fn);
 				PathAppendW(fn, L"whatsnew.txt");
 
 				// we don't set the buffer position so that it all works on the fallback code
@@ -1091,7 +1072,6 @@ static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 			StringCchPrintfW(buf2,2048,buf,(buf3[0] ? buf3 : (t1 = AutoWideDup(app_version_string))),
 							 (t2 = AutoWideDup(APP_VERSION_PLATFORM)), (t3 = AutoWideDup(app_date.c_str())));
 			SetDlgItemTextW(hwndDlg, IDC_ABOUTTEXT, buf2);
-			link_startsubclass(hwndDlg, IDC_WINAMPLINK);
 			if (t1) free(t1);
 			if (t2) free(t2);
 			if (t3) free(t3);
@@ -1132,21 +1112,6 @@ static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 			WaitForSingleObject(hThread,INFINITE);
 			CloseHandle(hThread);
 			hThread=NULL;
-		}
-	}
-	if (uMsg == WM_COMMAND)
-	{
-		switch (LOWORD(wParam))
-		{
-			case IDC_WINAMPLINK:
-			{
-				wchar_t homepage[1024] = {0};
-				if (config_langpack[0])
-				{
-					getStringW(IDS_LOCALIZED_HOMEPAGE, homepage, 1024);
-				}
-			}
-			return 0;
 		}
 	}
 	if (uMsg == WM_LBUTTONDBLCLK)
@@ -1485,31 +1450,3 @@ static BOOL CALLBACK creditProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 	return 0;
 }
 
-static BOOL CALLBACK translationProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
-{
-	switch (uMsg)
-	{
-	case WM_INITDIALOG:
-		{
-			// only attempt set it to show a hand cursor if it's an ownerdraw button
-			if(GetWindowLongPtrW(GetDlgItem(hwndDlg, IDC_AUTHOR_HOMEPAGE), GWL_STYLE) & BS_OWNERDRAW)
-			{
-				link_startsubclass(hwndDlg, IDC_AUTHOR_HOMEPAGE);
-			}
-			if(GetWindowLongPtrW(GetDlgItem(hwndDlg, IDC_AUTHOR_HOMEPAGE2), GWL_STYLE) & BS_OWNERDRAW)
-			{
-				link_startsubclass(hwndDlg, IDC_AUTHOR_HOMEPAGE2);
-			}
-		}
-		break;
-
-	case WM_COMMAND:
-		if(LOWORD(wParam) == IDCANCEL)
-		{
-			DestroyWindow(about_hwnd);
-		}
-		break;
-	} 
-	link_handledraw(hwndDlg,uMsg,wParam,lParam);
-	return 0;
-}

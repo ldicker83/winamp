@@ -161,8 +161,7 @@ static void __do_buttons(int which)
 	int m = WINAMP_BUTTON1 + which;
 	if (which == 5)
 	{
-		if (mouse_stats & MK_CONTROL) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_LOC,0);
-		else if (mouse_stats & MK_SHIFT) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_DIR,0);
+		if (mouse_stats & MK_SHIFT) SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_DIR,0);
  	    else SendMessageW(hMainWindow,WM_COMMAND,WINAMP_FILE_PLAY,0);
 	}
 	else
@@ -385,7 +384,7 @@ static void do_addbut(HWND hwnd)
 			{
 				case 0: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDMP3,0); break;
 				case 1: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDDIR,0); break;
-				case 2: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDLOC,0); break;
+				case 2: SendMessageW(hwnd,WM_COMMAND,IDC_PLAYLIST_ADDMP3,0); break; // the skin still draws a URL slot here
 			}
 		}
 	}

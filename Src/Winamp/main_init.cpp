@@ -76,7 +76,7 @@ BOOL InitApplication(HINSTANCE hInstance)  // register Winamp's window class, re
 		return 0;
 
 	// make other people's dialogs show the winamp icon
-	HWND h = CreateDialogW(hMainInstance, MAKEINTRESOURCE(IDD_OPENLOC), NULL, tmpProc);
+	HWND h = CreateDialogW(hMainInstance, MAKEINTRESOURCE(IDD_JUMPDLG), NULL, tmpProc);
 	SetClassLongPtrW(h, GCLP_HICON, (LONG_PTR)hIcon);
 	DestroyWindow(h);
 
@@ -153,21 +153,11 @@ void main_Create()
 
 	g_submenus_play = GetSubMenu(main_menu, 2);
 	g_submenus_bookmarks1 = GetSubMenu(main_menu, 4);
-	g_submenus_bookmarks2 = GetSubMenu(GetSubMenu(main_menu, 2), 3 + (g_audiocdletters ? g_audiocdletters + 1 : 0));
+	g_submenus_bookmarks2 = GetSubMenu(GetSubMenu(main_menu, 2), 3);
 	g_submenus_skins1 = GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE + 3);
 	g_submenus_skins2 = GetSubMenu(GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE), 1);
 	g_submenus_vis = GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE + 2);
 	g_submenus_options = GetSubMenu(main_menu, MAINMENU_OPTIONS_BASE);
-
-	if (config_wlz_menu)
-	{
-		MENUITEMINFOW mii = {sizeof(mii), MIIM_SUBMENU | MIIM_TYPE | MIIM_ID, MFT_STRING, };
-		mii.hSubMenu = g_submenus_lang = CreatePopupMenu();
-		mii.dwTypeData = getStringW(IDS_LANGUAGEPACKS_MENU, NULL, 0);
-		mii.cch = (UINT)wcslen(mii.dwTypeData);
-		g_submenus_lang_id = mii.wID = unique_loword_command++;
-		InsertMenuItemW(main_menu, MAINMENU_OPTIONS_BASE+4, TRUE, &mii);
-	}
 
 	HMENU rating_menu = GetSubMenu(GetSubMenu(GetSubMenu(top_menu,2),5),10);
 	ConvertRatingMenuStar(rating_menu, ID_PL_RATING5);
@@ -281,17 +271,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) // create the main Winamp w
 		g_showcode = nCmdShow;
 
 	v5_top_menu = LPLoadMenu(WINAMP5_MENUBAR);
-
-	if (config_wlz_menu)
-	{
-		MENUITEMINFOW mii = {sizeof(mii), MIIM_SUBMENU | MIIM_TYPE | MIIM_ID, MFT_STRING, };
-		mii.hSubMenu = g_submenus_lang;
-		mii.dwTypeData = getStringW(IDS_LANGUAGEPACKS_MENU, NULL, 0);
-		mii.cch = (UINT)wcslen(mii.dwTypeData);
-		mii.wID = g_submenus_lang_id;
-		InsertMenuItemW(GetSubMenu(v5_top_menu, 2), 1, TRUE, &mii);
-		g_mm_ffoptionsbase_adj++;
-	}
 
 	SetTimer(hMainWindow, 200, 5, NULL); // defer main window showing
 
