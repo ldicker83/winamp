@@ -11,7 +11,6 @@
 #include "M3UWriter.h"
 #include "PLSWriter.h"
 #include "M3U8Writer.h"
-#include "B4SWriter.h"
 #include "../nu/AutoChar.h"
 #include "Playlist.h"
 #include "../playlist/svc_playlisthandler.h"
@@ -211,8 +210,6 @@ int PlaylistManager::Save( const wchar_t *filename, ifc_playlist *playlist )
 		writer = new M3U8Writer;
 	else if ( !lstrcmpiW( ext, L".PLS" ) )
 		writer = new PLSWriter;
-	else if ( !lstrcmpiW( ext, L".B4S" ) )
-		writer = new B4SWriter;
 	else
 		return PLAYLISTMANAGER_FAILED;
 

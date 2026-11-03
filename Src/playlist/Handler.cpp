@@ -1,8 +1,8 @@
+#include "api__playlist.h"
 #include "Handler.h"
 #include "resource.h"
 #include "M3ULoader.h"
 #include "PLSLoader.h"
-#include "B4SLoader.h"
 #include <shlwapi.h>
 
 void GetExtension(const wchar_t *filename, wchar_t *ext, size_t extCch)
@@ -124,55 +124,6 @@ const wchar_t *PLSHandler::GetName()
 	return (!plspl[0]?WASABI_API_LNGSTRINGW_BUF(IDS_PLS_PLAYLIST,plspl,64):plspl);
 }
 
-/* --- B4S --- */
-const wchar_t *B4SHandler::enumExtensions(size_t n)
-{
-	switch(n)
-	{
-	case 0:
-		return L"B4S";
-		//case 1:
-		//return L"BPL";
-	default:
-		return 0;
-	}
-}
-
-int B4SHandler::SupportedFilename(const wchar_t *filename)
-{
-	wchar_t ext[16] = {0};
-	GetExtension(filename, ext, 16);
-
-	if (!lstrcmpiW(ext, L".B4S"))
-		return SVC_PLAYLISTHANDLER_SUCCESS;
-	if (!lstrcmpiW(ext, L".BPL"))
-		return SVC_PLAYLISTHANDLER_SUCCESS;
-
-	// TODO: open file and sniff it for file signature
-	return SVC_PLAYLISTHANDLER_FAILED;
-}
-
-ifc_playlistloader *B4SHandler::CreateLoader(const wchar_t *filename)
-{
-	return new B4SLoader;
-}
-
-void B4SHandler::ReleaseLoader(ifc_playlistloader *loader)
-{
-	B4SLoader *pls;
-	
-	pls = static_cast<B4SLoader *>(loader);
-	delete pls;
-}
-
-const wchar_t *B4SHandler::GetName()
-{
-	static wchar_t wa3pl[64];
-	// no point re-loading this all of the time since it won't change once we've been loaded
-	return (!wa3pl[0]?WASABI_API_LNGSTRINGW_BUF(IDS_WINAMP3_PLAYLIST,wa3pl,64):wa3pl);
-}
-
-
 #ifdef CBCLASS
 #undef CBCLASS
 #endif
@@ -198,13 +149,3 @@ CB(SVC_PLAYLISTHANDLER_GETNAME, GetName)
 CB(SVC_PLAYLISTHANDLER_HASWRITER, HasWriter)
 END_DISPATCH;
 #undef CBCLASS
-
-#define CBCLASS B4SHandler
-START_DISPATCH;
-CB(SVC_PLAYLISTHANDLER_ENUMEXTENSIONS, enumExtensions)
-CB(SVC_PLAYLISTHANDLER_SUPPORTFILENAME, SupportedFilename)
-CB(SVC_PLAYLISTHANDLER_CREATELOADER, CreateLoader)
-VCB(SVC_PLAYLISTHANDLER_RELEASELOADER, ReleaseLoader)
-CB(SVC_PLAYLISTHANDLER_GETNAME, GetName)
-CB(SVC_PLAYLISTHANDLER_HASWRITER, HasWriter)
-END_DISPATCH;

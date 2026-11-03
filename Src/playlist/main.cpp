@@ -14,7 +14,6 @@ int (*warand)(void) = 0;
 
 M3UHandlerFactory       m3uHandlerFactory;
 PLSHandlerFactory       plsHandlerFactory;
-B4SHandlerFactory       b4sHandlerFactory;
 PlaylistManagerFactory  playlistManagerFactory;
 PlaylistsFactory        playlistsFactory;
 ServiceWatcher          serviceWatcher;
@@ -69,7 +68,6 @@ void PlaylistComponent::RegisterServices( api_service *service )
 
 	WASABI_API_SVC->service_register( &m3uHandlerFactory );
 	WASABI_API_SVC->service_register( &plsHandlerFactory );
-	WASABI_API_SVC->service_register( &b4sHandlerFactory );
 	WASABI_API_SVC->service_register( &playlistManagerFactory );
 	WASABI_API_SVC->service_register( &playlistsFactory );
 
@@ -94,7 +92,6 @@ void PlaylistComponent::DeregisterServices( api_service *service )
 	service->service_deregister( &playlistManagerFactory );
 	service->service_deregister( &m3uHandlerFactory );
 	service->service_deregister( &plsHandlerFactory );
-	service->service_deregister( &b4sHandlerFactory );
 
 	serviceWatcher.StopWatching();
 	serviceWatcher.Clear();

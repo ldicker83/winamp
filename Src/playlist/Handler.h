@@ -16,7 +16,6 @@ protected:	RECVS_DISPATCH;}
 
 DECLARE_HANDLER(M3U, 1);
 DECLARE_HANDLER(PLS, 1);
-DECLARE_HANDLER(B4S, 0);
 
 // {8D031378-4209-4bfe-AC94-03C57C896214}
 static const GUID m3uHandlerGUID = 
@@ -25,8 +24,5 @@ static const GUID m3uHandlerGUID =
 // {4FF33CC0-F82C-4550-8E4A-DDF90036BE85}
 static const GUID plsHandlerGUID = 
 { 0x4ff33cc0, 0xf82c, 0x4550, { 0x8e, 0x4a, 0xdd, 0xf9, 0x0, 0x36, 0xbe, 0x85 } };
-
-static const GUID b4sHandlerGUID = 
-{ 0x6f62cbb8, 0x7e1f, 0x43eb, { 0xb3, 0xf6, 0x1, 0xc2, 0x60, 0x10, 0x29, 0xa3 } };
 
 #endif

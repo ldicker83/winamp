@@ -61,7 +61,6 @@ STRINGTABLE
 BEGIN
     IDS_M3U_PLAYLIST        "M3U Playlist"
     IDS_PLS_PLAYLIST        "PLS Playlist"
-    IDS_WINAMP3_PLAYLIST    "Winamp3 Playlist"
     IDS_ALL_PLAYLIST_TYPES  "All Playlist Types"
     IDS_PLAYLIST            "Playlist"
     IDS_MPCPL_PLAYLIST      "Media Player Classic Playlist (MPCPL)"

@@ -248,8 +248,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="..\Wasabi\bfc\string\StringW.cpp" />
     <ClCompile Include="..\Wasabi\bfc\wasabi_std.cpp" />
     <ClCompile Include="..\Winamp\strutil.cpp" />
-    <ClCompile Include="B4SLoader.cpp" />
-    <ClCompile Include="B4SWriter.cpp" />
     <ClCompile Include="factory_Handler.cpp" />
     <ClCompile Include="factory_playlistmanager.cpp" />
     <ClCompile Include="factory_playlists.cpp" />
@@ -268,15 +266,12 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClCompile Include="PLSWriter.cpp" />
     <ClCompile Include="pl_entry.cpp" />
     <ClCompile Include="util.cpp" />
-    <ClCompile Include="XMLString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Winamp\strutil.h" />
     <ClInclude Include="api__playlist.h" />
     <ClInclude Include="api_playlistmanager.h" />
     <ClInclude Include="api_playlists.h" />
-    <ClInclude Include="B4SLoader.h" />
-    <ClInclude Include="B4SWriter.h" />
     <ClInclude Include="factory_Handler.h" />
     <ClInclude Include="factory_playlistmanager.h" />
     <ClInclude Include="factory_playlists.h" />
@@ -298,7 +293,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="pl_entry.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="svc_playlisthandler.h" />
-    <ClInclude Include="XMLString.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="playlist.rc" />
