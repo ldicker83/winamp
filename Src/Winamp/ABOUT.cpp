@@ -1072,7 +1072,6 @@ static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 			StringCchPrintfW(buf2,2048,buf,(buf3[0] ? buf3 : (t1 = AutoWideDup(app_version_string))),
 							 (t2 = AutoWideDup(APP_VERSION_PLATFORM)), (t3 = AutoWideDup(app_date.c_str())));
 			SetDlgItemTextW(hwndDlg, IDC_ABOUTTEXT, buf2);
-			link_startsubclass(hwndDlg, IDC_WINAMPLINK);
 			if (t1) free(t1);
 			if (t2) free(t2);
 			if (t3) free(t3);
@@ -1113,16 +1112,6 @@ static BOOL CALLBACK about1Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lP
 			WaitForSingleObject(hThread,INFINITE);
 			CloseHandle(hThread);
 			hThread=NULL;
-		}
-	}
-	if (uMsg == WM_COMMAND)
-	{
-		switch (LOWORD(wParam))
-		{
-			case IDC_WINAMPLINK:
-			{
-			}
-			return 0;
 		}
 	}
 	if (uMsg == WM_LBUTTONDBLCLK)
