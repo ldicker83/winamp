@@ -3062,25 +3062,20 @@ typedef struct {
 **
 ** You call this to retrieve a copy of a IFileTypeRegistrar object which Winamp will
 ** create which provides some commonly used functions for registry and file access
-** which will be automatically elevated on Vista / Window 7 depending on the user's
-** permissions as required.
+** which runs with the permissions Winamp was started with.
 **
 ** // it is best to call this everytime that the object is required as there is no
 ** // guarantee it will already have been created or if it's already been released
 ** IFileTypeRegistrar *registrar = (IFileTypeRegistrar*)SendMessageW(hwnd_winamp,WM_WA_IPC,0,IPC_GET_FILEREGISTRAR_OBJECT);
 ** // make sure that we've got a valid object (as 1 is an unsupported api return)
 ** if(registrar && (registrar != (IFileTypeRegistrar*)1)){
-**   // we got a valid copy of the object (automatically elevated as required)
+**   // we got a valid copy of the object
 **   // so now we can start using the IFileTypeRegistrar object as required
 **
 **   // once we're done using the IFileTypeRegistrar object for the immediate moment
 **   // then we should release the object so everything is kept as clean as possible
 **   registrar->Release();
 ** }
-**
-** 5.66+:
-** If you pass 1 in wParam then it will skip trying to provide a fallback instance
-** which is helpful for batch processing and you need to know if elevation failed.
 */
 
 

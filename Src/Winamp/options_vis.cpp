@@ -402,7 +402,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							if (!ret)
 							{
 								IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar, true) == 0 && registrar)
+								if (GetRegistrar(&registrar) == 0 && registrar)
 								{
 									if (registrar->DeleteItem(buf) != S_OK)
 									{

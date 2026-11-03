@@ -175,7 +175,6 @@ void ParseParametersExpired(wchar_t *lpszCmdParam)
 		w5s_deinit(NULL);
 		Wasabi_Unload();
 		SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST | SHCNF_FLUSHNOWAIT, NULL, NULL);
-		RemoveRegistrar();
 		ExitProcess(0);
 	}
 }
@@ -361,7 +360,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 			w5s_deinit();
 			Wasabi_Unload();
 			SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST | SHCNF_FLUSHNOWAIT, NULL, NULL);
-			RemoveRegistrar();
 			ExitProcess(0);
 		}
 		else if (!_wcsnicmp(lpszCmdParam, L"/ADD", 4) && (!lpszCmdParam[4] || lpszCmdParam[4] == L' '))
@@ -602,7 +600,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 			setup_config();
 			DeleteFileW(M3U_FILE);
 			DeleteFileW(OLD_M3U_FILE);
-			RemoveRegistrar();
 			ExitProcess(0);
 		}
 		else if (IsCommand(lpszCmdParam, L"/QUIT", 5) ||
@@ -641,7 +638,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 					}
 				}
 			}
-			RemoveRegistrar();
 			ExitProcess(0);
 		}
 		/*else if (!_wcsnicmp(lpszCmdParam, L"/RETURN=", 8))
@@ -657,7 +653,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 			lpszCmdParam = SkipXW(lpszCmdParam, 9);
 			GetParameter(lpszCmdParam, p, 2048);
 			// eat parameter for now...
-			RemoveRegistrar();
 			ExitProcess(0); // and do not do anything...
 		}*/
 		else if (IsCommand(lpszCmdParam, L"/STARTMIN", 9))
@@ -1015,7 +1010,7 @@ wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit)
 			}
 
 			IFileTypeRegistrar *registrar=0;
-			if (GetRegistrar(&registrar, true) == 0 && registrar)
+			if (GetRegistrar(&registrar) == 0 && registrar)
 			{
 				if (FAILED(registrar->InstallItem(p, buf, outname)))
 				{

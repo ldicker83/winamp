@@ -236,7 +236,7 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 									in_modules[lvi.lParam]=0;
 
 									IFileTypeRegistrar *registrar=0;
-									if (GetRegistrar(&registrar, true) == 0 && registrar)
+									if (GetRegistrar(&registrar) == 0 && registrar)
 									{
 										registrar->DeleteItem(buf);
 										if (registrar->DeleteItem(buf) != S_OK)
@@ -275,7 +275,7 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 								}
 
 								IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar, true) == 0 && registrar)
+								if (GetRegistrar(&registrar) == 0 && registrar)
 								{
 									if (registrar->DeleteItem(base) != S_OK)
 									{

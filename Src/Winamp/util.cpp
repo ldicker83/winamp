@@ -331,7 +331,7 @@ void readwrite_client_uid(int isWrite, wchar_t uid_str[64])
 	if (isWrite)
 	{
 		IFileTypeRegistrar *registrar=0;
-		if (GetRegistrar(&registrar, true) == 0 && registrar)
+		if (GetRegistrar(&registrar) == 0 && registrar)
 		{
 			registrar->WriteClientUIDKey(path, uid_str);
 			registrar->Release();
