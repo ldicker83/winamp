@@ -7,6 +7,7 @@
  **/
 #include "Main.h"
 #include "../nu/FilePath.h"
+#include "FileOperations.h"
 #include "resource.h"
 #include "Options.h"
 #include "dsp.h"
@@ -91,7 +92,6 @@ static void DSPUpdateSel( HWND hwndDlg, HWND listWindow, INT iItem )
 		fn[ 0 ] = 0;
 
 	EnableWindow( GetDlgItem( hwndDlg, IDC_DSPCONF ), libname && !!*libname );
-	EnableWindow( GetDlgItem( hwndDlg, IDC_UNINSTDSP ), libname && !!*libname || skip );
 	EnableWindow( GetDlgItem( hwndDlg, IDC_DSPMOD ), libname && !!*libname );
 	EnableWindow( GetDlgItem( hwndDlg, IDC_PLUGINLABEL ), libname && !!*libname );
 }
@@ -390,87 +390,9 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 				return FALSE;
 			}
 
-			case IDC_UNINSTDSP:
+			case IDC_OPENPLUGINDIR_DSP:
 			{
-				if ( g_safeMode ) return FALSE;
-
-				if ( IsWindowEnabled( GetDlgItem( hwndDlg, IDC_UNINSTDSP ) ) )
-				{
-					HWND listWindow = GetDlgItem( hwndDlg, IDC_DSPLIB );
-					int which = ListView_GetNextItem( listWindow, -1, LVIS_SELECTED );
-					wchar_t fn[ FILENAME_SIZE ] = { 0 };
-					ListView_GetItemTextW( listWindow, which, 1, fn, ARRAYSIZE( fn ) );
-
-					// copes with not-loaded plug-in dlls
-					if ( !lstrcmpW( fn, getStringW( IDS_NOT_LOADED, NULL, 0 ) ) )
-					{
-						ListView_GetItemTextW( listWindow, which, 0, fn, ARRAYSIZE( fn ) );
-					}
-
-					if ( fn[ 0 ] && LPMessageBox( hwndDlg, IDS_P_PLUGIN_UNINSTALL, IDS_P_PLUGIN_UNINSTALL_CONFIRM, MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
-					{
-						wchar_t b[ MAX_PATH ] = { 0 };
-						dsp_quit();
-						FilePath::Combine( b, DSPDIR, fn );
-
-						HINSTANCE hLib = LoadLibraryW( b );
-						if ( hLib )
-						{
-							int ret = DSP_PLUGIN_UNINSTALL_NOW;
-							int ( *pr )( HINSTANCE hDllInst, HWND hwndDlg, int param );
-							*(void **) &pr = (void *) GetProcAddress( hLib, "winampUninstallPlugin" );
-
-							if ( pr )
-								ret = pr( hLib, hwndDlg, 0 );
-
-							wchar_t buf[ MAX_PATH ] = { 0 };
-							GetModuleFileNameW( hLib, buf, MAX_PATH );
-							FreeLibrary( hLib );
-
-							if ( ret == DSP_PLUGIN_UNINSTALL_NOW )
-							{
-								IFileTypeRegistrar *registrar = 0;
-								if ( GetRegistrar( &registrar ) == 0 && registrar )
-								{
-									if ( registrar->DeleteItem( buf ) != S_OK )
-									{
-										_w_sW( "remove_genplug", buf );
-										_w_i( "show_prefs", 34 );
-									}
-									else
-										ListView_DeleteItem( listWindow, which );
-
-									registrar->Release();
-								}
-							}
-							else if ( ret == DSP_PLUGIN_UNINSTALL_REBOOT )
-							{
-								wchar_t buf[ 1024 ] = { 0 };
-								GetModuleFileNameW( hLib, buf, MAX_PATH );
-								_w_sW( "remove_genplug", buf );
-								_w_i( "show_prefs", 34 );
-								PostMessageW( hMainWindow, WM_USER, 0, IPC_RESTARTWINAMP );
-							}
-						}
-						else
-						{
-							IFileTypeRegistrar *registrar = 0;
-							if ( GetRegistrar( &registrar ) == 0 && registrar )
-							{
-								if ( registrar->DeleteItem( b ) != S_OK )
-								{
-									_w_sW( "remove_genplug", fn );
-									_w_i( "show_prefs", 34 );
-								}
-								else
-									ListView_DeleteItem( listWindow, which );
-
-								registrar->Release();
-							}
-						}
-					}
-				}
-			
+				OpenFolder( hwndDlg, DSPDIR );
 				return FALSE;
 			}
 

@@ -7,6 +7,7 @@
  **/
 #include "main.h"
 #include "../nu/FilePath.h"
+#include "FileOperations.h"
 #include "language.h"
 #include "../nu/AutoWide.h"
 #include "resource.h"
@@ -261,51 +262,6 @@ static BOOL CALLBACK renameSkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARA
 	return 0;
 }
 
-static void SkinDeleteSkin(HWND hwndDlg, LRESULT x)
-{
-	wchar_t skin[MAX_PATH] = {0};
-	int x2 = SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_GETCURSEL,0,0);
-	SendDlgItemMessageW(hwndDlg,IDC_SELBOX,LB_GETTEXT,(x!=-1?x:x2),(LPARAM)skin);
-
-	switch (SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_GETITEMDATA,(x!=-1?x:x2),0))
-	{
-		case SKIN_FILETYPE_ZIP: StringCchCatW(skin,MAX_PATH, L".zip"); break;
-		case SKIN_FILETYPE_WSZ: StringCchCatW(skin,MAX_PATH, L".wsz"); break;
-		case SKIN_FILETYPE_WAL: StringCchCatW(skin,MAX_PATH, L".wal"); break;
-		default: break;
-	}
-
-	if (skin[0] && _wcsicmp(skin,CLASSIC_NAME) && _wcsicmp(skin,MODERN_SKIN_NAME) &&
-				   _wcsicmp(skin,BENTO_SKIN_NAME) && _wcsicmp(skin,BIG_BENTO_SKIN_NAME))
-	{
-		wchar_t buf[2048] = {0};
-		StringCchPrintfW(buf, 2048, getStringW(IDS_P_SKINS_DELETESKIN_PROMPT,NULL,0),skin);
-
-		if (MessageBoxW(hwndDlg,buf,getStringW(IDS_P_SKINS_DELETESKIN,NULL,0),MB_YESNO|MB_ICONQUESTION) == IDYES)
-		{
-			FilePath::Combine(buf, SKINDIR, skin);
-			IFileTypeRegistrar *registrar=0;
-			if (GetRegistrar(&registrar) == 0 && registrar)
-			{
-				registrar->DeleteItem(buf);
-				registrar->CleanupDirectory(buf);
-				registrar->Release();
-			}
-
-			SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_DELETESTRING,(x!=-1?x:x2),0);
-
-			// check if it's the current skin and if so reset to 'classic' and refresh
-			if (((x == x2) && !lstrcmpiW(config_skin, skin)) || x == -1)
-			{
-				SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_SETCURSEL,0,0);
-				config_skin[0]=0;
-				SendMessageW(hMainWindow,WM_COMMAND,WINAMP_REFRESHSKIN,0);
-				_setreadme(hwndDlg);
-			}
-		}
-	}
-}
-
 static BOOL CALLBACK AddSkinToListBox(ENUMSKIN *pes, void *user)
 {
 	int index;
@@ -348,30 +304,24 @@ static void SkinRenameSkin(HWND hwndDlg, LRESULT x, int* timer_active)
 				default: break;
 			}
 
-			IFileTypeRegistrar *registrar=0;
-			if (GetRegistrar(&registrar) == 0 && registrar)
+			if (RenameItem(oldname,newname))
 			{
-				if (SUCCEEDED(registrar->RenameItem(oldname,newname, FALSE)))
-				{
-					SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_DELETESTRING,(x!=-1?x:x2),0);
-					SendDlgItemMessageW(hwndDlg,IDC_SELBOX,LB_INSERTSTRING,(x!=-1?x:x2),(LPARAM)rename_skin);
-					SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_SETITEMDATA,(x!=-1?x:x2), nType);
+				SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_DELETESTRING,(x!=-1?x:x2),0);
+				SendDlgItemMessageW(hwndDlg,IDC_SELBOX,LB_INSERTSTRING,(x!=-1?x:x2),(LPARAM)rename_skin);
+				SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_SETITEMDATA,(x!=-1?x:x2), nType);
 
-					// check if it's the current skin and if so reset to 'classic' and refresh
-					if (((x == x2) && !lstrcmpiW(config_skin, newname)) || x == -1)
-					{
-						SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_SETCURSEL,(x!=-1?x:x2),0);
-						KillTimer(hwndDlg,1);					
-						SetTimer(hwndDlg,1,250,NULL);
-						*timer_active=1;
-					}
-				}
-				else
+				// check if it's the current skin and if so reset to 'classic' and refresh
+				if (((x == x2) && !lstrcmpiW(config_skin, newname)) || x == -1)
 				{
-					LPMessageBox(hwndDlg, IDS_P_SKINS_RN_ERR, IDS_P_SKINS_RN_ERR_CAP, MB_OK);
+					SendDlgItemMessage(hwndDlg,IDC_SELBOX,LB_SETCURSEL,(x!=-1?x:x2),0);
+					KillTimer(hwndDlg,1);					
+					SetTimer(hwndDlg,1,250,NULL);
+					*timer_active=1;
 				}
-
-				registrar->Release();
+			}
+			else
+			{
+				LPMessageBox(hwndDlg, IDS_P_SKINS_RN_ERR, IDS_P_SKINS_RN_ERR_CAP, MB_OK);
 			}
 		}
 	}
@@ -382,10 +332,6 @@ static LRESULT WINAPI list_newWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPA
 	if(uMsg == WM_RBUTTONUP)
 	{
 		PostMessageW(GetParent(hwndDlg),WM_USER+0x123,0,0);
-	}
-	else if(uMsg == WM_KEYDOWN && wParam == VK_DELETE)
-	{
-		SkinDeleteSkin(GetParent(hwndDlg),-1);
 	}
 	return CallWindowProcW(list_oldWndProc,hwndDlg,uMsg,wParam,lParam);
 }
@@ -468,7 +414,6 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 								   _wcsicmp(config_skin,BENTO_SKIN_NAME) &&
 								   _wcsicmp(config_skin,BIG_BENTO_SKIN_NAME);
 			EnableWindow(GetDlgItem(hwndDlg,IDC_RENAME_SKIN),en);
-			EnableWindow(GetDlgItem(hwndDlg,IDC_DELETE_SKIN),en);
 
 			SendMessageW(hw,WM_SETREDRAW,TRUE,0);
 			CheckDlgButton(hwndDlg,IDC_RANDOM,config_randskin);
@@ -515,9 +460,9 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 						{
 							SkinRenameSkin(hwndDlg, x, &timer_active);
 						}
-						else if (sel == ID_PREFS_SKIN_DELETESKIN)
+						else if (sel == ID_PREFS_SKIN_OPENFOLDER)
 						{
-							SkinDeleteSkin(hwndDlg,x);
+							OpenFolder(hwndDlg, SKINDIR);
 						}
 					}
 				}
@@ -538,9 +483,9 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 					SkinRenameSkin(hwndDlg, -1, &timer_active);
 					return 0;
 				}
-				case IDC_DELETE_SKIN:
+				case IDC_OPEN_SKINDIR:
 				{
-					SkinDeleteSkin(hwndDlg,-1);
+					OpenFolder(hwndDlg, SKINDIR);
 					return 0;
 				}
 				case IDC_RANDOM:
@@ -570,12 +515,7 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							StringCchPrintfW(message,2048,getStringW(IDS_SKIN_DIR_MOVE_MESSAGE,NULL,0),orig,SKINDIR);
 							if(MessageBoxW(hwndDlg, message, getStringW(IDS_SKIN_DIR_MOVE,NULL,0),MB_YESNO|MB_ICONQUESTION)==IDYES)
 							{
-							IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar) == 0 && registrar)
-								{
-									registrar->MoveDirectoryContents(orig,SKINDIR);
-									registrar->Release();
-								}
+							MoveDirectoryContents(orig,SKINDIR);
 							}
 
 							SendMessageW(GetDlgItem(hwndDlg,IDC_SELBOX),LB_RESETCONTENT,0,0);
@@ -636,7 +576,6 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 									   _wcsicmp(config_skin,BENTO_SKIN_NAME) &&
 									   _wcsicmp(config_skin,BIG_BENTO_SKIN_NAME);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_RENAME_SKIN),en);
-				EnableWindow(GetDlgItem(hwndDlg,IDC_DELETE_SKIN),en);
 		        }
 		        if (_wcsicmp(oldbuf,config_skin)) 
 		        {

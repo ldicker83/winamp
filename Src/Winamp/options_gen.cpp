@@ -7,6 +7,7 @@
  **/
 #include "Main.h"
 #include "../nu/FilePath.h"
+#include "FileOperations.h"
 #include "resource.h"
 #include "Options.h"
 #include "gen.h"
@@ -127,12 +128,10 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (ListView_GetItem(p->hwndFrom, &lvi) && (pnmv->uNewState & LVIS_SELECTED))
 				{
 					EnableWindow(GetDlgItem(hwndDlg, IDC_GENCONF), (lvi.lParam != -2));
-					EnableWindow(GetDlgItem(hwndDlg, IDC_UNINST), 1);
 				}
 				else
 				{
 					EnableWindow(GetDlgItem(hwndDlg, IDC_GENCONF), 0);
-					EnableWindow(GetDlgItem(hwndDlg, IDC_UNINST), 0);
 				}
 			}
 			else if (p->code == NM_DBLCLK)
@@ -193,100 +192,8 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				return FALSE;
 
-			case IDC_UNINST:
-				{
-					if (IsWindowEnabled(GetDlgItem(hwndDlg, IDC_UNINST)))
-					{
-						HWND listWindow = GetDlgItem(hwndDlg, IDC_GENLIB);
-						int which_sel = ListView_GetSelectionMark(listWindow);
-						LVITEM lvi = {LVIF_PARAM, which_sel};
-						if (ListView_GetItem(listWindow, &lvi) &&
-							LPMessageBox(hwndDlg, IDS_P_PLUGIN_UNINSTALL,IDS_P_PLUGIN_UNINSTALL_CONFIRM, MB_YESNO | MB_ICONEXCLAMATION) == IDYES)
-						{
-							if (lvi.lParam >= 0 && lvi.lParam < (int)gen_plugins.size())
-							{
-								int ret = GEN_PLUGIN_UNINSTALL_REBOOT;
-								int (*pr)(HINSTANCE hDllInst, HWND hwndDlg, int param);
-
-								if (lvi.lParam != -2)
-								{
-									*(void**)&pr = (void*)GetProcAddress(gen_plugins[lvi.lParam]->hDllInstance, "winampUninstallPlugin");
-									if (pr) ret = pr(gen_plugins[lvi.lParam]->hDllInstance, hwndDlg, 0);
-								}
-
-								if (ret == GEN_PLUGIN_UNINSTALL_REBOOT)
-								{
-									wchar_t buf[MAX_PATH] = {0};
-									GetModuleFileNameW(gen_plugins[lvi.lParam]->hDllInstance, buf, MAX_PATH);
-									_w_sW("remove_genplug", buf);
-									_w_i("show_prefs", 35);
-									PostMessageW(hMainWindow, WM_USER, 0, IPC_RESTARTWINAMP);
-								}
-								// do dynamic unload if the plugin is able to support it (5.5+)
-								else if (ret == GEN_PLUGIN_UNINSTALL_NOW)
-								{
-									wchar_t buf[MAX_PATH] = {0};
-									GetModuleFileNameW(gen_plugins[lvi.lParam]->hDllInstance, buf, MAX_PATH);
-									gen_plugins[lvi.lParam]->quit();
-									FreeModule(gen_plugins[lvi.lParam]->hDllInstance);
-									gen_plugins[lvi.lParam]=0;
-
-									IFileTypeRegistrar *registrar=0;
-									if (GetRegistrar(&registrar) == 0 && registrar)
-									{
-										if (registrar->DeleteItem(buf) != S_OK)
-										{
-											_w_sW("remove_genplug", buf);
-											_w_i("show_prefs", 35);
-											PostMessageW(hMainWindow, WM_USER, 0, IPC_RESTARTWINAMP);
-										}
-										registrar->Release();
-									}
-
-									ListView_DeleteItem(listWindow, which_sel);
-								}
-							}
-							// will cope with not loaded plug-ins so we can still remove them, etc
-							else if (lvi.lParam == -2)
-							{
-								wchar_t buf[1024] = {0}, base[1024] = {0};
-								StringCchCopyW(base, 1024, PLUGINDIR);
-								FilePath::AddBackslash(base);
-
-								LVITEMW lvi = {LVIF_TEXT, which_sel};
-								lvi.pszText = buf;
-								lvi.cchTextMax = ARRAYSIZE(buf);
-								ListView_GetItemW(listWindow, &lvi);
-
-								wchar_t *p = wcschr(buf, L'.');
-								if (p && *p == L'.')
-								{
-									p += 4;
-									*p = 0;
-									FilePath::RemoveFileSpec(base);
-									FilePath::Append(base, buf);
-								}
-
-								IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar) == 0 && registrar)
-								{
-									if (registrar->DeleteItem(base) != S_OK)
-									{
-										_w_sW("remove_genplug", base);
-										_w_i("show_prefs", 35);
-										PostMessageW(hMainWindow, WM_USER, 0, IPC_RESTARTWINAMP);
-									}
-									else
-										ListView_DeleteItem(listWindow, which_sel);
-									registrar->Release();
-								}
-							}
-
-							// resets the focus to the listbox so it'll keep ui response working
-							SetFocus(GetDlgItem(hwndDlg, IDC_GENLIB));
-						}
-					}
-				}
+			case IDC_OPENPLUGINDIR_GEN:
+				OpenFolder(hwndDlg, PLUGINDIR);
 				return FALSE;
 
 		}

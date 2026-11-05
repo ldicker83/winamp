@@ -636,23 +636,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 		}
 	}
 
-	{
-		// remove general purpose plug-in (if set)
-		wchar_t buf[ 1024 ] = { 0 };
-		_r_sW( "remove_genplug", buf, 1024 );
-		if ( buf[ 0 ] )
-		{
-			IFileTypeRegistrar *registrar = 0;
-			if ( GetRegistrar( &registrar ) == 0 && registrar )
-			{
-				registrar->DeleteItem( buf );
-				registrar->Release();
-			}
-
-			_w_s( "remove_genplug", 0 );
-		}
-	}
-
 	fft_init();
 	SpectralAnalyzer_Create();
 	stats_init();

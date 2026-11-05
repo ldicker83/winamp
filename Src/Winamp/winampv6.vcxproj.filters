@@ -121,6 +121,9 @@
     <ClCompile Include="ExplorerFindFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileOperations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ExtendedInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -517,6 +520,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExplorerFindFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtendedReader.h">

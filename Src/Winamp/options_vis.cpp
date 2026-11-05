@@ -7,6 +7,7 @@
  **/
 #include "Main.h"
 #include "../nu/FilePath.h"
+#include "FileOperations.h"
 #include "resource.h"
 #include "Options.h"
 #include "vis.h"
@@ -76,7 +77,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 		{IDC_VISCONF,IDS_P_VIS_CONF},
 		{IDC_VISSTOP,IDS_P_VIS_STOP},
 		{IDC_VISTEST,IDS_P_VIS_START},
-		{IDC_UNINSTVIS,IDS_P_VIS_UNINST},
+		{IDC_OPENPLUGINDIR_VIS,IDS_P_VIS_OPENDIR},
 	};
 
 	DO_HELP();
@@ -185,7 +186,6 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISTEST),enable);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISSTOP),enable);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISCONF),enable);
-				EnableWindow(GetDlgItem(hwndDlg,IDC_UNINSTVIS),enable);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISMOD),enable);
 			}
 
@@ -228,7 +228,6 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISTEST),enable);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISSTOP),enable);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISCONF),enable);
-				EnableWindow(GetDlgItem(hwndDlg,IDC_UNINSTVIS),enable);
 				EnableWindow(GetDlgItem(hwndDlg,IDC_VISMOD),enable);
 			}
 			else if (p->code == NM_DBLCLK || p->code == NM_CLICK)
@@ -364,56 +363,8 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				}
 				return FALSE;
 
-			case IDC_UNINSTVIS:
-				vis_stop();
-				{
-					if (IsWindowEnabled(GetDlgItem(hwndDlg, IDC_UNINSTVIS)))
-					{
-						HWND listWindow = GetDlgItem(hwndDlg, IDC_VISLIB);
-						int which = ListView_GetNextItem(listWindow, -1, LVIS_SELECTED);
-						wchar_t b[MAX_PATH] = {0}, fn[FILENAME_SIZE] = {0};
-						ListView_GetItemTextW(listWindow, which, 1, fn, ARRAYSIZE(fn));
-						FilePath::Combine(b, VISDIR, fn);
-
-						HINSTANCE hLib = LoadLibraryW(b);
-						if (hLib)
-						{
-							wchar_t buf[MAX_PATH] = {0};
-							GetModuleFileNameW(hLib, buf, MAX_PATH);
-							int ret=0;
-
-							int (*pr)
-								(HINSTANCE hDllInst, HWND hwndDlg, int param);
-
-							*(void**)&pr = (void*)GetProcAddress(hLib,"winampUninstallPlugin");
-
-							if (pr)
-								ret=pr(hLib,hwndDlg,0);
-
-							FreeLibrary(hLib);
-
-							if (!ret)
-							{
-								IFileTypeRegistrar *registrar=0;
-								if (GetRegistrar(&registrar) == 0 && registrar)
-								{
-									if (registrar->DeleteItem(buf) != S_OK)
-									{
-										_w_sW("remove_genplug", buf);
-										_w_i("show_prefs", 33);
-										PostMessageW(hMainWindow, WM_USER, 0, IPC_RESTARTWINAMP);
-									}
-									else
-										ListView_DeleteItem(listWindow, which);
-
-									registrar->Release();
-								}
-
-								SendDlgItemMessageA(hwndDlg,IDC_VISMOD,CB_RESETCONTENT,0,0);
-							}
-						}
-					}
-				}
+			case IDC_OPENPLUGINDIR_VIS:
+				OpenFolder(hwndDlg, VISDIR);
 				return FALSE;
 
 		}
