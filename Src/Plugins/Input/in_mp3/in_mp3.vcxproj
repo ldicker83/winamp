@@ -295,9 +295,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ProjectReference Include="..\..\..\nsutil\nsutil.vcxproj">
       <Project>{dabe6307-f8dd-416d-9dac-673e2decb73f}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\nu\nu.vcxproj">
-      <Project>{f1f5cd60-0d5b-4cea-9eeb-2f87ff9aa915}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Wasabi\Wasabi.vcxproj">
       <Project>{3e0bfa8a-b86a-42e9-a33f-ec294f823f7f}</Project>
     </ProjectReference>
