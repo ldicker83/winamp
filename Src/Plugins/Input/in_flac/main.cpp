@@ -28,14 +28,12 @@
 #include "../nu/Autochar.h"
 #include <shlwapi.h>
 #include "resource.h"
-#include "AlbumArt.h"
 #include "RawReader.h"
 #include <strsafe.h>
 #include <filesystem>
 
 api_config *AGAVE_API_CONFIG = 0;
 api_memmgr *WASABI_API_MEMMGR=0;
-AlbumArtFactory albumArtFactory;
 static RawMediaReaderService raw_media_reader_service;
 static SingletonServiceFactory<svc_raw_media_reader, RawMediaReaderService> raw_factory;
 // wasabi based services for localisation support
@@ -56,7 +54,6 @@ int Init()
 		return IN_INIT_FAILURE;
 
 	killswitch = CreateEvent(0, TRUE, FALSE, 0);
-	plugin.service->service_register(&albumArtFactory);
 	raw_factory.Register(plugin.service, &raw_media_reader_service);
 
 	waServiceFactory *sf = (waServiceFactory *)plugin.service->service_getServiceByGuid(AgaveConfigGUID);
@@ -94,7 +91,6 @@ void Quit()
 	sf = (waServiceFactory *)plugin.service->service_getServiceByGuid(memMgrApiServiceGuid);
 	if (sf)	sf->releaseInterface(WASABI_API_MEMMGR);
 
-	plugin.service->service_deregister(&albumArtFactory);
 	raw_factory.Deregister(plugin.service);
 }
 
