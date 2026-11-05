@@ -390,85 +390,61 @@ void PlaylistManager::Reverse( ifc_playlist *playlist )
 
 void PlaylistManager::LoadDirectory( const wchar_t *directory, ifc_playlistloadercallback *callback, ifc_playlistdirectorycallback *dirCallback )
 {
-	WIN32_FIND_DATAW found = { 0 };
 	wchar_t filespec[ MAX_PATH ] = { 0 };
-	FilePath::Combine( filespec, directory, L"*.*" );
 
-	HANDLE i = FindFirstFileW( filespec, &found );
-	if ( i != INVALID_HANDLE_VALUE )
+	for ( const auto &found : FilePath::List( directory ) )
 	{
-		do
+		const std::wstring name = found.path().filename().native();
+
+		// if it's another folder, then we might want to recurse into it
+		if ( FilePath::IsDirectory( found ) )
 		{
-			// if it's another folder, then we might want to recurse into it
-			if ( ( found.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) // if it's a directory
-				 && wcscmp( found.cFileName, L"." ) && wcscmp( found.cFileName, L".." ) // but not . or ..
-				 && ( !dirCallback || dirCallback->ShouldRecurse( found.cFileName ) ) ) // and we're allowed to recurse
+			if ( ( !dirCallback || dirCallback->ShouldRecurse( name.c_str() ) ) // if we're allowed to recurse
+				 && FilePath::Combine( filespec, directory, name.c_str() ) )
 			{
-				if ( FilePath::Combine( filespec, directory, found.cFileName ) )
+				LoadDirectory( filespec, callback, dirCallback );
+			}
+			continue;
+		}
+
+		const wchar_t *ext = FilePath::FindExtension( name.c_str() );
+		if ( !ext[ 0 ] )
+			continue;
+
+		if ( !_wcsicmp( ext, L".lnk" ) )
+		{
+			wchar_t thisf[ MAX_PATH ] = { 0 };
+			wchar_t temp2[ MAX_PATH ] = { 0 };
+			FilePath::Combine( temp2, directory, name.c_str() );
+			if ( ResolveShortCut( NULL, temp2, thisf ) && GetLongPathNameW( thisf, temp2, MAX_PATH ) && lstrcmpiW( temp2, directory ) )
+			{
+				if ( IsUrl( temp2 ) && ( !dirCallback || dirCallback->ShouldLoad( temp2 ) ) )
 				{
-					LoadDirectory( filespec, callback, dirCallback );
+					if ( callback->OnFile( temp2, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )
+						break;
+				}
+				else if ( FilePath::IsDirectory( temp2 ) )
+				{
+					// recursively load a shortcut w/o fear of infinite recursion
+					NoRecurseCallback noRecurse( dirCallback );
+					LoadDirectory( temp2, callback, &noRecurse );
+				}
+				else if ( FilePath::Exists( temp2 ) && ( !dirCallback || dirCallback->ShouldLoad( temp2 ) ) )
+				{
+					if ( callback->OnFile( temp2, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )
+						break;
 				}
 			}
-
-			if ( !( found.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
+		}
+		else // !shortcut
+		{
+			if ( FilePath::Combine( filespec, directory, name.c_str() ) &&
+				 ( !dirCallback || dirCallback->ShouldLoad( filespec ) ) )
 			{
-				const wchar_t *ext = FilePath::FindExtension( found.cFileName );
-				if ( ext[ 0 ] )
-				{
-					if ( !_wcsicmp( ext, L".lnk" ) )
-					{
-						wchar_t thisf[ MAX_PATH ] = { 0 };
-						wchar_t temp2[ MAX_PATH ] = { 0 };
-						FilePath::Combine( temp2, directory, found.cFileName );
-						if ( ResolveShortCut( NULL, temp2, thisf ) && GetLongPathNameW( thisf, temp2, MAX_PATH ) && lstrcmpiW( temp2, directory ) )
-						{
-							WIN32_FIND_DATAW d2 = { 0 };
-							if ( IsUrl( temp2 ) && ( !dirCallback || dirCallback->ShouldLoad( temp2 ) ) )
-							{
-								if ( callback->OnFile( temp2, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )
-									break;
-							}
-							else
-							{
-								HANDLE h2 = FindFirstFileW( temp2, &d2 );
-								if ( h2 != INVALID_HANDLE_VALUE )
-								{
-									if ( !( d2.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
-									{
-										if ( !dirCallback || dirCallback->ShouldLoad( temp2 ) )
-										{
-											if ( callback->OnFile( temp2, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )
-											{
-												FindClose( h2 );
-												break;
-											}
-										}
-									}
-									else
-									{
-										// recursively load a shortcut w/o fear of infinite recursion
-										NoRecurseCallback noRecurse( dirCallback );
-										LoadDirectory( temp2, callback, &noRecurse );
-									}
-									FindClose( h2 );
-								}
-							}
-						}
-					}
-					else // !shortcut
-					{
-
-						if ( FilePath::Combine( filespec, directory, found.cFileName ) &&
-							 ( !dirCallback || dirCallback->ShouldLoad( filespec ) ) )
-						{
-							if ( callback->OnFile( filespec, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )
-								break;
-						}
-					}
-				}
+				if ( callback->OnFile( filespec, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )
+					break;
 			}
-		} while ( FindNextFileW( i, &found ) );
-		FindClose( i );
+		}
 	}
 }
 

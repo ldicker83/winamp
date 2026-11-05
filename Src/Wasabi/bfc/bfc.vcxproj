@@ -200,8 +200,6 @@
     <ClCompile Include="assert.cpp" />
     <ClCompile Include="critsec.cpp" />
     <ClCompile Include="file\filename.cpp" />
-    <ClCompile Include="file\readdir.cpp" />
-    <ClCompile Include="file\recursedir.cpp" />
     <ClCompile Include="freelist.cpp" />
     <ClCompile Include="loadlib.cpp" />
     <ClCompile Include="memblock.cpp" />
@@ -235,8 +233,6 @@
     <ClInclude Include="critsec.h" />
     <ClInclude Include="dispatch.h" />
     <ClInclude Include="file\filename.h" />
-    <ClInclude Include="file\readdir.h" />
-    <ClInclude Include="file\recursedir.h" />
     <ClInclude Include="file\tmpnamestr.h" />
     <ClInclude Include="freelist.h" />
     <ClInclude Include="loadlib.h" />

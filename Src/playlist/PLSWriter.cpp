@@ -1,36 +1,43 @@
 #include "PLSWriter.h"
 #include "../nu/AutoChar.h"
+#include <filesystem>
 
-PLSWriter::PLSWriter() : fp(0), numEntries(0)
+// a title or filename that can't be converted comes through as null
+static const char *Text(const char *text)
+{
+	return text ? text : "(null)";
+}
+
+PLSWriter::PLSWriter() : numEntries(0)
 {
 }
 
 int PLSWriter::Open(const wchar_t *filename)
 {
-	fp = _wfopen(filename, L"wt");
-	if (!fp) 
+	fp.open(std::filesystem::path(filename), std::ios::binary);
+	if (!fp.is_open())
 		return 0;
-  
-	fprintf(fp, "[playlist]\r\n");
+
+	fp << "[playlist]\r\n";
 
 	return 1;
 }
 
 void PLSWriter::Write(const wchar_t *filename)
 {
-	fwprintf(fp, L"File%d=%s\r\n", (int)++numEntries, filename);
+	fp << "File" << ++numEntries << "=" << Text(AutoChar(filename)) << "\r\n";
 }
 
 void PLSWriter::Write(const wchar_t *filename, const wchar_t *title, int length)
 {
 	Write(filename);
-		fwprintf(fp, L"Title%d=%s\r\n", (int)numEntries, title);
-				fprintf(fp, "Length%d=%d\r\n", (int)numEntries, length);
+	fp << "Title" << numEntries << "=" << Text(AutoChar(title)) << "\r\n";
+	fp << "Length" << numEntries << "=" << length << "\r\n";
 }
 
 void PLSWriter::Close()
 {
-	fprintf(fp, "NumberOfEntries=%d\r\n", (int)numEntries);
-	fprintf(fp, "Version=2\r\n");
-	fclose(fp);
+	fp << "NumberOfEntries=" << numEntries << "\r\n";
+	fp << "Version=2\r\n";
+	fp.close();
 }

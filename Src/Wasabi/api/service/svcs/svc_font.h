@@ -2,7 +2,6 @@
 #define _SVC_FONT_H
 
 #include <bfc/dispatch.h>
-#include <bfc/std_file.h>
 #include <stdio.h>
 #include <api/service/services.h>
 //#include <api/service/servicei.h>

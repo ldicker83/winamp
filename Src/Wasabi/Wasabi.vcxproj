@@ -199,7 +199,6 @@
     <ClCompile Include="api\service\svc_enum.cpp" />
     <ClCompile Include="api\service\waservicefactoryx.cpp" />
     <ClCompile Include="api\syscb\callbacks\syscbx.cpp" />
-    <ClCompile Include="bfc\std_file.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api.h" />
