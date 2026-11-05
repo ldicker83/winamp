@@ -38,7 +38,6 @@ genHotkeysAddStructLocalised WADefCommands[] = {
 	{IDS_UI__TOGGLE_PLAYLIST_WINSHADE,{0, 0, WM_COMMAND, 40266, 0, "ghkdc pl ws"}},
 	{IDS_UI__TOGGLE_DOUBLESIZE,{0, 0, WM_COMMAND, 40165, 0, "ghkdc ds"}},
 	{IDS_UI__TOGGLE_MAIN_WINDOW,{0, 0, WM_COMMAND, 40258, 0, "ghkdc t main"}},
-	// removed due to it not being in current winamp builds now {IDS_UI__TOGGLE_MINIBROWSER,{0, 0, WM_COMMAND, 40298, 0, "ghkdc t mb"}},
 	{IDS_VIS__PREFERENCES,{0, HKF_BRING_TO_FRONT, WM_COMMAND, 40191, 0, "ghkdc vis prefs"}},
 	{IDS_VIS_TOGGLE_VIS_ON_OFF,{0, 0, WM_COMMAND, 40192, 0, "ghkdc t vis"}},
 	// added in 1.91 based on user feedback (ID_VIS_* options) and also from finding the correct menu id to use

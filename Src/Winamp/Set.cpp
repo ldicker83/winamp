@@ -129,7 +129,6 @@ static void doMyDirtyShitholeDockingShit(HWND myWnd, RECT newr, int sedge)  // -
 				dockwnd = hPLWindow;
 				vis = config_pe_open;
 			}
-//else if (x == 3) { dockwnd=hMBWindow; vis=0; } //config_mb_open; }
 			else
 			{
 				if ( !p )
@@ -250,7 +249,6 @@ static void doScreenDockMoveSubWindows(HWND myWnd, RECT newr, int whichedge)
 			vis = config_pe_open;
 			EstPLWindowRect( &newrect );
 		}
-//else if (x == 3) { dockwnd=hMBWindow; vis=0;/*config_mb_open; */ EstMBWindowRect(&newrect); }
 		else
 		{
 			if ( !p )
@@ -371,7 +369,6 @@ static void doScreenDock()
 				vis = config_pe_open;
 				EstPLWindowRect( &newrect );
 			}
-//else if (x == 3) { dockwnd=hMBWindow; vis=0; /*config_mb_open; */ EstMBWindowRect(&newrect); }
 			else
 			{
 				if ( !p )
@@ -439,7 +436,6 @@ static void doScreenDock()
 					
 					EstPLWindowRect( &oldrect );
 				}
-//				else if (x == 3) { if (!whichedge) config_mb_wy = newrect.top; else config_mb_wx = newrect.left; EstMBWindowRect(&oldrect); }
 				else
 				{
 					int w = p->r.right - p->r.left;
@@ -969,12 +965,6 @@ void set_aot(int dodockingstuff)
 			hwdp=DeferWindowPos(hwdp,hPLWindow, 0, r.left, r.top, r.right-r.left, r.bottom-r.top, SWP_NOACTIVATE|SWP_NOZORDER);
 			do_pl_inv=1;
 		}
-
-/*		if (hMBWindow && !GetParent(hMBWindow))
-		{
-			EstMBWindowRect(&r);
-			hwdp=DeferWindowPos(hwdp,hMBWindow, 0, r.left, r.top, r.right-r.left, r.bottom-r.top, SWP_DRAWFRAME|SWP_NOACTIVATE|SWP_NOZORDER);
-		}*/
 
 		// traverse the embed windows
 		EnterCriticalSection(&embedcs);

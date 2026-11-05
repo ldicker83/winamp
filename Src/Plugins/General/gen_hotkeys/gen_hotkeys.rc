@@ -162,7 +162,6 @@ BEGIN
     IDS_UI__TOGGLE_PLAYLIST_WINSHADE "UI: Toggle playlist windowshade"
     IDS_UI__TOGGLE_DOUBLESIZE "UI: Toggle doublesize"
     IDS_UI__TOGGLE_MAIN_WINDOW "UI: Toggle main window"
-    IDS_UI__TOGGLE_MINIBROWSER "UI: Toggle main minibrowser"
     IDS_VIS__PREFERENCES    "Visualization: Preferences"
 END
 

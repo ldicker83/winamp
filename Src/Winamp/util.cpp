@@ -165,7 +165,6 @@ void plSplineGetPoint(pl_Spline *s, float frame, float *out)
 //	if (hwnd == hMainWindow) h = hAccel[0];
 //	else if (hwnd == hEQWindow) h = hAccel[1];
 //	else if (hwnd == hPLWindow) h = hAccel[2];
-//	//	else if (hwnd==hMBWindow) h=hAccel[3];
 //	else
 //	{
 //		return 0;

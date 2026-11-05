@@ -538,7 +538,6 @@ typedef struct {
 */
   #define IPC_GETWND_EQ 0 // use one of these for the param
   #define IPC_GETWND_PE 1
-  #define IPC_GETWND_MB 2
   #define IPC_GETWND_VIDEO 3
 #define IPC_ISWNDVISIBLE 261 // same param as IPC_GETWND
 
@@ -614,14 +613,6 @@ typedef struct {
 /* int (*httpRetrieveFileW)(HWND hwnd, char *url, wchar_t *file, wchar_t *dlgtitle); */
 
 
-#define IPC_MBOPEN 241
-/* (requires Winamp 2.05+)
-** SendMessageW(hwnd_winamp,WM_WA_IPC,0,IPC_MBOPEN);
-** SendMessageW(hwnd_winamp,WM_WA_IPC,(WPARAM)url,IPC_MBOPEN);
-** IPC_MBOPEN will open a new URL in the minibrowser. if url is NULL, it will open the Minibrowser window.
-*/
-
-
 #define IPC_CHANGECURRENTFILE 245
 /* (requires Winamp 2.05+)
 ** SendMessageW(hwnd_winamp,WM_WA_IPC,(WPARAM)file,IPC_CHANGECURRENTFILE);
@@ -633,32 +624,6 @@ typedef struct {
 /* (requires Winamp 5.3+)
 ** SendMessageW(hwnd_winamp,WM_WA_IPC,(WPARAM)file,IPC_CHANGECURRENTFILEW);
 ** IPC_CHANGECURRENTFILEW will set the current playlist item.
-*/
-
-
-#define IPC_GETMBURL 246
-/* (requires Winamp 2.2+)
-** char buffer[4096]; // Urls can be VERY long
-** SendMessageW(hwnd_winamp,WM_WA_IPC,(WPARAM)buffer,IPC_GETMBURL);
-** IPC_GETMBURL will retrieve the current Minibrowser URL into buffer.
-** buffer must be at least 4096 bytes long.
-*/
-
-
-#define IPC_MBBLOCK 248
-/* (requires Winamp 2.4+)
-** SendMessageW(hwnd_winamp,WM_WA_IPC,value,IPC_MBBLOCK);
-**
-** IPC_MBBLOCK will block the Minibrowser from updates if value is set to 1
-*/
-
-
-#define IPC_MBOPENREAL 249
-/* (requires Winamp 2.4+)
-** SendMessageW(hwnd_winamp,WM_WA_IPC,(WPARAM)url,IPC_MBOPENREAL);
-**
-** IPC_MBOPENREAL works the same as IPC_MBOPEN except that it will works even if 
-** IPC_MBBLOCK has been set to 1
 */
 
 
@@ -1923,7 +1888,6 @@ class ITrackSelector
 // wParam = 
 #define IPC_CB_WND_EQ 0 // use one of these for the param
 #define IPC_CB_WND_PE 1
-#define IPC_CB_WND_MB 2
 #define IPC_CB_WND_VIDEO 3
 #define IPC_CB_WND_MAIN 4
 
@@ -2089,7 +2053,7 @@ typedef struct {
   int x;
   int y;
   int align;
-} windowCommand; // send this as param to an IPC_PLCMD, IPC_MBCMD, IPC_VIDCMD
+} windowCommand; // send this as param to an IPC_PLCMD, IPC_VIDCMD
 
 
 #define IPC_CB_ONTOGGLEAOT 618 
@@ -2492,14 +2456,6 @@ typedef struct {
 #define PLCMD_MISC 3
 #define PLCMD_LIST 4
 
-//#define IPC_MBCMD  1001 
-
-#define MBCMD_BACK    0
-#define MBCMD_FORWARD 1
-#define MBCMD_STOP    2
-#define MBCMD_RELOAD  3
-#define MBCMD_MISC    4
-
 #define IPC_VIDCMD 1002 
 
 #define VIDCMD_FULLSCREEN 0
@@ -2509,12 +2465,6 @@ typedef struct {
 #define VIDPOPUP_MISC     4
 #define VIDCMD_EXIT_FS    5
 
-//#define IPC_MBURL       1003 //sets the URL
-//#define IPC_MBGETCURURL 1004 //copies the current URL into wParam (have a 4096 buffer ready)
-//#define IPC_MBGETDESC   1005 //copies the current URL description into wParam (have a 4096 buffer ready)
-//#define IPC_MBCHECKLOCFILE 1006 //checks that the link file is up to date (otherwise updates it). wParam=parent HWND
-//#define IPC_MBREFRESH   1007 //refreshes the "now playing" view in the library
-//#define IPC_MBGETDEFURL 1008 //copies the default URL into wParam (have a 4096 buffer ready)
 
 #define IPC_STATS_LIBRARY_ITEMCNT 1300 // updates library count status
 

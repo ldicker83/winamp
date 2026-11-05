@@ -248,20 +248,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 			g_skinloadedmanually = 0;
 		}
 		if (config_pe_open) InvalidateRect(hPLWindow, NULL, FALSE);
-#if 0
-		if (config_mb_open)
-		{
-			RECT r;
-			r.left = 0;r.top = 0;r.right = 11;r.bottom = config_mb_height;
-			InvalidateRect(hMBWindow, &r, FALSE);
-			r.left = 11;r.top = 0;r.right = config_mb_width;r.bottom = 20;
-			InvalidateRect(hMBWindow, &r, FALSE);
-			r.left = config_mb_width - 8;r.top = 20;r.right = config_mb_width;r.bottom = config_mb_height;
-			InvalidateRect(hMBWindow, &r, FALSE);
-			r.left = 11;r.top = config_mb_height - 38;r.right = config_mb_width - 8;r.bottom = config_mb_height;
-			InvalidateRect(hMBWindow, &r, FALSE);
-		}
-#endif
 		if (config_eq_open) InvalidateRect(hEQWindow, NULL, FALSE);
 		// plugin wnds get the WM_DISPLAYCHANGE which is all they need
 		return 1;
@@ -356,7 +342,6 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 					dockwnd = hPLWindow;
 					vis = config_pe_open;
 				}
-//else if (x == 3) { /*dockwnd = hMBWindow; vis = 0;*/ } // config_mb_open; }
 				else
 				{
 					if ( !p )

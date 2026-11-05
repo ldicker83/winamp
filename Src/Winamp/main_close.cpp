@@ -69,7 +69,7 @@ void Main_OnEndSession(HWND hwnd, BOOL fEnding)
 
 		if (!hwnd && systray_intray) systray_restore();
 
-		hEQWindow=hPLWindow=/*hMBWindow=*/0;	
+		hEQWindow=hPLWindow=0;	
 		hVisWindow=0;
 		hPLVisWindow=0;	
 

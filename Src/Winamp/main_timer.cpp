@@ -52,8 +52,6 @@ LRESULT Main_OnTimer(HWND hwnd, UINT id)
 		if (playing) stats.IncrementStat(Stats::TIME_PLAYING);
 		if (!config_minimized) stats.IncrementStat(Stats::TIME_VISIBLE);
 		if (!config_minimized && playing) stats.IncrementStat(Stats::TIME_VISIBLE_PLAYING);
-		//if (config_mb_open && !config_minimized) stats_timemb++;
-		//if (config_mb_open && !config_minimized && playing) stats_timembplaying++;
 	}
 	// removing the playing only check on this so rating menu updates will appear even when stopped
 	if ((id == UPDATE_DISPLAY_TIMER) || (id == UPDATE_DISPLAY_TIMER + 2) || (id == UPDATE_DISPLAY_TIMER + 4))

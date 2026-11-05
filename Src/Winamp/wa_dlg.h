@@ -25,7 +25,6 @@ extern "C" {
 #endif
 /*
     1) gen.bmp has a generic window frame for plugins to use.
-       its format is similar to the minibrowser's.
        In addition gen.bmp includes a font for the titlebar, in both
        highlight and no-highlight modes. The font is variable width,
        and it uses the first color before the letter A as the delimiter.

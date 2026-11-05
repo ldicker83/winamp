@@ -113,7 +113,6 @@ CONFIG_EXT int config_dotitlenum DEF_VAL(1);
 CONFIG_EXT int config_dotasknum DEF_VAL(1);
 CONFIG_EXT char config_bifont DEF_VAL(0); // bitmapped font (off by default)
 CONFIG_EXT char config_bifont_alt DEF_VAL(0); // non-bitmapped font alternative option (off by default)
-CONFIG_EXT char config_browserbrand[16] DEF_VAL("");
 
 CONFIG_EXT int config_wav_do_header DEF_VAL(1);
 CONFIG_EXT int config_wav_convert DEF_VAL(0);

@@ -669,29 +669,6 @@ s4:
 //s6:
 //		;
 
-#if 0
-		{
-			char str[1024] = {0};
-			FilePath::Combine(fn, skin_directory, "mb.ini");
-			GetPrivateProfileString("Winamp", "MBOpen", "", str, sizeof(str), fn);
-			str[1023] = 0;
-			if (str[0])
-			{
-				if (hMBWindow)
-				{
-					if (g_skinloadedmanually) SendMessageW(hMainWindow, WM_USER, (WPARAM)0, IPC_MBOPEN);
-					SendMessageW(hMainWindow, WM_USER, (WPARAM)str, IPC_MBOPEN);
-				}
-				else
-				{
-					extern char page_nav[1024];
-					if (g_skinloadedmanually) config_mb_open = 1;
-					lstrcpy(page_nav, str);
-				}
-			}
-		}
-#endif
-
 		FilePath::Combine(fn, skin_directory, L"pledit.txt");
 
 		Skin_PLColors[0] = hexGetPrivateProfileInt("Text", "Normal",     Skin_PLColors[0], fn);

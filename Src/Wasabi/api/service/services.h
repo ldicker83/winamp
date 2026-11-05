@@ -40,7 +40,6 @@ namespace WaSvc
         METADATA                = MK4CC( 'm', 't', 'd', 't' ),      // play item meta data
         METATAG                 = MK4CC( 'm', 't', 't', 'g' ),      // metadata tagging of play items
         EVALUATOR               = MK4CC( 'e', 'v', 'a', 'l' ),      // evaluate a string
-        MINIBROWSER             = MK2CC( 'm', 'b' ),                // minibrowser
         TOOLTIPSRENDERER        = MK4CC( 't', 't', 'i', 'p' ),      // tooltips renderer
         XUIOBJECT               = MK4CC( 'x', 'u', 'i', 'o' ),      // xml gui objects
         STRINGCONVERTER         = MK4CC( 'u', 't', 'f', '8' ),      // unicode string conversion
