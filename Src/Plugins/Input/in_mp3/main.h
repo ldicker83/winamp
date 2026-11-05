@@ -26,7 +26,6 @@ extern int config_fastvis;
 extern unsigned char config_miscopts;
 extern unsigned char config_downmix, config_downsample;
 extern int config_http_buffersize, config_http_prebuffer, config_http_prebuffer_underrun;
-extern unsigned char allow_sctitles,sctitle_format;
 extern char config_http_save_dir[MAX_PATH];
 
 extern wchar_t lastfn[8192];	// currently playing file (used for getting info on the current file)
@@ -66,46 +65,12 @@ static __inline long float_to_long(double t)
 #define float_to_long(x) ((long)( x ))
 #endif
 
-extern void processMetaDataC(char *data, int len, int msgId );
-
-enum
-{
-	UVOX_METADATA_STYLE_AOLRADIO = 0,
-	UVOX_METADATA_STYLE_SHOUTCAST = 1,
-	UVOX_METADATA_STYLE_SHOUTCAST2 = 2,
-	UVOX_METADATA_STYLE_SHOUTCAST2_ARTWORK = 3,
-	UVOX_METADATA_STYLE_SHOUTCAST2_ARTWORK_PLAYING = 4,
-};
-
-typedef struct {
-	void *Next;
-	int style;
-	long timer;
-	char title[16384];
-	int part;
-	int total_parts;
-	int part_len;
-	int type;
-	} TitleType;
-#define TITLELISTTYPE TitleType
-
-extern TITLELISTTYPE *TitleLinkedList;
-extern TITLELISTTYPE  TitleListTerminator;
-
-extern void initTitleList(void);
-extern TITLELISTTYPE *newTitleListEntry(void);
-extern void removeTitleListEntry(TITLELISTTYPE *Entry);
-extern void clearTitleList(void);
-
-char *GetUltravoxUserAgent();
-char *GetUserAgent();
 void w9x_lstrcpynW(wchar_t *dest, const wchar_t *src, int maxLen);
 
 // maximum acceptable deviance between LAME header bytesize and real filesize (minus id3 tag)
 // has to be large enough to accomodate unknown tags (APE, lyrics3) 
 const int MAX_ACCEPTABLE_DEVIANCE = 16384; 
 void get_extended_info(const wchar_t *fn, int *len);
-#define UVOX_3901_LEN 32768
 
 void ConvertTryUTF8(const char *in, wchar_t *out, size_t outlen);
 
