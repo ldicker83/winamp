@@ -7,6 +7,7 @@
  **/
 
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "language.h"
 #define APSTUDIO_INVOKED
 #include "resource.h"
@@ -104,30 +105,22 @@ HMODULE FindD3DX9()
 		return d3dx_lib;
 
 	HMODULE d3dx9 = NULL;
-	HANDLE hFind;
-	WIN32_FIND_DATAW pfiledata;
 	wchar_t systemDir[MAX_PATH] = {0};
 	wchar_t libPath[MAX_PATH] = {0};
 	GetSystemDirectoryW(systemDir, MAX_PATH);
-	StringCchCatW(systemDir, MAX_PATH,L"\\d3dx9_");
 	StringCchCopyW(libPath, MAX_PATH, systemDir);
-	StringCchCatW(systemDir, MAX_PATH,L"*.dll");
+	StringCchCatW(libPath, MAX_PATH,L"\\d3dx9_");
 
-	hFind = FindFirstFileW(systemDir,&pfiledata);
-	if (hFind != INVALID_HANDLE_VALUE)
 	{
-		BOOL more = true;
 		int iHighVersion = 0;
-		while (more)
+		for (const auto &entry : FilePath::List(systemDir, L"d3dx9_*.dll"))
 		{
-			wchar_t *start = wcsrchr(pfiledata.cFileName,L'_') + 1;
-			int version = _wtoi(start);
+			const std::wstring name = entry.path().filename().native();
+			int version = _wtoi(name.c_str() + name.rfind(L'_') + 1);
 			if (version <= 42 && version > iHighVersion)
 				iHighVersion = version;
-			more = FindNextFileW(hFind,&pfiledata);
 		}
 
-		FindClose(hFind);
 		if (iHighVersion >= 24)
 		{
 			wchar_t finalD3DX9LibPath[MAX_PATH] = {0};
@@ -966,7 +959,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 					if ( p->title )
 					{
 						wa::strings::wa_string l_ext( p->filename );
-						PlayList_append_withinfo( AutoWideFn( p->filename ), AutoWide( p->title ), PathFindExtensionW( l_ext.GetW().c_str() ), p->length, 0 );
+						PlayList_append_withinfo( AutoWideFn( p->filename ), AutoWide( p->title ), FilePath::FindExtension( l_ext.GetW().c_str() ), p->length, 0 );
 					}
 					else
 						PlayList_appendthing(AutoWideFn(p->filename), 0, 0);
@@ -1042,7 +1035,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 					{
 						filename[i] = 0;
 						i = 0;
-						SetCurrentDirectoryA(filename);
+						{ std::error_code error; std::filesystem::current_path(filename, error); }
 						GlobalFree(filename);
 						filename = 0;
 					}
@@ -1309,7 +1302,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				basicFileInfoStruct *bfis = (basicFileInfoStruct*)data;
 				if (bfis->quickCheck == 2 && config_riol == 1) bfis->quickCheck = 0;
 				AutoWideFn wfn(bfis->filename);
-				if (PathIsURLW(wfn))
+				if (FilePath::IsUrl(static_cast<const wchar_t *>(wfn)))
 				{
 					const wchar_t *cachedTitle = PlayList_GetCachedTitle(wfn);
 					if (cachedTitle && cachedTitle[0])
@@ -1327,7 +1320,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		{
 			basicFileInfoStructW *bfis = (basicFileInfoStructW *)data;
 			if ( bfis->quickCheck == 2 && config_riol == 1 ) bfis->quickCheck = 0;
-			if ( bfis->filename && *bfis->filename && PathIsURLW( bfis->filename ) )
+			if ( bfis->filename && *bfis->filename && FilePath::IsUrl( bfis->filename ) )
 			{
 				const wchar_t *cachedTitle = PlayList_GetCachedTitle( bfis->filename );
 				if ( cachedTitle && cachedTitle[ 0 ] )

@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
 #include "../nu/AutoWide.h"
 
@@ -22,7 +23,7 @@ static PLUGINORDER preload[] =
 int LoadOutputPlugin(const wchar_t* plugin_filename, int index)
 {
 	wchar_t file[MAX_PATH] = { 0 };
-	PathCombineW(file, PLUGINDIR, plugin_filename);
+	FilePath::Combine(file, PLUGINDIR, plugin_filename);
 
 	HINSTANCE hLib = LoadLibraryW(file);
 	if ( hLib == NULL )
@@ -71,19 +72,14 @@ void out_init()
 	int index = 0, i = 0, count = sizeof(preload) / sizeof(PLUGINORDER);
 	for ( ; i < count; i++ ) index = LoadOutputPlugin(preload[i].name, index);
 
-	WIN32_FIND_DATAW d = { 0 };
-	wchar_t dirstr[MAX_PATH] = { 0 };
-	PathCombineW(dirstr, PLUGINDIR, L"OUT_*.DLL");
-	HANDLE h = FindFirstFileW(dirstr, &d);
-	if ( h != INVALID_HANDLE_VALUE )
+	for ( const auto &entry : FilePath::List(PLUGINDIR, L"OUT_*.DLL") )
 	{
-		do
-		{
-			for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, d.cFileName)); i++ );
-			if ( i == count ) index = LoadOutputPlugin(d.cFileName, index);
-			else preload[i].found = true;
-		} while ( FindNextFileW(h, &d) && index < 31 );
-		FindClose(h);
+		const std::wstring name = entry.path().filename().native();
+		for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, name.c_str())); i++ );
+		if ( i == count ) index = LoadOutputPlugin(name.c_str(), index);
+		else preload[i].found = true;
+		if ( index >= 31 )
+			break;
 	}
 }
 

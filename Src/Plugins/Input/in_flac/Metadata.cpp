@@ -20,94 +20,101 @@
 */
 #include "Metadata.h"
 #include <FLAC/all.h>
-#include "StreamFileWin32.h" // for FileSize64
 #include "api__in_flv.h"
+#include "../nu/FilePath.h"
 #include <strsafe.h>
+#include <filesystem>
+#include <fstream>
+#include <system_error>
 
 struct MetadataReader
 {
-	MetadataReader(HANDLE _handle)
+	bool Open(const std::filesystem::path &filename, std::ios::openmode mode)
 	{
-		handle = _handle;
-		endOfFile=false;
+		file.open(filename, mode | std::ios::binary);
+		return file.is_open();
 	}
-		HANDLE handle;
-	bool endOfFile;	
+
+	// a stream has to be repositioned when it changes between reading and writing
+	void SwitchTo(bool write)
+	{
+		if (writing != write)
+		{
+			file.clear();
+			file.seekg(file.tellg());
+			writing = write;
+		}
+	}
+
+	std::fstream file;
+	bool endOfFile = false;
+	bool writing = false;
 };
 
-static size_t win32_read(void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle)
+static size_t metadata_read(void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle)
 {
 	MetadataReader *reader = (MetadataReader *)handle;
-	DWORD bytesRead=0;
-	BOOL result = ReadFile(reader->handle, ptr, size*nmemb, &bytesRead, NULL);
-	if (result == TRUE && bytesRead == 0)
+	reader->SwitchTo(false);
+	reader->file.read(static_cast<char *>(ptr), static_cast<std::streamsize>(size*nmemb));
+	const size_t bytesRead = static_cast<size_t>(reader->file.gcount());
+	if (bytesRead == 0 && !reader->file.bad())
 		reader->endOfFile=true;
+	// a short read sets eofbit and failbit, which would stop the next tell or seek
+	if (!reader->file.bad())
+		reader->file.clear();
 	return bytesRead/size;
 }
 
-static size_t win32_write(const void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle)
+static size_t metadata_write(const void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle)
 {
 	MetadataReader *reader = (MetadataReader *)handle;
-	DWORD bytesWritten=0;
-	WriteFile(reader->handle, ptr, size*nmemb, &bytesWritten, NULL);
-	return bytesWritten/size;
-}
-
-static __int64 Seek64(HANDLE hf, __int64 distance, DWORD MoveMethod)
-{
-	LARGE_INTEGER li;
-
-	li.QuadPart = distance;
-
-	li.LowPart = SetFilePointer (hf, li.LowPart, &li.HighPart, MoveMethod);
-
-	if (li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
-	{
-		li.QuadPart = -1;
-	}
-
-	return li.QuadPart;
-}
-
-static int win32_seek(FLAC__IOHandle handle, FLAC__int64 offset, int whence)
-{
-		MetadataReader *reader = (MetadataReader *)handle;
-	if (Seek64(reader->handle, offset, whence) == -1)
-		return -1;
-	else
+	reader->SwitchTo(true);
+	if (!reader->file.write(static_cast<const char *>(ptr), static_cast<std::streamsize>(size*nmemb)))
 		return 0;
-	
+	return nmemb;
 }
 
-static FLAC__int64 win32_tell(FLAC__IOHandle handle)
+static int metadata_seek(FLAC__IOHandle handle, FLAC__int64 offset, int whence)
 {
 	MetadataReader *reader = (MetadataReader *)handle;
-	return Seek64(reader->handle, 0, FILE_CURRENT);
+	const std::ios::seekdir direction = whence == SEEK_SET ? std::ios::beg : (whence == SEEK_CUR ? std::ios::cur : std::ios::end);
+	reader->file.clear();
+	reader->file.seekg(static_cast<std::streamoff>(offset), direction);
+	if (!reader->file)
+		return -1;
+	reader->endOfFile = false;
+	reader->writing = false;
+	return 0;
 }
 
-static int win32_eof(FLAC__IOHandle handle)
+static FLAC__int64 metadata_tell(FLAC__IOHandle handle)
+{
+	MetadataReader *reader = (MetadataReader *)handle;
+	return static_cast<std::streamoff>(reader->file.tellg());
+}
+
+static int metadata_eof(FLAC__IOHandle handle)
 {
 	MetadataReader *reader = (MetadataReader *)handle;
 	return !!reader->endOfFile;
 }
 
-static int win32_close(FLAC__IOHandle handle)
+static int metadata_close(FLAC__IOHandle handle)
 {
 	MetadataReader *reader = (MetadataReader *)handle;
 
-	CloseHandle(reader->handle);
-	reader->handle = INVALID_HANDLE_VALUE;
+	reader->file.close();
 	return 0;
 }
 
 static FLAC__IOCallbacks unicodeIO =
 {
-  win32_read,
-  win32_write,
-  win32_seek,
-  win32_tell,
-  win32_eof,
-  win32_close,
+  metadata_read,
+  metadata_write,
+  metadata_seek,
+  metadata_tell,
+  metadata_eof,
+  metadata_close,
 };
 
 FLACMetadata::FLACMetadata()
@@ -153,14 +160,17 @@ bool FLACMetadata::Open(const wchar_t *filename, bool optimize)
 	if (!chain || !itr)
 		return false;
 
-	HANDLE hfile = CreateFileW(filename, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0);
-	MetadataReader reader(hfile);
-	if (reader.handle == INVALID_HANDLE_VALUE)
+	MetadataReader reader;
+	if (!reader.Open(filename, std::ios::in))
 		return false;
-	filesize = FileSize64(reader.handle);
+
+	std::error_code error;
+	filesize = static_cast<__int64>(std::filesystem::file_size(filename, error));
+	if (error)
+		return false;
 
 	FLAC__bool success = FLAC__metadata_chain_read_with_callbacks(chain, &reader, unicodeIO);
-	CloseHandle(hfile);
+	reader.file.close();
 	if (!success)
 		return false;
 
@@ -306,46 +316,34 @@ bool FLACMetadata::Save(const wchar_t *filename)
 		if (padding && padding->length < 16384)
 			padding->length = 16384; // TODO: configurable padding size
 
-		HANDLE hfile = CreateFileW(filename, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
-		MetadataReader reader(hfile);
-		if (reader.handle == INVALID_HANDLE_VALUE)
+		MetadataReader reader;
+		if (!reader.Open(filename, std::ios::in))
 			return false;
 
-		wchar_t tempPath[MAX_PATH-14] = {0}, tempFile[MAX_PATH] = {0};
-		GetTempPathW(MAX_PATH-14, tempPath);
-		GetTempFileNameW(tempPath, L"waf", 0, tempFile);
-
-		HANDLE hTempFile = CreateFileW(tempFile, GENERIC_READ|GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
-		MetadataReader tempReader(hTempFile);
+		const std::filesystem::path tempFile = FilePath::UniqueName(FilePath::TempDirectory(), L"waf");
+		MetadataReader tempReader;
+		if (!tempReader.Open(tempFile, std::ios::in | std::ios::out | std::ios::trunc))
+			return false;
 
 		FLAC__bool res = FLAC__metadata_chain_write_with_callbacks_and_tempfile(chain, false, &reader, unicodeIO, &tempReader, unicodeIO);
 
-		CloseHandle(hfile);
-		CloseHandle(hTempFile);
-		if (!MoveFileW(tempFile, filename))
-		{
-			if (CopyFileW(tempFile, filename, FALSE))
-			{
-				DeleteFileW(tempFile);
-			}
-			else
-			{
-				DeleteFileW(tempFile);
-				return false;
-			}
-		}
-		return !!res;
+		reader.file.close();
+		tempReader.file.close();
+
+		// only replace the original if the new file was written in full
+		const bool replaced = res && FilePath::Copy(tempFile, filename, true);
+		FilePath::Remove(tempFile);
+		return replaced;
 	}
 	else
 	{
-		HANDLE hfile = CreateFileW(filename, GENERIC_READ|GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
-		MetadataReader reader(hfile);
-		if (reader.handle == INVALID_HANDLE_VALUE)
+		MetadataReader reader;
+		if (!reader.Open(filename, std::ios::in | std::ios::out))
 			return false;
 
 		FLAC__bool res = FLAC__metadata_chain_write_with_callbacks(chain, true, &reader, unicodeIO);
 
-		CloseHandle(hfile);
+		reader.file.close();
 		return !!res;
 	}
 }

@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include <stdio.h>
 #include "resource.h"
 #include "draw.h"
@@ -84,7 +85,7 @@ HBITMAP draw_LBitmap(LPCTSTR bmname, const wchar_t *filename)
 	if (skin_directory[0] && filename) {
 		HBITMAP bm;
 		wchar_t bitmapfilename[MAX_PATH] = {0};
-		PathCombineW(bitmapfilename, skin_directory, filename);
+		FilePath::Combine(bitmapfilename, skin_directory, filename);
 		bm = (HBITMAP)LoadImageW(hMainInstance, bitmapfilename, IMAGE_BITMAP, 0, 0, (palmode?LR_CREATEDIBSECTION:0)|LR_LOADFROMFILE);
 		if (bm) return bm;
 	}
@@ -392,8 +393,8 @@ void draw_init()
 		{
 			FILE *fp;
 			wchar_t bitmapfilename[MAX_PATH] = {0};
-			PathCombineW(bitmapfilename, skin_directory, L"viscolor.txt");
-			fp = _wfopen(bitmapfilename,L"rt");
+			FilePath::Combine(bitmapfilename, skin_directory, L"viscolor.txt");
+			fp = FilePath::Open(bitmapfilename,L"rt");
 			if (fp)
 			{
 				int x;

@@ -1,4 +1,6 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
+#include <fstream>
 #include "../Agave/Component/ifc_wa5component.h"
 #include <vector>
 #include "api.h"
@@ -27,39 +29,39 @@ repeat as necessary
 */
 static int w5s_load_binary_manifest(const wchar_t *filename, const wchar_t *w5s_filename)
 {
-	HANDLE manifest = CreateFileW(filename, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-	if (manifest != INVALID_HANDLE_VALUE)
+	std::ifstream manifest{std::filesystem::path(filename), std::ios::binary};
+	if (manifest)
 	{
+		const auto read = [&manifest](void *buffer, size_t size) {
+			manifest.read(static_cast<char *>(buffer), static_cast<std::streamsize>(size));
+			return static_cast<size_t>(manifest.gcount());
+		};
+
 		for(;;)
 		{
 			uint32_t manifest_magic_word;
 			GUID service_guid;
 			FOURCC service_fourcc;
 
-			DWORD bytesRead=0;
-			ReadFile(manifest, &manifest_magic_word, sizeof(manifest_magic_word), &bytesRead, NULL);
+			size_t bytesRead = read(&manifest_magic_word, sizeof(manifest_magic_word));
 			if (bytesRead == 0) // EOF
 			{
-				CloseHandle(manifest);
 				return W5S_LAZYLOAD;
 			}
 
 			if (bytesRead != sizeof(manifest_magic_word) || memcmp(&manifest_magic_word, &magic_word, sizeof(magic_word)))
 				break;
 
-			bytesRead=0;
-			ReadFile(manifest, &service_guid, sizeof(service_guid), &bytesRead, NULL);
+			bytesRead = read(&service_guid, sizeof(service_guid));
 			if (bytesRead != sizeof(service_guid))
 				break;
 
-			bytesRead=0;
-			ReadFile(manifest, &service_fourcc, sizeof(service_fourcc), &bytesRead, NULL);
+			bytesRead = read(&service_fourcc, sizeof(service_fourcc));
 			if (bytesRead != sizeof(service_fourcc))
 				break;
 
 			uint16_t service_name_length;
-			bytesRead=0;
-			ReadFile(manifest, &service_name_length, sizeof(service_name_length), &bytesRead, NULL);
+			bytesRead = read(&service_name_length, sizeof(service_name_length));
 			if (bytesRead != sizeof(service_name_length))
 				break;
 
@@ -69,8 +71,7 @@ static int w5s_load_binary_manifest(const wchar_t *filename, const wchar_t *w5s_
 				service_name = (char *)calloc(service_name_length + 1, sizeof(char));
 				if (service_name)
 				{
-					bytesRead=0;
-					ReadFile(manifest, service_name, service_name_length, &bytesRead, NULL);
+					bytesRead = read(service_name, service_name_length);
 					if (bytesRead != service_name_length)
 					{
 						free(service_name);
@@ -80,8 +81,7 @@ static int w5s_load_binary_manifest(const wchar_t *filename, const wchar_t *w5s_
 			}
 
 			uint16_t service_test_string_length;
-			bytesRead=0;
-			ReadFile(manifest, &service_test_string_length, sizeof(service_test_string_length), &bytesRead, NULL);
+			bytesRead = read(&service_test_string_length, sizeof(service_test_string_length));
 			if (bytesRead != sizeof(service_test_string_length))
 				break;
 
@@ -91,8 +91,7 @@ static int w5s_load_binary_manifest(const wchar_t *filename, const wchar_t *w5s_
 				service_test_string = (char *)calloc(service_test_string_length + 1, sizeof(char));
 				if (service_name)
 				{
-					bytesRead=0;
-					ReadFile(manifest, service_test_string, service_test_string_length, &bytesRead, NULL);
+					bytesRead = read(service_test_string, service_test_string_length);
 					if (bytesRead != service_test_string_length)
 					{
 						free(service_name);
@@ -110,7 +109,6 @@ static int w5s_load_binary_manifest(const wchar_t *filename, const wchar_t *w5s_
 
 		// file seems to be malformed, go ahead and load w5s.
 		// any lazy factories we already loaded will self-destruct when the real services load
-		CloseHandle(manifest);
 		return W5S_LOAD; 
 	}
 
@@ -162,43 +160,36 @@ void w5s_load(const wchar_t *filename)
 
 void w5s_init()
 {
-	WIN32_FIND_DATAW d = {0};
 	wchar_t dirstr[MAX_PATH] = {0};
 
 	// pre-load so we're definitely available to other services which need this
-	PathCombineW(dirstr, SYSPLUGINDIR, L"wasabi2.w5s");
+	FilePath::Combine(dirstr, SYSPLUGINDIR, L"wasabi2.w5s");
 	w5s_load(dirstr);
 
-	PathCombineW(dirstr, SYSPLUGINDIR, L"*.W5S");
-	HANDLE h = FindFirstFileW(dirstr, &d);
-	if (h != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(SYSPLUGINDIR, L"*.W5S"))
 	{
-		do
+		const std::wstring name = entry.path().filename().native();
+		// due to how this plug-in works, is better to do a filename check to not load in
+		// safe mode as it otherwise causes the FreeLibrary(..) call to crash Winamp :o(
+		if (g_safeMode)
 		{
-			// due to how this plug-in works, is better to do a filename check to not load in
-			// safe mode as it otherwise causes the FreeLibrary(..) call to crash Winamp :o(
-			if (g_safeMode)
-			{
-				if (!wcsnicmp(d.cFileName, L"UnicodeTaskbarFix.w5s", 21)) continue;
-				if (!wcsnicmp(d.cFileName, L"fpl.w5s", 7)) continue;
-				if (!wcsnicmp(d.cFileName, L"mpcpl.w5s", 9)) continue;
-			}
+			if (!wcsnicmp(name.c_str(), L"UnicodeTaskbarFix.w5s", 21)) continue;
+			if (!wcsnicmp(name.c_str(), L"fpl.w5s", 7)) continue;
+			if (!wcsnicmp(name.c_str(), L"mpcpl.w5s", 9)) continue;
+		}
 
-			if (lstrcmpiW(L"wasabi2.w5s", d.cFileName))
+		if (lstrcmpiW(L"wasabi2.w5s", name.c_str()))
+		{
+			wchar_t manifeststr[MAX_PATH] = {0}, namestr[MAX_PATH] = {0};
+			FilePath::Combine(manifeststr, SYSPLUGINDIR, name.c_str());
+			FilePath::RemoveExtension(manifeststr);
+			FilePath::AddExtension(manifeststr, L".wbm");
+			FilePath::Combine(namestr, SYSPLUGINDIR, name.c_str());
+			if (w5s_load_binary_manifest(manifeststr, namestr) == W5S_LOAD)
 			{
-				wchar_t manifeststr[MAX_PATH] = {0}, namestr[MAX_PATH] = {0};
-				PathCombineW(manifeststr, SYSPLUGINDIR, d.cFileName);
-				PathRemoveExtensionW(manifeststr);
-				PathAddExtensionW(manifeststr, L".wbm");
-				PathCombineW(namestr, SYSPLUGINDIR, d.cFileName);
-				if (w5s_load_binary_manifest(manifeststr, namestr) == W5S_LOAD)
-				{
-					w5s_load(namestr);
-				}
+				w5s_load(namestr);
 			}
 		}
-		while (FindNextFileW(h, &d));
-		FindClose(h);
 	}
 
 	Wasabi_FindSystemServices();

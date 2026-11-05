@@ -1,4 +1,5 @@
 #include "wasabi_std.h"
+#include "../nu/FilePath.h"
 
 #include "parse/pathparse.h"
 
@@ -505,7 +506,7 @@ const wchar_t * Wasabi::Std::dotDotDir()
 #ifdef _WIN32 // PORT ME
 bool Wasabi::Std::isRootPath(const wchar_t *path) 
 {
-	return PathIsRootW(path)==TRUE;
+	return FilePath::IsRoot(path)==TRUE;
 }
 #endif
 
@@ -590,7 +591,7 @@ const char * Wasabi::Std::scanstr_back(const char *str, const char *toscan, cons
 const wchar_t * Wasabi::Std::extension(const wchar_t *fn)
 {
 #ifdef _WIN32 // PORT ME
-	wchar_t *x = PathFindExtensionW(fn);
+	const wchar_t *x = FilePath::FindExtension(fn);
 	if (x && *x)
 		return CharNextW(x);
 	else
@@ -604,7 +605,7 @@ const wchar_t * Wasabi::Std::extension(const wchar_t *fn)
 const wchar_t * Wasabi::Std::filename(const wchar_t *fn)
 {
 #ifdef _WIN32
-	return PathFindFileNameW(fn);
+	return FilePath::FindFileName(fn);
 #else
 #warning port me
   return 0;
@@ -858,37 +859,6 @@ bool Wasabi::Std::match(const wchar_t *p, const wchar_t *t)
 }
 #endif
 #ifndef _NOSTUDIO
-int Wasabi::Std::getCurDir(wchar_t *str, int maxlen) {
-  ASSERT(str != NULL);
-#ifdef WIN32
-  int retval = 0;
-
-  retval = GetCurrentDirectoryW(maxlen, str);
-
-  return retval;
-
-#else
-#warning port me
-  return 0;
-  //return getcwd( str, maxlen ) != NULL;
-#endif
-}
-
-int Wasabi::Std::setCurDir(const wchar_t *str) {
-  ASSERT(str != NULL);
-#ifdef WIN32
-  int retval = 0;
-
-  retval = SetCurrentDirectoryW(str);
-
-  return retval;
-
-#else
-#warning port me
-  return 0;
-//  return chdir( str );
-#endif
-}
 
 
 int Wasabi::Std::getNumCPUs() {
@@ -956,25 +926,6 @@ String Wasabi::Std::getLastErrorString(int _err) {
   return ret;
 }
 
-// gets the system font path
-void Wasabi::Std::getFontPath(int bufsize, wchar_t *dst) 
-{
-  ASSERT(dst != NULL);
-#ifdef WIN32
-  
-	wchar_t path[MAX_PATH]=L"";
-  SHGetSpecialFolderPathW(NULL, path, CSIDL_FONTS, FALSE);
-  WCSCPYN(dst, path, bufsize);
-
-
-#else
-#ifdef PLATFORM_WARNINGS
-#warning Wasabi::Std::getFontPath not implemented on LINUX
-#endif
-#endif
-
-}
-
 const wchar_t wasabi_default_fontnameW[] = WASABI_DEFAULT_FONTNAMEW;
 int default_font_scale = 100;
 wchar_t default_font[256] =
@@ -1003,61 +954,6 @@ int Wasabi::Std::getDefaultFontScale() {
 
 void Wasabi::Std::setDefaultFontScale(int scale) {
   default_font_scale = scale;
-}
-
-int Wasabi::Std::createDirectory(const wchar_t *dirname) 
-{
-#ifdef WIN32
-  if(!CreateDirectoryW(dirname,NULL))
-#else
-  if(mkdir(dirname, 0755))
-#endif
-  {
-    // create all the path
-    PathParserW pp(dirname);
-    int l = pp.getNumStrings();
-    for(int i=2;i<=l;i++) 
-		{
-      StringW dir;
-      for(int j=0;j<i;j++)
-				dir.AppendFolder(pp.enumString(j));
-#ifdef WIN32
-      CreateDirectoryW(dir,NULL);
-#else
-      mkdir(dir, 0755);
-#endif
-    }
-  }
-  return 1;
-}
-
-int Wasabi::Std::getFileInfos(const char *filename, fileInfoStruct *infos) {
-#ifdef WIN32
-	HANDLE h;
-	WIN32_FIND_DATAA fd = {0};
-	if((h=FindFirstFileA(filename, &fd))==INVALID_HANDLE_VALUE) return 0;
-
-	infos->fileSizeHigh=fd.nFileSizeHigh;
-	infos->fileSizeLow=fd.nFileSizeLow;
-	struct _stati64 statbuf;
-	if (_stati64(filename, &statbuf) == -1) return 0;
-	infos->lastWriteTime = statbuf.st_mtime;
-	infos->readonly = fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY;
-	FindClose(h);
-
-	return 1;
-#else
-	struct stat st;
-
-	int ret = stat( filename, &st );
-	if ( ret != 0 )
-		return 0;
-
-	infos->fileSizeHigh = 0;
-	infos->fileSizeLow = st.st_size;
-	infos->lastWriteTime = st.st_mtime;
-	return 1;
-#endif
 }
 
 void Wasabi::Std::shellExec(const wchar_t *cmd, const wchar_t *params)

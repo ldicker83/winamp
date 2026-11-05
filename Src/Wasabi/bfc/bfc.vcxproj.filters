@@ -49,12 +49,6 @@
     <ClCompile Include="file\filename.cpp">
       <Filter>Source Files\file</Filter>
     </ClCompile>
-    <ClCompile Include="file\readdir.cpp">
-      <Filter>Source Files\file</Filter>
-    </ClCompile>
-    <ClCompile Include="file\recursedir.cpp">
-      <Filter>Source Files\file</Filter>
-    </ClCompile>
     <ClCompile Include="parse\pathparse.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
@@ -160,12 +154,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="file\filename.h">
-      <Filter>Header Files\file</Filter>
-    </ClInclude>
-    <ClInclude Include="file\readdir.h">
-      <Filter>Header Files\file</Filter>
-    </ClInclude>
-    <ClInclude Include="file\recursedir.h">
       <Filter>Header Files\file</Filter>
     </ClInclude>
     <ClInclude Include="file\tmpnamestr.h">

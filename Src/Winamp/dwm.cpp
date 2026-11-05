@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "config.h"
 #include "wintheme.h"
 #include <shobjidl.h>
@@ -34,7 +35,7 @@ static bool LoadDWMApi()
 	if (!triedLoad)
 	{
 		wchar_t gen_win7shell_path[MAX_PATH] = {0};
-		PathCombineW(gen_win7shell_path, PLUGINDIR, L"gen_win7shell.dll");
+		FilePath::Combine(gen_win7shell_path, PLUGINDIR, L"gen_win7shell.dll");
 		HMODULE gen_win7shell = LoadLibraryW(gen_win7shell_path);
 		if (gen_win7shell)
 		{

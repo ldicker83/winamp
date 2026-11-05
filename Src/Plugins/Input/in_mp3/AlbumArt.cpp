@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "Metadata.h"
 #include "api__in_mp3.h"
 #include "../nu/AutoWide.h"
@@ -9,10 +10,10 @@
 
 bool IsMyExtension(const wchar_t *filename)
 {
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return false;
 	{
-		const wchar_t *extension = PathFindExtension(filename);
+		const wchar_t *extension = FilePath::FindExtension(filename);
 		if (extension && *extension)
 		{
 			AutoWide wideList(config_extlist); // TODO: build a copy of this at config load time so we don't have to run this every time

@@ -127,8 +127,9 @@ static void dosavePreset(HWND hwndDlg, SPSEffectContext *ctx)
 {
 	char temp[2048] = {0};
 	OPENFILENAME l={sizeof(l),0};
-	char buf1[2048],buf2[2048];
-	GetCurrentDirectory(sizeof(buf2),buf2);
+	char buf1[2048];
+	std::error_code error;
+	const std::filesystem::path oldCurrentPath = std::filesystem::current_path(error);
 	strcpy(buf1,g_path);
 	l.hwndOwner = hwndDlg;
 	l.lpstrFilter = BuildFilterString();
@@ -145,7 +146,7 @@ static void dosavePreset(HWND hwndDlg, SPSEffectContext *ctx)
 		SPS_save_preset(ctx,ctx->curpreset_name,"SPS PRESET");
 		updatePresetText(hwndDlg,ctx);
 	} 
-	SetCurrentDirectory(buf2);
+	std::filesystem::current_path(oldCurrentPath, error);
 }
 
 static void presetToDialog(HWND hwndDlg, SPSEffectContext *ctx)
@@ -331,8 +332,9 @@ BOOL CALLBACK SPS_configWindowProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						SendMessage( mod.hwndParent, WM_WA_IPC, 0, IPC_PUSH_DISABLE_EXIT );
 						char temp[ 2048 ] = { 0 };
 						OPENFILENAME l = { sizeof( l ),0 };
-						char buf1[ 2048 ], buf2[ 2048 ];
-						GetCurrentDirectory( sizeof( buf2 ), buf2 );
+						char buf1[ 2048 ];
+						std::error_code error;
+						const std::filesystem::path oldCurrentPath = std::filesystem::current_path( error );
 						strcpy( buf1, g_path );
 						l.lpstrInitialDir = buf1;
 						l.hwndOwner = hwndDlg;
@@ -347,7 +349,7 @@ BOOL CALLBACK SPS_configWindowProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							SPS_load_preset( ctx, temp, "SPS PRESET" );
 							presetToDialog( hwndDlg, ctx );
 						}
-						SetCurrentDirectory( buf2 );
+						std::filesystem::current_path( oldCurrentPath, error );
 						SendMessage( mod.hwndParent, WM_WA_IPC, 0, IPC_POP_DISABLE_EXIT );
 					}
 					break;

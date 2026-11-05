@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "dsp.h"
 
 static int initted=0;
@@ -18,7 +19,7 @@ void dsp_init(void)
 	if (!config_dspplugin_name[0])
 		return;
 
-	PathCombineW(str,DSPDIR,config_dspplugin_name);
+	FilePath::Combine(str,DSPDIR,config_dspplugin_name);
 	hLib = LoadLibraryW(str);
 
 	if (!hLib)

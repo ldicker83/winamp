@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "WinampPlaylist.h"
 #include "../nu/AutoChar.h"
 #include "../nu/AutoWide.h"
@@ -93,21 +94,13 @@ void WinampPlaylist::OnFile(const wchar_t *filename, const wchar_t *title, int l
 	*/
 
 	// see if it's a directory
-	if ( loadDirectories && !PathIsURLW( filename ) && !PathIsNetworkPathW( filename ) )
+	if ( loadDirectories && !FilePath::IsUrl( filename ) && !FilePath::IsUnc( filename ) )
 	{
-		HANDLE h;
-		WIN32_FIND_DATAW d;
-
-		h = FindFirstFileW( filename, &d );
-		if ( h != INVALID_HANDLE_VALUE )
+		if ( FilePath::IsDirectory( filename ) )
 		{
-			FindClose( h );
-			if ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
-			{
-				WinampDirectoryLoad dir( true );
-				playlistManager->LoadDirectory( filename, this, &dir );
-				return;
-			}
+			WinampDirectoryLoad dir( true );
+			playlistManager->LoadDirectory( filename, this, &dir );
+			return;
 		}
 	}
 

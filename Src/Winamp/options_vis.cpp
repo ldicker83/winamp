@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "Options.h"
 #include "vis.h"
@@ -25,7 +26,7 @@ static void VisUpdateSel(HWND hwndDlg, HWND listWindow, INT iItem)
 
 		StringCchCopyW(config_visplugin_name, MAX_PATH, fn);
 		SendDlgItemMessageA(hwndDlg,IDC_VISMOD,CB_RESETCONTENT,0,0);
-		PathCombineW(b, VISDIR, fn);
+		FilePath::Combine(b, VISDIR, fn);
 
 		HINSTANCE hLib = LoadLibraryW(b);
 		if (hLib)
@@ -109,76 +110,68 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 			ListView_InsertColumnW(listWindow, 1, &lvc);
 
 
-			WIN32_FIND_DATAW d = {0};
-			wchar_t dirstr[MAX_PATH+128] = {0};
-			PathCombineW(dirstr,VISDIR,L"*.DLL");
-			HANDLE h = FindFirstFileW(dirstr,&d);
-			if (h != INVALID_HANDLE_VALUE) 
+			for (const auto &entry : FilePath::List(VISDIR, L"*.DLL"))
 			{
-				do
+				std::wstring name = entry.path().filename().native();
+				if (_wcsnicmp(name.c_str(),L"dsp_",4)
+					&& _wcsnicmp(name.c_str(),L"in_",3) 
+					&& _wcsnicmp(name.c_str(),L"gen_",4) 
+					&& _wcsnicmp(name.c_str(),L"ml_",3) 
+					&& _wcsnicmp(name.c_str(),L"enc_",4) 
+					&& _wcsnicmp(name.c_str(),L"CDDB",4)
+					&& _wcsnicmp(name.c_str(),L"out_",4)
+					&& _wcsnicmp(name.c_str(), L"pmp_", 4))
 				{
-					if (_wcsnicmp(d.cFileName,L"dsp_",4)
-						&& _wcsnicmp(d.cFileName,L"in_",3) 
-						&& _wcsnicmp(d.cFileName,L"gen_",4) 
-						&& _wcsnicmp(d.cFileName,L"ml_",3) 
-						&& _wcsnicmp(d.cFileName,L"enc_",4) 
-						&& _wcsnicmp(d.cFileName,L"CDDB",4)
-						&& _wcsnicmp(d.cFileName,L"out_",4)
-						&& _wcsnicmp(d.cFileName, L"pmp_", 4))
+					wchar_t b[1024] = {0}, namestr[MAX_PATH] = {0};
+					FilePath::Combine(b, VISDIR, name.c_str());
+					HINSTANCE hLib = LoadLibrary(b);
+					if (hLib)
 					{
-						wchar_t b[1024] = {0}, namestr[MAX_PATH] = {0};
-						PathCombineW(b, VISDIR, d.cFileName);
-						HINSTANCE hLib = LoadLibrary(b);
-						if (hLib)
+						winampVisGetHeaderType pr = (winampVisGetHeaderType) GetProcAddress(hLib,"winampVisGetHeader");
+						if (pr)
 						{
-							winampVisGetHeaderType pr = (winampVisGetHeaderType) GetProcAddress(hLib,"winampVisGetHeader");
-							if (pr)
+							if (!g_safeMode)
 							{
-								if (!g_safeMode)
+								winampVisHeader* pv = pr(hMainWindow);
+								if (pv)
 								{
-									winampVisHeader* pv = pr(hMainWindow);
-									if (pv)
-									{
-										StringCchCopyW(namestr,MAX_PATH+256,AutoWide(pv->description));
-									}
-									else
-									{
-										StringCchCopyW(namestr,MAX_PATH+256,L"!");
-									}
+									StringCchCopyW(namestr,MAX_PATH+256,AutoWide(pv->description));
 								}
-							} 
-							else
-							{
-								StringCchCopyW(namestr,MAX_PATH+256,L"!");
+								else
+								{
+									StringCchCopyW(namestr,MAX_PATH+256,L"!");
+								}
 							}
-							FreeModule(hLib);
-						}
+						} 
 						else
 						{
 							StringCchCopyW(namestr,MAX_PATH+256,L"!");
 						}
+						FreeModule(hLib);
+					}
+					else
+					{
+						StringCchCopyW(namestr,MAX_PATH+256,L"!");
+					}
 
-						if (wcscmp(namestr,L"!"))
+					if (wcscmp(namestr,L"!"))
+					{
+						LVITEMW lvi = {LVIF_TEXT, 0, 0};
+						lvi.pszText = namestr;
+						lvi.iItem = ListView_InsertItemW(listWindow, &lvi);
+
+						lvi.mask = LVIF_TEXT;
+						lvi.iSubItem = 1;
+						lvi.pszText = name.data();
+						ListView_SetItemW(listWindow, &lvi);
+
+						if (!_wcsicmp(name.c_str(), config_visplugin_name))
 						{
-							LVITEMW lvi = {LVIF_TEXT, 0, 0};
-							lvi.pszText = namestr;
-							lvi.iItem = ListView_InsertItemW(listWindow, &lvi);
-
-							lvi.mask = LVIF_TEXT;
-							lvi.iSubItem = 1;
-							lvi.pszText = d.cFileName;
-							ListView_SetItemW(listWindow, &lvi);
-
-							if (!_wcsicmp(d.cFileName, config_visplugin_name))
-							{
-								ListView_SetItemState(listWindow, lvi.iItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-								VisUpdateSel(hwndDlg, listWindow, lvi.iItem);
-							}
+							ListView_SetItemState(listWindow, lvi.iItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+							VisUpdateSel(hwndDlg, listWindow, lvi.iItem);
 						}
-					}								
-				} while (FindNextFileW(h,&d));
-
-				FindClose(h);
+					}
+				}								
 			}
 
 			// [5.55+] only send this to correct the page state if we have no valid vis plugins available and loaded
@@ -306,7 +299,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							wchar_t b[MAX_PATH] = {0}, fn[MAX_PATH*2] = {0};
 							ListView_GetItemTextW(listWindow, which, 1, fn, ARRAYSIZE(fn));
 
-							PathCombineW(b, VISDIR, fn);
+							FilePath::Combine(b, VISDIR, fn);
 							HINSTANCE hLib = LoadLibraryW(b);
 							if (hLib)
 							{
@@ -380,7 +373,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 						int which = ListView_GetNextItem(listWindow, -1, LVIS_SELECTED);
 						wchar_t b[MAX_PATH] = {0}, fn[FILENAME_SIZE] = {0};
 						ListView_GetItemTextW(listWindow, which, 1, fn, ARRAYSIZE(fn));
-						PathCombineW(b, VISDIR, fn);
+						FilePath::Combine(b, VISDIR, fn);
 
 						HINSTANCE hLib = LoadLibraryW(b);
 						if (hLib)

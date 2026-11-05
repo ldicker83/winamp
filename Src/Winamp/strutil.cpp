@@ -7,6 +7,7 @@
  **/
 
 #include <windows.h>
+#include "../nu/FilePath.h"
 #include <Shlwapi.h>
 #include "strutil.h"
 
@@ -55,14 +56,14 @@ void MakeRelativePathName(const wchar_t *filename, wchar_t *outFile, const wchar
 {
 	wchar_t outPath[MAX_PATH] = {0};
 
-	int common = PathCommonPrefixW(path, filename, outPath);
+	int common = FilePath::CommonPrefix(path, filename, outPath);
 	if (common && common == lstrlenW(path))
 	{
-		PathAddBackslashW(outPath);
+		FilePath::AddBackslash(outPath);
 		const wchar_t *p = filename + lstrlenW(outPath);
 		lstrcpynW(outFile, p, FILENAME_SIZE);
 	}
-	else if (!PathIsUNCW(filename) && PathIsSameRootW(filename, path))
+	else if (!FilePath::IsUnc(filename) && FilePath::IsSameRoot(filename, path))
 	{
 		lstrcpynW(outFile, filename+2, FILENAME_SIZE);
 	}
@@ -432,7 +433,7 @@ const wchar_t *extensioncW(const wchar_t *fn)
 void extension_ex(const char *fn, char *buf, int buflen)
 { 
 	const char *s = extensionc(fn);
-	if (!PathIsURLA(fn) 
+	if (!FilePath::IsUrl(fn) 
 		|| (!strstr(s, "?") && !strstr(s, "&") && !strstr(s, "=") && *s))
 	{
 		lstrcpynA(buf, s, buflen);
@@ -460,7 +461,7 @@ void extension_ex(const char *fn, char *buf, int buflen)
 void extension_exW(const wchar_t *fn, wchar_t *buf, int buflen)
 { 
 	const wchar_t *s = extensioncW(fn);
-	if (!PathIsURLW(fn) 
+	if (!FilePath::IsUrl(fn) 
 		|| (!wcsstr(s, L"?") && !wcsstr(s, L"&") && !wcsstr(s, L"=") && *s))
 	{
 		lstrcpynW(buf, s, buflen);

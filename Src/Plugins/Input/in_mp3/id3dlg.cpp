@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "Metadata.h"
 #include "../Winamp/wa_ipc.h"
 // ID3v2 stuff
@@ -60,7 +61,7 @@ void getfileinfo(const wchar_t *filename, wchar_t *title, int *length_in_ms)
 	else
 		fn = lastfn;
 	if (!_wcsnicmp(fn, L"file://", 7)) fn += 7;
-	if (PathIsURL(fn))
+	if (FilePath::IsUrl(fn))
 	{
 		if (title)
 		{
@@ -109,8 +110,8 @@ void getfileinfo(const wchar_t *filename, wchar_t *title, int *length_in_ms)
 				else
 				{
 					lstrcpynW(title, fn, MAX_PATH);
-					PathStripPathW(title);
-					PathRemoveExtensionW(title);
+					FilePath::StripPath(title);
+					FilePath::RemoveExtension(title);
 				}
 			}
 
@@ -1019,7 +1020,7 @@ extern "C"
 	__declspec(dllexport) int winampUseUnifiedFileInfoDlg(const wchar_t * fn)
 	{
 		if (!_wcsnicmp(fn, L"file://", 7)) fn += 7;
-		if (PathIsURLW(fn)) return 2;
+		if (FilePath::IsUrl(fn)) return 2;
 		return 1;
 	}
 

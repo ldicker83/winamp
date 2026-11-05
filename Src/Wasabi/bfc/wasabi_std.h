@@ -36,7 +36,6 @@
 #include "std_mem.h"
 #include "std_math.h"
 #include "std_string.h"
-#include "std_file.h"
 #include "wasabi_std_rect.h"
 #include <stdlib.h>
 #include <locale.h>
@@ -267,8 +266,6 @@ namespace Wasabi
 		// retrieves filename from a given path+filename
 		const wchar_t* filename(const wchar_t* fn);
 
-		int getCurDir(wchar_t* str, int maxlen);
-		int setCurDir(const wchar_t* str);
 
 		// regexp match functions
 
@@ -318,8 +315,6 @@ namespace Wasabi
 		// return TRUE if pattern matches, FALSE otherwise.
 		bool match(const wchar_t* p, const wchar_t* t);
 
-		// gets the system font path.
-		void getFontPath(int bufsize, wchar_t* dst);
 
 		// gets the filename of a font file guaranteed to be in the system font path.
 		void getDefaultFont(int bufsize, wchar_t* dst);
@@ -334,19 +329,7 @@ namespace Wasabi
 		void setDefaultFontScale(int scale);
 
 		// creates a directory. returns 0 on error, nonzero on success
-		int createDirectory(const wchar_t* dirname);
 
-		// gets informations about a given filename. returns 0 if file not found
-		typedef struct
-		{
-			unsigned int fileSizeHigh;
-			unsigned int fileSizeLow;
-			time_t lastWriteTime;
-			int readonly;
-		}
-		fileInfoStruct;
-
-		int getFileInfos(const char* filename, fileInfoStruct* infos);
 
 		// removes a directory
 		void removeDirectory(const char* buf, int recurse);

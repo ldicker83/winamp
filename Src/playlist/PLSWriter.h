@@ -1,7 +1,7 @@
 #ifndef NULLSOFT_PLSWRITERH
 #define NULLSOFT_PLSWRITERH
 
-#include <stdio.h>
+#include <fstream>
 #include "PlaylistWriter.h"
 class PLSWriter : public PlaylistWriter
 {
@@ -15,7 +15,7 @@ public:
 	void Close();
 private:
 	size_t numEntries;
-	FILE *fp;
+	std::ofstream fp;
 };
 
 #endif

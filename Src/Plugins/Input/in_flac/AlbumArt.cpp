@@ -20,6 +20,7 @@
 */
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "api__in_flv.h"
 #include "Metadata.h"
 #include "../nu/AutoWide.h"
@@ -29,7 +30,7 @@
 
 bool FLAC_AlbumArtProvider::IsMine(const wchar_t *filename)
 {
-	const wchar_t *extension = PathFindExtensionW(filename);
+	const wchar_t *extension = FilePath::FindExtension(filename);
 	if (extension && *extension)
 	{
 		wchar_t exts[128] = {0};

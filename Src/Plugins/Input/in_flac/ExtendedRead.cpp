@@ -21,7 +21,6 @@
 
 #include "main.h"
 #include <FLAC/all.h>
-#include "StreamFileWin32.h"
 #include "QuickBuf.h"
 #include <bfc/platform/types.h>
 #include <assert.h>

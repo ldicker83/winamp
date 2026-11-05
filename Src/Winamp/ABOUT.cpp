@@ -7,6 +7,7 @@
 **/
 
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "language.h"
 #include <math.h>
 #include "../nu/threadname.h"
@@ -423,8 +424,8 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				SendDlgItemMessage(hwndDlg, IDC_TIPS, EM_SETLIMITTEXT, 0, 0);
 
 				GetModuleFileNameW(NULL,fn,MAX_PATH);
-				PathRemoveFileSpecW(fn);
-				PathAppendW(fn, L"whatsnew.txt");
+				FilePath::RemoveFileSpec(fn);
+				FilePath::Append(fn, L"whatsnew.txt");
 
 				// we don't set the buffer position so that it all works on the fallback code
 				// and make sure there's a selection no matter what happens with other things
@@ -432,15 +433,15 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				SendDlgItemMessageW(hwndDlg,IDC_VER_COMBO,CB_SETCURSEL,0,0);
 
 				versions.clear();
-				fp = _wfopen(fn,L"rb");
+				fp = FilePath::Open(fn,L"rb");
 
 				// if there isn't a localised whatsnew.txt then revert to the old ways
 				if(!fp)
 				{
 					GetModuleFileNameW(NULL,fn,MAX_PATH);
-					PathRemoveFileSpecW(fn);
-					PathAppendW(fn,L"whatsnew.txt");
-					fp = _wfopen(fn,L"rb");
+					FilePath::RemoveFileSpec(fn);
+					FilePath::Append(fn,L"whatsnew.txt");
+					fp = FilePath::Open(fn,L"rb");
 				}
 
 				if (fp)

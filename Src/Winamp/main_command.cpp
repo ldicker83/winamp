@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "../nu/AutoWide.h"
 #include "api.h"
@@ -102,7 +103,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 
 	if (LOWORD(wID) >= 34768 && LOWORD(wID) < g_BookmarkTop)
 	{
-		FILE *fp = _wfopen(BOOKMARKFILE8, L"rt");
+		FILE *fp = FilePath::Open(BOOKMARKFILE8, L"rt");
 		if (fp)
 		{
 			int x = 0, id = LOWORD(wID)-34768;
@@ -646,7 +647,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 		{
 			wchar_t b[MAX_PATH] = {0};
 			HINSTANCE hLib;
-			PathCombineW(b, VISDIR, config_visplugin_name);
+			FilePath::Combine(b, VISDIR, config_visplugin_name);
 			hLib = LoadLibraryW(b);
 			if (hLib)
 			{

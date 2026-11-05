@@ -7,22 +7,21 @@
  **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include <stdio.h>
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
+#include "../nu/FilePath.h"
 
 void doHtmlPlaylist(void)
 {
 	FILE *fp = 0;
-	wchar_t filename[MAX_PATH] = {0}, tp[MAX_PATH] = {0};
-	if (!GetTempPathW(MAX_PATH,tp)) StringCchCopyW(tp, MAX_PATH, L".");
-	if (GetTempFileNameW(tp, L"WHT", 0, filename)){
-		DeleteFileW(filename);
-		StringCchCatW(filename, MAX_PATH, L".html");
-	}
-	else StringCchCopyW(filename, MAX_PATH, L"wahtml_tmp.html");
+	wchar_t filename[MAX_PATH] = {0};
+	StringCchCopyW(filename, MAX_PATH, FilePath::UniqueName(FilePath::TempDirectory(), L"WHT", L".html").c_str());
 
-	fp = _wfopen(filename, L"wt");
+	fp = FilePath::Open(filename, L"wt");
 	if (!fp)
 	{
 		LPMessageBox(hPLWindow, IDS_HTML_ERROR_WRITE, IDS_ERROR, MB_OK | MB_ICONWARNING);

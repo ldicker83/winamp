@@ -16,9 +16,6 @@
     <ClCompile Include="api\service\waservicefactoryx.cpp">
       <Filter>Source Files\api\service</Filter>
     </ClCompile>
-    <ClCompile Include="bfc\std_file.cpp">
-      <Filter>Source Files\bfc</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api.h">
@@ -32,9 +29,6 @@
     </ClInclude>
     <ClInclude Include="api\service\api_service.h">
       <Filter>Header Files\api\service</Filter>
-    </ClInclude>
-    <ClInclude Include="bfc\std_file.h">
-      <Filter>Header Files\bfc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

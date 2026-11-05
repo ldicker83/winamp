@@ -1,4 +1,5 @@
 #include "StringW.h"
+#include "../nu/FilePath.h"
 
 #include "../wasabi_std.h"
 #include "../std_mem.h"
@@ -406,7 +407,7 @@ void StringW::AppendPath(const wchar_t *path)
 	{
 #ifdef _WIN32
 		wchar_t temp[MAX_PATH] = {0};
-		PathCombineW(temp, val, path);
+		FilePath::Combine(temp, val, path);
 		setValue(temp);
 #else
 #warning find a better way
@@ -425,11 +426,11 @@ void StringW::AppendFolder(const wchar_t *path)
 	FixSlashes();
 	wchar_t temp[MAX_PATH] = {0};
 	if (val)
-		PathCombineW(temp, val, path);
+		FilePath::Combine(temp, val, path);
 	else
 		WCSCPYN(temp, path, MAX_PATH);
 
-	PathAddBackslashW(temp);
+	FilePath::AddBackslash(temp);
 	setValue(temp);
 #else
 #warning find a better way
@@ -447,7 +448,7 @@ void StringW::AddBackslash()
 #ifdef _WIN32
 		wchar_t temp[MAX_PATH] = {0};
 		WCSCPYN(temp, val, MAX_PATH);
-		PathAddBackslashW(temp);
+		FilePath::AddBackslash(temp);
 #else
 		wchar_t temp[PATH_MAX] = {0};
 		WCSCPYN(temp, val, PATH_MAX);
@@ -474,7 +475,7 @@ void StringW::RemovePath()
 	FixSlashes();
 
 	if (val)
-		PathRemoveFileSpecW(val);
+		FilePath::RemoveFileSpec(val);
 #else
 #warning port me
 #endif
@@ -745,7 +746,7 @@ StringPathCombine::StringPathCombine(const wchar_t *path, const wchar_t *filenam
 {
 #ifdef _WIN32
 	wchar_t temp[MAX_PATH] = {0};
-	PathCombineW(temp, path, filename);
+	FilePath::Combine(temp, path, filename);
 	setValue(temp);
 #else
 	setValue(path);

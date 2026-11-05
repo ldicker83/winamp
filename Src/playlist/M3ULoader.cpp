@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
 #include <strsafe.h>
 #include <fstream>
@@ -102,17 +103,17 @@ int M3ULoader::OnFileHelper( ifc_playlistloadercallback *playlist, const wchar_t
 	
 	int ret;
 
-	if ( wcsstr( wideFilename, L"://" ) || PathIsRootW( wideFilename ) )
+	if ( wcsstr( wideFilename, L"://" ) || FilePath::IsRoot( wideFilename ) )
 	{
 		ret = playlist->OnFile( wideFilename, title, length, extraInfo );
 	}
 	else
 	{
 		wchar_t fullPath[ MAX_PATH ] = { 0 };
-		if ( PathCombineW( fullPath, rootPath, wideFilename ) )
+		if ( FilePath::Combine( fullPath, rootPath, wideFilename ) )
 		{
 			wchar_t canonicalizedPath[ MAX_PATH ] = { 0 };
-			PathCanonicalizeW( canonicalizedPath, fullPath );
+			FilePath::Canonicalize( canonicalizedPath, fullPath );
 			ret = playlist->OnFile( canonicalizedPath, title, length, extraInfo );
 		}
 		else
@@ -138,26 +139,66 @@ static bool StringEnds( const wchar_t *a, const wchar_t *b )
 	return false;
 }
 
+// decodes a whole playlist. a byte order mark means UTF-8 or UTF-16. without one, each byte is its own character
+static std::wstring DecodePlaylist( const std::vector<char> &data, bool &has_utf8_bom )
+{
+	const auto *bytes = reinterpret_cast<const unsigned char *>( data.data() );
+	const size_t size = data.size();
+
+	std::wstring text;
+	if ( size >= 3 && bytes[ 0 ] == 0xEF && bytes[ 1 ] == 0xBB && bytes[ 2 ] == 0xBF )
+	{
+		has_utf8_bom = true;
+		const int length = MultiByteToWideChar( CP_UTF8, 0, data.data() + 3, (int)size - 3, 0, 0 );
+		text.resize( length );
+		MultiByteToWideChar( CP_UTF8, 0, data.data() + 3, (int)size - 3, text.data(), length );
+	}
+	else if ( size >= 2 && bytes[ 0 ] == 0xFF && bytes[ 1 ] == 0xFE )
+	{
+		text.resize( ( size - 2 ) / sizeof( wchar_t ) );
+		memcpy( text.data(), data.data() + 2, text.size() * sizeof( wchar_t ) );
+	}
+	else
+	{
+		text.assign( bytes, bytes + size );
+	}
+
+	// a text file ends at Ctrl+Z
+	const size_t end = text.find( L'\x1A' );
+	if ( end != text.npos )
+		text.resize( end );
+	return text;
+}
+
+// copies the next line including its newline. a line that doesn't fit is carried on by the next call
+static bool NextLine( std::wstring_view text, size_t &position, wchar_t *line, size_t line_size )
+{
+	if ( position >= text.size() )
+		return false;
+
+	size_t length = (std::min)( text.size() - position, line_size - 1 );
+	const size_t newline = text.substr( position, length ).find( L'\n' );
+	if ( newline != std::wstring_view::npos )
+		length = newline + 1;
+
+	wmemcpy( line, text.data() + position, length );
+	line[ length ] = 0;
+	position += length;
+	return true;
+}
+
 int M3ULoader::Load( const wchar_t *p_filename, ifc_playlistloadercallback *playlist )
 {
 	// TODO: download temp file if it's a URL
 	// TODO - WDP2-198
 
-	FILE *fp = _wfopen( p_filename, L"rt,ccs=UNICODE" );
-	if ( !fp )
+	if ( !p_filename )
 		return IFC_PLAYLISTLOADER_FAILED;
 
-	fseek( fp, 0, SEEK_END );
-	int size = ftell( fp );
-	fseek( fp, 0, SEEK_SET );
-
-	if ( size == -1 )
-	{
-		fclose( fp );
-		fp = 0;
-
+	std::vector<char> l_data;
+	if ( !FilePath::ReadAll( p_filename, l_data ) )
 		return IFC_PLAYLISTLOADER_FAILED;
-	}
+
 
 	if ( StringEnds( p_filename, L".m3u8" ) )
 		_utf8 = true;
@@ -187,14 +228,11 @@ int M3ULoader::Load( const wchar_t *p_filename, ifc_playlistloadercallback *play
 	else
 	{
 		StringCchCopyW( rootPath, MAX_PATH, p_filename );
-		PathRemoveFileSpecW( rootPath );
+		FilePath::RemoveFileSpec( rootPath );
 	}
 
-	unsigned char BOM[ 3 ] = { 0, 0, 0 };
-	if ( fread( BOM, 3, 1, fp ) == 1 && BOM[ 0 ] == 0xEF && BOM[ 1 ] == 0xBB && BOM[ 2 ] == 0xBF )
-		_utf8 = true;
-	else
-		fseek( fp, 0, SEEK_SET );
+	const std::wstring l_text = DecodePlaylist( l_data, _utf8 );
+	size_t l_position = 0;
 
 
 	std::wstring l_separator     = L"\" ";
@@ -217,13 +255,8 @@ int M3ULoader::Load( const wchar_t *p_filename, ifc_playlistloadercallback *play
 
 	std::map<std::wstring, std::wstring> l_extended_infos;
 
-	while ( 1 )
+	while ( NextLine( l_text, l_position, linebuf, l_linebuf_size - 1 ) )
 	{
-		if ( feof( fp ) )
-			break;
-
-		linebuf[ 0 ] = 0;
-		fgetws( linebuf, l_linebuf_size - 1, fp );
 
 		linebuf[ wcscspn( linebuf, _END_LINE ) ] = 0;
 		if ( wcslen( linebuf ) == 0 )
@@ -439,9 +472,6 @@ int M3ULoader::Load( const wchar_t *p_filename, ifc_playlistloadercallback *play
 			}
 		}
 	}
-
-	if ( fp )
-		fclose( fp );
 
 	return IFC_PLAYLISTLOADER_SUCCESS;
 }

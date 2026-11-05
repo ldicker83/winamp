@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "LAMEInfo.h"
 #include "AACFrame.h"
 #include "config.h"
@@ -238,7 +239,7 @@ void GetFileDescription(const wchar_t *file, CGioFile &_file, wchar_t *data, siz
 	int hdroffs = 0;
 	size_t size = datalen;
 	wchar_t *mt = data;
-	wchar_t *ext = PathFindExtension(file);
+	const wchar_t *ext = FilePath::FindExtension(file);
 
 	wchar_t langbuf[256] = {0};
 	int flen = _file.GetContentLength();
@@ -525,7 +526,7 @@ void GetAudioInfo(const wchar_t *filename, CGioFile *file, int *len, int *channe
 	*channels=0;
 	if (file)
 	{
-		wchar_t *ext = PathFindExtension(filename);
+		const wchar_t *ext = FilePath::FindExtension(filename);
 		if (!_wcsicmp(ext, L".aac") || !_wcsicmp(ext, L".vlb"))
 		{
 			unsigned char t[INFO_READ_SIZE*2] = {0};

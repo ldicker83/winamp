@@ -1,4 +1,5 @@
 #include "Metadata.h"
+#include "../nu/FilePath.h"
 #include "main.h"
 #include "api__in_mp3.h"
 #include "LAMEInfo.h"
@@ -9,12 +10,15 @@
 #include <assert.h>
 #include <foundation/error.h>
 #include <strsafe.h>
+#include <filesystem>
+#include <fstream>
+#include <system_error>
 
 #define INFO_READ_SIZE 32768
 
 Metadata::Metadata( CGioFile *_file, const wchar_t *_filename )
 {
-	if ( !PathIsURL( _filename ) )
+	if ( !FilePath::IsUrl( _filename ) )
 		filename = _wcsdup( _filename );
 
 	ReadTags( _file );
@@ -87,51 +91,62 @@ void Metadata::ReadTags(CGioFile *_file)
 	}
 }
 
-static int ID3Write(const wchar_t *filename, HANDLE infile, DWORD offset, void *data, DWORD len)
+// writes data, then everything in infile from offset on, and swaps the result in over filename. closes infile on success
+static int ID3Write(const wchar_t *filename, std::fstream &infile, DWORD offset, void *data, DWORD len)
 {
-	wchar_t tempFile[MAX_PATH] = {0};
-	StringCchCopyW(tempFile, MAX_PATH, filename);
-	PathRemoveExtension(tempFile);
-	StringCchCatW(tempFile, MAX_PATH, L".tmp");
+	std::filesystem::path tempFile(filename);
+	tempFile.replace_extension(L".tmp");
 
 	// check to make sure the filename was actually different!
 	// benski> TODO: we should just try to mangle the filename more rather than totally bail out
-	if (!_wcsicmp(tempFile, filename))
+	if (!_wcsicmp(tempFile.c_str(), filename))
 		return SAVE_ERROR_CANT_OPEN_TEMPFILE;
 
-	// TODO: overlapped I/O
-	HANDLE outfile = CreateFile(tempFile, GENERIC_WRITE|GENERIC_READ, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0);
-	if (outfile != INVALID_HANDLE_VALUE)
+	std::ofstream outfile(tempFile, std::ios::binary | std::ios::trunc);
+	if (!outfile)
+		return SAVE_ERROR_CANT_OPEN_TEMPFILE;
+
+	if (data && len)
+		outfile.write(static_cast<const char *>(data), len);
+
+	infile.clear();
+	infile.seekg(offset);
+
+	char buffer[4096] = {0};
+	while (infile.read(buffer, sizeof(buffer)) || infile.gcount() > 0)
+		outfile.write(buffer, infile.gcount());
+
+	outfile.close();
+	const bool written = !outfile.fail() && !infile.bad();
+	infile.close();
+
+	// only replace the original if the new file was written in full
+	if (!written || !FilePath::Copy(tempFile, filename, true))
 	{
-		DWORD written=0;
-		if (data && len)
-			WriteFile(outfile, data, len, &written, NULL);
-		SetFilePointer(infile, offset, 0, FILE_BEGIN);
-
-		DWORD read=0;
-		do
-		{
-			char data[4096] = {0};
-			written = read = 0;
-			ReadFile(infile, data, 4096, &read, NULL);
-			if (read) WriteFile(outfile, data, read, &written, NULL);
-		}
-		while (read != 0);
-		CloseHandle(outfile);
-		CloseHandle(infile);
-		if (!MoveFile(tempFile, filename))
-		{
-			if (!CopyFile(tempFile, filename, FALSE))
-			{
-				DeleteFile(tempFile);
-				return SAVE_ERROR_ERROR_OVERWRITING;
-			}
-			DeleteFile(tempFile);
-		}
-		return SAVE_SUCCESS;
+		FilePath::Remove(tempFile);
+		return SAVE_ERROR_ERROR_OVERWRITING;
 	}
-	return SAVE_ERROR_CANT_OPEN_TEMPFILE;
+	FilePath::Remove(tempFile);
+	return SAVE_SUCCESS;
+}
 
+static bool WriteTo(std::fstream &file, const void *data, size_t len)
+{
+	return !!file.write(static_cast<const char *>(data), static_cast<std::streamsize>(len)).flush();
+}
+
+// removes bytes from the end of the file, leaving the stream positioned at the new end
+static void TruncateFromEnd(std::fstream &file, const wchar_t *filename, uint64_t bytes)
+{
+	file.flush();
+
+	std::error_code error;
+	const auto size = std::filesystem::file_size(filename, error);
+	if (!error && bytes <= size)
+		std::filesystem::resize_file(filename, size - bytes, error);
+
+	file.clear();
+	file.seekp(0, std::ios::end);
 }
 
 bool Metadata::IsDirty()
@@ -145,18 +160,15 @@ int Metadata::Save()
 		return SAVE_SUCCESS;
 
 	int err=SAVE_SUCCESS;
-	if (GetFileAttributes(filename)&FILE_ATTRIBUTE_READONLY)
+	if (FilePath::IsReadOnly(filename))
 		return SAVE_ERROR_READONLY;
 
-	HANDLE metadataFile = CreateFile(filename, GENERIC_WRITE|GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0);
-	if (metadataFile == INVALID_HANDLE_VALUE)
+	std::fstream metadataFile(std::filesystem::path(filename), std::ios::in | std::ios::out | std::ios::binary);
+	if (!metadataFile.is_open())
 		return SAVE_ERROR_OPENING_FILE;
 
 	if (file.Open(filename, INFO_READ_SIZE/1024) != NErr_Success)
-	{
-		CloseHandle(metadataFile);
 		return SAVE_ERROR_OPENING_FILE;
-	}
 
 	bool strippedID3v1=false; // this flag will get set to true when we remove ID3v1 as a side effect of removing APEv2 or Lyrics3 (or ID3v2.4 end-tag if/when we implement)
 	bool strippedLyrics3=false;
@@ -171,10 +183,9 @@ int Metadata::Save()
 			uint32_t lyrics3_len = 0;
 			void *lyrics3_data = file.GetLyrics3(&lyrics3_len);
 			if (lyrics3_data)
-				SetFilePointer(metadataFile, -(LONG)(len + 15 + lyrics3_len + (file.GetID3v1()?128:0)), NULL, FILE_END);
+				TruncateFromEnd(metadataFile, filename, len + 15 + lyrics3_len + (file.GetID3v1()?128:0));
 			else
-				SetFilePointer(metadataFile, -(LONG)(len + (file.GetID3v1()?128:0)), NULL, FILE_END);
-			SetEndOfFile(metadataFile);
+				TruncateFromEnd(metadataFile, filename, len + (file.GetID3v1()?128:0));
 			strippedLyrics3=true;
 			strippedID3v1=true;
 		}
@@ -187,8 +198,7 @@ int Metadata::Save()
 		void *lyrics3_data = file.GetLyrics3(&len);
 		if (lyrics3_data)
 		{
-			SetFilePointer(metadataFile, -(LONG)(len + 15 + (file.GetID3v1()?128:0)), NULL, FILE_END);
-			SetEndOfFile(metadataFile);
+			TruncateFromEnd(metadataFile, filename, len + 15 + (file.GetID3v1()?128:0));
 			strippedID3v1=true;
 		}
 	}
@@ -199,8 +209,7 @@ int Metadata::Save()
 	{
 		if (file.GetID3v1()) // see if we have ID3v1
 		{
-			SetFilePointer(metadataFile, -128, NULL, FILE_END);
-			SetEndOfFile(metadataFile);
+			TruncateFromEnd(metadataFile, filename, 128);
 		}
 	}
 
@@ -221,12 +230,11 @@ int Metadata::Save()
 		void *apev2_data = malloc(apev2_len);
 		if (apev2_data && apev2.Encode(apev2_data, apev2_len) == APEv2::APEV2_SUCCESS)
 		{
-			SetFilePointer(metadataFile, 0, NULL, FILE_END);
-			DWORD bytesWritten=0;
-			WriteFile(metadataFile, apev2_data, (DWORD)apev2_len, &bytesWritten, 0);
+			metadataFile.seekp(0, std::ios::end);
+			bool wrote = WriteTo(metadataFile, apev2_data, (DWORD)apev2_len);
 			free(apev2_data);
 			apev2_data = 0;
-			if (bytesWritten != apev2_len)
+			if (!wrote)
 			{
 				err=SAVE_APEV2_WRITE_ERROR;
 				goto fail;
@@ -249,26 +257,23 @@ int Metadata::Save()
 		void *lyrics3_data = file.GetLyrics3(&len);
 		if (lyrics3_data)
 		{
-			SetFilePointer(metadataFile, 0, NULL, FILE_END);
-			DWORD bytesWritten=0;
-			WriteFile(metadataFile, lyrics3_data, len, &bytesWritten, NULL);
-			if (bytesWritten != len)
+			metadataFile.seekp(0, std::ios::end);
+			bool wrote = WriteTo(metadataFile, lyrics3_data, len);
+			if (!wrote)
 			{
 				err=SAVE_LYRICS3_WRITE_ERROR;
 				goto fail;
 			}
 			char temp[7] = {0};
 			StringCchPrintfA(temp, 7, "%06u", len);
-			bytesWritten = 0; 
-			WriteFile(metadataFile, temp, 6, &bytesWritten, NULL);
-			if (bytesWritten != 6)
+			wrote = WriteTo(metadataFile, temp, 6);
+			if (!wrote)
 			{
 				err=SAVE_LYRICS3_WRITE_ERROR;
 				goto fail;
 			}
-			bytesWritten = 0; 
-			WriteFile(metadataFile, "LYRICS200", 9, &bytesWritten, NULL);
-			if (bytesWritten != 9)
+			wrote = WriteTo(metadataFile, "LYRICS200", 9);
+			if (!wrote)
 			{
 				err=SAVE_LYRICS3_WRITE_ERROR;
 				goto fail;
@@ -282,10 +287,9 @@ int Metadata::Save()
 		uint8_t id3v1_data[128] = {0};
 		if (id3v1.Encode(id3v1_data) == METADATA_SUCCESS)
 		{
-			SetFilePointer(metadataFile, 0, NULL, FILE_END);
-			DWORD bytesWritten=0;
-			WriteFile(metadataFile, id3v1_data, 128, &bytesWritten, NULL);
-			if (bytesWritten != 128)
+			metadataFile.seekp(0, std::ios::end);
+			bool wrote = WriteTo(metadataFile, id3v1_data, 128);
+			if (!wrote)
 			{
 				err=SAVE_ID3V1_WRITE_ERROR;
 				goto fail;
@@ -300,10 +304,9 @@ int Metadata::Save()
 		void *id3v1_data=file.GetID3v1();
 		if (id3v1_data)
 		{
-			SetFilePointer(metadataFile, 0, NULL, FILE_END);
-			DWORD bytesWritten=0;
-			WriteFile(metadataFile, id3v1_data, 128, &bytesWritten, NULL);
-			if (bytesWritten != 128)
+			metadataFile.seekp(0, std::ios::end);
+			bool wrote = WriteTo(metadataFile, id3v1_data, 128);
+			if (!wrote)
 			{
 				err=SAVE_ID3V1_WRITE_ERROR;
 				goto fail;
@@ -321,9 +324,7 @@ int Metadata::Save()
 		if (old_id3v2_data && !newlen) // there's an old tag, but no new tag
 		{
 			err = ID3Write(filename, metadataFile, oldlen, 0, 0);
-			if (err == SAVE_SUCCESS)
-				metadataFile = INVALID_HANDLE_VALUE; // ID3Write returns true if it closed the handle
-			else
+			if (err != SAVE_SUCCESS)
 				goto fail;
 		}
 		else if (!old_id3v2_data && !newlen) // no old tag, no new tag.. easy :)
@@ -344,12 +345,11 @@ int Metadata::Save()
 				if (new_id3v2_data && id3v2.Encode(new_id3v2_data, newlen) == METADATA_SUCCESS)
 				{
 					// TODO: deal with files with multiple starting id3v2 tags
-					SetFilePointer(metadataFile, 0, NULL, FILE_BEGIN);
-					DWORD bytesWritten=0;
-					WriteFile(metadataFile, new_id3v2_data, newlen, &bytesWritten, NULL);
+					metadataFile.seekp(0, std::ios::beg);
+					bool wrote = WriteTo(metadataFile, new_id3v2_data, newlen);
 					free(new_id3v2_data);
 					new_id3v2_data = 0;
-					if (bytesWritten != newlen)
+					if (!wrote)
 					{
 						err = SAVE_ID3V2_WRITE_ERROR;
 						goto fail;
@@ -370,15 +370,11 @@ int Metadata::Save()
 				if (new_id3v2_data && id3v2.Encode(new_id3v2_data, newlen) == METADATA_SUCCESS)
 				{
 					// TODO: deal with files with multiple starting id3v2 tags
-					SetFilePointer(metadataFile, 0, NULL, FILE_BEGIN);
-					DWORD bytesWritten=0;
 					err = ID3Write(filename, metadataFile, oldlen, new_id3v2_data, newlen);
 					free(new_id3v2_data);
 					new_id3v2_data = 0;
-					if (err == SAVE_SUCCESS)
-						metadataFile = INVALID_HANDLE_VALUE; // ID3Write returns true if it closed the handle
-					else
-						goto fail;
+					if (err != SAVE_SUCCESS)
+				goto fail;
 				}
 				else
 				{
@@ -393,8 +389,6 @@ int Metadata::Save()
 
 fail:
 	file.Close();
-	if (metadataFile != INVALID_HANDLE_VALUE)
-		CloseHandle(metadataFile);
 	return err;
 }
 

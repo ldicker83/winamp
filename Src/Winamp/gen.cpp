@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "gen.h"
 #include <vector>
 #include "../nu/AutoWide.h"
@@ -25,7 +26,7 @@ static PLUGINORDER preload[] =
 void LoadGenPlugin(const wchar_t* filename)
 {
 	wchar_t file[MAX_PATH] = { 0 };
-	PathCombineW(file, PLUGINDIR, filename);
+	FilePath::Combine(file, PLUGINDIR, filename);
 
 	if (!wa::files::file_exists(file))
 	{
@@ -99,7 +100,7 @@ void LoadGenPlugin(const wchar_t* filename)
 				//
 				// for some plug-ins, we sadly need to leave them loaded
 				// otherwise they'll just cause Winamp to keep crashing!
-				if ( _wcsicmp(PathFindFileNameW(filename), L"gen_Wake_up_call.dll") )
+				if ( _wcsicmp(FilePath::FindFileName(filename), L"gen_Wake_up_call.dll") )
 				{
 					FreeModule(hLib);
 				}
@@ -145,24 +146,15 @@ void load_genplugins()
 	for ( ; i < count; i++ )
 		LoadGenPlugin(preload[i].name);
 
-	wchar_t dirstr[MAX_PATH] = { 0 };
-	WIN32_FIND_DATAW d = { 0 };
-	PathCombineW(dirstr, PLUGINDIR, L"GEN_*.DLL");
-
-	HANDLE h = FindFirstFileW(dirstr, &d);
-	if ( h != INVALID_HANDLE_VALUE )
+	for ( const auto &entry : FilePath::List(PLUGINDIR, L"GEN_*.DLL") )
 	{
-		do
-		{
-			for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, d.cFileName)); i++ );
+		const std::wstring name = entry.path().filename().native();
+		for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, name.c_str())); i++ );
 
-			if ( i == count )
-				LoadGenPlugin(d.cFileName);
-			else
-				preload[i].found = true;
-		} while ( FindNextFileW(h, &d) );
-
-		FindClose(h);
+		if ( i == count )
+			LoadGenPlugin(name.c_str());
+		else
+			preload[i].found = true;
 	}
 }
 

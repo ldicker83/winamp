@@ -6,6 +6,8 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
+#include <fstream>
 #include "resource.h"
 #include "options.h"
 #include "api.h"
@@ -58,18 +60,16 @@ INT_PTR CALLBACK TitleProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				case IDC_TAGZ_HELP:
 				{
 					wchar_t dirmask[MAX_PATH] = {0};
-					GetTempPathW(MAX_PATH, dirmask);
-					PathCombineW(dirmask, dirmask, L"atf.htm");
-					if (!PathFileExistsW(dirmask))
+					StringCchCopyW(dirmask, MAX_PATH, (FilePath::TempDirectory() / L"atf.htm").c_str());
+					if (!FilePath::Exists(dirmask))
 					{
-						DWORD size = 0, written = 0;
+						DWORD size = 0;
 						HGLOBAL hResource = langManager->LoadResourceFromFile(hMainInstance, hMainInstance, RT_HTML,MAKEINTRESOURCE(IDR_ATF_HTML), &size);
 
-						HANDLE hFile = CreateFileW(dirmask, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-						if (INVALID_HANDLE_VALUE != hFile)
+						std::ofstream file{std::filesystem::path(dirmask), std::ios::binary};
+						if (file)
 						{
-							WriteFile(hFile, hResource, size, &written, NULL);
-							CloseHandle(hFile);
+							file.write(static_cast<const char *>(static_cast<const void *>(hResource)), size);
 						}
 					}
 					ShellExecuteW(hwndDlg, L"open", dirmask, NULL, NULL, SW_SHOWNORMAL);

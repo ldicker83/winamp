@@ -7,6 +7,7 @@
 **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "strutil.h"
 #include "../nu/AutoChar.h"
@@ -378,8 +379,8 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 		else if (IsCommand(lpszCmdParam, L"/DELM3U", 7))
 		{
 			setup_config();
-			DeleteFileW(M3U_FILE);
-			DeleteFileW(OLD_M3U_FILE);
+			FilePath::Remove(M3U_FILE);
+			FilePath::Remove(OLD_M3U_FILE);
 			ExitProcess(0);
 		}
 		else if (IsCommand(lpszCmdParam, L"/QUIT", 5) ||
@@ -710,8 +711,10 @@ void parseCmdLine(wchar_t *cmdline, HWND hwnd)
 		else
 		{
 			COPYDATASTRUCT cds;
-			wchar_t *p2 = 0;
-			if (!PathIsURLW(param) && GetFullPathNameW(param, MAX_PATH, tmp, &p2) && tmp[0])
+			std::error_code error;
+			if (!FilePath::IsUrl(param))
+				StringCchCopyW(tmp, MAX_PATH, std::filesystem::absolute(param, error).c_str());
+			if (!FilePath::IsUrl(param) && !error && tmp[0])
 			{
 				cds.dwData = IPC_PLAYFILEW;
 				cds.lpData = (void *) tmp;
@@ -747,9 +750,9 @@ wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit)
 		if (p && *p == L'\"') { p++; if (wcsstr(p, L"\"")) wcsstr(p, L"\"")[0] = 0; }
 
 		// this is roughly equivalent to PathUndecorate, which we can't use because it requires IE 5.0+
-		StringCchCopyW(outname, MAX_PATH, PathFindFileNameW(p));
+		StringCchCopyW(outname, MAX_PATH, FilePath::FindFileName(p));
 		StringCchCopyW(buf, MAX_PATH, SKINDIR);
-		PathCombineW(buf2, buf, outname);
+		FilePath::Combine(buf2, buf, outname);
 
 		_r_sW("skin", current, MAX_PATH);
 

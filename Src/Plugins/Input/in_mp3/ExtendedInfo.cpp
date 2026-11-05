@@ -1,4 +1,7 @@
 #include "main.h"
+#include <filesystem>
+#include <system_error>
+#include "../nu/FilePath.h"
 #include "Metadata.h"
 #include "../Winamp/wa_ipc.h"
 #include "../nu/ns_wc.h"
@@ -8,30 +11,35 @@
 #include <strsafe.h>
 
 extern CGioFile *g_playing_file;
-static FILETIME ftLastWriteTime;
+static std::filesystem::file_time_type lastWriteTime;
 
 // is used to determine if the last write time of the file has changed when
 // asked to get the metadata for the same cached file so we can update things
 BOOL HasFileTimeChanged(const wchar_t *fn)
 {
-	WIN32_FILE_ATTRIBUTE_DATA fileData = {0};
-	if (GetFileAttributesExW(fn, GetFileExInfoStandard, &fileData) == TRUE)
+	if (!fn)
+		return FALSE;
+
+	std::error_code error;
+	const auto time = std::filesystem::last_write_time(fn, error);
+	if (!error && time != lastWriteTime)
 	{
-		if(CompareFileTime(&ftLastWriteTime, &fileData.ftLastWriteTime))
-		{
-			ftLastWriteTime = fileData.ftLastWriteTime;
-			return TRUE;
-		}
+		lastWriteTime = time;
+		return TRUE;
 	}
 	return FALSE;
 }
 
 void UpdateFileTimeChanged(const wchar_t *fn)
 {
-	WIN32_FILE_ATTRIBUTE_DATA fileData;
-	if (GetFileAttributesExW(fn, GetFileExInfoStandard, &fileData) == TRUE)
+	if (!fn)
+		return;
+
+	std::error_code error;
+	const auto time = std::filesystem::last_write_time(fn, error);
+	if (!error)
 	{
-		ftLastWriteTime = fileData.ftLastWriteTime;
+		lastWriteTime = time;
 	}
 }
 
@@ -129,7 +137,7 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 
 	if (!fn || !fn[0]) return 0;
 
-	if (g_playing_file && PathIsURL(fn) && !lstrcmpW(lastfn, fn))
+	if (g_playing_file && FilePath::IsUrl(fn) && !lstrcmpW(lastfn, fn))
 	{
 		EnterCriticalSection(&streamInfoLock);
 		uint32_t len = 0;
@@ -143,7 +151,7 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 		LeaveCriticalSection(&streamInfoLock);
 	}
 
-	if (PathIsURL(fn))
+	if (FilePath::IsUrl(fn))
 		return 0;
 
 	if (m_ext_get_mp3info && (!m_ext_get_mp3info->IsMe(fn) || HasFileTimeChanged(fn)))

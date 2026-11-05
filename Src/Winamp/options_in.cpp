@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "Options.h"
 #include "main.hpp"
@@ -30,7 +31,6 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 	{
 		pluginsLoaded = false;
 
-		WIN32_FIND_DATAW d = {0};
 		link_startsubclass(hwndDlg, IDC_PLUGINVERS);
 
 		HWND listWindow = GetDlgItem(hwndDlg, IDC_INPUTS);
@@ -64,7 +64,7 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				{
 					wchar_t fn[MAX_PATH] = {0}, buf[512] = {0};
 					GetModuleFileNameW(in_modules[x]->hDllInstance, fn, MAX_PATH);
-					PathStripPathW(fn);
+					FilePath::StripPath(fn);
 
 					int ver = ((in_modules[x]->version & ~IN_UNICODE) & ~IN_INIT_RET);
 					LVITEMW lvi = {LVIF_TEXT | LVIF_PARAM, (int)x, 0};
@@ -81,38 +81,32 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 			}
 
 			wchar_t dirstr[MAX_PATH] = {0};
-			PathCombineW(dirstr, PLUGINDIR, L"IN_*.DLL");
-			HANDLE h = FindFirstFileW(dirstr, &d);
-			if (h != INVALID_HANDLE_VALUE)
+			for (const auto &entry : FilePath::List(PLUGINDIR, L"IN_*.DLL"))
 			{
-				do
+				std::wstring name = entry.path().filename().native();
+				FilePath::Combine(dirstr, PLUGINDIR, name.c_str());
+				HMODULE b = LoadLibraryExW(dirstr, NULL, LOAD_LIBRARY_AS_DATAFILE);
+				for (x = 0; b && (x != in_modules.size()); x ++)
 				{
-					PathCombineW(dirstr, PLUGINDIR, d.cFileName);
-					HMODULE b = LoadLibraryExW(dirstr, NULL, LOAD_LIBRARY_AS_DATAFILE);
-					for (x = 0; b && (x != in_modules.size()); x ++)
+					if (in_modules[x]->hDllInstance == b)
 					{
-						if (in_modules[x]->hDllInstance == b)
-						{
-							break;
-						}
+						break;
 					}
-
-					if (x == in_modules.size() || !b)
-					{
-						LVITEMW lvi = {LVIF_TEXT | LVIF_PARAM, (int)x, 0};
-						lvi.pszText = d.cFileName;
-						lvi.lParam = -2;
-						lvi.iItem = ListView_InsertItemW(listWindow, &lvi);
-
-						lvi.mask = LVIF_TEXT;
-						lvi.iSubItem = 1;
-						lvi.pszText = getStringW(IDS_NOT_LOADED, NULL, 0);
-						ListView_SetItemW(listWindow, &lvi);
-					}
-					FreeLibrary(b);
 				}
-				while (FindNextFileW(h, &d));
-				FindClose(h);
+
+				if (x == in_modules.size() || !b)
+				{
+					LVITEMW lvi = {LVIF_TEXT | LVIF_PARAM, (int)x, 0};
+					lvi.pszText = name.data();
+					lvi.lParam = -2;
+					lvi.iItem = ListView_InsertItemW(listWindow, &lvi);
+
+					lvi.mask = LVIF_TEXT;
+					lvi.iSubItem = 1;
+					lvi.pszText = getStringW(IDS_NOT_LOADED, NULL, 0);
+					ListView_SetItemW(listWindow, &lvi);
+				}
+				FreeLibrary(b);
 			}
 
 			GetClientRect(listWindow, &r);
@@ -258,7 +252,7 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							{
 								wchar_t buf[1024] = {0}, base[1024] = {0};
 								StringCchCopyW(base, 1024, PLUGINDIR);
-								PathAddBackslashW(base);
+								FilePath::AddBackslash(base);
 
 								LVITEMW lvi = {LVIF_TEXT, which_sel};
 								lvi.pszText = buf;
@@ -270,8 +264,8 @@ INT_PTR CALLBACK InputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 								{
 									p += 4;
 									*p = 0;
-									PathRemoveFileSpecW(base);
-									PathAppendW(base, buf);
+									FilePath::RemoveFileSpec(base);
+									FilePath::Append(base, buf);
 								}
 
 								IFileTypeRegistrar *registrar=0;

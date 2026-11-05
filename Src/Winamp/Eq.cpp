@@ -1,4 +1,6 @@
 #include <windowsx.h>
+#include "../nu/FilePath.h"
+#include <fstream>
 
 #include "Main.h"
 #include "api.h"
@@ -481,7 +483,7 @@ static BOOL CALLBACK loadmp3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		SetWindowTextA(hwndDlg, getString(IDS_LOADAUTOLOAD, NULL, 0));
 		{
 			int x;
-			const wchar_t *filespec = PathFindFileNameW(FileName);
+			const wchar_t *filespec = FilePath::FindFileName(FileName);
 			WideCharToMultiByteSZ(CP_ACP, 0, filespec, -1, buf, 1024, 0, 0);
 			SetWindowTextA(GetDlgItem(hwndDlg, IDC_SAVEPRESET_EDIT), buf);
 			x = SendMessageW(GetDlgItem(hwndDlg, IDC_LOADEQLIST), LB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)buf);
@@ -618,7 +620,7 @@ static BOOL CALLBACK savemp3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		addEQtolistbox(EQDIR2, GetDlgItem(hwndDlg, IDC_LOADEQLIST));
 		{
 			int x;
-			const wchar_t *filespec = PathFindFileNameW(FileName);
+			const wchar_t *filespec = FilePath::FindFileName(FileName);
 						WideCharToMultiByteSZ(CP_ACP, 0, filespec, -1, buf, 1024, 0, 0);
 			SetWindowTextA(GetDlgItem(hwndDlg, IDC_SAVEPRESET_EDIT), buf);
 			x = SendMessageW(GetDlgItem(hwndDlg, IDC_LOADEQLIST), LB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)buf);
@@ -738,7 +740,7 @@ static BOOL CALLBACK delmp3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 				EnableWindow(GetDlgItem(hwndDlg, IDOK), 0);
 			SetWindowTextA(hwndDlg, getString(IDS_DELETEAUTOLOAD1, NULL, 0));
 			SetWindowTextA(GetDlgItem(hwndDlg, IDOK), getString(IDS_DELETEAUTOLOAD2, NULL, 0));
-			const wchar_t *filespec = PathFindFileNameW(FileName);
+			const wchar_t *filespec = FilePath::FindFileName(FileName);
 			WideCharToMultiByteSZ(CP_ACP, 0, filespec, -1, buf, 1024, 0, 0);
 			int x = SendMessageW(GetDlgItem(hwndDlg, IDC_LOADEQLIST), LB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)buf);
 			if (x != LB_ERR)
@@ -864,104 +866,117 @@ static BOOL EQ_OnNCActivate(HWND hwnd, BOOL fActive, HWND hwndActDeact, BOOL fMi
 	return TRUE;
 }
 
+// a preset file is the signature and then fixed size records, which each start with the preset's name
+static const size_t kEQRecordSize = _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp);
+
+// reads up to size bytes. coming up short isn't an error, so the stream stays usable for the next seek
+static size_t ReadEQ(std::fstream &file, char *buffer, size_t size)
+{
+	file.read(buffer, static_cast<std::streamsize>(size));
+	const size_t bytes_read = static_cast<size_t>(file.gcount());
+	file.clear();
+	return bytes_read;
+}
+
+// opens the file for reading and writing, creating it if need be. if it doesn't start with the
+// signature then it isn't a preset file, so it's replaced with an empty one
+static bool OpenEQForUpdate(std::fstream &file, const wchar_t *filename)
+{
+	const std::filesystem::path path(filename);
+	if (!FilePath::Exists(path))
+		std::ofstream{path, std::ios::binary};
+
+	file.open(path, std::ios::in | std::ios::out | std::ios::binary);
+	if (!file.is_open())
+		return false;
+
+	char s[2048] = {0};
+	const size_t sig_length = strlen(sig);
+	ReadEQ(file, s, sig_length);
+	if (memcmp(s, sig, sig_length))
+	{
+		file.close();
+		file.clear();
+		file.open(path, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+		if (!file.is_open())
+			return false;
+		file.write(sig, static_cast<std::streamsize>(sig_length));
+		file.seekg(static_cast<std::streamoff>(sig_length));
+	}
+	return true;
+}
+
 int writeEQfile_init(wchar_t *file, const std::string& name, unsigned char *tab)
 {
 	unsigned char preamp = 31;
 	char s[2048] = {0};
-	DWORD a = 0;
-	HANDLE hFile = CreateFileW(file, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) return 1;
-	ReadFile(hFile, s, lstrlenA(sig), &a, NULL);
-	if (memcmp(s, sig, lstrlenA(sig)))
-	{
-		SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-		a = 0; WriteFile(hFile, sig, lstrlenA(sig), &a, NULL);
-		SetEndOfFile(hFile);
-	}
+	std::fstream eq;
+	if (!OpenEQForUpdate(eq, file)) return 1;
 	while (1)
 	{
-		a = 0;
-		ReadFile(hFile, s, _MAX_FNAME + 1 + 10 + 1, &a, NULL);
-		if (a != _MAX_FNAME + 1 + 10 + 1)
+		if (ReadEQ(eq, s, _MAX_FNAME + 1 + 10 + 1) != _MAX_FNAME + 1 + 10 + 1)
 		{
-			SetFilePointer(hFile, 0, NULL, FILE_END);
+			eq.seekp(0, std::ios::end);
 			break;
 		}
 		if (!_stricmp(name.c_str(), s))
 		{
-			CloseHandle(hFile);
 			return 0; // don't write it
 		}
 	}
 	StringCchCopyExA(s, _MAX_FNAME+1, name.c_str(), 0, 0, STRSAFE_FILL_BEHIND_NULL);
 	memcpy(s + _MAX_FNAME + 1, tab, 10);
 	memcpy(s + _MAX_FNAME + 1 + 10, &preamp, 1);
-	a = 0; WriteFile(hFile, s, _MAX_FNAME + 1 + 10 + 1, &a, NULL);
-	CloseHandle(hFile);
+	eq.write(s, _MAX_FNAME + 1 + 10 + 1);
 	return 0;
 }
 
 static int writeEQfile(wchar_t *file, const std::string &name)
 {
 	char s[2048] = {0};
-	DWORD a = 0;
-	HANDLE hFile = CreateFileW(file, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) return 1;
-	ReadFile(hFile, s, lstrlenA(sig), &a, NULL);
-	if (memcmp(s, sig, lstrlenA(sig)))
-	{
-		SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-		a = 0; WriteFile(hFile, sig, lstrlenA(sig), &a, NULL);
-		SetEndOfFile(hFile);
-	}
+	std::fstream eq;
+	if (!OpenEQForUpdate(eq, file)) return 1;
 	while (1)
 	{
-		a = 0;
-		ReadFile(hFile, s, _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp), &a, NULL);
-		if (a != _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp))
+		const std::streamoff record = eq.tellg();
+		if (ReadEQ(eq, s, kEQRecordSize) != kEQRecordSize)
 		{
-			SetFilePointer(hFile, 0, NULL, FILE_END);
+			eq.seekp(0, std::ios::end);
 			break;
 		}
 		if (!_stricmp(name.c_str(), s))
 		{
-			SetFilePointer(hFile, -(signed)a, NULL, FILE_CURRENT);
+			eq.seekp(record);
 			break;
 		}
 	}
 	StringCchCopyExA(s, _MAX_FNAME+1, name.c_str(), 0, 0, STRSAFE_FILL_BEHIND_NULL);
 	memcpy(s + _MAX_FNAME + 1, eq_tab, sizeof(eq_tab));
 	memcpy(s + _MAX_FNAME + 1 + sizeof(eq_tab), &config_preamp, sizeof(config_preamp));
-	a = 0; WriteFile(hFile, s, _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp), &a, NULL);
-	CloseHandle(hFile);
+	eq.write(s, kEQRecordSize);
 	return 0;
 }
 
 static int readEQfile(wchar_t *file, const std::string &name)
 {
 	char s[2048] = {0};
-	DWORD a = 0;
-	HANDLE hFile = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) return 1;
-	ReadFile(hFile, s, lstrlenA(sig), &a, NULL);
-	if (memcmp(s, sig, lstrlenA(sig)))
+	std::fstream eq(std::filesystem::path(file), std::ios::in | std::ios::binary);
+	if (!eq.is_open()) return 1;
+	ReadEQ(eq, s, strlen(sig));
+	if (memcmp(s, sig, strlen(sig)))
 	{
-		CloseHandle(hFile);
 		return 1;
 	}
 	while (1)
 	{
-		a = 0;
-		ReadFile(hFile, s, _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp), &a, NULL);
-		if (a != _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp))
+		if (ReadEQ(eq, s, kEQRecordSize) != kEQRecordSize)
 		{
-			CloseHandle(hFile);
 			return 1;
 		}
 		if (!_stricmp(name.c_str(), s))
 			break;
 	}
-	CloseHandle(hFile);
+	eq.close();
 	memcpy(eq_tab, s + _MAX_FNAME + 1, sizeof(eq_tab));
 	memcpy(&config_preamp, s + _MAX_FNAME + 1 + sizeof(eq_tab), sizeof(config_preamp));
 	eq_set(config_use_eq, (char*)eq_tab, config_preamp);
@@ -971,58 +986,49 @@ static int readEQfile(wchar_t *file, const std::string &name)
 
 static void deleteEQfile(wchar_t *file, char *name)
 {
-	wchar_t tmpfile[2048] = {0};
 	char s[2048] = {0};
-	DWORD a = 0;
-	HANDLE hFile = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) return ;
-	StringCchPrintfW(tmpfile, 2048, L"%s.TMP", file);
-	HANDLE hFileOut = CreateFileW(tmpfile, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFileOut == INVALID_HANDLE_VALUE)
+	const std::filesystem::path path(file);
+	std::fstream eq(path, std::ios::in | std::ios::binary);
+	if (!eq.is_open()) return ;
+	std::filesystem::path tmpfile(path);
+	tmpfile += L".TMP";
+	std::ofstream out(tmpfile, std::ios::binary | std::ios::trunc);
+	if (!out.is_open())
 	{
-		CloseHandle(hFile);
 		return ;
 	}
-	ReadFile(hFile, s, lstrlenA(sig), &a, NULL);
-	a = 0; WriteFile(hFileOut, s, lstrlenA(sig), &a, NULL);
+	ReadEQ(eq, s, strlen(sig));
+	out.write(s, static_cast<std::streamsize>(strlen(sig)));
 	while (1)
 	{
-		a = 0;
-		ReadFile(hFile, s, _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp), &a, NULL);
-		if (a != _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp))
+		const size_t a = ReadEQ(eq, s, kEQRecordSize);
+		if (a != kEQRecordSize)
 		{
 			break;
 		}
 		if (_stricmp(name, s))
-			WriteFile(hFileOut, s, a, &a, NULL);
+			out.write(s, static_cast<std::streamsize>(a));
 	}
-	CloseHandle(hFile);
-	CloseHandle(hFileOut);
-	DeleteFileW(file);
-	StringCchPrintfW(tmpfile, 2048, L"%s.TMP", file);
-	MoveFileW(tmpfile, file);
+	eq.close();
+	out.close();
+	FilePath::Rename(tmpfile, path);
 	return ;
 }
 
 static void addEQtolistbox(wchar_t *file, HWND listbox)
 {
 	char s[2048] = {0};
-	DWORD l = 0;
-	HANDLE hFile = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) return ;
-	ReadFile(hFile, s, lstrlenA(sig), &l, NULL);
-	if (memcmp(s, sig, lstrlenA(sig)))
+	std::fstream eq(std::filesystem::path(file), std::ios::in | std::ios::binary);
+	if (!eq.is_open()) return ;
+	ReadEQ(eq, s, strlen(sig));
+	if (memcmp(s, sig, strlen(sig)))
 	{
-		CloseHandle(hFile);
 		return ;
 	}
 	while (1)
 	{
-		DWORD a = 0;
-		ReadFile(hFile, s, _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp), &a, NULL);
-		if (a != _MAX_FNAME + 1 + sizeof(eq_tab) + sizeof(config_preamp))
+		if (ReadEQ(eq, s, kEQRecordSize) != kEQRecordSize)
 			break;
 		SendMessageA(listbox, LB_ADDSTRING, 0, (LPARAM)s);   // Must stay in ANSI mode
 	}
-	CloseHandle(hFile);
 }

@@ -15,6 +15,7 @@
 /* ------------------------ includes --------------------------------------*/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "api__in_mp3.h"
 #include <time.h>
 #include <locale.h>
@@ -39,16 +40,23 @@
 #define SAFE_MALLOC_MATH(orig, x) (((orig)<x)?x:orig)
 // seems like a reasonable limit, but we should check with tag first
 
-static int64_t Seek64(HANDLE hf, int64_t distance, DWORD MoveMethod)
+static int64_t Seek64(std::ifstream &file, int64_t distance, std::ios::seekdir direction)
 {
-	LARGE_INTEGER li;
-	li.QuadPart = distance;
-	li.LowPart = SetFilePointer (hf, li.LowPart, &li.HighPart, MoveMethod);
-	if (li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
-	{
-		li.QuadPart = -1;
-	}
-	return li.QuadPart;
+	file.clear();
+	file.seekg(static_cast<std::streamoff>(distance), direction);
+	if (!file)
+		return -1;
+	return static_cast<std::streamoff>(file.tellg());
+}
+
+// reads up to count bytes. reaching the end of the file isn't an error, so the stream stays usable
+static DWORD ReadStream(std::ifstream &file, void *buffer, size_t count)
+{
+	file.read(static_cast<char *>(buffer), static_cast<std::streamsize>(count));
+	const DWORD bytes_read = static_cast<DWORD>(file.gcount());
+	if (!file.bad())
+		file.clear();
+	return bytes_read;
 }
 
 HWND GetDialogBoxParent()
@@ -83,7 +91,6 @@ CGioFile::CGioFile()
 	mpeg_position=0;
 	no_peek_hack=false;
 	encodingMethod=0;
-	ZeroMemory(&last_write_time, sizeof(last_write_time));
 	ZeroMemory(id3v1_data, sizeof(id3v1_data));
 	lengthVerified=false;
 	m_vbr_bytes = 0;
@@ -97,7 +104,7 @@ CGioFile::CGioFile()
 	apev2_data=0;
 	m_full_buffer = NULL;
 	fEof = false;
-	hFile = INVALID_HANDLE_VALUE;
+
 	m_vbr_frames = 0;
 	ZeroMemory(&m_vbr_toc, sizeof(m_vbr_toc));
 	m_vbr_frame_len = 0;
@@ -234,16 +241,18 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 	if ( !_wcsnicmp( pszName, L"file://", 7 ) )
 		pszName += 7;
 
-	if ( PathIsURL( pszName ) )
+	if ( FilePath::IsUrl( pszName ) )
 		return NErr_ConnectionFailed;
 	else
 	{
-		hFile = CreateFile(pszName, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, 0);
+		if ( m_file.is_open() )
+			m_file.close();
+		m_file.clear();
+		m_file.open( pszName, std::ios::binary );
 
-		if (hFile != INVALID_HANDLE_VALUE)
+		if ( m_file.is_open() )
 		{
-			GetFileTime( hFile, 0, 0, &last_write_time );
-			mpeg_length = Seek64( hFile, 0, FILE_END );
+			mpeg_length = Seek64( m_file, 0, std::ios::end );
 
 			uint64_t startOffset = 0;
 			unsigned char buf[ 1448 ] = { 0 };
@@ -252,8 +261,8 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 			while ( 1 ) // read all tags (sometimes programs get stupid and make multiple tags)
 			{
 				len = 0;
-				Seek64( hFile, startOffset, FILE_BEGIN );
-				ReadFile( hFile, buf, 10, &len, NULL );
+				Seek64( m_file, startOffset, std::ios::beg );
+				len = ReadStream( m_file, buf, 10 );
 
 				if ( len >= 10 &&
 					 buf[ 0 ] == 'I' &&
@@ -275,7 +284,7 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 					thisLen += ( (int)buf[ 8 ] ) << 7;
 					thisLen += ( (int)buf[ 9 ] );
 
-					SetFilePointer( hFile, -10, NULL, FILE_CURRENT );
+					Seek64( m_file, -10, std::ios::cur );
 
 					if ( stream_id3v2_buf ) // already read a tag?
 					{
@@ -284,7 +293,7 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 						mpeg_length   -= thisLen;
 						mpeg_position += thisLen;
 						
-						SetFilePointer( hFile, thisLen, NULL, FILE_CURRENT );
+						Seek64( m_file, thisLen, std::ios::cur );
 
 						continue;
 					}
@@ -295,13 +304,13 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 						memcpy( stream_id3v2_buf, buf, 10 );
 
 						DWORD dummy = 0;
-						if ( !ReadFile( hFile, stream_id3v2_buf, thisLen, &dummy, 0 ) || dummy < thisLen )
+						if ( ( dummy = ReadStream( m_file, stream_id3v2_buf, thisLen ) ) < thisLen )
 						{
 							free( stream_id3v2_buf );
 							stream_id3v2_buf = NULL;
 							
 							thisLen = 0;
-							SetFilePointer( hFile, 0, NULL, FILE_END );
+							Seek64( m_file, 0, std::ios::end );
 
 							break;
 						}
@@ -328,8 +337,6 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 				}
 				else
 				{
-					// benski> unnecessary because we call SetFilePointer immediately after the loop:
-					// CUT: SetFilePointer(hFile, -10, NULL, FILE_CURRENT);
 					break;
 				}
 			}
@@ -337,10 +344,10 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 			/* Read ID3v1 Tag */
 			if ( mpeg_length >= 128 )
 			{
-				SetFilePointer( hFile, -128, NULL, FILE_END );
+				Seek64( m_file, -128, std::ios::end );
 
 				len = 0;
-				if ( ReadFile( hFile, id3v1_data, 128, &len, NULL ) && len == 128 )
+				if ( ( len = ReadStream( m_file, id3v1_data, 128 ) ) == 128 )
 				{
 					if ( id3v1_data[ 0 ] == 'T' && id3v1_data[ 1 ] == 'A' && id3v1_data[ 2 ] == 'G' )
 					{
@@ -351,10 +358,10 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 			}
 
 			/* read appended ID3v2.4 tag */
-			if ( mpeg_length >= 10 && Seek64( hFile, mpeg_position + mpeg_length - 10, FILE_BEGIN ) != -1 )
+			if ( mpeg_length >= 10 && Seek64( m_file, mpeg_position + mpeg_length - 10, std::ios::beg ) != -1 )
 			{
 				len = 0;
-				ReadFile( hFile, buf, 10, &len, NULL );
+				len = ReadStream( m_file, buf, 10 );
 				if ( len >= 10 &&
 					 buf[ 0 ] == '3' &&
 					 buf[ 1 ] == 'D' &&
@@ -388,10 +395,10 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 				lyrics3_size = 0;
 				char lyrics3_end_signature[ 15 ] = { 0 };
 
-				Seek64( hFile, ( mpeg_position + mpeg_length - 15 ), FILE_BEGIN );
+				Seek64( m_file, ( mpeg_position + mpeg_length - 15 ), std::ios::beg );
 
 				len = 0;
-				if ( ReadFile( hFile, lyrics3_end_signature, 15, &len, NULL ) && len == 15 )
+				if ( ( len = ReadStream( m_file, lyrics3_end_signature, 15 ) ) == 15 )
 				{
 					if ( !memcmp( lyrics3_end_signature + 6, "LYRICS200", 9 ) )
 					{
@@ -401,10 +408,10 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 							lyrics3_data = (char *)malloc( lyrics3_size );
 							if ( lyrics3_data )
 							{
-								SetFilePointer( hFile, -(LONG)( 15 + lyrics3_size ), NULL, FILE_CURRENT );
+								Seek64( m_file, -(LONG)( 15 + lyrics3_size ), std::ios::cur );
 
 								len = 0;
-								ReadFile( hFile, lyrics3_data, lyrics3_size, &len, 0 );
+								len = ReadStream( m_file, lyrics3_data, lyrics3_size );
 								if ( len != lyrics3_size || memcmp( lyrics3_data, "LYRICSBEGIN", 11 ) )
 								{
 									free( lyrics3_data );
@@ -429,10 +436,10 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 				apev2_data = NULL;
 				
 				char ape[ 32 ] = { 0 };
-				Seek64( hFile, ( mpeg_position + mpeg_length - 32 ), FILE_BEGIN );
+				Seek64( m_file, ( mpeg_position + mpeg_length - 32 ), std::ios::beg );
 
 				len = 0;
-				if ( ReadFile( hFile, ape, 32, &len, NULL ) && len == 32 )
+				if ( ( len = ReadStream( m_file, ape, 32 ) ) == 32 )
 				{
 					APEv2::Header footer( ape );
 					if ( footer.Valid() )
@@ -440,13 +447,13 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 						m_apev2_len = footer.TagSize();
 						if ( mpeg_length >= m_apev2_len )
 						{
-							Seek64( hFile, -(int64_t)( m_apev2_len ), FILE_CURRENT );
+							Seek64( m_file, -(int64_t)( m_apev2_len ), std::ios::cur );
 
 							apev2_data = (char *)malloc( m_apev2_len );
 							if ( apev2_data )
 							{
 								len = 0;
-								ReadFile( hFile, apev2_data, m_apev2_len, &len, NULL );
+								len = ReadStream( m_file, apev2_data, m_apev2_len );
 								if ( len != m_apev2_len || apev2.Parse( apev2_data, m_apev2_len ) != APEv2::APEV2_SUCCESS )
 								{
 									free( apev2_data );
@@ -463,10 +470,10 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 			}
 
 			{
-				Seek64( hFile, mpeg_position, FILE_BEGIN );
+				Seek64( m_file, mpeg_position, std::ios::beg );
 
 				len = 0;
-				ReadFile( hFile, buf, sizeof( buf ), &len, NULL );
+				len = ReadStream( m_file, buf, sizeof( buf ) );
 				
 				delete m_vbr_hdr;
 				m_vbr_hdr = NULL;
@@ -551,9 +558,9 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 
 			// read OFL
 			{
-				Seek64( hFile, mpeg_position, FILE_BEGIN );
+				Seek64( m_file, mpeg_position, std::ios::beg );
 				len = 0;
-				ReadFile( hFile, buf, sizeof( buf ), &len, NULL );
+				len = ReadStream( m_file, buf, sizeof( buf ) );
 				MPEGFrame frame;
 				frame.ReadBuffer( buf );
 				OFL ofl;
@@ -574,22 +581,20 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 
 			ReadiTunesGaps();
 
-			Seek64( hFile, mpeg_position, FILE_BEGIN );
+			Seek64( m_file, mpeg_position, std::ios::beg );
 
 			if ( maxbufsizek * 1024 >= mpeg_length )
 			{
-				DWORD m_full_buffer_len = 0;
 				m_full_buffer = new unsigned char[ (unsigned int)mpeg_length ];
-				if ( !ReadFile( hFile, m_full_buffer, (DWORD)mpeg_length, &m_full_buffer_len, NULL ) )
+				ReadStream( m_file, m_full_buffer, (size_t)mpeg_length );
+				if ( m_file.bad() )
 				{
-					CloseHandle( hFile );
-					hFile = INVALID_HANDLE_VALUE;
+					m_file.close();
 					delete[] m_full_buffer;
 					m_full_buffer = NULL;
 					return NErr_Error;
 				}
-				CloseHandle( hFile );
-				hFile = INVALID_HANDLE_VALUE;
+				m_file.close();
 				m_full_buffer_pos = 0;
 			}
 			else
@@ -621,10 +626,11 @@ int CGioFile::Close()
 	delete [] m_full_buffer;
 	m_full_buffer = NULL;
 
-	if (hFile != INVALID_HANDLE_VALUE)
+	if (m_file.is_open())
 	{
-		dwReturn = CloseHandle(hFile) ? NErr_Success : NErr_Error;
-		hFile = INVALID_HANDLE_VALUE;
+		m_file.clear();
+		m_file.close();
+		dwReturn = m_file.fail() ? NErr_Error : NErr_Success;
 	}
 
 	return dwReturn;
@@ -678,7 +684,6 @@ int CGioFile::Read(void *pBuffer, int cbToRead, int *pcbRead)
 		return NErr_Success;
 	}
 
-	BOOL bSuccess;
 	if (m_full_buffer)
 	{
 		int len = cbToRead;
@@ -701,7 +706,7 @@ int CGioFile::Read(void *pBuffer, int cbToRead, int *pcbRead)
 	}
 	else
 	{
-		if (hFile != INVALID_HANDLE_VALUE)
+		if (m_file.is_open())
 		{
 			if ((uint64_t)cbToRead >= (mpeg_length - file_position))
 			{
@@ -716,10 +721,9 @@ int CGioFile::Read(void *pBuffer, int cbToRead, int *pcbRead)
 				return NErr_Success;
 			}
 
-			DWORD dwRead = 0;
-			bSuccess = ReadFile(hFile, pBuffer, cbToRead, &dwRead, NULL);
+			const DWORD dwRead = ReadStream(m_file, pBuffer, cbToRead);
 
-			if (bSuccess)
+			if (!m_file.bad())
 			{
 				file_position += dwRead;
 				// update pcbRead
@@ -780,9 +784,9 @@ DWORD CGioFile::GetCurrentPosition(void) const
 	{
 		dwPos = (DWORD)m_full_buffer_pos;
 	}
-	else if (hFile != INVALID_HANDLE_VALUE)
+	else if (m_file.is_open())
 	{
-		dwPos = SetFilePointer(hFile, 0, NULL, FILE_CURRENT);
+		dwPos = (DWORD)static_cast<std::streamoff>(m_file.tellg());
 		dwPos -= (DWORD)(mpeg_position + peekBuffer.size());
 	}
 
@@ -802,9 +806,9 @@ void CGioFile::SetCurrentPosition(long dwPos, int How) // GIO_FILE_BEGIN only
 		if (m_full_buffer_pos < 0) m_full_buffer_pos = 0;
 		if (m_full_buffer_pos > mpeg_length) m_full_buffer_pos = mpeg_length;
 	}
-	else if (hFile != INVALID_HANDLE_VALUE)
+	else if (m_file.is_open())
 	{
-		Seek64(hFile, mpeg_position + dwPos, FILE_BEGIN);
+		Seek64( m_file, mpeg_position + dwPos, std::ios::beg );
 		file_position = dwPos;
 		peekBuffer.clear();
 	}

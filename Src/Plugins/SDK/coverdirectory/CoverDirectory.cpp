@@ -1,4 +1,9 @@
 #include "api.h"
+#include "../nu/FilePath.h"
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <system_error>
 #include "CoverDirectory.h"
 #include <api/service/svcs/svc_imgload.h>
 #include <api/service/waservicefactory.h>
@@ -47,7 +52,7 @@ static bool BuildCoverFilename(const wchar_t *filename, const wchar_t *type, wch
 		CleanNameForPath(artistname);
 		CleanNameForPath(albumname);
 		StringCchPrintf(mask, MAX_PATH, L"%s - %s.*",artistname, albumname);
-		PathCombine(path, WASABI_API_APP->path_getUserSettingsPath(), L"Cover Library");
+		FilePath::Combine(path, WASABI_API_APP->path_getUserSettingsPath(), L"Cover Library");
 		return true;
 	}
 	return false;
@@ -77,122 +82,70 @@ static svc_imageLoader *FindImageLoader(const wchar_t *filespec, waServiceFactor
 	return NULL;
 }
 
-static bool ImageExists(const wchar_t *path, const wchar_t *mask)
-{
-	wchar_t dirmask[MAX_PATH];
-	PathCombineW(dirmask, path, mask);
-	WIN32_FIND_DATAW find;
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			wchar_t fn[MAX_PATH];
-			PathCombine(fn, path, mask);
-			waServiceFactory *factory=0;
-			svc_imageLoader *loader = FindImageLoader(fn, &factory);
-			if (loader)
-			{
-				factory->releaseInterface(loader);
-				FindClose(hFind);
-				return true;
-			}
-			
-		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
-	}
-	return false;
-}
-
-static bool LoadFile(const wchar_t *filename, void **bits, size_t *len)
+static bool LoadFile(const std::filesystem::path &filename, void **bits, size_t *len)
 {
 	*len=0;
-	FILE * f = _wfopen(filename,L"rb");
+	std::error_code error;
+	const auto size = std::filesystem::file_size(filename, error);
+	if (error || !size)
+		return false;
+
+	std::ifstream f(filename, std::ios::binary);
 	if (!f)
 		return false;
-	fseek(f,0,2);
-	*len = ftell(f);
-	if (!*len)
-	{
-		fclose(f);
-		return false;
-	}
-	fseek(f,0,0);
+
+	*len = static_cast<size_t>(size);
 	void * data = WASABI_API_MEMMGR->sysMalloc(*len);
-	fread(data,*len,1,f);
-	fclose(f);
+	f.read(static_cast<char *>(data), static_cast<std::streamsize>(*len));
 	*bits = data;
 	return true;
 }
 
 static bool LoadImageData(const wchar_t *path, const wchar_t *mask, void **bits, size_t *len, wchar_t **mimeType)
 {
-	wchar_t dirmask[MAX_PATH];
-	PathCombineW(dirmask, path, mask);
-	WIN32_FIND_DATAW find;
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(path, mask))
 	{
-		do
+		const std::filesystem::path &fn = entry.path();
+		waServiceFactory *factory=0;
+		svc_imageLoader *loader = FindImageLoader(fn.c_str(), &factory);
+		if (loader)
 		{
-			wchar_t fn[MAX_PATH];
-			PathCombine(fn, path, find.cFileName);
-			waServiceFactory *factory=0;
-			svc_imageLoader *loader = FindImageLoader(fn, &factory);
-			if (loader)
+			factory->releaseInterface(loader);
+			if (LoadFile(fn, bits, len))
 			{
-				factory->releaseInterface(loader);
-				if (LoadFile(fn, bits, len))
+				const std::wstring extension = fn.extension().native();
+				if (!extension.empty())
 				{
-					const wchar_t *ext = PathFindExtension(fn);
-					if (*ext)
-					{
-						ext++;
-						size_t len = wcslen(ext);
-						*mimeType = (wchar_t *)WASABI_API_MEMMGR->sysMalloc((len + 1) * sizeof(wchar_t));
-						StringCchCopy(*mimeType, len+1, ext);
-						CharLower(*mimeType);
-					}
-					else
-					{
-						*mimeType=0;
-					}
-
-					FindClose(hFind);
-					return true;
+					const wchar_t *ext = extension.c_str() + 1;
+					size_t len = wcslen(ext);
+					*mimeType = (wchar_t *)WASABI_API_MEMMGR->sysMalloc((len + 1) * sizeof(wchar_t));
+					StringCchCopy(*mimeType, len+1, ext);
+					CharLower(*mimeType);
 				}
+				else
+				{
+					*mimeType=0;
+				}
+
+				return true;
 			}
-			
 		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
 	}
 	return false;
 }
 
 static bool DeleteImage(const wchar_t *path, const wchar_t *mask)
 {
-	wchar_t dirmask[MAX_PATH];
-	PathCombineW(dirmask, path, mask);
-	WIN32_FIND_DATAW find;
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	const std::filesystem::path fn = std::filesystem::path(path) / mask;
+	for (const auto &entry : FilePath::List(path, mask))
 	{
-		do
+		waServiceFactory *factory=0;
+		svc_imageLoader *loader = FindImageLoader(fn.c_str(), &factory);
+		if (loader)
 		{
-			wchar_t fn[MAX_PATH];
-			PathCombine(fn, path, mask);
-			waServiceFactory *factory=0;
-			svc_imageLoader *loader = FindImageLoader(fn, &factory);
-			if (loader)
-			{
-				DeleteFile(fn);
-				factory->releaseInterface(loader);
-			}			
+			FilePath::Remove(fn);
+			factory->releaseInterface(loader);
 		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
 	}
 	return false;
 }

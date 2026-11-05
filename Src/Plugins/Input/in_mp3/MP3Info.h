@@ -34,9 +34,6 @@ public:
 		return !lstrcmpW(file, fn);
 	}
 protected:
-	// Keep track of file timestamp for file system change notification handling
-	FILETIME		last_write_time;
-
 private:
 	void SetField(const wchar_t *value, wchar_t *&v2, char *v1, size_t v1size);
 	Metadata metadata;	

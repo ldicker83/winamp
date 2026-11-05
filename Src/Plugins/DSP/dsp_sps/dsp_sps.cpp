@@ -1,4 +1,6 @@
 #include <windows.h>
+#include <filesystem>
+#include <system_error>
 #include <commctrl.h>
 #include "../winamp/dsp.h"
 #include "resource.h"
@@ -166,7 +168,8 @@ static int m_genhotkeys_add_ipc;
 int init(struct winampDSPModule *this_mod)
 {
 	wsprintf(g_path,"%s\\dsp_sps",(char*)SendMessageW(this_mod->hwndParent,WM_WA_IPC,0,IPC_GETPLUGINDIRECTORY));
-	CreateDirectory(g_path,NULL);
+	std::error_code error;
+	std::filesystem::create_directory(g_path, error);
 
 	// loader so that we can get the localisation service api for use
 	WASABI_API_SVC = (api_service*)SendMessageW(this_mod->hwndParent, WM_WA_IPC, 0, IPC_GET_API_SERVICE);

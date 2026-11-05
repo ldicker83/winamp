@@ -37,17 +37,11 @@
     <ClCompile Include="Stopper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StreamFileWin32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\nu\SpillBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StreamFileWin32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Stopper.h">
       <Filter>Header Files</Filter>
     </ClInclude>

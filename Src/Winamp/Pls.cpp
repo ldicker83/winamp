@@ -6,18 +6,25 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include <io.h>
+#include "../nu/FilePath.h"
 #include <sys/stat.h>
+#include "../nu/FilePath.h"
 #include "api.h"
+#include "../nu/FilePath.h"
 #include "WinampPlaylist.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
+#include "../nu/FilePath.h"
 #include <strsafe.h>
+#include "../nu/FilePath.h"
 
 void saveplsfn(const wchar_t *_fn)
 {
 	int pos = PlayList_getPosition();
 	PlayList_setposition(0);
-	FILE *plsFile = _wfopen(_fn, L"wt");
+	FILE *plsFile = FilePath::Open(_fn, L"wt");
 	if(plsFile)
 	{
 		int x = 0;
@@ -66,9 +73,10 @@ int loadpls(HWND hwnd, int whattodo)
 	}
 	wchar_t filter[1024] = {0};
 	playlistManager->GetFilterList(filter, 1024);
-	wchar_t temp[FILENAME_SIZE] = {0}, oldCurPath[MAX_PATH] = {0}, titleStr[128] = {0};
+	wchar_t temp[FILENAME_SIZE] = {0}, titleStr[128] = {0};
 
-	GetCurrentDirectoryW(MAX_PATH, oldCurPath);
+	std::error_code error;
+	const std::filesystem::path oldCurPath = std::filesystem::current_path(error);
 
 	OPENFILENAMEW l = {sizeof(OPENFILENAMEW),0};
 	static int q;
@@ -93,9 +101,7 @@ int loadpls(HWND hwnd, int whattodo)
 	UninitDragDrops();
 	if (GetOpenFileNameW(&l))
 	{
-		wchar_t newCurPath[MAX_PATH] = {0};
-		GetCurrentDirectoryW(MAX_PATH, newCurPath);
-		WASABI_API_APP->path_setWorkingPath(newCurPath);
+		WASABI_API_APP->path_setWorkingPath(std::filesystem::current_path(error).c_str());
 
 		q = 0;
 		if (LoadPlaylist(temp, whattodo, 0) != 0)
@@ -103,7 +109,7 @@ int loadpls(HWND hwnd, int whattodo)
 		//else // TODO: this wasn't there in the old code, so we'll leave it out for now
 		retv = 1;
 	}
-	SetCurrentDirectoryW(oldCurPath);
+	std::filesystem::current_path(oldCurPath, error);
 	q = 0;
 	InitDragDrops();
 	return retv;
@@ -111,19 +117,17 @@ int loadpls(HWND hwnd, int whattodo)
 
 static void checkplswritable(wchar_t *filename)
 {
-	if (!_waccess(filename, 0))
+	if (FilePath::IsReadOnly(filename))
 	{
-		if (_waccess(filename, 2))
-		{
-			_wchmod(filename, _S_IREAD | _S_IWRITE);
-		}
+		std::error_code error;
+		std::filesystem::permissions(filename, std::filesystem::perms::owner_write, std::filesystem::perm_options::add, error);
 	}
 }
 
 int savepls(HWND hwnd)
 {
-	wchar_t oldCurPath[MAX_PATH] = {0};
-	GetCurrentDirectoryW(MAX_PATH, oldCurPath);
+	std::error_code error;
+	const std::filesystem::path oldCurPath = std::filesystem::current_path(error);
 
 	static wchar_t temp[MAX_PATH] = {0};
 	OPENFILENAMEW l = {sizeof(OPENFILENAMEW),0};
@@ -144,17 +148,15 @@ int savepls(HWND hwnd)
 
 	if (GetSaveFileNameW(&l))
 	{
-		wchar_t newCurPath[MAX_PATH] = {0};
-		GetCurrentDirectoryW(MAX_PATH, newCurPath);
-		WASABI_API_APP->path_setWorkingPath(newCurPath);
-		SetCurrentDirectoryW(oldCurPath);
+		WASABI_API_APP->path_setWorkingPath(std::filesystem::current_path(error).c_str());
+		std::filesystem::current_path(oldCurPath, error);
 
 		checkplswritable(temp);
 		q = 0;
 		ret = 1;
 		if (!_wcsicmp(extensionW(temp), L"pls"))
 		{
-			DeleteFileW(temp);
+			FilePath::Remove(temp);
 			saveplsfn(temp);
 		}
 		else // if it's not PLS, then it's m3u or m3u8, both of which are handled by the same function
@@ -164,7 +166,7 @@ int savepls(HWND hwnd)
 	}
 
 	_w_i("plsflt", l.nFilterIndex);
-	SetCurrentDirectoryW(oldCurPath);
+	std::filesystem::current_path(oldCurPath, error);
 	q = 0;
 	return ret;
 }

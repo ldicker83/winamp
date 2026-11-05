@@ -7,6 +7,7 @@
  **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include <windowsx.h>
 
 #include "../Agave/Language/lang.h"
@@ -129,7 +130,7 @@ int bNoHwndOther = 0;
 
 static void CreateEQPresets()
 {
-	if (!PathFileExistsW(EQDIR1))
+	if (!FilePath::Exists(EQDIR1))
 	{
 		struct EQSET
 		{
@@ -453,8 +454,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR unused /*lps
 	SetDllDirectoryW( L"" );
 
 	GetModuleFileNameW( NULL, SHAREDDIR, MAX_PATH );
-	PathRemoveFileSpecW( SHAREDDIR );
-	PathAppendW( SHAREDDIR, L"Shared" );
+	FilePath::RemoveFileSpec( SHAREDDIR );
+	FilePath::Append( SHAREDDIR, L"Shared" );
 	// load supporting dlls from the Winamp\Shared directory
 	SetDllDirectoryW( SHAREDDIR );
 
@@ -907,7 +908,7 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					count--;
 				}
 
-				fp = _wfopen( BOOKMARKFILE8, L"rt" );
+				fp = FilePath::Open( BOOKMARKFILE8, L"rt" );
 				if ( fp )
 				{
 					while ( 1 )
@@ -948,34 +949,33 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			else if ( hMenu == g_submenus_skins1 || hMenu == g_submenus_skins2 )
 			{
 				MENUITEMINFOW l_menu_info = { sizeof( l_menu_info ), };
-				HANDLE h;
-				WIN32_FIND_DATAW d = { 0 };
-				wchar_t dirmask[ MAX_PATH ] = { 0 };
-
 				l_menu_info.fMask = MIIM_TYPE | MIIM_DATA | MIIM_ID | MIIM_STATE;
 				l_menu_info.fType = MFT_STRING;
 				l_menu_info.wID = 32768;
-				PathCombineW( dirmask, SKINDIR, L"*" );
 
 				if ( !config_skin[ 0 ] )
 					CheckMenuItem( hMenu, 32767, MF_CHECKED );
 				else
 					CheckMenuItem( hMenu, 32767, MF_UNCHECKED );
 
-				h = FindFirstFileW( dirmask, &d );
-				if ( h != INVALID_HANDLE_VALUE )
+				if ( FilePath::IsDirectory( SKINDIR ) )
 				{
 					int a = 0, mod_got = 0, bento_got = 0, checked = 0;
-					do
+					for ( const auto &entry : FilePath::List( SKINDIR ) )
 					{
-						if ( !wcscmp( d.cFileName, L"." ) || !wcscmp( d.cFileName, L".." ) ) continue;
-						if ( Skin_IsModern( d.cFileName, d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ) continue;
-						if ( ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"zip" ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"wal" ) ||
-							 !_wcsicmp( extensionW( d.cFileName ), L"wsz" ) )
+						if ( l_menu_info.wID >= 34700 )
+							break;
+
+						const BOOL isDirectory = FilePath::IsDirectory( entry );
+						wchar_t fileName[ MAX_PATH ] = { 0 };
+						StringCchCopyW( fileName, MAX_PATH, entry.path().filename().c_str() );
+						if ( Skin_IsModern( fileName, isDirectory ) ) continue;
+						if ( isDirectory ||
+							 !_wcsicmp( extensionW( fileName ), L"zip" ) ||
+							 !_wcsicmp( extensionW( fileName ), L"wal" ) ||
+							 !_wcsicmp( extensionW( fileName ), L"wsz" ) )
 						{
-							if ( !_wcsicmp( config_skin, d.cFileName ) )
+							if ( !_wcsicmp( config_skin, fileName ) )
 							{
 								l_menu_info.fState = MFS_CHECKED | MFS_ENABLED;
 								checked = 1;
@@ -985,37 +985,37 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 								l_menu_info.fState = MFS_UNCHECKED | MFS_ENABLED;
 							}
 
-							if ( d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+							if ( isDirectory )
 								l_menu_info.dwItemData = 0;
 							else
 							{
-								if ( !_wcsicmp( extensionW( d.cFileName ), L"zip" ) )
+								if ( !_wcsicmp( extensionW( fileName ), L"zip" ) )
 									l_menu_info.dwItemData = 1;
-								else if ( !_wcsicmp( extensionW( d.cFileName ), L"wal" ) )
+								else if ( !_wcsicmp( extensionW( fileName ), L"wal" ) )
 									l_menu_info.dwItemData = 4;
 								else
 									l_menu_info.dwItemData = 2;
-								extensionW( d.cFileName )[ -1 ] = 0;
+								extensionW( fileName )[ -1 ] = 0;
 							}
 
-							l_menu_info.dwTypeData = d.cFileName;
-							l_menu_info.cch = (UINT)wcslen( d.cFileName );
+							l_menu_info.dwTypeData = fileName;
+							l_menu_info.cch = (UINT)wcslen( fileName );
 							if ( !a )
 								if ( !RemoveMenu( hMenu, l_menu_info.wID + 3 - 32768, MF_BYPOSITION ) )
 									a = 1;
 
-							if ( !l_menu_info.dwItemData && !_wcsicmp( d.cFileName, MODERN_SKIN_NAME ) )
+							if ( !l_menu_info.dwItemData && !_wcsicmp( fileName, MODERN_SKIN_NAME ) )
 							{
 								mod_got = 1;
 								InsertMenuItemW( hMenu, 3, TRUE, &l_menu_info );
 							}
-							else if ( !_wcsicmp( d.cFileName, BENTO_SKIN_NAME ) )
+							else if ( !_wcsicmp( fileName, BENTO_SKIN_NAME ) )
 							{
 								// place below classic + modern (if it exists)
 								bento_got = 1;
 								InsertMenuItemW( hMenu, 3 + mod_got, TRUE, &l_menu_info );
 							}
-							else if ( !_wcsicmp( d.cFileName, BIG_BENTO_SKIN_NAME ) )
+							else if ( !_wcsicmp( fileName, BIG_BENTO_SKIN_NAME ) )
 							{
 								// place below classic + modern + normal bento (if it exists)
 								InsertMenuItemW( hMenu, 3 + mod_got + bento_got, TRUE, &l_menu_info );
@@ -1025,8 +1025,7 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 							l_menu_info.wID++;
 						}
-					} while ( l_menu_info.wID < 34700 && FindNextFileW( h, &d ) );
-					FindClose( h );
+					}
 					g_SkinTop = l_menu_info.wID;
 					while ( !a ) if ( !RemoveMenu( hMenu, l_menu_info.wID++ + 3 - 32768, MF_BYPOSITION ) ) a = 1;
 					if ( !checked ) CheckMenuItem( hMenu, 32767, MF_CHECKED );

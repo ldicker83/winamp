@@ -7,8 +7,11 @@
  **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "menuv5.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoWide.h"
+#include "../nu/FilePath.h"
 
 #define TREE_LOCALMEDIA 1000
 #define TREE_PLAYLISTS 3001
@@ -225,7 +228,7 @@ int V5_File_Menu(HWND hwnd, int x, int y, int width, int height)
 		count--;
 	}
 
-	fp = _wfopen(BOOKMARKFILE8, L"rt");
+	fp = FilePath::Open(BOOKMARKFILE8, L"rt");
 	if (fp)
 	{
 		while (1)

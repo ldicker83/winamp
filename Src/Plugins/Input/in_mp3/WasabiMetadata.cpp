@@ -1,4 +1,5 @@
 #include "WasabiMetadata.h"
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
 #include "../nu/AutoChar.h"
 
@@ -19,7 +20,7 @@ int MP3StreamMetadata::getFlags()
 
 int MP3StreamMetadata::isOurFile(const wchar_t *filename)
 {
-	if (PathIsURL(filename) && !_wcsicmp(PathFindExtension(filename), L".mp3"))
+	if (FilePath::IsUrl(filename) && !_wcsicmp(FilePath::FindExtension(filename), L".mp3"))
 		return 1;
 	else
 		return 0;

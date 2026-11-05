@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "strutil.h"
 #include "api.h"
 #include "WinampPlaylist.h"
@@ -17,12 +18,12 @@
 int savem3ufn(const wchar_t *filename, int rel, int useBase)
 {
 	UINT conv=CP_ACP;
-	if (!lstrcmpiW(PathFindExtensionW(filename), L".m3u8"))
+	if (!lstrcmpiW(FilePath::FindExtension(filename), L".m3u8"))
 		conv=CP_UTF8;
 	FILE *fp = 0;
 	int ext = 1;
 	int pos = PlayList_getPosition();
-	fp = _wfopen(filename, L"wt");
+	fp = FilePath::Open(filename, L"wt");
 	if (!fp) return -1;
 	if (conv==CP_UTF8)
 		fputs("\xEF\xBB\xBF", fp); // write UTF-8 BOM

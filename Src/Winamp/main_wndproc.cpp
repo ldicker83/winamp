@@ -6,13 +6,21 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "../nu/ns_wc.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoWide.h" 
+#include "../nu/FilePath.h"
 #include "../nu/AutoWideFn.h" 
+#include "../nu/FilePath.h"
 #include "./api.h" 
+#include "../nu/FilePath.h"
 #include "resource.h"
+#include "../nu/FilePath.h"
 #include "wintheme.h"
+#include "../nu/FilePath.h"
 
 // WM_CREATE handler
 LRESULT Main_OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
@@ -168,7 +176,7 @@ LRESULT Main_OnCopyData(HWND sendingHWND, COPYDATASTRUCT *cds)
 			}
 			return TRUE;
 		case IPC_CHDIR:
-			SetCurrentDirectoryA((char *) cds->lpData);
+			{ std::error_code error; std::filesystem::current_path((char *) cds->lpData, error); }
 			return TRUE;
 		case IPC_PLAYFILE:
 			{
@@ -186,11 +194,10 @@ LRESULT Main_OnCopyData(HWND sendingHWND, COPYDATASTRUCT *cds)
 			return TRUE;
 		case IPC_GETMODULENAME:
 			{
-				char b[512] = {0}, b2[512] = {0};
-				GetModuleFileNameA(hMainInstance, b, sizeof(b));
-				GetShortPathNameA(b, b2, 511);
-				GetShortPathNameA((char *)cds->lpData, b, 511);
-				stat_isit = _stricmp(b, b2);
+				wchar_t b[MAX_PATH] = {0};
+				GetModuleFileNameW(hMainInstance, b, MAX_PATH);
+				std::error_code error;
+				stat_isit = !std::filesystem::equivalent(b, (char *)cds->lpData, error);
 			}
 			return TRUE;
 		case IPC_ADDBOOKMARK:

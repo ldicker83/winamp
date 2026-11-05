@@ -7,6 +7,8 @@
 **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
+#include <fstream>
 #include "../nu/AutoWide.h"
 #include "../nu/AutoChar.h"
 #include "../nu/ns_wc.h"
@@ -20,37 +22,17 @@ HWND skin_hwnd;
 
 BOOL _cleanupDirW(const wchar_t *dir)
 {
-	wchar_t dirmask[MAX_PATH] = {0};
-	HANDLE h;
-	WIN32_FIND_DATAW d = {0};
-	PathCombineW(dirmask, dir, L"*.*");
-	h = FindFirstFileW(dirmask, &d);
-	if (h != INVALID_HANDLE_VALUE)
+	// a file that can't be deleted yet doesn't stop the rest going. anything left over is retried
+	// by Skin_CleanupAfterCrash on the next start
+	for (const auto &entry : FilePath::List(dir))
 	{
-		do
-		{
-			wchar_t v[MAX_PATH] = {0};
-			PathCombineW(v, dir, d.cFileName);
-			if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			{
-				if (wcscmp(d.cFileName,L".") && wcscmp(d.cFileName,L".."))
-					_cleanupDirW(v);
-			}
-			else
-			{
-				if(!DeleteFileW(v))
-				{
-					// this handles some rogue cases where files in the wlz's aren't unloadable
-					MoveFileExW(v, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
-					MoveFileExW(dir, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
-				}
-			}
-		}
-		while (FindNextFileW(h, &d));
-		FindClose(h);
+		if (FilePath::IsDirectory(entry))
+			_cleanupDirW(entry.path().c_str());
+		else
+			FilePath::Remove(entry.path());
 	}
-	
-	return RemoveDirectoryW(dir);
+
+	return FilePath::Remove(dir);
 }
 
 // attempt to cleanup the last extracted temp folder for a skin incase Winamp crashed on exit
@@ -89,15 +71,16 @@ void CreateDirectoryForFileW(wchar_t *fn, wchar_t *base)
 	tmp = buf1;
 	while (tmp && *tmp) { if (*tmp == L'/') *tmp = L'\\'; tmp++; }
 
+	std::error_code error;
 	p = buf1 + wcslen(base);
 	while (p && *p)
 	{
 		while (p && *p != L'\\' && *p) p = CharNextW(p);
-		if (p && !*p) CreateDirectoryW(buf1, NULL);
+		if (p && !*p) std::filesystem::create_directory(buf1, error);
 		else
 		{
 			if (p) *p = 0;
-			CreateDirectoryW(buf1, NULL);
+			std::filesystem::create_directory(buf1, error);
 			if (p) *p++ = L'\\';
 		}
 	}
@@ -109,8 +92,8 @@ static void make_skin_dir(void)
 	{
 		if (_wcsicmp(extensionW(config_skin), L"zip") && _wcsicmp(extensionW(config_skin), L"wsz") && _wcsicmp(extensionW(config_skin), L"wal"))
 		{
-			if (PathIsFileSpecW(config_skin) || PathIsRelativeW(config_skin))
-				PathCombineW(skin_directory, SKINDIR, config_skin);
+			if (FilePath::IsFileSpec(config_skin) || FilePath::IsRelative(config_skin))
+				FilePath::Combine(skin_directory, SKINDIR, config_skin);
 			else 
 				StringCchCopyW(skin_directory, MAX_PATH, config_skin);
 		}
@@ -119,13 +102,13 @@ static void make_skin_dir(void)
 			wchar_t dirmask[MAX_PATH] = {0};
 			char str[78] = {0};
 			StringCchCopyW(skin_directory, MAX_PATH, SKINTEMPDIR);
-			CreateDirectoryW(SKINTEMPDIR, NULL);
+			std::error_code error; std::filesystem::create_directory(SKINTEMPDIR, error);
 			StringCchPrintfA(str, 78, "skin_clean_up%ws", szAppName);
 			_w_sW(str, SKINTEMPDIR);
 			{
 				unzFile f;
-				if (PathIsFileSpecW(config_skin) || PathIsRelativeW(config_skin))
-					PathCombineW(dirmask, SKINDIR, config_skin);
+				if (FilePath::IsFileSpec(config_skin) || FilePath::IsRelative(config_skin))
+					FilePath::Combine(dirmask, SKINDIR, config_skin);
 				else
 					StringCchCopyW(dirmask, MAX_PATH, config_skin);
 				f = unzOpen(AutoChar(dirmask)); 
@@ -152,19 +135,10 @@ static void make_skin_dir(void)
 
 					if (unzGoToFirstFile(f) == UNZ_OK)
 					{
-						OVERLAPPED asyncIO = {0};
-						int isNT = (GetVersion() < 0x80000000);
-						if (isNT)
-						{
-							asyncIO.hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-							asyncIO.OffsetHigh = 0;
-						}
 						do
 						{
 							char filename[MAX_PATH], *fn, *p;
 							int success = 0;
-							if (isNT)
-								SetEvent(asyncIO.hEvent);
 							unzGetCurrentFileInfo(f, NULL, filename, sizeof(filename), NULL, 0, NULL, 0);
 
 							//Only extract the file-types that could be in a skin
@@ -190,7 +164,7 @@ static void make_skin_dir(void)
 										!_stricmp(p, "mpeg") || !_stricmp(p, "url") || !_stricmp(p, "jpg") ||
 										!_stricmp(p, "mi") ) ) )
 									{
-										PathCombineW(dirmask, SKINTEMPDIR, AutoWide(fn));
+										FilePath::Combine(dirmask, SKINTEMPDIR, AutoWide(fn));
 										CreateDirectoryForFileW(dirmask, SKINTEMPDIR);
 										goto do_write;
 									}
@@ -205,63 +179,32 @@ static void make_skin_dir(void)
 									success = 0;
 									if (unzOpenCurrentFile(f) == UNZ_OK)
 									{
-										HANDLE fp;
-
-										PathCombineW(dirmask, SKINTEMPDIR, AutoWide(fn));
+										FilePath::Combine(dirmask, SKINTEMPDIR, AutoWide(fn));
 
 do_write:
-										//fp = fopen(dirmask,"wb");
-										fp = CreateFileW(dirmask, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | (isNT ? FILE_FLAG_OVERLAPPED : 0), NULL);
-										if (fp != INVALID_HANDLE_VALUE)
 										{
-											int l = 0, pos = 0, bufNum=0;
-
-											#define SKIN_ZIP_BUFFER_SIZE 2048
-											char buf[SKIN_ZIP_BUFFER_SIZE*2] = {0};
-											success = 1;
-											do
+											std::ofstream fp{std::filesystem::path(dirmask), std::ios::binary};
+											if (fp)
 											{
-												DWORD written = 0;
-												bufNum = !bufNum; // bufNum = (bufNUm + 1) %2;
-												l = unzReadCurrentFile(f, buf+SKIN_ZIP_BUFFER_SIZE*bufNum, SKIN_ZIP_BUFFER_SIZE);
-												if (!l)
-													unzCloseCurrentFile(f);
-												if (isNT)
+												int l = 0;
+												char buf[2048] = {0};
+												success = 1;
+												do
 												{
-													WaitForSingleObject(asyncIO.hEvent, INFINITE);
-													if (l > 0)
-													{
-														asyncIO.Offset = pos;
-														if (WriteFile(fp, buf+SKIN_ZIP_BUFFER_SIZE*bufNum, l, NULL, &asyncIO) == FALSE
-															&& GetLastError() != ERROR_IO_PENDING)
-														{
-															success=0;
-														}
-														pos += l;
-													}
-												}
-												else
-												{
-													if (l > 0)
-													{
-														if (WriteFile(fp, buf+SKIN_ZIP_BUFFER_SIZE*bufNum, l, &written, NULL) == FALSE)
-															success = 0;
-													}
-												}
-											} while (l > 0 && success);
-
-											CloseHandle(fp);
+													l = unzReadCurrentFile(f, buf, sizeof(buf));
+													if (!l)
+														unzCloseCurrentFile(f);
+													if (l > 0 && !fp.write(buf, l))
+														success = 0;
+												} while (l > 0 && success);
+											}
 										}
 									}
 								}
 							}
 						}
 						while (unzGoToNextFile(f) == UNZ_OK);
-						if (isNT && asyncIO.hEvent)
-						{
-							CloseHandle(asyncIO.hEvent);
-						}
-					} 
+						} 
 					unzClose(f);
 				}
 			}
@@ -486,7 +429,7 @@ static void Skin_LoadCursors( void )
 		if ( config_skin[ 0 ] )
 		{
 			wchar_t sn[ MAX_PATH ] = { 0 };
-			PathCombineW( sn, skin_directory, cursor_loads[ x ].fn );
+			FilePath::Combine( sn, skin_directory, cursor_loads[ x ].fn );
 			hc = (HCURSOR) LoadImageW( NULL, sn, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE );
 		}
 
@@ -506,18 +449,18 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory)
 		return !_wcsicmp(extensionW((wchar_t *)name), L"wal");
 
 	wchar_t path[MAX_PATH] = {0};
-	PathCombineW(path, SKINDIR, name);
-	PathAppendW(path, L"skin.xml");
-	return PathFileExistsW(path);
+	FilePath::Combine(path, SKINDIR, name);
+	FilePath::Append(path, L"skin.xml");
+	return FilePath::Exists(path);
 }
 
 BOOL Skin_Check_Modern_Support()
 {
 	wchar_t fn[ MAX_PATH ] = { 0 };
 
-	PathCombineW( fn, skin_directory, L"skin.xml" );
+	FilePath::Combine( fn, skin_directory, L"skin.xml" );
 
-	if ( PathFileExistsW( fn ) && !GetModuleHandleW( L"gen_ff.dll" ) )
+	if ( FilePath::Exists( fn ) && !GetModuleHandleW( L"gen_ff.dll" ) )
 	{
 		g_skinmissinggenff = 1;
 
@@ -595,7 +538,7 @@ void Skin_Load(void)
 		}
 
 		wchar_t fn[MAX_PATH] = {0};
-		PathCombineW(fn, skin_directory, L"region.txt");
+		FilePath::Combine(fn, skin_directory, L"region.txt");
 		skin_rgn_numpoints_tot = getnums("Normal", "NumPoints", fn, &skin_rgn_numpoints);
 		if (skin_rgn_numpoints_tot)
 		{
@@ -729,7 +672,7 @@ s4:
 #if 0
 		{
 			char str[1024] = {0};
-			PathCombine(fn, skin_directory, "mb.ini");
+			FilePath::Combine(fn, skin_directory, "mb.ini");
 			GetPrivateProfileString("Winamp", "MBOpen", "", str, sizeof(str), fn);
 			str[1023] = 0;
 			if (str[0])
@@ -749,7 +692,7 @@ s4:
 		}
 #endif
 
-		PathCombineW(fn, skin_directory, L"pledit.txt");
+		FilePath::Combine(fn, skin_directory, L"pledit.txt");
 
 		Skin_PLColors[0] = hexGetPrivateProfileInt("Text", "Normal",     Skin_PLColors[0], fn);
 		Skin_PLColors[1] = hexGetPrivateProfileInt("Text", "Current",    Skin_PLColors[1], fn);
@@ -774,26 +717,19 @@ void Skin_Random(void)
 {
 	if (config_randskin)
 	{
-		HANDLE h;
-		WIN32_FIND_DATAW d = {0};
-		int v, x;
-		wchar_t dirmask[MAX_PATH] = {0};
-		PathCombineW(dirmask, SKINDIR, L"*");
-		x = 1;
-		h = FindFirstFileW(dirmask, &d);
-		if (h != INVALID_HANDLE_VALUE)
+		const auto isSkin = [](const std::filesystem::directory_entry &entry) {
+			if (FilePath::IsDirectory(entry))
+				return true;
+			const wchar_t *ext = extensionW(entry.path().filename().c_str());
+			return !_wcsicmp(ext, L"zip") || !_wcsicmp(ext, L"wsz") || !_wcsicmp(ext, L"wal");
+		};
+
+		const auto entries = FilePath::List(SKINDIR);
+		int v, x = 1;
+		for (const auto &entry : entries)
 		{
-			do
-			{
-				if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				{
-					if (wcscmp(d.cFileName, L".") && wcscmp(d.cFileName, L"..")) x++;
-				}
-				else if (!_wcsicmp(extensionW(d.cFileName), L"zip") || !_wcsicmp(extensionW(d.cFileName), L"wsz") || !_wcsicmp(extensionW(d.cFileName), L"wal"))
-					x++;
-			}
-			while (FindNextFileW(h, &d));
-			FindClose(h);
+			if (isSkin(entry))
+				x++;
 		}
 		v = warand() % x;
 		if (!v)
@@ -802,31 +738,19 @@ void Skin_Random(void)
 			return ;
 		}
 		x = 1;
-		h = FindFirstFileW(dirmask, &d);
-		if (h != INVALID_HANDLE_VALUE)
+		for (const auto &entry : entries)
 		{
-			do
+			if (isSkin(entry))
 			{
-				int t = 0;
-				if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				if (x == v)
 				{
-					if (wcscmp(d.cFileName, L".") && wcscmp(d.cFileName, L"..")) t = 1;
+					StringCchCopyW(config_skin, MAX_PATH, entry.path().filename().c_str());
+					break;
 				}
-				else if (!_wcsicmp(extensionW(d.cFileName), L"zip") || !_wcsicmp(extensionW(d.cFileName), L"wsz") || !_wcsicmp(extensionW(d.cFileName), L"wal")) t = 1;
-				if (t)
-				{
-					if (x == v)
-					{
-						StringCchCopyW(config_skin, MAX_PATH, d.cFileName);
-						break;
-					}
-					x++;
-				}
+				x++;
 			}
-			while (FindNextFileW(h, &d));
-			FindClose(h);
 		}
-		PostMessageW(hMainWindow, WM_COMMAND, WINAMP_REFRESHSKIN, 0);
+PostMessageW(hMainWindow, WM_COMMAND, WINAMP_REFRESHSKIN, 0);
 
 		if (prefs_last_page == 40 && IsWindow(prefs_hwnd))
 		{

@@ -1,7 +1,7 @@
 #ifndef NULLSOFT_M3UWRITERH
 #define NULLSOFT_M3UWRITERH
 
-#include <stdio.h>
+#include <fstream>
 #include "PlaylistWriter.h"
 class M3UWriter : public PlaylistWriter
 {
@@ -17,7 +17,7 @@ public:
 	void Close() override;
 
 private:
-	FILE *fp = NULL;
+	std::ofstream fp;
 };
 
 #endif

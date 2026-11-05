@@ -1,4 +1,5 @@
 #include "BMPLoader.h"
+#include "../nu/FilePath.h"
 #include "api__bmp.h"
 #include <wchar.h>
 #include <bfc/platform/strcmp.h>
@@ -32,11 +33,9 @@ int BMPLoader::testData(const void *data, int datalen)
 	return *((WORD*)data) == (WORD)'MB';
 }
 
-static void writeFile(const wchar_t *file, const void * data, int length) {
-	FILE *f = _wfopen(file,L"wb");
-	if(!f) return;
-	fwrite(data,length,1,f);
-	fclose(f);
+static void writeFile(const std::filesystem::path &file, const void * data, int length) {
+	std::ofstream f(file, std::ios::binary);
+	f.write(static_cast<const char *>(data), length);
 }
 
 ARGB32 *BMPLoader::loadImage(const void *data, int datalen, int *w, int *h, ifc_xmlreaderparams *params)
@@ -45,14 +44,12 @@ ARGB32 *BMPLoader::loadImage(const void *data, int datalen, int *w, int *h, ifc_
 	if(!w) w = &w0;
 	if(!h) h = &h0;
 
-	wchar_t file[MAX_PATH] = {0};
-	GetTempPath(MAX_PATH, file);
-	GetTempFileName(file,L"wa5bmp",0,file);
+	const std::filesystem::path file = FilePath::UniqueName(FilePath::TempDirectory(), L"wa5bmp");
 	writeFile(file,data,datalen);
 	
-	HBITMAP hbmp = (HBITMAP)LoadImage(0, file, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+	HBITMAP hbmp = (HBITMAP)LoadImage(0, file.c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	
-	_wunlink(file);
+	FilePath::Remove(file);
 	if(!hbmp) return 0;
 	BITMAP bm;
 	HDC hMemDC, hMemDC2;

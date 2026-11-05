@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoWide.h"
 #include "../nu/AutoWideFn.h"
 extern "C"
@@ -199,7 +200,7 @@ public:
 							lp = PlayList_getPosition();
 						}
 
-						if(!PathIsURLA(url))
+						if(!FilePath::IsUrl(url))
 						{
 							// if it's not reported as an url, try to treat it like
 							// a filepath which has been url-encoded and insert it

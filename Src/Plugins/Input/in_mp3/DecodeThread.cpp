@@ -1,4 +1,5 @@
 #include "DecodeThread.h"
+#include "../nu/FilePath.h"
 #include "giofile.h"
 #include "main.h"
 #include "pdtimer.h"
@@ -554,7 +555,7 @@ DWORD DecodeLoop::Loop()
 
 	if (file.IsSeekable()) mod.is_seekable = 1;
 
-	wchar_t *ext = PathFindExtension(lastfn);
+	wchar_t *ext = FilePath::FindExtension(lastfn);
 	if (!_wcsicmp(ext, L".aac")
 	    || !_wcsicmp(ext, L".vlb")
 	    || !_wcsicmp(ext, L".apl"))
