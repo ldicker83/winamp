@@ -379,8 +379,8 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 		else if (IsCommand(lpszCmdParam, L"/DELM3U", 7))
 		{
 			setup_config();
-			DeleteFileW(M3U_FILE);
-			DeleteFileW(OLD_M3U_FILE);
+			FilePath::Remove(M3U_FILE);
+			FilePath::Remove(OLD_M3U_FILE);
 			ExitProcess(0);
 		}
 		else if (IsCommand(lpszCmdParam, L"/QUIT", 5) ||
@@ -711,8 +711,10 @@ void parseCmdLine(wchar_t *cmdline, HWND hwnd)
 		else
 		{
 			COPYDATASTRUCT cds;
-			wchar_t *p2 = 0;
-			if (!FilePath::IsUrl(param) && GetFullPathNameW(param, MAX_PATH, tmp, &p2) && tmp[0])
+			std::error_code error;
+			if (!FilePath::IsUrl(param))
+				StringCchCopyW(tmp, MAX_PATH, std::filesystem::absolute(param, error).c_str());
+			if (!FilePath::IsUrl(param) && !error && tmp[0])
 			{
 				cds.dwData = IPC_PLAYFILEW;
 				cds.lpData = (void *) tmp;

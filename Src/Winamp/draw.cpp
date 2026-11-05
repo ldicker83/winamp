@@ -394,7 +394,7 @@ void draw_init()
 			FILE *fp;
 			wchar_t bitmapfilename[MAX_PATH] = {0};
 			FilePath::Combine(bitmapfilename, skin_directory, L"viscolor.txt");
-			fp = _wfopen(bitmapfilename,L"rt");
+			fp = FilePath::Open(bitmapfilename,L"rt");
 			if (fp)
 			{
 				int x;

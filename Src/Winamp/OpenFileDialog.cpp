@@ -7,12 +7,19 @@
  **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
+#include "../nu/FilePath.h"
 #include "strutil.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
+#include "../nu/FilePath.h"
 #include "api.h"
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
+#include "../nu/FilePath.h"
 #include <shobjidl.h>
+#include "../nu/FilePath.h"
 
 /*static wchar_t *inc(wchar_t *p, size_t &size, int extra=0)
 {
@@ -212,9 +219,10 @@ void getNewFile(int clearlist, HWND hwnd, const wchar_t *path) // if clearlist i
 	// otherwise revert to using the older pre-Vista methods
 	const int len = 256 * 1024 - 128;
 
-	wchar_t oldCurPath[MAX_PATH] = {0}, titleStr[128] = {0};
+	wchar_t titleStr[128] = {0};
 
-	GetCurrentDirectoryW(MAX_PATH, oldCurPath);
+	std::error_code error;
+	const std::filesystem::path oldCurPath = std::filesystem::current_path(error);
 	wchar_t *temp, *fsb;
 	OPENFILENAMEW l = {sizeof(OPENFILENAMEW),0};
 	static int q;
@@ -238,9 +246,7 @@ void getNewFile(int clearlist, HWND hwnd, const wchar_t *path) // if clearlist i
 		UninitDragDrops();
 	if (GetOpenFileNameW(&l))
 	{
-		wchar_t newCurPath[MAX_PATH] = {0};
-		GetCurrentDirectoryW(MAX_PATH, newCurPath);
-		WASABI_API_APP->path_setWorkingPath(newCurPath);
+		WASABI_API_APP->path_setWorkingPath(std::filesystem::current_path(error).c_str());
 		int sp;
 		if (clearlist)
 		{
@@ -262,7 +268,7 @@ void getNewFile(int clearlist, HWND hwnd, const wchar_t *path) // if clearlist i
 		if (clearlist)
 			BeginPlayback();
 	}
-	SetCurrentDirectoryW(oldCurPath);
+	std::filesystem::current_path(oldCurPath, error);
 
 	if (hwnd == hMainWindow)
 		InitDragDrops();

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstddef>
+#include <cstdio>
 #include <cstdint>
 #include <cwctype>
 #include <filesystem>
@@ -650,6 +651,19 @@ namespace FilePath
 	}
 	inline bool Remove(const wchar_t *path) { return path && Remove(std::filesystem::path(path)); }
 	inline bool Remove(const char *path) { return path && Remove(std::filesystem::path(path)); }
+
+	// C stdio can't open a wide path on Windows, so this is the one place that has to know about it.
+	// _wfopen rather than _wfopen_s, which would stop other programs from opening the file
+	inline std::FILE *Open(const std::filesystem::path &path, const wchar_t *mode)
+	{
+#ifdef _WIN32
+#pragma warning(suppress: 4996)
+		return _wfopen(path.c_str(), mode);
+#else
+		return std::fopen(path.c_str(), std::filesystem::path(mode).string().c_str());
+#endif
+	}
+	inline std::FILE *Open(const wchar_t *path, const wchar_t *mode) { return path ? Open(std::filesystem::path(path), mode) : nullptr; }
 
 	inline bool Rename(const std::filesystem::path &from, const std::filesystem::path &to)
 	{

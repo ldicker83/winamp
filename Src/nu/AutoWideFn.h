@@ -13,6 +13,9 @@
 #include "AutoWide.h"
 #include "AutoChar.h"
 #include <shlwapi.h> 
+#include <filesystem>
+#include <string>
+#include <vector>
 /*
 Tries to find a filename that underwent a destructive Unicode-to-ANSI conversion
 */
@@ -31,57 +34,38 @@ public:
 	}
 
 	operator wchar_t *() { return wideFn; }
-	bool unicode_find(/*char *path,*/ char *pattern, wchar_t *out, UINT out_ptr, bool dir, HANDLE *f)
+	// a listing carried between calls, so a directory can be retried when a later part of the path doesn't match
+	struct FindState
 	{
-		WIN32_FIND_DATAW fd = {0};
+		bool started = false;
+		std::vector<std::filesystem::directory_entry> entries;
+		size_t next = 0;
+	};
 
-		if (*f == INVALID_HANDLE_VALUE)
+	bool unicode_find(/*char *path,*/ char *pattern, wchar_t *out, UINT out_ptr, bool dir, FindState &f)
+	{
+		if (!f.started)
 		{
-			lstrcpyW(out + out_ptr, L"*");
-			*f = FindFirstFileW(out, &fd);
 			out[out_ptr] = 0;
-			if (*f == INVALID_HANDLE_VALUE) return 0;
-		}
-		else
-		{
-			if (!FindNextFileW(*f, &fd))
-			{
-				FindClose(*f);
-				*f = INVALID_HANDLE_VALUE;
-				return 0;
-			}
+			f.entries = FilePath::List(*out ? out : L".");
+			f.started = true;
 		}
 
-		if (*f == INVALID_HANDLE_VALUE) return 0;
 		char temp[MAX_PATH*2 + 1] = {0};
-		do
+		while (f.next < f.entries.size())
 		{
-			if (dir)
-			{
-				if (!(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)) continue;
-			}
-			else
-			{
-				if (fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) continue;
-			}
-			WideCharToMultiByte(CP_ACP, 0, fd.cFileName, -1, temp, sizeof(temp), 0, 0);
-			//wcstombs(temp,fd.cFileName,sizeof(temp));
-			if (!_stricmp(temp, pattern))
-			{ //found
-				lstrcpyW(out + out_ptr, fd.cFileName);
-				return 1;
-			}
+			const auto &entry = f.entries[f.next++];
+			if (FilePath::IsDirectory(entry) != dir)
+				continue;
 
-			WideCharToMultiByte(CP_ACP, 0, fd.cAlternateFileName, -1, temp, sizeof(temp), 0, 0);
+			const std::wstring name = entry.path().filename().native();
+			WideCharToMultiByte(CP_ACP, 0, name.c_str(), -1, temp, sizeof(temp), 0, 0);
 			if (!_stricmp(temp, pattern))
 			{ //found
-				lstrcpyW(out + out_ptr, fd.cFileName);
+				lstrcpyW(out + out_ptr, name.c_str());
 				return 1;
 			}
 		}
-		while (FindNextFileW(*f, &fd));
-		FindClose(*f);
-		*f = INVALID_HANDLE_VALUE;
 
 		return 0;
 	}
@@ -91,7 +75,7 @@ public:
 		char * next = strchr(ptr, '\\');
 		if (next)
 		{ //dig another dir
-			HANDLE f = INVALID_HANDLE_VALUE;
+			FindState f;
 			bool found;
 			do
 			{
@@ -99,7 +83,7 @@ public:
 				char * zz = _strdup(ptr);
 				char bk = *ptr;
 				*ptr = 0;
-				found = unicode_find(/*path,*/ zz, out, out_ptr, 1, &f);
+				found = unicode_find(/*path,*/ zz, out, out_ptr, 1, f);
 				free(zz);
 				*ptr = bk;
 				next[0] = '\\';
@@ -110,7 +94,6 @@ public:
 					out[out_ptr++] = '\\';
 					if (unicode_open_recur(path, next + 1, out, out_ptr))
 					{
-						if (f != INVALID_HANDLE_VALUE) FindClose(f);
 						return 1;
 					}
 					out_ptr = op_bk;
@@ -120,23 +103,15 @@ public:
 		}
 		else
 		{ //final dir
-			HANDLE f = INVALID_HANDLE_VALUE;
 			char * zz = _strdup(ptr);
 			char bk = *ptr;
 			*ptr = 0;
-			bool found = unicode_find(/*path,*/ zz, out, out_ptr, 0, &f);
+			FindState files, directories;
+			bool found = unicode_find(/*path,*/ zz, out, out_ptr, 0, files);
 			if (!found)
-			{
-				if (f != INVALID_HANDLE_VALUE) 
-				{
-					FindClose(f);
-					f = INVALID_HANDLE_VALUE;
-				}
-				found = unicode_find(/*path,*/ zz, out, out_ptr, 1, &f);
-			}
+				found = unicode_find(/*path,*/ zz, out, out_ptr, 1, directories);
 			free(zz);
 			*ptr = bk;
-			if (f != INVALID_HANDLE_VALUE) FindClose(f);
 			return found;
 		}
 		return 0;

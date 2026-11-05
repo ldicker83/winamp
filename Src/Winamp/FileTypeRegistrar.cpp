@@ -8,6 +8,8 @@
 //#include "../nu/cast64.h"
 #include <strsafe.h>
 
+extern "C" BOOL _cleanupDirW(const wchar_t *dir);
+
 #if defined(_SYSINFOAPI_H_) && defined(NOT_BUILD_WINDOWS_DEPRECATE) && (_WIN32_WINNT >= 0x0501)
 #include <VersionHelpers.h>
 #endif
@@ -704,34 +706,23 @@ HRESULT FileTypeRegistrar::RegisterDVDPlayer(const wchar_t *programName, int ico
 
 HRESULT FileTypeRegistrar::InstallItem(LPCWSTR sourceFile, LPCWSTR destinationFolder, LPCWSTR destinationFilename)
 {
-	SHFILEOPSTRUCT op = {0};
+	const std::filesystem::path source(sourceFile), destination = std::filesystem::path(destinationFolder) / destinationFilename;
 
-	op.hwnd = 0;
-	op.wFunc = FO_COPY;
+	std::error_code error;
+	if (std::filesystem::equivalent(source, destination, error))
+		return S_OK; // copying a file onto itself isn't a failure
 
-	wchar_t srcFile[MAX_PATH+1] = {0};
-	wchar_t *end;
-	StringCchCopyExW(srcFile, MAX_PATH, sourceFile, &end, 0, 0);
-	if (end)
-		end[1]=0; // double null terminate
-	op.pFrom = srcFile;
-
-	wchar_t destFile[MAX_PATH+1] = {0};
-	FilePath::Combine(destFile, destinationFolder, destinationFilename);
-	destFile[wcslen(destFile)+1]=0; // double null terminate
-	op.pTo = destFile;
-
-	op.fFlags=FOF_NOCONFIRMATION|FOF_NOCONFIRMMKDIR|FOF_SIMPLEPROGRESS|FOF_NOERRORUI|FOF_SILENT;
-	op.lpszProgressTitle = L"";
-	int val = SHFileOperation(&op);
+	std::filesystem::create_directories(destination.parent_path(), error);
+	std::filesystem::copy(source, destination, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing, error);
 
 	// send back the error message so we can show on the UI
-	if (val != 0 && val != 0x71/*DE_SAMEFILE*/)
+	if (error)
 	{
-		StringCchPrintfW((LPWSTR)destinationFilename,MAX_PATH,L"0x%x",val);
+		StringCchPrintfW((LPWSTR)destinationFilename,MAX_PATH,L"0x%x",error.value());
+		return E_FAIL;
 	}
 
-	return ((val == 0 || val == 0x71/*DE_SAMEFILE*/) ? S_OK : E_FAIL);
+	return S_OK;
 }
 
 HRESULT FileTypeRegistrar::DeleteItem(LPCWSTR file)
@@ -752,92 +743,42 @@ HRESULT FileTypeRegistrar::DeleteItem(LPCWSTR file)
 
 HRESULT FileTypeRegistrar::RenameItem(LPCWSTR oldFile, LPCWSTR newFile, BOOL force)
 {
-	SHFILEOPSTRUCT op = {0};
-	op.wFunc = force?FO_MOVE:FO_RENAME;
-
-	wchar_t srcFile[MAX_PATH+1] = {0};
-	wchar_t *end;
-	StringCchCopyExW(srcFile, MAX_PATH, oldFile, &end, 0, 0);
-	if (end) end[1]=0; // double null terminate
-	op.pFrom = srcFile;
-
-	wchar_t destFile[MAX_PATH+1] = {0};
-	end=0;
-	StringCchCopyExW(destFile, MAX_PATH, newFile, &end, 0, 0);
-	if (end) end[1]=0; // double null terminate
-	op.pTo = destFile;
-
-	op.fFlags=FOF_NOCONFIRMATION|FOF_NOCONFIRMMKDIR|FOF_SIMPLEPROGRESS|FOF_NOERRORUI|FOF_SILENT;
-	op.lpszProgressTitle = L"";
-	int val = SHFileOperation(&op);
-
-	return val == 0?S_OK:E_FAIL;
-
-	/*
-	if (!MoveFile(oldFile, newFile))
-	{
-	// if move failed
+	if (FilePath::Rename(oldFile, newFile))
+		return S_OK;
 
 	if (!force) // if they don't want to force the move
-	return E_FAIL;
+		return E_FAIL;
 
-	if (CopyFile(oldFile, newFile, FALSE) && DeleteFile(oldFile)) // copy then delete
-	return E_FAIL;
-	}
+	// a rename can't cross volumes, so copy and then delete
+	std::error_code error;
+	std::filesystem::copy(oldFile, newFile, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing, error);
+	if (error)
+		return E_FAIL;
+
+	std::filesystem::remove_all(oldFile, error);
 	return S_OK;
-	*/
 }
 
 HRESULT FileTypeRegistrar::CleanupDirectory(LPCWSTR directory)
 {
-	wchar_t dirmask[MAX_PATH] = {0};
-	WIN32_FIND_DATAW d = {0};
-	FilePath::Combine(dirmask, directory, L"*.*");
-	HANDLE h = FindFirstFileW(dirmask, &d);
-	if (h != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			wchar_t v[MAX_PATH] = {0};
-			FilePath::Combine(v, directory, d.cFileName);
-			if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			{
-				if (wcscmp(d.cFileName,L".") && wcscmp(d.cFileName,L".."))
-					CleanupDirectory(v);
-			}
-			else
-			{
-				if(!DeleteFileW(v))
-				{
-					// this handles some rogue cases where files in the wlz's aren't unloadable
-					MoveFileExW(v, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
-					MoveFileExW(directory, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
-				}
-			}
-		}
-		while (FindNextFileW(h, &d));
-		FindClose(h);
-	}
-	RemoveDirectoryW(directory);
+	_cleanupDirW(directory);
 	return S_OK;
 }
 
 HRESULT FileTypeRegistrar::MoveDirectoryContents(LPCWSTR oldDirectory, LPCWSTR newDirectory)
 {
-	wchar_t fromDirectory[MAX_PATH+1] = {0}; // need to zero it all so it will be double-null terminated
-	SHFILEOPSTRUCT sf = {0};
+	const std::filesystem::path destination(newDirectory);
 
-	StringCchPrintfW(fromDirectory,MAX_PATH,L"%s\\*",oldDirectory);
+	std::error_code error;
+	std::filesystem::create_directories(destination, error);
 
-	sf.wFunc = FO_MOVE;
-	sf.pFrom = fromDirectory;
-	sf.pTo = newDirectory;
-	sf.fFlags = FOF_NOCONFIRMATION|FOF_NOCONFIRMMKDIR|FOF_NOERRORUI|FOF_NORECURSION;
-
-	if(SHFileOperation(&sf)){
-		return E_FAIL;
+	bool failed = false;
+	for (const auto &entry : FilePath::List(oldDirectory))
+	{
+		if (RenameItem(entry.path().c_str(), (destination / entry.path().filename()).c_str(), TRUE) != S_OK)
+			failed = true;
 	}
-	return S_OK;
+	return failed ? E_FAIL : S_OK;
 }
 
 HRESULT FileTypeRegistrar::WriteProKey(LPCWSTR name, LPCWSTR key)

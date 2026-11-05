@@ -433,7 +433,7 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				SendDlgItemMessageW(hwndDlg,IDC_VER_COMBO,CB_SETCURSEL,0,0);
 
 				versions.clear();
-				fp = _wfopen(fn,L"rb");
+				fp = FilePath::Open(fn,L"rb");
 
 				// if there isn't a localised whatsnew.txt then revert to the old ways
 				if(!fp)
@@ -441,7 +441,7 @@ static BOOL CALLBACK whatsnewProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 					GetModuleFileNameW(NULL,fn,MAX_PATH);
 					FilePath::RemoveFileSpec(fn);
 					FilePath::Append(fn,L"whatsnew.txt");
-					fp = _wfopen(fn,L"rb");
+					fp = FilePath::Open(fn,L"rb");
 				}
 
 				if (fp)

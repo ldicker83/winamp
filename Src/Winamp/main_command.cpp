@@ -103,7 +103,7 @@ LRESULT Main_OnCommand(HWND hwnd, int wID, HWND hwndCtl, UINT codeNotify)
 
 	if (LOWORD(wID) >= 34768 && LOWORD(wID) < g_BookmarkTop)
 	{
-		FILE *fp = _wfopen(BOOKMARKFILE8, L"rt");
+		FILE *fp = FilePath::Open(BOOKMARKFILE8, L"rt");
 		if (fp)
 		{
 			int x = 0, id = LOWORD(wID)-34768;

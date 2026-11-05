@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "bookmark.h"
+#include "../nu/FilePath.h"
 
 BookmarkWriter::BookmarkWriter():fp(0)
 {
@@ -13,12 +14,12 @@ BookmarkWriter::BookmarkWriter():fp(0)
 
 void BookmarkWriter::Open(const wchar_t *filename)
 {
-	 fp=_wfopen(filename, L"a+t");
+	 fp=FilePath::Open(filename, L"a+t");
 }
 
 void BookmarkWriter::New(const wchar_t *filename)
 {
-	 fp=_wfopen(filename, L"wt");
+	 fp=FilePath::Open(filename, L"wt");
 }
 
 void BookmarkWriter::Write(const char *filename, const char *title)

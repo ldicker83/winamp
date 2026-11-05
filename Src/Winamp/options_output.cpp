@@ -30,7 +30,6 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 	{
 		pluginsLoaded = false;
 
-		WIN32_FIND_DATAW d = {0};
 		link_startsubclass(hwndDlg, IDC_PLUGINVERS);
 
 		HWND listWindow = GetDlgItem(hwndDlg, IDC_OUTPUTS);
@@ -81,40 +80,34 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 			}
 
 			wchar_t dirstr[MAX_PATH] = {0};
-			FilePath::Combine(dirstr, PLUGINDIR, L"OUT*.DLL");
-			HANDLE h = FindFirstFileW(dirstr, &d);
-			if (h != INVALID_HANDLE_VALUE)
+			for (const auto &entry : FilePath::List(PLUGINDIR, L"OUT*.DLL"))
 			{
-				do
+				std::wstring name = entry.path().filename().native();
+				FilePath::Combine(dirstr, PLUGINDIR, name.c_str());
+				HMODULE b = LoadLibraryExW(dirstr, NULL, LOAD_LIBRARY_AS_DATAFILE);
+				bool found = false;
+				for (x = 0; b && out_modules[x]; x ++)
 				{
-					FilePath::Combine(dirstr, PLUGINDIR, d.cFileName);
-					HMODULE b = LoadLibraryExW(dirstr, NULL, LOAD_LIBRARY_AS_DATAFILE);
-					bool found = false;
-					for (x = 0; b && out_modules[x]; x ++)
+					if (out_modules[x]->hDllInstance == b)
 					{
-						if (out_modules[x]->hDllInstance == b)
-						{
-							found = true;
-							break;
-						}
+						found = true;
+						break;
 					}
-
-					if (!found)
-					{
-						LVITEMW lvi = {LVIF_TEXT | LVIF_PARAM, (int)x, 0};
-						lvi.pszText = d.cFileName;
-						lvi.lParam = -2;
-						lvi.iItem = ListView_InsertItemW(listWindow, &lvi);
-
-						lvi.mask = LVIF_TEXT;
-						lvi.iSubItem = 1;
-						lvi.pszText = getStringW(IDS_NOT_LOADED, NULL, 0);
-						ListView_SetItemW(listWindow, &lvi);
-					}
-					FreeLibrary(b);
 				}
-				while (FindNextFileW(h, &d));
-				FindClose(h);
+
+				if (!found)
+				{
+					LVITEMW lvi = {LVIF_TEXT | LVIF_PARAM, (int)x, 0};
+					lvi.pszText = name.data();
+					lvi.lParam = -2;
+					lvi.iItem = ListView_InsertItemW(listWindow, &lvi);
+
+					lvi.mask = LVIF_TEXT;
+					lvi.iSubItem = 1;
+					lvi.pszText = getStringW(IDS_NOT_LOADED, NULL, 0);
+					ListView_SetItemW(listWindow, &lvi);
+				}
+				FreeLibrary(b);
 			}
 
 			GetClientRect(listWindow, &r);

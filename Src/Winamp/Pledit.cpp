@@ -1425,16 +1425,10 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					for (x = v - 1; x >= 0; x --)
 					{
 						wchar_t fn[FILENAME_SIZE] = {0};
-						FILE *fp = NULL;
 						PlayList_getitem(x, fn, NULL);
-						fp = _wfopen(fn, L"rb");
-						if (!FilePath::IsUrl(fn) && !(fp/* = _wfopen(fn, L"rb")*/))
+						if (!FilePath::IsUrl(fn) && !FilePath::Exists(fn))
 						{
 							PlayList_deleteitem(x);
-						}
-						else
-						{
-							if (fp) fclose(fp);
 						}
 					}
 					{

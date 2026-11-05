@@ -812,8 +812,9 @@ void setup_config(void)
 	if (!M3UBASE[0])
 		StringCchCopyW(M3UBASE, MAX_PATH, M3UDIR);
 
-	CreateDirectoryW(M3UDIR, NULL);
-	CreateDirectoryW(CONFIGDIR, NULL);
+	std::error_code error;
+	std::filesystem::create_directory(M3UDIR, error);
+	std::filesystem::create_directory(CONFIGDIR, error);
 
 	// basic config files
 	FilePath::Combine(OLD_M3U_FILE, M3UDIR, L"Winamp.m3u");
@@ -824,13 +825,11 @@ void setup_config(void)
 	// go make one from winamp.bm - implemented for 5.58+
 	if(!FilePath::Exists(BOOKMARKFILE8))
 	{
-		CopyFileW(BOOKMARKFILE,BOOKMARKFILE8,FALSE);
+		FilePath::Copy(BOOKMARKFILE,BOOKMARKFILE8,true);
 	}
 	FilePath::Combine(EQDIR1, CONFIGDIR, L"Winamp.q1");
 	FilePath::Combine(EQDIR2, CONFIGDIR, L"Winamp.q2");
-	wchar_t tempPath[MAX_PATH] = {0};
-	GetTempPathW(MAX_PATH, tempPath);
-	FilePath::Combine(TEMP_FILE, tempPath, L"Winamp.tmp");
+	StringCchCopyW(TEMP_FILE, MAX_PATH, (FilePath::TempDirectory() / L"Winamp.tmp").c_str());
 	FilePath::Combine(DEMOMP3, M3UDIR, L"demo.mp3");
 	FilePath::Combine(ML_INI_FILE, CONFIGDIR, L"Plugins\\gen_ml.ini");
 
@@ -903,9 +902,7 @@ void setup_config(void)
 	}
 
 	// create a skin temp directory, too
-	wchar_t buf[MAX_PATH] = {0};
-	GetTempPathW(MAX_PATH, buf);
-	GetTempFileNameW(buf, L"WAS", GetTickCount(), SKINTEMPDIR);
+	StringCchCopyW(SKINTEMPDIR, MAX_PATH, FilePath::UniqueName(FilePath::TempDirectory(), L"WAS").c_str());
 
 	RI(minst);
 }

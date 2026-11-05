@@ -54,10 +54,8 @@ int EnumerateSkins(ENUMSKINPROC fnEnumSkin, void *user)
 {
 	if (!fnEnumSkin) return FALSE;
 
-	HANDLE h;
 	BOOL bActiveFound, bTerminated;
-	WIN32_FIND_DATAW d;
-	wchar_t dirmask[MAX_PATH], szName[MAX_PATH], *pszActive;
+	wchar_t szName[MAX_PATH], *pszActive;
 	ENUMSKIN es;
 
 	bActiveFound = FALSE;
@@ -82,24 +80,20 @@ int EnumerateSkins(ENUMSKINPROC fnEnumSkin, void *user)
 	}
 	else pszActive = NULL;
 
-	FilePath::Combine(dirmask, SKINDIR, L"*");
-	h = FindFirstFileW(dirmask,&d);
-	if (h != INVALID_HANDLE_VALUE) 
+	for (const auto &entry : FilePath::List(SKINDIR))
 	{
-		do 
+		const std::wstring name = entry.path().filename().native();
+		const BOOL isDirectory = FilePath::IsDirectory(entry);
+		if (!Skin_IsModern(name.c_str(), isDirectory) && FillEnumRec(&es, name.c_str(), isDirectory, szName, sizeof(szName)/sizeof(wchar_t), (bActiveFound) ? NULL : pszActive))
 		{
-			if (!Skin_IsModern(d.cFileName, (FILE_ATTRIBUTE_DIRECTORY & d.dwFileAttributes)) && FillEnumRec(&es, d.cFileName, (FILE_ATTRIBUTE_DIRECTORY & d.dwFileAttributes), szName, sizeof(szName)/sizeof(wchar_t), (bActiveFound) ? NULL : pszActive))
+			if (es.bActive) bActiveFound = TRUE;
+			if (!fnEnumSkin(&es, user)) 
 			{
-				if (es.bActive) bActiveFound = TRUE;
-				if (!fnEnumSkin(&es, user)) 
-				{
-					bTerminated = TRUE;
-					break;
-				}
-			}	
-			
-		} while (FindNextFileW(h,&d));
-		FindClose(h);
+				bTerminated = TRUE;
+				break;
+			}
+		}	
+		
 	}
 
 	if(!CLASSIC_NAME[0])getStringW(IDS_CLASSIC_SKIN_NAME,CLASSIC_NAME,64);
@@ -198,39 +192,32 @@ static void _setreadme(HWND hwndDlg)
 		{
 			wchar_t s[MAX_PATH]={0};
 			FilePath::Combine(s, skin_directory, L"readme.txt");      
-			FILE *fp=_wfopen(s,L"rt");
+			FILE *fp=FilePath::Open(s,L"rt");
 			if (!fp)
 			{
 				FilePath::Combine(s, skin_directory, L"read me.txt");
-				fp=_wfopen(s,L"rt");
+				fp=FilePath::Open(s,L"rt");
 			}
 			if (!fp)
 			{
 				FilePath::Combine(s, skin_directory, L"file_id.diz");
-				fp=_wfopen(s,L"rt");
+				fp=FilePath::Open(s,L"rt");
 			}
 			if (!fp)
 			{
-				WIN32_FIND_DATAW d;
-				FilePath::Combine(s, skin_directory, L"*.txt");
-
-				HANDLE h = FindFirstFileW(s,&d);
 				s[0]=0;
-				if (h != INVALID_HANDLE_VALUE) 
+				for (const auto &entry : FilePath::List(skin_directory, L"*.txt"))
 				{
-					do 
+					const std::wstring name = entry.path().filename().native();
+					if (_wcsicmp(name.c_str(),L"pledit.txt") &&
+						_wcsicmp(name.c_str(),L"viscolor.txt") &&
+						_wcsicmp(name.c_str(),L"region.txt"))
 					{
-						if (_wcsicmp(d.cFileName,L"pledit.txt") &&
-							_wcsicmp(d.cFileName,L"viscolor.txt") &&
-							_wcsicmp(d.cFileName,L"region.txt")) 
-						{
-							FilePath::Combine(s, skin_directory, d.cFileName);
-							break;
-						}
-      				} while (FindNextFileW(h,&d));
-					FindClose(h);
-					if (s && L'\0' == *s) fp=_wfopen(s,L"rb");
+						FilePath::Combine(s, skin_directory, name.c_str());
+						break;
+					}
 				}
+				if (*s) fp=FilePath::Open(s,L"rb");
 			}
 
 			if (fp)

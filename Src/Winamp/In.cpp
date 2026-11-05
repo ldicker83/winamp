@@ -170,20 +170,12 @@ int in_init()
 	for ( ; i < count; i++ )
 		LoadInputPlugin(preload[i].name);
 
-	WIN32_FIND_DATAW d = { 0 };
-	wchar_t dirstr[MAX_PATH] = { 0 };
-
-	FilePath::Combine(dirstr, PLUGINDIR, L"IN_*.DLL");
-	HANDLE h = FindFirstFileW(dirstr, &d);
-	if ( h != INVALID_HANDLE_VALUE )
+	for ( const auto &entry : FilePath::List(PLUGINDIR, L"IN_*.DLL") )
 	{
-		do
-		{
-			for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, d.cFileName)); i++ );
-			if ( i == count ) LoadInputPlugin(d.cFileName);
-			else preload[i].found = true;
-		} while ( FindNextFileW(h, &d) );
-		FindClose(h);
+		const std::wstring name = entry.path().filename().native();
+		for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, name.c_str())); i++ );
+		if ( i == count ) LoadInputPlugin(name.c_str());
+		else preload[i].found = true;
 	}
 
 	return TRUE;

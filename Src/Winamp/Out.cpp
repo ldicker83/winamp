@@ -72,19 +72,14 @@ void out_init()
 	int index = 0, i = 0, count = sizeof(preload) / sizeof(PLUGINORDER);
 	for ( ; i < count; i++ ) index = LoadOutputPlugin(preload[i].name, index);
 
-	WIN32_FIND_DATAW d = { 0 };
-	wchar_t dirstr[MAX_PATH] = { 0 };
-	FilePath::Combine(dirstr, PLUGINDIR, L"OUT_*.DLL");
-	HANDLE h = FindFirstFileW(dirstr, &d);
-	if ( h != INVALID_HANDLE_VALUE )
+	for ( const auto &entry : FilePath::List(PLUGINDIR, L"OUT_*.DLL") )
 	{
-		do
-		{
-			for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, d.cFileName)); i++ );
-			if ( i == count ) index = LoadOutputPlugin(d.cFileName, index);
-			else preload[i].found = true;
-		} while ( FindNextFileW(h, &d) && index < 31 );
-		FindClose(h);
+		const std::wstring name = entry.path().filename().native();
+		for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, name.c_str())); i++ );
+		if ( i == count ) index = LoadOutputPlugin(name.c_str(), index);
+		else preload[i].found = true;
+		if ( index >= 31 )
+			break;
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include "Main.h"
 #include "../nu/FilePath.h"
+#include <fstream>
 #include "resource.h"
 #include "api.h"
 #include "../nu/AutoWide.h"
@@ -797,36 +798,22 @@ static ARGB32 *loadImgFromFile(const wchar_t *file, int *len, int *w, int *h, wc
 	svc_imageLoader *loader = FindImageLoader(file, &sf);
 	if (loader)
 	{
-		HANDLE hf = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-		if (hf != INVALID_HANDLE_VALUE)
+		std::vector<char> data;
+		if (FilePath::ReadAll(file, data) && !data.empty())
 		{
-			*len = GetFileSize(hf, 0);
-			HANDLE hmap = CreateFileMapping(hf, 0, PAGE_READONLY, 0, 0, 0);
-			if (hmap)
+			*len = (int)data.size();
+			if (loader->testData(data.data(),*len))
 			{
-				void *data = MapViewOfFile(hmap, FILE_MAP_READ, 0, 0, 0);
-				if (data)
+				ARGB32* im = loader->loadImage(data.data(),*len,w,h);
+				if (im && !_wcsicmp(loader->mimeType(), L"image/jpeg"))
 				{
-					if (loader->testData(data,*len))
-					{
-						ARGB32* im = loader->loadImage(data,*len,w,h);
-						if (im && !_wcsicmp(loader->mimeType(), L"image/jpeg"))
-						{
-							*mime = _wcsdup(L"jpg");
-							*imageData = (ARGB32*)WASABI_API_MEMMGR->sysMalloc(*len);
-							memcpy(*imageData, data, *len);
-						}
-						UnmapViewOfFile(data);
-						CloseHandle(hmap);
-						CloseHandle(hf);
-						sf->releaseInterface(loader);
-						return im;
-					}
-					UnmapViewOfFile(data);
+					*mime = _wcsdup(L"jpg");
+					*imageData = (ARGB32*)WASABI_API_MEMMGR->sysMalloc(*len);
+					memcpy(*imageData, data.data(), *len);
 				}
-				CloseHandle(hmap);
+				sf->releaseInterface(loader);
+				return im;
 			}
-			CloseHandle(hf);
 		}
 		sf->releaseInterface(loader);
 	}
@@ -862,14 +849,10 @@ static void * writeImg(const ARGB32 *data, int w, int h, int *length, const wcha
 
 static int writeFile(const wchar_t *file, const void * data, int length)
 {
-	FILE *f=_wfopen(file,L"wb");
+	std::ofstream f{std::filesystem::path(file), std::ios::binary};
 	if (!f) return ALBUMART_FAILURE;
-	if (fwrite(data,length,1,f) != 1)
-	{
-		fclose(f);
+	if (!f.write(static_cast<const char *>(data), length))
 		return ALBUMART_FAILURE;
-	}
-	fclose(f);
 	return ALBUMART_SUCCESS;
 }
 

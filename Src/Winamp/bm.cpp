@@ -6,12 +6,19 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "bookmark.h"
+#include "../nu/FilePath.h"
 #include <malloc.h>
+#include "../nu/FilePath.h"
 #include "api.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoCharFn.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
+#include "../nu/FilePath.h"
 #include <strsafe.h>
+#include "../nu/FilePath.h"
 
 void Bookmark_additem(wchar_t *fn, wchar_t *ft)
 {
@@ -87,8 +94,8 @@ void WriteEscaped(FILE *fp, const char *str)
 
 void Bookmark_WriteAsXML(const wchar_t *filename, int max)
 {
-	FILE *destFp=_wfopen(filename,L"wb");
-	FILE *fp=_wfopen(BOOKMARKFILE8,L"rt");
+	FILE *destFp=FilePath::Open(filename,L"wb");
+	FILE *fp=FilePath::Open(BOOKMARKFILE8,L"rt");
 
 	if (fp && destFp)
 	{

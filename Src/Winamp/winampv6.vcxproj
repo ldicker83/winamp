@@ -446,7 +446,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)5.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)5.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="options_bookmarks.cpp" />
     <ClCompile Include="options_classic.cpp" />
     <ClCompile Include="options_dsp.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)%(Filename)6.obj</ObjectFileName>

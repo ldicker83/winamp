@@ -157,10 +157,7 @@ INT_PTR CALLBACK FtypeProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 			GetModuleFileNameW(hMainInstance,s,MAX_PATH);
 			FilePath::RemoveFileSpec(s);
 			FilePath::Append(s, L"winampa.exe");
-			HANDLE hf = CreateFileW(s,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
-			if (hf != INVALID_HANDLE_VALUE)
-				CloseHandle(hf);
-			else
+			if (!FilePath::Exists(s))
 			{
 				int ids[]={IDC_WATEXT2,IDC_WATEXT1,IDC_CHECK1,IDC_CHECK2};
 				for (int x=0; x<sizeof(ids)/sizeof(ids[0]); x++)

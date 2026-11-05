@@ -146,24 +146,15 @@ void load_genplugins()
 	for ( ; i < count; i++ )
 		LoadGenPlugin(preload[i].name);
 
-	wchar_t dirstr[MAX_PATH] = { 0 };
-	WIN32_FIND_DATAW d = { 0 };
-	FilePath::Combine(dirstr, PLUGINDIR, L"GEN_*.DLL");
-
-	HANDLE h = FindFirstFileW(dirstr, &d);
-	if ( h != INVALID_HANDLE_VALUE )
+	for ( const auto &entry : FilePath::List(PLUGINDIR, L"GEN_*.DLL") )
 	{
-		do
-		{
-			for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, d.cFileName)); i++ );
+		const std::wstring name = entry.path().filename().native();
+		for ( i = 0; i < count && (preload[i].found || lstrcmpiW(preload[i].name, name.c_str())); i++ );
 
-			if ( i == count )
-				LoadGenPlugin(d.cFileName);
-			else
-				preload[i].found = true;
-		} while ( FindNextFileW(h, &d) );
-
-		FindClose(h);
+		if ( i == count )
+			LoadGenPlugin(name.c_str());
+		else
+			preload[i].found = true;
 	}
 }
 

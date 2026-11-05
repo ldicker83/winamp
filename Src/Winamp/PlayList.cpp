@@ -1,5 +1,6 @@
 #include "Main.h"
 #include "../nu/FilePath.h"
+#include <fstream>
 #include <assert.h>
 #include "MoreItems.h"
 #include "../nu/AutoLock.h"
@@ -1243,13 +1244,11 @@ extern "C"
 		if (!_wcsicmp(extensionW(url), L""))  // no extension, check for pls/m3u signatures
 		{
 			// TODO: move to its own function
-			FILE *fp = _wfopen(url,L"r");
-			
 			char buf[21] = {0};
+			std::ifstream fp{std::filesystem::path(url)};
 			if (fp)
 			{
-				fread(buf, 1, 21, fp);
-				fclose(fp);
+				fp.read(buf, 21);
 				buf[20] = 0;
 			}
 			if (!_strnicmp(buf, "[Reference]", 11))
@@ -1303,12 +1302,9 @@ extern "C"
 			PlayList_adddir(url, 1);
 		else
 		{
-			WIN32_FIND_DATAW d = {0};
-			HANDLE h = FindFirstFileW(url, &d);
-			if (h != INVALID_HANDLE_VALUE)
+			if (FilePath::Exists(url))
 			{
-				FindClose(h);
-				if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				if (FilePath::IsDirectory(url))
 					PlayList_adddir(url, 1);
 				else if (LoadPlaylist(url, 1, 0) == -1) // if it's not a playlist file
 				{

@@ -23,7 +23,7 @@ int savem3ufn(const wchar_t *filename, int rel, int useBase)
 	FILE *fp = 0;
 	int ext = 1;
 	int pos = PlayList_getPosition();
-	fp = _wfopen(filename, L"wt");
+	fp = FilePath::Open(filename, L"wt");
 	if (!fp) return -1;
 	if (conv==CP_UTF8)
 		fputs("\xEF\xBB\xBF", fp); // write UTF-8 BOM
