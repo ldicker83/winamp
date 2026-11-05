@@ -5,7 +5,6 @@ Changes:
   * [a7] fixed id3v2 bug (1 character strings not being displayed correctly)
   * [a6] fixed stupid file association bug (oops)
   * [a5] fixed crash when repeating a non-existing file bug (added a Sleep())
-  * [a5] fixed shoutcast disk writer issue
   * [a5] fixed SendMessage() potential issues (using postmessage and SendMessageTimeout() now)
   * [a5] added new format-for-non-id3 files, added 'use id3 tag' option, which lets you disable them
          completely

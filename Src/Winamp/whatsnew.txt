@@ -230,7 +230,6 @@ Winamp 5.1 Surround Edition
 	Awesome at low bitrates too!
 * New: Grand Prize Winner of the Internet Surround Music Project!
 	KAJE - Hey Buddy (featuring Afrika Bambaataa)
-* New: SHOUTcast Wire - A Media RSS Browser and Subscription Service
 * New: Predixis Smart Playlist Generator 
 	(Mix your tracks based on what they sound like!)
 * New: AOL Radio featuring (((XM))) Free Sampler!
@@ -363,7 +362,6 @@ Winamp 5.04:
 * added script/ActiveX disabling for Media Library's minibrowser (on by default)
 * fixed memory leak on MP3 files with messed up ID3v2 tags
 * fixed visualization when playing CD tracks
-* fixed proxy user:pass@server:port string getting cut when playing Shoutcast streams
 * made in_dshow not to handle mms:// streams ending with .wma
 * fixed %tracknumber% tag for CD tracks
 * fixed some crash bugs in in_mp4
@@ -1185,7 +1183,6 @@ Winamp 2.95 (never released):
 * media library: skinnable list/treeview selection colors
 * nsv: subtitle bugfixes
 * nsv: more buffering options
-* nsv: shoutcast metadata support
 * nsv: better invalid bitstream handling
 * nsv: better display options
 * nsv: new ASYN aux chunk handling.
@@ -1234,7 +1231,7 @@ Winamp 2.91:
 Winamp 2.90:
 * hot new default skin, done by none other than the evil robot turned good, Steve Gedikian
 * added integrated full featured video support (NSV and DirectShow (AVI,ASf,MPEG,etc)) 
-* added library (complete with media database, shoutcast listing, playlist editing, 
+* added library (complete with media database, playlist editing, 
    CD listing, mass tag editting, plugin API for portable devices, and more!)
 * updated Winamp's window docking code to be more robust/extensible
   - made AVS dock use this new API
@@ -1253,7 +1250,6 @@ Winamp 2.90:
 * added Alt+M shortcut for minimizing Winamp
 * added Ctrl+(Keypad +)/Ctrl+(Keypad -) shortcuts in playlist editor for changing font size
 * fixed stop after current menu item trash related bug
-* added ultravox support for in_mp3
 * made in_mp3 not display 'unknown X' for empty id3 tags
 * installer uses leet new NSIS 2.0b3
 * improvements to the setup process
@@ -1477,7 +1473,6 @@ Winamp 2.6:
   * Removed unused links stuff in about box
   * Improved Jump (to file) dialog (hit the J key)
   * Bookmarking system
-  * Fix to mp3 plug-in. Now won't stop after failed shoutcast stream.
   * Updates to URLs used in player for web site integration
   * Winamp Agent (can monitor file types, and restore them)
   * Better Netscape/IE integration
@@ -1505,7 +1500,6 @@ Winamp 2.50:
   * Skin selection menu in main menu, browser in preferences
   * Builtin visualization settings are now in preferences
   * Two streaming-related bugfixes to in_mp3.dll
-  * Added streamed-file saving to in_mp3.dll (no shoutcast saving, sorry)
   * Added extended-M3U/PLS support (files include title and length info)
   * Improved in_mp3.dll's frame sync code
   * Better multi-byte character set support
@@ -1515,7 +1509,6 @@ Winamp 2.50:
   * Fixed some leaks in in_cdda.dll
   * Restructured some internals of Winamp for bitrate reporting for speed
   * Added recent stream list to open location box
-  * Automatic IE integration for SHOUTcast
   * Fixed a bug in out_wave.dll
   * Updated AudioSoft plug-in
   * Final WMA support for full version
@@ -1542,7 +1535,6 @@ Winamp 2.23:
 
 Winamp 2.22:
   * AudioSoft ASFS Support
-  * SHOUTcast 1.1 (final, released) support
   * WMA fixes
   * Lots of bugfixes
 
@@ -1573,8 +1565,6 @@ What's new in Winamp 2.10:
   * Improved MPEG audio decoding
     * Blip reduction
     * ID3v1 URL Comment support
-    * Shoutcast URL Browser support
-    * Shoutcast 1.1 title streaming
   * Improved MOD/XM/IT rendering (64 bit mixing, sample declicking, etc)
   * Totally new output driver (faster and more compatible)
   * Language package support
@@ -1622,8 +1612,6 @@ What's new in Winamp 2.06 (the final release of 1998!)?
   * CDDB support now remembers if it hasn't worked recently to avoid
     from keeping popping up.
   * Fixed a dsp plug-in bug in Nitrane
-  * Added SHOUTcast title reading to Nitrane, improved Nitrane's HTTP
-    streaming (non-blocking connect, baby)
   * Added better MPEG 2.5 support to Nitrane (still don't have the right
     reordering tables, though, but an improvement nonetheless)
  
