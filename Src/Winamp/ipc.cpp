@@ -212,7 +212,8 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 			}
 		break;
 		case IPC_USES_RECYCLEBIN:
-			return config_playlist_recyclebin;
+			// Winamp doesn't delete files itself any more, but a plug-in that does should recycle rather than destroy them
+			return 1;
 		case IPC_IS_AOT:
 			return config_aot;
 		case IPC_IS_EXIT_ENABLED:

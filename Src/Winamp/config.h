@@ -60,7 +60,6 @@ CONFIG_EXT int config_useexttitles DEF_VAL(1);
 CONFIG_EXT wchar_t config_visplugin_name[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT char config_visplugin_num, config_visplugin_priority DEF_VAL(2), config_visplugin_autoexec;
 CONFIG_EXT unsigned char config_shuffle_morph_rate DEF_VAL(50);
-CONFIG_EXT unsigned char config_playlist_recyclebin DEF_VAL(1);
 CONFIG_EXT unsigned char config_ospb DEF_VAL(0), config_eqdsize DEF_VAL(1);
 CONFIG_EXT char config_outname[128] DEF_VAL("out_ds.dll");
 CONFIG_EXT wchar_t config_dspplugin_name[MAX_PATH] DEF_VAL(L"");

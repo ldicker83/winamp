@@ -262,7 +262,6 @@
 #define IDD_PREFS_CLASSICSKIN           257
 #define IDS_RATEITEM_STR                257
 #define IDD_CLASSIC_UI                  258
-#define IDS_ERROR_DELETING              258
 #define IDD_NEWTITLE                    259
 #define IDS_PREFS_PLAYBACK              259
 #define IDD_RENAMESKIN                  260
@@ -801,7 +800,6 @@
 #define IDC_ASCII                       1294
 #define IDC_STATIC1                     1295
 #define IDC_STATIC2                     1296
-#define IDC_RECYCLE                     1297
 #define IDC_STATIC3                     1297
 #define IDC_STATIC4                     1300
 #define IDC_DELETEM3U                   1302
@@ -932,7 +930,6 @@
 #define IDC_EXTRA_METADATA              1418
 #define IDC_STATIC_PLAY_URL             1419
 #define IDC_SKIN_INSTALL_PROMPT         1421
-#define IDS_P_O_RECYCLE                 32768
 #define WINAMP_FILE_QUIT                40001
 #define WINAMP_OPTIONS_PREFS            40012
 #define WINAMP_OPTIONS_AOT              40019
@@ -1018,7 +1015,6 @@
 #define WINAMP_SELSKIN                  40219
 #define WINAMP_VISCONF                  40221
 #define ID_PE_NONEXIST                  40222
-#define ID_PE_DELETEFROMDISK            40223
 #define ID_PE_CLOSE                     40224
 #define WINAMP_VIS_SETOSC               40226
 #define WINAMP_VIS_SETANA               40227

@@ -174,7 +174,6 @@ void config_write(int i)
 		_w_i("load_wy", load_rect.top);
 	}
 	WI(autoload_eq);
-	WI(playlist_recyclebin);
 	WI(use_eq);
 	WI(eq_ws);
 	WI(wx);
@@ -302,7 +301,6 @@ void config_read(int i)
 	RI(bifont);
 	RI(bifont_alt);
 	RI(autoload_eq);
-	RI(playlist_recyclebin);
 	RI(use_eq);
 	RI(wx);
 	RI(wy);

@@ -1370,54 +1370,6 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				break;
-				case ID_PE_DELETEFROMDISK:
-				{
-					int v, x;
-					v = PlayList_getlength();
-					for (x = v - 1; x >= 0; x --)
-					{
-						if (PlayList_getselect(x))
-						{
-							wchar_t fn[FILENAME_SIZE] = {0};
-
-							PlayList_getitem(x, fn, NULL);
-							if (!FilePath::IsUrl(fn))
-							{
-								SHFILEOPSTRUCTW fileOp = {0};
-								wchar_t file[FILENAME_SIZE] = {0};
-								StringCchCopyW(file, FILENAME_SIZE - 1, fn);
-								file[ wcslen(fn) + 1] = 0; // double null terminate;
-
-								fileOp.hwnd = hwnd;
-								fileOp.wFunc = FO_DELETE;
-								fileOp.pFrom = file;
-								fileOp.pTo = 0;
-								fileOp.fFlags = config_playlist_recyclebin ? FOF_ALLOWUNDO : 0;
-								fileOp.fAnyOperationsAborted = 0;
-								fileOp.hNameMappings = 0;
-								fileOp.lpszProgressTitle = 0;
-
-								if (SHFileOperationW(&fileOp))
-								{
-									wchar_t mes[4096] = {0};
-									StringCchPrintfW(mes, 4096, getStringW(IDS_ERROR_DELETING,NULL,0), fn);
-									MessageBoxW(hwnd, mes, getStringW(IDS_ERROR,NULL,0), MB_OK);
-								}
-								else
-								{
-									// only remove if the deletion actually went ahead
-									if(!fileOp.fAnyOperationsAborted)
-										PlayList_deleteitem(x);
-								}
-							}
-						}
-					}
-					{
-						RECT r = {0, 0, config_pe_width, config_pe_height - 37};
-						InvalidateRect(hwnd, &r, FALSE);
-					}
-				}
-				break;
 				case ID_PE_NONEXIST:
 				{
 					int x, v;

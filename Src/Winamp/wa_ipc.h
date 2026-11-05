@@ -2427,8 +2427,8 @@ typedef struct {
 #define IPC_USES_RECYCLEBIN 651
 /* (requires Winamp 5.09+)
 ** int use_bin=SendMessageW(hwnd_winamp,WM_WA_IPC,0,IPC_USES_RECYCLEBIN);
-** This will return 1 if the deleted file should be sent to the recycle bin or
-** 0 if deleted files should be deleted permanently (default action for < 5.09).
+** This always returns 1: Winamp doesn't delete files itself any more, and there's no
+** longer an option for it, so a plug-in that deletes files should recycle them.
 **
 ** Note: if you use this on pre 5.09 installs of Winamp then it will return 1 which is
 ** not correct but is due to the way that SendMessageW(..) handles un-processed messages.
