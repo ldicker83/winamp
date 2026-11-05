@@ -155,9 +155,7 @@ void stats_getuidstr(char str[512])
 
 void Stats_OnPlay(const wchar_t *playstring)
 {
-	if (!_wcsnicmp(playstring, L"http://", 7) 
-		||	    !_wcsnicmp(playstring, L"mms://", 6) 
-)
+	if (!_wcsnicmp(playstring, L"http://", 7) || !_wcsnicmp(playstring, L"mms://", 6))
 		stats.IncrementStat(Stats::STREAMS_PLAYED);
 	else if (!_wcsnicmp(playstring, L"cda://", 6) ||
 		!_wcsicmp(extensionW(playstring), L"cda"))
