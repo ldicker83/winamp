@@ -1074,7 +1074,6 @@ BEGIN
             END
             POPUP "Misc"
             BEGIN
-                MENUITEM "&Generate HTML playlist\tCtrl+Alt+G", ID_PE_PRINT
                 MENUITEM SEPARATOR
                 MENUITEM "&Rebuild titles on selection\tCtrl+Alt+E", ID_PE_EXTINFO
             END
@@ -1566,7 +1565,6 @@ BEGIN
     VK_DELETE,      ID_PE_NONEXIST,         VIRTKEY, ALT, NOINVERT
     "S",            WINAMP_SELSKIN,         VIRTKEY, ALT, NOINVERT
     "E",            ID_PE_EXTINFO,          VIRTKEY, CONTROL, ALT, NOINVERT
-    "G",            ID_PE_PRINT,            VIRTKEY, CONTROL, ALT, NOINVERT
     "A",            WINAMP_OPTIONS_AOT,     VIRTKEY, CONTROL, ALT, NOINVERT
     VK_DOWN,        ID_PE_SCDOWN,           VIRTKEY, SHIFT, NOINVERT
     VK_UP,          ID_PE_SCUP,             VIRTKEY, SHIFT, NOINVERT
@@ -1804,11 +1802,6 @@ BEGIN
     IDS_OFD_ADD_FILES_TO_PLAYLIST "Add file(s) to playlist"
     IDS_OFD_ALL_FILES       "All files (*.*)"
     IDS_STATIONINFOCAPTION  "Station Info"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_HTML_ERROR_WRITE    "Error writing HTML file."
 END
 
 STRINGTABLE

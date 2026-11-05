@@ -995,9 +995,6 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					InvalidateRect(hwnd, &r, FALSE);
 				}
 				return 0;
-				case ID_PE_PRINT:
-					doHtmlPlaylist();
-					return 0;
 				case WINAMP_NEXT_WINDOW:
 					return SendMessageW(hMainWindow, uMsg, wParam, lParam);
 				case ID_PE_OPEN:
