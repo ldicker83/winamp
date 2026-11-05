@@ -197,7 +197,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\api\xml\xmlwrite.cpp" />
     <ClCompile Include="assert.cpp" />
     <ClCompile Include="critsec.cpp" />
     <ClCompile Include="file\filename.cpp" />
@@ -230,7 +229,6 @@
     <ClCompile Include="util\base64.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\api\xml\xmlwrite.h" />
     <ClInclude Include="bfc_assert.h" />
     <ClInclude Include="bitlist.h" />
     <ClInclude Include="common.h" />

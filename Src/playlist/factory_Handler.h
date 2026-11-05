@@ -26,5 +26,4 @@ protected:\
 
 DECLARE_HANDLER_FACTORY(M3UHandlerFactory);
 DECLARE_HANDLER_FACTORY(PLSHandlerFactory);
-DECLARE_HANDLER_FACTORY(B4SHandlerFactory);
 #endif

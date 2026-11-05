@@ -23,16 +23,6 @@ Command			Description
 /ALLOW_COMPAT_MODE	This will allow Winamp to be run without the warning shown if Windows compatibility mode
 			is detected, as there are some cases where this is the only way to run Winamp as wanted.
 
-/ADDPLAYLIST <file> <name> [<guid>]	Allows for adding the specified playlist to Winamp's library playlists.
-					The <guid> parameter is optional and auto-generated if not specified.
-/APPENDPLAYLIST <guid> <file>		Append the specified <file> to the end of the specified playlist.
-					You need to use the correct <guid> otherwise this will fail.
-/CREATEPLAYLIST <name> [<guid>]		Will create a new playlist in Winamp's library playlists using the name
-					specified. The <guid> parameter is optional and is auto-generated if
-					not specified.
-/ENUMPLAYLISTS		Enumerates through Winamp's library playlists and sends the output to 'stdout'
-			e.g. winamp.exe /ENUMPLAYLISTS > playlists.txt
-			The output is UTF-8 encoded (no BOM) and the formatting is: <GUID>,<file>,<name>
 /DELM3U			Instructs Winamp to remove the current copy of winamp.m3u(8) from the playlists folder.
 
 /REV			Rewind the currently playing item by the native amount e.g. 5 seconds.

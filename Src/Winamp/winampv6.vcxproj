@@ -436,7 +436,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="main_wndproc.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="menuv5.cpp" />
-    <ClCompile Include="MergePlaylist.cpp" />
     <ClCompile Include="Metadata.cpp" />
     <ClCompile Include="MoreItems.cpp" />
     <ClCompile Include="ole.cpp" />
@@ -473,7 +472,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)7.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="OutputPluginAudioStream.cpp" />
-    <ClCompile Include="ParamList.cpp" />
     <ClCompile Include="paths.cpp" />
     <ClCompile Include="PathsINI.cpp" />
     <ClCompile Include="peui.cpp" />
@@ -543,7 +541,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="WinampPlaylist.cpp" />
     <ClCompile Include="wintheme.cpp" />
     <ClCompile Include="wpz.cpp" />
-    <ClCompile Include="XMLString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Agave\ExplorerFindFile\api_explorerfindfile.h" />
@@ -599,13 +596,11 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="Main.h" />
     <ClInclude Include="main.hpp" />
     <ClInclude Include="MemoryManager.h" />
-    <ClInclude Include="MergePlaylist.h" />
     <ClInclude Include="Metadata.h" />
     <ClInclude Include="MoreItems.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="out.h" />
     <ClInclude Include="OutputPluginAudioStream.h" />
-    <ClInclude Include="ParamList.h" />
     <ClInclude Include="PlaybackConfigGroup.h" />
     <ClInclude Include="Playlist.h" />
     <ClInclude Include="precomp.h" />
@@ -645,7 +640,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="WinampAttributes.h" />
     <ClInclude Include="WinampPlaylist.h" />
     <ClInclude Include="wintheme.h" />
-    <ClInclude Include="XMLString.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\atf.htm">

@@ -2055,7 +2055,6 @@ BEGIN
     IDS_ARTWORK             "Artwork"
     IDS_ADVANCED            "Advanced"
     IDS_NOOUTPUT            "Cannot find the selected output plug-in or a native output plug-in to fallback to for playback.\n\nGoto Preferences -> Plug-ins -> Output and select an appropriate output plug-in or re-install Winamp to restore its native plug-ins."
-    IDS_PLAYLISTSTRING      "Playlist Files (*.M3U;*.PLS;*.ASX;*.WAX;*.WMX;*.WVX;*.WPL;*.B4S;*.BPL)"
     IDS_ALLTYPES            "All supported types"
     IDS_P_IN_INPUTS         "This is a list of installed input plug-ins for Winamp. You can configure each one by selecting it and hitting Configure."
     IDS_P_IN_CONF           "This option configures the selected input plug-in."

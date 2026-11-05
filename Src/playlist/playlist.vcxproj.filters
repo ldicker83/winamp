@@ -1,19 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="B4SLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="B4SWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="factory_Handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="factory_playlistmanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="factory_playlists.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Handler.cpp">
@@ -43,12 +34,6 @@
     <ClCompile Include="PlaylistManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Playlists.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlaylistsXML.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PLSLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,9 +44,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XMLString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Wasabi\bfc\assert.cpp">
@@ -102,22 +84,10 @@
     <ClInclude Include="api_playlistmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="api_playlists.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="B4SLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="B4SWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="factory_Handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="factory_playlistmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="factory_playlists.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Handler.h">
@@ -150,12 +120,6 @@
     <ClInclude Include="PlaylistManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Playlists.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlaylistsXML.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlaylistWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -172,9 +136,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="svc_playlisthandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XMLString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Winamp\strutil.h">

@@ -27,7 +27,6 @@
 #define IDS_ADVANCED                    19
 #define IDS_ONLYHTTP                    20
 #define IDS_NOOUTPUT                    21
-#define IDS_PLAYLISTSTRING              22
 #define IDS_ALLTYPES                    23
 #define IDS_P_IN_INPUTS                 26
 #define IDS_P_IN_CONF                   27

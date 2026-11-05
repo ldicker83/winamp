@@ -15,8 +15,6 @@
 #error port me!
 #endif
 
-#define ERRORBMP L"wasabi.bitmapnotfound"
-#define HARDERRORBMP L"xml/wasabi/window/error.png"
 // do not define NO_MMX in this file. :)
 
 #ifndef NO_MMX

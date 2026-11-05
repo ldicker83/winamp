@@ -61,12 +61,8 @@ STRINGTABLE
 BEGIN
     IDS_M3U_PLAYLIST        "M3U Playlist"
     IDS_PLS_PLAYLIST        "PLS Playlist"
-    IDS_WINAMP3_PLAYLIST    "Winamp3 Playlist"
     IDS_ALL_PLAYLIST_TYPES  "All Playlist Types"
     IDS_PLAYLIST            "Playlist"
-    IDS_MPCPL_PLAYLIST      "Media Player Classic Playlist (MPCPL)"
-    IDS_FPL_PLAYLIST        "Foobar2000 Playlist (FPL)"
-    IDS_XSPF_PLAYLIST       "XML Shareable Playlist Format"
 END
 
 #endif    // English (U.S.) resources

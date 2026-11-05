@@ -46,9 +46,6 @@
     <ClCompile Include="thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\api\xml\xmlwrite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="file\filename.cpp">
       <Filter>Source Files\file</Filter>
     </ClCompile>
@@ -160,9 +157,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tlist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\api\xml\xmlwrite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="file\filename.h">

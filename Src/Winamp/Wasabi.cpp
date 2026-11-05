@@ -19,7 +19,6 @@
 #include "../nu/Singleton.h"
 
 api_playlistmanager *playlistManager=0;
-api_playlists *AGAVE_API_PLAYLISTS=0;
 api_language *WASABI_API_LNG=0;
 api_albumart *AGAVE_API_ALBUMART=0;
 // ----- Services -----
@@ -152,10 +151,6 @@ void Wasabi_FindSystemServices()
 		AGAVE_API_PLAYLISTMANAGER = (api_playlistmanager *)sf->getInterface();
 
 
-	sf = WASABI_API_SVC->service_getServiceByGuid(api_playlistsGUID);
-	if (sf)
-		AGAVE_API_PLAYLISTS = (api_playlists *)sf->getInterface();
-
 		sf = WASABI_API_SVC->service_getServiceByGuid(albumArtGUID);
 	if (sf)
 		AGAVE_API_ALBUMART = (api_albumart *)sf->getInterface();
@@ -180,14 +175,6 @@ void Wasabi_ForgetSystemServices()
 		AGAVE_API_PLAYLISTMANAGER = 0;
 	}
 
-
-	if (AGAVE_API_PLAYLISTS)
-	{
-		sf = WASABI_API_SVC->service_getServiceByGuid(api_playlistsGUID);
-		if (sf)
-			sf->releaseInterface(AGAVE_API_PLAYLISTS);
-		AGAVE_API_PLAYLISTS = 0;
-	}
 
 	if (AGAVE_API_ALBUMART)
 	{

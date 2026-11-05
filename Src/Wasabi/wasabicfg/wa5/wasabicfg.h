@@ -76,9 +76,6 @@ Comment or uncomment the following directives according to the needs of your app
 // This enables the filereader pipeline
 #define WASABI_COMPILE_FILEREADER
 
-// This enables the xml parser for config and group loading
-#define WASABI_COMPILE_XMLPARSER
-
 // This enables system callback management
 #define WASABI_COMPILE_SYSCB
 
@@ -106,7 +103,6 @@ Comment or uncomment the following directives according to the needs of your app
 //#define WASABI_COMPILE_METADB // not done !
 #define WASABI_COMPILE_CONFIG
 #define WASABI_COMPILE_FILEREADER
-#define WASABI_COMPILE_XMLPARSER
 #define WASABI_COMPILE_SYSCB
 #define WASABI_COMPILE_MEMMGR
 #define WASABI_COMPILE_SKIN_WA2
