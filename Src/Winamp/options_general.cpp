@@ -26,7 +26,6 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 		{IDC_CHECK5,IDS_P_DISP_SYSTRAYICON},
 		{IDC_CHECK1,IDS_P_DISP_TASKBAR},
 		{IDC_PREFS_SPLASH,IDS_P_O_SPLASH},
-		{IDC_RECYCLE, IDS_P_O_RECYCLE},
 		{IDC_NO_MOUSEWHEEL, IDS_P_NO_MOUSEWHEEL},
 	};
 	DO_HELP();
@@ -56,7 +55,6 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 			SendDlgItemMessage(hwndDlg,IDC_SYSTRAY_SCROLLER,TBM_SETRANGEMIN,0,0);
 			SendDlgItemMessage(hwndDlg,IDC_SYSTRAY_SCROLLER,TBM_SETPOS,1,config_sticon);
 
-			CheckDlgButton(hwndDlg,IDC_RECYCLE,config_playlist_recyclebin?1:0);
 
 			CheckDlgButton(hwndDlg, IDC_CHECK1, !(config_taskbar & 1));
 			EnableWindow(GetDlgItem(hwndDlg, IDC_SCROLLTITLE), !(config_taskbar & 1));
@@ -72,11 +70,7 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 					config_minst = !!IsDlgButtonChecked(hwndDlg,IDC_MINST);
 					return 0;
 
-				case IDC_RECYCLE:
-					config_playlist_recyclebin = IsDlgButtonChecked(hwndDlg, IDC_RECYCLE)?1:0;
-					break;
-
-    			case IDC_PREFS_SPLASH:
+case IDC_PREFS_SPLASH:
 					config_splash = IsDlgButtonChecked(hwndDlg,IDC_PREFS_SPLASH)?1:0;
 					break;
 

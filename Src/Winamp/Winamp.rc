@@ -522,7 +522,6 @@ BEGIN
     RTEXT           "Idle",IDC_STATIC,225,95,15,8
     CONTROL         "Slider1",IDC_PREFS_PRIORITY_CLASS,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | TBS_TOP | WS_TABSTOP,244,25,13,80
     LTEXT           "Change only if needed. High and Realtime priorities are not recommended.",IDC_STATIC,205,109,52,48,WS_DISABLED
-    CONTROL         "Recycle permanently deleted files",IDC_RECYCLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,107,124,10
     CONTROL         "Prevent the mouse wheel from altering the volume",IDC_NO_MOUSEWHEEL,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,5,120,177,10
     CONTROL         "Disable always on top while fullscreen applications are focused",IDC_DROPAOTFS,
@@ -1093,7 +1092,6 @@ BEGIN
             POPUP "Remove..."
             BEGIN
                 MENUITEM "Remove &missing files from playlist\tAlt+Delete", ID_PE_NONEXIST
-                MENUITEM "&Physically remove selected file(s)", ID_PE_DELETEFROMDISK
             END
         END
         POPUP "Select"
@@ -1374,7 +1372,6 @@ BEGIN
         MENUITEM "C&lear playlist\tCtrl+Shift+Delete", 40214,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Remove &missing files from playlist\tAlt+Delete", 40222,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Physically remove selected file(s)", 40223,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Playlist pre&ferences...",    40358,MFT_STRING,MFS_ENABLED
     END
@@ -1790,7 +1787,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_RATEITEM_STR        "Rate items"
-    IDS_ERROR_DELETING      "Error deleting %s"
     IDS_PREFS_PLAYBACK      "Playback"
     IDS_P_CLASSIC_70FPS     "70fps"
     IDS_P_CLASSIC_35FPS     "35fps"
@@ -1831,11 +1827,6 @@ BEGIN
     IDS_NO_BOOKMARKS        "No bookmarks found"
     IDS_NO_IMAGE            "(no image)"
     IDS_PLAYLISTSTRING_NEW  "Playlist Files (%s)"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_P_O_RECYCLE         "Disabling this option will cause files to be deleted permanently instead of sent to the recycle bin.  Affects 'physically remove file' command in both the playlist and media library."
 END
 
 STRINGTABLE
