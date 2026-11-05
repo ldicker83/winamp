@@ -29,9 +29,6 @@ extern ThreadPool *threadPool;
 #define AGAVE_API_STATS (&stats)
 
 /* Services we need from W5S services */
-#include "../Agave/AlbumArt/api_albumart.h"
-extern api_albumart *albumArtApi;
-#define AGAVE_API_ALBUMART albumArtApi
 #include "../playlist/api_playlistmanager.h"
 extern api_playlistmanager *playlistManager;
 #define AGAVE_API_PLAYLISTMANAGER playlistManager
