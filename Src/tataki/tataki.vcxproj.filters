@@ -72,9 +72,6 @@
     <ClInclude Include="canvas\ifc_canvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="canvas\PaintCanvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="region\win\region.h">
       <Filter>Header Files</Filter>
     </ClInclude>
