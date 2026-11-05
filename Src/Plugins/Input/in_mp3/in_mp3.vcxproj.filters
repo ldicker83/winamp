@@ -4,9 +4,6 @@
     <ClCompile Include="AACFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AlbumArt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="apev2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,9 +91,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="apev2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AlbumArt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="api__in_mp3.h">

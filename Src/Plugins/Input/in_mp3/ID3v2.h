@@ -16,9 +16,6 @@ public:
 	int GetString(const char *tag, wchar_t *data, int dataLen);
 	int SetString(const char *tag, const wchar_t *data);
 
-	int GetAlbumArt(const wchar_t *type, void **bits, size_t *len, wchar_t **mimeType);
-	int SetAlbumArt(const wchar_t *type, void *bits, size_t len, const wchar_t *mimeType);
-	int DeleteAlbumArt(const wchar_t *type);
 
 	void Clear();
 private:

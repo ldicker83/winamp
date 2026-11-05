@@ -132,7 +132,6 @@ char config_rating_email[255] = {0};
 void config_read()
 {
 	config_init();
-	RI(allow_scartwork);
 	RI(allow_sctitles);
 	RI(sctitle_format);
 	RI(config_http_buffersize);
@@ -187,7 +186,6 @@ void config_read()
 
 void config_write()
 {
-	WI(allow_scartwork);
 	WI(config_fastvis);
 	WI(config_miscopts);
 	WI(allow_sctitles);
@@ -600,7 +598,6 @@ static INT_PTR CALLBACK httpProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER2), TBM_SETRANGEMIN, 0, 0);
 		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER2), TBM_SETPOS, 1, config_http_prebuffer_underrun / 2);
 		CheckDlgButton(hwndDlg, IDC_CHECK1, allow_sctitles);
-		CheckDlgButton(hwndDlg, IDC_SC_ARTWORK, allow_scartwork);
 		CheckDlgButton(hwndDlg, IDC_CHECK3, sctitle_format);
 
 		if (config_miscopts&16)
@@ -624,7 +621,6 @@ static INT_PTR CALLBACK httpProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 			{
 				sctitle_format = !!IsDlgButtonChecked(hwndDlg, IDC_CHECK3);
 				allow_sctitles = !!IsDlgButtonChecked(hwndDlg, IDC_CHECK1);
-				allow_scartwork = !!IsDlgButtonChecked(hwndDlg, IDC_SC_ARTWORK);
 				{
 					int s;
 					int t;

@@ -166,8 +166,6 @@ BEGIN
     GROUPBOX        "Streaming Extensions",IDC_STATIC,6,72,86,76
     CONTROL         "Enable SHOUTcast title support",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,12,83,74,18
     CONTROL         "Include stream name in title",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,12,105,74,18
-    CONTROL         "Enable SHOUTcast v2 artwork support",IDC_SC_ARTWORK,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,12,126,74,18
     GROUPBOX        "Saving",IDC_STATIC,96,110,124,38
     CONTROL         "Save files to:",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,120,57,10
     PUSHBUTTON      "",IDC_BUTTON2,102,132,112,11

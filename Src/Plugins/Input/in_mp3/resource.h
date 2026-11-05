@@ -184,7 +184,6 @@
 #define IDC_RADIO2                      1107
 #define IDC_CHECK1                      1108
 #define IDC_STATUS                      1109
-#define IDC_SC_ARTWORK                  1109
 #define IDC_CHECK2                      1110
 #define IDC_URL                         1111
 #define IDC_BUTTON2                     1112

@@ -1,7 +1,43 @@
 #include "RawMediaReader.h"
+#include "main.h"
+#include "../nu/AutoWide.h"
+#include "../nu/FilePath.h"
 #include <limits.h>
+#include <strsafe.h>
 
-bool IsMyExtension(const wchar_t *filename);
+static bool IsMyExtension(const wchar_t *filename)
+{
+	if (FilePath::IsUrl(filename))
+		return false;
+	{
+		const wchar_t *extension = FilePath::FindExtension(filename);
+		if (extension && *extension)
+		{
+			AutoWide wideList(config_extlist); // TODO: build a copy of this at config load time so we don't have to run this every time
+			extension++;
+			wchar_t *b = wideList;
+
+			wchar_t *c = 0;
+			do
+			{
+				wchar_t d[20] = {0};
+				StringCchCopyW(d, 15, b);
+				if ((c = wcschr(b, L';')))
+				{
+					if ((c-b)<15)
+						d[c - b] = 0;
+				}
+
+				if (!lstrcmpiW(extension, d))
+					return true;
+
+				b = c + 1;
+			}
+			while (c);
+		}
+	}
+	return false;
+}
 
 int RawMediaReaderService::CreateRawMediaReader(const wchar_t *filename, ifc_raw_media_reader **out_reader)
 {
