@@ -8,7 +8,7 @@
 #include "../nu/AutoWide.h"
 #include <new>
 #include <strsafe.h>
-#include "nswasabi/ReferenceCounted.h"
+#include "foundation/error.h"
 
 static bool IsMyExtension(const wchar_t *filename)
 {
@@ -45,25 +45,13 @@ int RawMediaReaderService::CreateRawMediaReader(const wchar_t *filename, ifc_raw
 {
 	if (IsMyExtension(filename))
 	{
-		nx_file_t file;
-		ReferenceCountedNXString filename_nx;
-		ReferenceCountedNXURI filename_uri;
-		NXStringCreateWithUTF16(&filename_nx, filename);
-		NXURICreateWithNXString(&filename_uri, filename_nx);
-
-		int ret = NXFileOpenFile(&file, filename_uri, nx_file_FILE_read_binary);
-		if (ret != NErr_Success)
-			return ret;
-
 		RawMediaReader *reader = new (std::nothrow) RawMediaReader();
 		if (!reader)
 		{
-			NXFileRelease(file);
 			return NErr_OutOfMemory;
 		}
 
-		ret = reader->Initialize(file);
-		NXFileRelease(file);
+		int ret = reader->Initialize(filename);
 		if (ret != NErr_Success)
 		{
 			delete reader;
@@ -105,34 +93,33 @@ static FLAC__StreamDecoderWriteStatus OnAudio(const FLAC__StreamDecoder *decoder
 RawMediaReader::RawMediaReader()
 {
 	decoder=0;
-	file=0;
 }
 
 RawMediaReader::~RawMediaReader()
 {
 	if (decoder)
 		FLAC__stream_decoder_delete(decoder);
-	NXFileRelease(file);
 }
 
-int RawMediaReader::Initialize(nx_file_t file)
+int RawMediaReader::Initialize(const std::filesystem::path &filename)
 {
-	this->file = NXFileRetain(file);
+	if (!state.Open(filename))
+		return NErr_FileNotFound;
+
 	decoder = FLAC__stream_decoder_new();
 	if (!decoder)
 		return NErr_FailedCreate;
 
 	FLAC__stream_decoder_set_metadata_ignore(decoder, FLAC__METADATA_TYPE_VORBIS_COMMENT);
-	state.SetFile(file);
 	state.SetObject(this);
 	FLAC__stream_decoder_set_md5_checking(decoder, true);
 	if(FLAC__stream_decoder_init_stream(
 		decoder,
-		FLAC_NXFile_Read,
-		FLAC_NXFile_Seek,
-		FLAC_NXFile_Tell,
-		FLAC_NXFile_Length,
-		FLAC_NXFile_EOF,
+		FLAC_File_Read,
+		FLAC_File_Seek,
+		FLAC_File_Tell,
+		FLAC_File_Length,
+		FLAC_File_EOF,
 		OnAudio,
 		OnMetadata,
 		OnError,
@@ -149,14 +136,21 @@ int RawMediaReader::Initialize(nx_file_t file)
 	FLAC__stream_decoder_get_decode_position(decoder, &position);
 	FLAC__stream_decoder_delete(decoder);
 	decoder=0;
-	NXFileSeek(file, position);
+	state.Seek(position);
 	
 	return NErr_Success;
 }
 
 int RawMediaReader::Read(void *buffer, size_t buffer_size, size_t *bytes_read)
 {
-	return NXFileRead(file, buffer, buffer_size, bytes_read);
+	size_t read = 0;
+	if (!state.Read(buffer, buffer_size, &read))
+		return NErr_Error;
+
+	if (bytes_read)
+		*bytes_read = read;
+
+	return read ? NErr_Success : NErr_EndOfFile;
 }
 
 size_t RawMediaReader::Release()

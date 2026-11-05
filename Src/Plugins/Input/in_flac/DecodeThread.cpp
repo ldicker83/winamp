@@ -34,7 +34,8 @@
 #include "../nu/AudioOutput.h"
 #include "../Agave/Language/api_language.h"
 #include "FLACFileCallbacks.h"
-#include "nx/nxpath.h"
+#include <filesystem>
+#include <memory>
 
 int m_force_seek = -1; // el hacko grande
 const DWORD PAUSE_TIMEOUT = 100; // number of milliseconds to sleep for when paused
@@ -496,12 +497,11 @@ extern HANDLE threadStarted;
 DWORD CALLBACK FLACThread(LPVOID param)
 {
 	buffer_scale=1.0;
-	nx_file_t file;
 	FLACClientData state;
 	audio_output.Init(plugin.outMod);
 	paused=false;
 	SetEvent(threadStarted);
-	nx_uri_t filename = (nx_uri_t)param;
+	const std::unique_ptr<std::filesystem::path> filename(static_cast<std::filesystem::path *>(param));
 	decodePosition = 0;
 	gain = 1.0;
 	bufferCount = 0;
@@ -511,7 +511,6 @@ DWORD CALLBACK FLACThread(LPVOID param)
 		if (WaitForSingleObject(killswitch, 200) != WAIT_OBJECT_0)
 			PostMessage(plugin.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
 
-		free(filename);
 		return 0;
 	}
 
@@ -521,31 +520,24 @@ DWORD CALLBACK FLACThread(LPVOID param)
 	plugin.is_seekable = 1; 
 
 
-	int ret;
-		
-	ret = NXFileOpenFile(&file, filename, nx_file_FILE_read_binary);
-
-	if (ret != NErr_Success)
+	if (!state.Open(*filename))
 	{
 		FLAC__stream_decoder_delete(decoder);
 		if (WaitForSingleObject(killswitch, 200) != WAIT_OBJECT_0)
 			PostMessage(plugin.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
 
-		NXURIRelease(filename);
 		return 0;
 	}
 
-	state.SetFile(file);
-
-	NXFileLength(file, &fileSize);
+	fileSize = state.GetLength();
 
 	if (FLAC__stream_decoder_init_stream(
 		decoder,
-		FLAC_NXFile_Read,
-		FLAC_NXFile_Seek,
-		FLAC_NXFile_Tell,
-		FLAC_NXFile_Length,
-		FLAC_NXFile_EOF,
+		FLAC_File_Read,
+		FLAC_File_Seek,
+		FLAC_File_Tell,
+		FLAC_File_Length,
+		FLAC_File_EOF,
 		OnAudio,
 		OnMetadata,  // or NULL
 		OnError,
@@ -553,11 +545,9 @@ DWORD CALLBACK FLACThread(LPVOID param)
 		) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
 	{
 		FLAC__stream_decoder_delete(decoder);
-		NXFileRelease(file);
 		if (WaitForSingleObject(killswitch, 200) != WAIT_OBJECT_0)
 			PostMessage(plugin.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
 
-		NXURIRelease(filename);
 		return 0;
 	}
 
@@ -569,11 +559,9 @@ DWORD CALLBACK FLACThread(LPVOID param)
 	{
 		FLAC__stream_decoder_finish(decoder);
 		FLAC__stream_decoder_delete(decoder);
-		NXFileRelease(file);
 		if (WaitForSingleObject(killswitch, 200) != WAIT_OBJECT_0)
 			PostMessage(plugin.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
 
-		NXURIRelease(filename);
 		return 0;
 	}
 
@@ -596,8 +584,6 @@ DWORD CALLBACK FLACThread(LPVOID param)
 		case WAIT_OBJECT_0:// kill thread
 			FLAC__stream_decoder_finish(decoder);
 			FLAC__stream_decoder_delete(decoder);
-			NXFileRelease(file);
-			NXURIRelease(filename);
 			return 0;
 
 		case WAIT_TIMEOUT:
@@ -616,8 +602,6 @@ DWORD CALLBACK FLACThread(LPVOID param)
 					{
 							FLAC__stream_decoder_finish(decoder);
 							FLAC__stream_decoder_delete(decoder);
-							NXFileRelease(file);
-							NXURIRelease(filename);
 							return 0;
 					}
 					PostMessage(plugin.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
