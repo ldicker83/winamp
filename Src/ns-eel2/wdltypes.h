@@ -129,8 +129,7 @@ typedef bool WDL_bool;
 #define WDL_DIRCHAR_STR "/"
 #endif
 
-#if defined(_WIN32) || defined(__APPLE__)
-  // on __APPLE__ we should ideally check the filesystem for case-sensitivity, assuming a case-insensitive-only match
+#if defined(_WIN32)
   #define wdl_filename_cmp(x,y) stricmp(x,y)
   #define wdl_filename_cmpn(x,y,n) strnicmp(x,y,n)
 #else

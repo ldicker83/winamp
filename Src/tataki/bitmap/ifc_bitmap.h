@@ -8,8 +8,6 @@
 #warning move this typedef to bfc/platform/platform.h
 #ifdef _WIN32
 typedef HBITMAP OSBITMAPHANDLE;
-#elif defined(__APPLE__)
-typedef CGImageRef OSBITMAPHANDLE;
 #else
 #error port me
 #endif

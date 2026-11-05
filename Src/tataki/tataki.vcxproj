@@ -256,7 +256,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\Build\Winamp_$(PlatformShortName)_$
     <ClInclude Include="canvas\bltcanvas.h" />
     <ClInclude Include="canvas\canvas.h" />
     <ClInclude Include="canvas\ifc_canvas.h" />
-    <ClInclude Include="canvas\PaintCanvas.h" />
     <ClInclude Include="canvas\win\bltcanvas.h" />
     <ClInclude Include="canvas\win\canvas.h" />
     <ClInclude Include="export.h" />

@@ -9,8 +9,6 @@
 #include "win/MessageLoop.h"
 #elif   defined(__linux__)
 #include "linux/MessageLoop.h"
-#elif defined(__APPLE__)
-#include "osx/MessageLoop.h"
 #else
 #error port me!
 #endif

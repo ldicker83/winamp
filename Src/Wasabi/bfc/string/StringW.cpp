@@ -299,10 +299,6 @@ size_t StringW::va_sprintf(const wchar_t *format, va_list args)
 	size_t remain;
 	StringCchVPrintfExW(val, length+1, 0, &remain, 0, format, saveargs);
 	return length-remain;
-#elif defined(__APPLE__)
-  int real_len = ::vswprintf(val, length+1, format, saveargs);
-  ASSERTPR(real_len <= (int)length, "String.printf overflow");
-  return real_len;
 #endif
 
 }

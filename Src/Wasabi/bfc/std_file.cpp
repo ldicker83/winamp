@@ -8,9 +8,6 @@
 #include <shellapi.h>	// for ShellExecute
 #endif
 
-#ifdef __APPLE__
-#include <unistd.h>
-#endif
 
 #define TMPNAME_PREFIX L"WTF"
 
@@ -118,24 +115,6 @@ OSFILETYPE WFOPEN(const wchar_t *filename, OSFNCSTR mode, bool useFileReaders)
 	ret = CreateFileW(filename, mode_to_access(mode), FILE_SHARE_READ, 0, mode_to_create(mode), FILE_FLAG_SEQUENTIAL_SCAN, 0);
 	if (ret != OPEN_FAILED && mode[0]=='a')
 		SetFilePointer(ret, 0, 0, FILE_END);
-#elif defined(__APPLE__)
-  // this is kind of slow, but hopefully this function isn't called enough for a major performance impact
-  // maybe it'd be faster if we did -fshort-wchar and used CFStringCreateWithCharactersNoCopy
-  CFStringRef cfstr =  CFStringCreateWithBytes(kCFAllocatorDefault, (UInt8 *)filename, wcslen(filename)*sizeof(wchar_t), kCFStringEncodingUTF32, false);
-  if (cfstr)
-  {
-  size_t len = CFStringGetMaximumSizeOfFileSystemRepresentation(cfstr);
-  if (len)
-  {
-    char *tmpfn = alloca(len);
-    if (tmpfn)
-    {
-      if (CFStringGetFileSystemRepresentation(cfstr, tmpfn, len))
-        ret = fopen(tmpfn, mode);
-    }
-  }
-  CFRelease(cfstr);
-  }
 #else
 #error port me
 #endif
@@ -307,7 +286,7 @@ OSFNCSTR TMPNAM2(OSFNSTR str, int val)
 	{
 		return tempName;
 	}
-#elif defined(LINUX) || defined(__APPLE__)
+#elif defined(LINUX)
 	mkstemp(StringPrintf("%sXXXXXX", str).getNonConstVal());
 	return (const char *)str;
 #endif
@@ -342,8 +321,6 @@ int WACCESS(OSFNCSTR filename, int mode)
 {
 #ifdef WIN32
 	return _waccess(filename, mode);
-#elif defined(__APPLE__)
-	return access(filename, mode); // this has been undefed at the top of this file
 #endif
 }
 
@@ -418,7 +395,7 @@ int StdFile::resolveShortcut(OSFNCSTR filename, OSFNSTR destfilename, int maxbuf
 {
 #ifdef WIN32
 	return ResolveShortCut(filename, destfilename, maxbuf);
-#elif defined(LINUX) || defined(__APPLE__)
+#elif defined(LINUX)
 	return readlink(filename, destfilename, maxbuf);
 #else
 #error port me

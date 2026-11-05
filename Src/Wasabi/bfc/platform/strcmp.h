@@ -6,10 +6,5 @@
 #define strcasestr StrStrIA
 #endif
 
-#ifdef __APPLE__
-#include <string.h>
-#define _strnicmp strncasecmp
-#define _stricmp strcasecmp
-#endif
 
 #endif

@@ -5,6 +5,4 @@
 #include "linux/nxlog.h"
 #elif defined(_WIN32)
 #include "win/nxlog.h"
-#elif defined(__APPLE__)
-#include "osx/nxlog.h"
 #endif

@@ -153,8 +153,6 @@ COMEXP void WCSTOLOWER(wchar_t *str);
 #include <strsafe.h>
 #undef STRSAFE_NO_DEPRECATE
 #define WCSNPRINTF StringCchPrintfW
-#elif defined(__APPLE__)
-#define WCSNPRINTF swprintf
 #endif
 
 #ifdef WIN32

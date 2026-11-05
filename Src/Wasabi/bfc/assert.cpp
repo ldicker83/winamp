@@ -2,9 +2,6 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
-#ifdef __APPLE__
-#include <unistd.h>
-#endif
 
 #include "bfc_assert.h"
 
@@ -16,8 +13,6 @@ static int in_assert = 0;
 #ifdef WIN32
 #define ASSERT_SPRINTF wsprintfA
 #elif defined(LINUX)
-#define ASSERT_SPRINTF sprintf
-#elif defined(__APPLE__)
 #define ASSERT_SPRINTF sprintf
 #else
 #error port me!
@@ -67,8 +62,6 @@ void _assert_handler(const char *reason, const char *file, int line) {
 	DeleteAtom(a);
 #elif defined(LINUX)
 	kill(getpid(), SIGSEGV );
-#elif defined(__APPLE__)
-	kill(getpid(), SIGSEGV );
 #else
 #error port me!
 #endif
@@ -92,8 +85,6 @@ void _assert_handler_str(const char *string, const char *reason, const char *fil
 		ExitProcess(0);
 	DeleteAtom(a);
 #elif defined(LINUX)
-	kill(getpid(), SIGSEGV );
-#elif defined(__APPLE__)
 	kill(getpid(), SIGSEGV );
 #else
 #error port me!

@@ -5,8 +5,6 @@
 #include "linux/nxapi.h"
 #elif defined(_WIN32)
 #include "win/nxapi.h"
-#elif defined(__APPLE__)
-#include "osx/nxapi.h"
 #else
 #error port me!
 #endif
