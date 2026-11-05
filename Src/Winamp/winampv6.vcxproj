@@ -376,7 +376,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="creditsrend.c" />
     <ClCompile Include="DecodeFile.cpp" />
     <ClCompile Include="DeveloperConfigGroup.cpp" />
-    <ClCompile Include="dispatchCallback.cpp" />
     <ClCompile Include="dock.cpp" />
     <ClCompile Include="dpi.cpp" />
     <ClCompile Include="Draw.cpp" />
@@ -574,7 +573,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="DecodeFile.h" />
     <ClInclude Include="DeveloperConfigGroup.h" />
     <ClInclude Include="directdraw.h" />
-    <ClInclude Include="dispatchCallback.h" />
     <ClInclude Include="dpi.h" />
     <ClInclude Include="draw.h" />
     <ClInclude Include="dsp.h" />

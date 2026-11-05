@@ -310,10 +310,6 @@ static const GUID InMkvLangGUID =
 static const GUID GenMudLangGUID = 
 { 0x233dc7b, 0x7060, 0x43e5, { 0x83, 0x54, 0xd2, 0xf2, 0xc7, 0xc7, 0x61, 0x1d } };
 
-// {DCCF5A41-D16B-452b-8B7A-CFCA3360D8E8}
-static const GUID omBrowserLangGUID = 
-{ 0xdccf5a41, 0xd16b, 0x452b, { 0x8b, 0x7a, 0xcf, 0xca, 0x33, 0x60, 0xd8, 0xe8 } };
-
 // Winamp Android plugin (pmp_android.dll)
 // {EBFF6E00-39D8-45e6-B3EC-E3B07A45E6B0}
 static const GUID PmpAndroidLangGUID = 

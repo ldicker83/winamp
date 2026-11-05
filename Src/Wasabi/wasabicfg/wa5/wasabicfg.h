@@ -242,7 +242,6 @@ Comment or uncomment the following directives according to the needs of your app
 
 #ifndef WASABI_EXTERNAL_GUIOBJECTS
 
-#define WASABI_WIDGETS_BROWSER
 #define WASABI_WIDGETS_FRAME
 #define WASABI_WIDGETS_GRID
 #define WASABI_WIDGETS_QUERYDRAG

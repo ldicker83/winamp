@@ -64,9 +64,6 @@
     <ClCompile Include="DeveloperConfigGroup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dispatchCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -487,9 +484,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="directdraw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dispatchCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dpi.h">
