@@ -107,57 +107,6 @@ bool IsCommand(const wchar_t *cmdline, const wchar_t *str, size_t size)
 		return false;
 }
 
-#if 0
-#ifdef BETA
-void ParseParametersExpired(wchar_t *lpszCmdParam)
-{
-	lpszCmdParam = EatSpaces(lpszCmdParam);
-	if (IsCommand(lpszCmdParam, L"/UNREG", 6))
-	{
-		char ext_list[8192] = {0};
-		char *a = ext_list;
-		CoInitialize(0);
-		setup_config();
-		Wasabi_Load();
-		w5s_init();
-
-		ext_list[0] = 0;
-		_r_s("config_extlist", ext_list, sizeof(ext_list));
-		while (a && *a)
-		{
-			char *p = strstr(a, ":");
-			if (p) *p++ = 0;
-			config_register(a, 0);
-			a = p;
-		}
-
-		wchar_t playlistExtensions[1024] = {0};
-		playlistManager->GetExtensionList(playlistExtensions, 1024);
-		wchar_t *p = playlistExtensions;
-		while (p && *p)
-		{
-			config_register(AutoChar(p), 0);
-			p += lstrlenW(p) + 1;
-		}
-
-		a = "wsz\0wpz\0wal\0wlz\0";
-		while (a && *a)
-		{
-			config_register(a, 0);
-			a += lstrlen(a) + 1;
-		}
-		config_regcdplayer(0);
-		if (config_isdircontext()) config_removedircontext();
-		config_registermediaplayer(0);
-		w5s_deinit(NULL);
-		Wasabi_Unload();
-		SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST | SHCNF_FLUSHNOWAIT, NULL, NULL);
-		ExitProcess(0);
-	}
-}
-#endif
-#endif
-
 void* LoadResource(HINSTANCE hinst, HINSTANCE owner, LPCTSTR lpType, LPCTSTR lpName, DWORD* size)
 {
 	HINSTANCE hmod = hinst;
@@ -267,77 +216,6 @@ wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *
 		{
 			lpszCmdParam = SkipXW(lpszCmdParam, 7);
 			*bHandle = 1;
-		}
-		else if (!_wcsnicmp(lpszCmdParam, L"/REG=", 5))
-		{
-			wchar_t p[1024] = {0};
-			wchar_t *pItr = p;
-			lpszCmdParam = SkipXW(lpszCmdParam, 5);
-			GetParameter(lpszCmdParam, p, 1024);
-
-			is_install = 1;
-			while (pItr && *pItr)
-			{
-				// changed 5.64 - cope with upper + lowercase
-				// if the commands are done that way as well
-				switch (*pItr)
-				{
-					case L'A': case L'a': is_install |= 2; break; //2=audiotype
-					case L'V': case L'v': is_install |= 4; break; //4=videotype
-					case L'C': case L'c': is_install |= 8; break; //8=cd
-					case L'N': case L'n': is_install |= 16; break; //16=set needreg=1
-					case L'D': case L'd': is_install |= 32; break; //32=dircontextmenus
-					case L'L': case L'l': is_install |= 64; break; //64=playlisttype
-					case L'S': case L's': is_install |= 128; break; //128=setupwizard
-				}
-				pItr = CharNextW(pItr);
-			}
-		}
-		else if (IsCommand(lpszCmdParam, L"/NOREG", 6))
-		{
-			lpszCmdParam = SkipXW(lpszCmdParam, 6);
-			g_noreg = 1;
-		}
-		else if (IsCommand(lpszCmdParam, L"/UNREG", 6))
-		{
-			wchar_t ext_list[16384] = {0};
-			wchar_t *a = ext_list;
-			CoInitialize(0);
-			setup_config();
-			Wasabi_Load();
-			w5s_init();
-
-			_r_sW("config_extlist", ext_list, ARRAYSIZE(ext_list));
-			while (a && *a)
-			{
-				wchar_t *p = wcsstr(a, L":");
-				if (p) *p++ = 0;
-				config_register(a, 0);
-				a = p;
-			}
-
-			wchar_t playlistExtensions[1024] = {0};
-			playlistManager->GetExtensionList(playlistExtensions, 1024);
-			wchar_t *p = playlistExtensions;
-			while (p && *p)
-			{
-				config_register(p, 0);
-				p += lstrlenW(p) + 1;
-			}
-
-			a = L"wsz\0wpz\0wal\0wlz\0";
-			while (a && *a)
-			{
-				config_register(a, 0);
-				a += lstrlenW(a) + 1;
-			}
-			config_regcdplayer(0, 0);
-			if (config_isdircontext()) config_removedircontext(0);
-			config_registermediaplayer(0);
-			w5s_deinit();
-			Wasabi_Unload();
-			SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST | SHCNF_FLUSHNOWAIT, NULL, NULL);
-			ExitProcess(0);
 		}
 		else if (!_wcsnicmp(lpszCmdParam, L"/ADD", 4) && (!lpszCmdParam[4] || lpszCmdParam[4] == L' '))
 		{

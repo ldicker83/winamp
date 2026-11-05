@@ -9,29 +9,8 @@
 #define DEF_VAL(x)
 #endif   // CONFIG_IMPL
 
-/* --- This lets us change the registry strings at compile-time, for special builds --- */
-
-#ifndef WINAMP_FILE
-#define REGISTRY_PREFIX "Winamp"
-#endif
-
 #define WIDEN2(x) L ## x
 #define WIDEN(x) WIDEN2(x)
-
-#define WINAMP_FILE REGISTRY_PREFIX ".File"
-#define WINAMP_FILEW WIDEN(REGISTRY_PREFIX) L".File"
-#define WINAMP_PLAYLIST REGISTRY_PREFIX ".PlayList"
-#define WINAMP_PLAYLISTW WIDEN(REGISTRY_PREFIX) L".PlayList"
-#define WINAMP_SKINZIP REGISTRY_PREFIX ".SkinZip"
-#define WINAMP_SKINZIPW WIDEN(REGISTRY_PREFIX) L".SkinZip"
-#define WINAMP_PLAY REGISTRY_PREFIX ".Play"
-#define WINAMP_PLAYW WIDEN(REGISTRY_PREFIX) L".Play"
-#define WINAMP_ENQUEUE REGISTRY_PREFIX ".Enqueue"
-#define WINAMP_ENQUEUEW WIDEN(REGISTRY_PREFIX) L".Enqueue"
-#define WINAMP_BOOKMARK REGISTRY_PREFIX ".Bookmark"
-#define WINAMP_BOOKMARKW WIDEN(REGISTRY_PREFIX) L".Bookmark"
-
-/* -------------------------------------------------------------------------------- --- */
 
 #include <string>
 
@@ -91,7 +70,7 @@ CONFIG_EXT unsigned char config_splash DEF_VAL(0) ,config_minst;
 CONFIG_EXT unsigned char config_taskbar,config_fixtitles DEF_VAL(3);
 CONFIG_EXT unsigned char config_ascb_new DEF_VAL(1),config_ttips DEF_VAL(1), config_priority DEF_VAL(1);
 CONFIG_EXT unsigned char config_riol DEF_VAL(4);
-CONFIG_EXT unsigned char config_whichicon DEF_VAL(1),config_whichicon2 DEF_VAL(1),config_addtolist;
+CONFIG_EXT unsigned char config_addtolist;
 CONFIG_EXT unsigned char config_snap DEF_VAL(1), config_snaplen DEF_VAL(10), config_parent DEF_VAL(1);
 CONFIG_EXT unsigned char config_hilite DEF_VAL(1);
 CONFIG_EXT unsigned char config_disvis DEF_VAL(1), config_pladv DEF_VAL(1);
@@ -133,7 +112,6 @@ CONFIG_EXT int config_embedwnd_freesize;
 CONFIG_EXT wchar_t config_skin[MAX_PATH] DEF_VAL(L""), skin_directory[MAX_PATH] DEF_VAL(L"");
 CONFIG_EXT int config_dotitlenum DEF_VAL(1);
 CONFIG_EXT int config_dotasknum DEF_VAL(1);
-CONFIG_EXT char config_check_ft_startup DEF_VAL(0), config_updated_ft_startup DEF_VAL(0), config_uid_ft DEF_VAL(0);
 CONFIG_EXT char config_bifont DEF_VAL(0); // bitmapped font (off by default)
 CONFIG_EXT char config_bifont_alt DEF_VAL(0); // non-bitmapped font alternative option (off by default)
 CONFIG_EXT char config_browserbrand[16] DEF_VAL("");
@@ -142,7 +120,6 @@ CONFIG_EXT int config_wav_do_header DEF_VAL(1);
 CONFIG_EXT int config_wav_convert DEF_VAL(0);
 CONFIG_EXT char config_wav_ext[8] DEF_VAL("WAV");
 CONFIG_EXT int config_no_visseh;
-CONFIG_EXT int config_no_registry DEF_VAL(0);
 
 CONFIG_EXT int config_last_classic_skin_page DEF_VAL(0);
 CONFIG_EXT int config_last_playback_page DEF_VAL(0);
@@ -154,6 +131,5 @@ CONFIG_EXT int config_noml_ratings_prompt DEF_VAL(1);
 CONFIG_EXT int config_noml_ratings DEF_VAL(0);
 
 CONFIG_EXT int config_jtf_check DEF_VAL(0);
-CONFIG_EXT int config_block_img DEF_VAL(1);
 
 #endif // config.h

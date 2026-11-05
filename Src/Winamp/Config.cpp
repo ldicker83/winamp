@@ -18,18 +18,7 @@
 #include "../nu/ns_wc.h"
 #include "../nu/AutoLock.h"
 #include "../nu/AutoCharFn.h"
-#include "FileTypeRegistrar.h"
 #include "main.hpp"
-#include <shobjidl.h>
-
-static FileTypeRegistrar builtIn;
-
-int GetRegistrar(IFileTypeRegistrar **registrar)
-{
-	*registrar = &builtIn;
-	builtIn.AddRef();
-	return 0;
-}
 
 int _r_i(const std::string& name, int def)
 {
@@ -108,8 +97,6 @@ void config_write(int i)
 		WSW(titlefmt);
 		WSW(visplugin_name);
 		WSW(dspplugin_name);
-		WI(check_ft_startup);
-		WI(updated_ft_startup);
 		WI(visplugin_num);
 		WI(pe_fontsize);
 		WI(pe_direction);
@@ -125,8 +112,6 @@ void config_write(int i)
 		WI(ttips);
 		WI(riol);
 		WI(minst);
-		WI(whichicon);
-		WI(whichicon2);
 		WI(addtolist);
 		WI(snap);
 		WI(snaplen);
@@ -268,7 +253,6 @@ void config_write(int i)
 	WS(wav_ext);
 	_w_sW("playlist_custom_font", playlist_custom_fontW);
 	WI(custom_plfont);
-	WI(no_registry);
 	WI(last_classic_skin_page);
 	WI(last_playback_page);
 	WI(last_fileinfo_page);
@@ -279,41 +263,15 @@ void config_write(int i)
 
 	WI(noml_ratings_prompt);
 	WI(noml_ratings);
-	WI(uid_ft);
 }
 
 void config_read(int i)
 {
 	wchar_t programname[MAX_PATH] = {0};
 	GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-	//	regmimetype(L"interface/x-winamp-skin", programname, L".wsz", 0); // hack cause wa3 is gheeeeeey
 
 	RI(utf8);
 	RI(eq_ws);
-	RI(updated_ft_startup);
-	// fiddle things so if running an existing install then we force restore file assoc off
-	// when we're running on Vista / Win7+ to resolve complaints from users on those OSes.
-	// vista
-	if(config_updated_ft_startup)
-	{
-		RI(check_ft_startup);
-	}
-	else
-	{
-		OSVERSIONINFO version = {0};
-		version.dwOSVersionInfoSize = sizeof(version);
-		if (!GetVersionEx(&version)) ZeroMemory(&version, sizeof(OSVERSIONINFO));
-		if (version.dwMajorVersion >= 6) // Vista
-		{
-			config_updated_ft_startup = 0;
-		}
-		else
-		{
-			RI(check_ft_startup);
-		}
-	}
-	config_updated_ft_startup = 1;
-	
 	RS(browserbrand);
 	RI(inet_mode);
 	RI(pe_fontsize);
@@ -332,8 +290,6 @@ void config_read(int i)
 	RI(ttips);
 	RI(keeponscreen);
 	RI(riol);
-	RI(whichicon);
-	RI(whichicon2);
 	RI(addtolist);
 	RI(snap);
 	RI(snaplen);
@@ -480,7 +436,6 @@ void config_read(int i)
 	RI(noml_ratings);
 
 	RI(jtf_check);
-	RI(block_img);
 	RI(wav_do_header);
 	RI(wav_convert);
 	RS(wav_ext);
@@ -489,7 +444,6 @@ void config_read(int i)
 	if (!*playlist_custom_fontW) StringCbCopyW(playlist_custom_fontW, sizeof(playlist_custom_fontW), DEFAULT_FONT);
 	WideCharToMultiByteSZ(CP_ACP, 0, playlist_custom_fontW, -1, playlist_custom_font, 128, 0, 0);
 	RI(custom_plfont);
-	RI(no_registry);
 	RS(defext);
 	RSW(titlefmt);
 	RSW(visplugin_name);
@@ -535,225 +489,6 @@ void config_read(int i)
 	}
 }
 
-
-int config_isregistered(wchar_t *ext)
-{
-	wchar_t b[256] = {0};
-	DWORD rval = 0, s = sizeof(b);
-
-	if (config_no_registry) return 0;
-
-	if (!ext[0]) return 0;
-	StringCchPrintfW(b, 256, L".%s", ext);
-
-	OSVERSIONINFO version = {0};
-	version.dwOSVersionInfoSize = sizeof(version);
-	if (!GetVersionEx(&version)) ZeroMemory(&version, sizeof(OSVERSIONINFO));
-
-	if (IsWin8()) // Windows 8
-	{
-		// QueryAppIsDefault(..) was deprecated in Windows 8 so this is an alternative
-		// which seems to work though how long it will keep working is currently unknown
-		IApplicationAssociationRegistration* pAAR = 0;
-		HRESULT hr = CoCreateInstance(CLSID_ApplicationAssociationRegistration,
-									  NULL, CLSCTX_INPROC,
-									  __uuidof(IApplicationAssociationRegistration),
-									  (void**)&pAAR);
-		if (SUCCEEDED(hr) && pAAR)
-		{
-			LPWSTR app = 0;
-			/*hr = */pAAR->QueryCurrentDefault(b,
-											   AT_FILEEXTENSION,
-											   AL_EFFECTIVE,
-											   &app);
-			pAAR->Release();
-
-			if (IsPlaylistExtension(ext))
-			{
-				if(!lstrcmpiW(WINAMP_PLAYLISTW, app)){ rval = 1; }
-			}
-			else if (!_wcsicmp(ext, L"wsz") || !_wcsicmp(ext, L"wal") || !_wcsicmp(ext, L"wpz"))
-			{
-				if(!lstrcmpiW(WINAMP_SKINZIPW, app)){ rval = 1; }
-			}
-			else
-			{
-				wchar_t str[64] = {0};
-				StringCchPrintfW(str, 64, L"%s%hs", WINAMP_FILEW, b);
-				if(!lstrcmpiW(str, app)){ rval = 1; }
-			}
-			if (app) CoTaskMemFree(app);
-		}
-	}
-	else if (version.dwMajorVersion >= 6) // Vista
-	{
-		IApplicationAssociationRegistration* pAAR = NULL;
-		HRESULT hr = CoCreateInstance(CLSID_ApplicationAssociationRegistration,
-									  NULL, CLSCTX_INPROC,
-									  __uuidof(IApplicationAssociationRegistration),
-									  (void**)&pAAR);
-		if (SUCCEEDED(hr) && pAAR)
-		{
-			BOOL hasExt=FALSE;
-			hr = pAAR->QueryAppIsDefault(b,
-										 AT_FILEEXTENSION,
-										 AL_EFFECTIVE,
-										 AutoWide(app_name),
-										 &hasExt);
-			pAAR->Release();
-			if (SUCCEEDED(hr))
-			{
-				rval=!!hasExt;
-			}
-		}
-	}
-	else
-	{
-		HKEY key = NULL;
-		if (RegOpenKeyW(HKEY_CLASSES_ROOT, b, &key) != ERROR_SUCCESS) return 0;
-
-		DWORD vt = 0;
-		if (RegQueryValueExW(key, NULL, 0, &vt, (LPBYTE)b, &s) == ERROR_SUCCESS)
-		{
-			if (vt != REG_SZ || (wcsncmp(b, WINAMP_FILEW, wcslen(WINAMP_FILEW)) &&
-								 wcscmp(b, WINAMP_PLAYLISTW) &&
-								 wcscmp(b, WINAMP_SKINZIPW))) rval = 0;
-			else rval = 1;
-		}
-		else rval = 0;
-		RegCloseKey(key);
-	}
-
-	return rval;
-}
-
-bool allowed_extension(wchar_t *ext)
-{
-	const wchar_t* blocked[] = {L"exe", L"dll",
-								L"jpg", L"jpeg", L"gif", L"bmp",
-								L"png", L"tif", L"tiff"};
-	// ensure we block at least 'exe' and 'dll', and images if not disabled
-	for (size_t i = 0; i < (config_block_img ? ARRAYSIZE(blocked) : 2); i++)
-	{
-		if (!_wcsicmp(ext, blocked[i])) return false;
-	}
-	return true;
-}
-
-void config_register(wchar_t *ext, int reg)
-{
-	const wchar_t *which_str = WINAMP_FILEW;
-	if (config_no_registry) return ;
-	if (!ext[0]) return ;
-	if (!allowed_extension(ext)) return ; //windows=gay
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		wchar_t family_str[256] = {0};
-
-		if (IsPlaylistExtension(ext))
-			which_str = WINAMP_PLAYLISTW;
-		else if (!_wcsicmp(ext, L"wsz") || !_wcsicmp(ext, L"wal") || !_wcsicmp(ext, L"wpz"))
-			which_str = WINAMP_SKINZIPW;
-		else
-		{
-			StringCchPrintfW(family_str, 256, L"%s.%s", WINAMP_FILEW, ext);
-
-			wchar_t family_description[256] = {0};
-			if (in_get_extended_fileinfoW(family_str, L"family", family_description, 255) && family_description[0])
-			{
-				which_str=family_str;
-				if (reg)
-					config_setup_filetype(family_str, family_description, 0);
-			}
-		}
-
-		if (reg && !_wcsicmp(ext, L"asx"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"video/x-asx", programname, L".asx", 0);
-			regmimetype(L"video/asx", programname, L".asx", 0);
-			regmimetype(L"video/x-ms-asf", programname, L".asx", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"wal"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"interface/x-winamp3-skin", programname, L".wal", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"wsz"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"interface/x-winamp-skin", programname, L".wsz", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"pls"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"audio/x-scpls", programname, L".pls", 0);
-			regmimetype(L"audio/scpls", programname, L".pls", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"wma"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"audio/x-ms-wma", programname, L".wma", 1);
-			regmimetype(L"application/x-msdownload", programname, L".wma", 1);
-		}
-		if (reg && !_wcsicmp(ext, L"m3u"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"audio/x-mpegurl", programname, L".m3u", 0);
-			regmimetype(L"audio/mpegurl", programname, L".m3u", 0);
-		}
-		if (reg && !_wcsicmp(ext, L"mp3"))
-		{
-			wchar_t programname[MAX_PATH] = {0};
-			GetModuleFileNameW(hMainInstance, programname, MAX_PATH);
-			regmimetype(L"audio/x-mpeg", programname, L".mp3", 1);
-			regmimetype(L"audio/x-mp3", programname, L".mp3", 1);
-			regmimetype(L"audio/x-mpg", programname, L".mp3", 1);
-			regmimetype(L"audio/mp3", programname, L".mp3", 1);
-			regmimetype(L"audio/mpg", programname, L".mp3", 1);
-			regmimetype(L"audio/mpeg", programname, L".mp3", 1);
-		}
-
-		wchar_t b[128] = {0};
-		StringCchPrintfW(b, 128, L".%s", ext);
-		CharLowerBuffW(b, ARRAYSIZE(b));
-		if (reg)
-			registrar->RegisterType(b, which_str, AutoWide(app_name));
-		else
-		{
-			// avoid removing WINAMP_FILEW as this will break some parts
-			// this will generally happen from 3rd party plugins where
-			// no %family% will be correctly returned in the relevant
-			if(_wcsicmp(which_str, WINAMP_FILEW))
-			{
-				registrar->UnregisterType(b, which_str, AutoWide(app_name), IsPlaylistExtension(ext));
-			}
-		}
-
-		registrar->Release();
-	}
-}
-
-void regmimetype(const wchar_t *mtype, const wchar_t *programname, const wchar_t *ext, int nsonly)
-{
-	if (config_no_registry)
-		return ;
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		registrar->RegisterMIMEType(mtype, programname, ext, nsonly);
-		registrar->Release();
-	}
-}
 
 void trimPathW(wchar_t *pathStart)
 {
@@ -907,130 +642,3 @@ void setup_config(void)
 	RI(minst);
 }
 
-BOOL config_removedircontext(BOOL use_fallback)
-{
-	if (config_no_registry)
-		return TRUE;
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		registrar->RemoveDirectoryContext(WINAMP_PLAYW);
-		registrar->RemoveDirectoryContext(WINAMP_ENQUEUEW);
-		registrar->RemoveDirectoryContext(WINAMP_BOOKMARKW);
-		registrar->Release();
-		return TRUE;
-	}
-	return FALSE;
-}
-
-int config_iscdplayer(void)
-{
-	DWORD r = 0, s;
-	HKEY mp3Key;
-	char buf[MAX_PATH], buf2[MAX_PATH] = "\"";;
-	if (!GetModuleFileNameA(hMainInstance, buf2 + 1, sizeof(buf2) - 8)) return 0;
-	if (RegOpenKeyA(HKEY_CLASSES_ROOT, "AudioCD\\shell\\play\\command", &mp3Key) != ERROR_SUCCESS) return 0;
-	StringCchCatA(buf2, MAX_PATH, "\" %1");
-	s = sizeof(buf);
-	if (RegQueryValueEx(mp3Key, NULL, 0, NULL, (LPBYTE)buf, &s) == ERROR_SUCCESS)
-	{
-		if (!lstrcmpiA(buf, buf2)) r = 1;
-	}
-	RegCloseKey(mp3Key);
-	return r;
-}
-
-BOOL config_regcdplayer(int reg, int mode)
-{
-	if (config_no_registry) return TRUE;
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		wchar_t programName[MAX_PATH] = {0};
-		if (GetModuleFileNameW(hMainInstance, programName, MAX_PATH))
-		{
-			if (reg)
-				registrar->RegisterCDPlayer(programName);
-			else
-				registrar->UnregisterCDPlayer(programName);
-		}
-		registrar->Release();
-		return TRUE;
-	}
-	return FALSE;
-}
-
-void config_agent_add(void)
-{
-	if (config_no_registry) return;
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		wchar_t exe_name[MAX_PATH + 2] = {0};
-		GetModuleFileNameW(hMainInstance, exe_name, sizeof(exe_name)/sizeof(wchar_t));
-		FilePath::RemoveFileSpec(exe_name);
-		FilePath::Combine(exe_name, exe_name, L"winampa.exe");
-		FilePath::QuoteSpaces(exe_name);
-
-		registrar->AddAgent(exe_name);
-		registrar->Release();
-	}
-
-}
-
-void config_agent_remove(void)
-{
-	if (config_no_registry) return ;
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		HWND hwnd = FindWindowW(L"WinampAgentMain", NULL);
-		if (hwnd)
-		{
-			SendMessageW(hwnd, WM_CLOSE, 0, 0);
-		}
-		registrar->RemoveAgent();
-		registrar->Release();
-	}
-
-}
-
-BOOL config_register_capability(wchar_t *ext, int mode)
-{
-	if (config_no_registry) return TRUE;
-
-	IFileTypeRegistrar *registrar=0;
-	if (GetRegistrar(&registrar) == 0 && registrar)
-	{
-		WCHAR szApplication[128] = {0}, szExtension[64] = {0}, szProgId[256] = {0};
-		size_t required = MultiByteToWideCharSZ(CP_ACP, 0, app_name, -1, NULL, 0);
-		if (required > ARRAYSIZE(szApplication)) 
-			return TRUE;
-
-		if (0 == MultiByteToWideCharSZ(CP_ACP, 0, app_name, -1, szApplication, ARRAYSIZE(szApplication)))
-			return TRUE;
-
-		LPWSTR cursor = szProgId;
-		size_t remaining = ARRAYSIZE(szProgId);
-
-		if (FAILED(StringCchCopyExW(cursor, remaining, WINAMP_FILEW, &cursor, &remaining, 0)))
-			return TRUE;
-
-		if (FAILED(StringCchCopyExW(cursor, remaining, L".", &cursor, &remaining, 0)))
-			return TRUE;
-
-		if (FAILED(StringCchCopyExW(cursor, remaining, ext/*szExtension*/, &cursor, &remaining, 0)))
-			return TRUE;
-
-		//CharLowerW(szExtension);
-
-		registrar->RegisterCapability(szApplication, szProgId, szExtension);
-		registrar->Release();
-		return TRUE;
-	}
-	return FALSE;
-}

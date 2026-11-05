@@ -170,7 +170,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		case IPC_GET_API_SERVICE:
 			return reinterpret_cast<LRESULT>((api_service *)WASABI_API_SVC);
 		case IPC_USE_REGISTRY:
-			return !config_no_registry;
+			return 0;
 		case IPC_GET_DISPATCH_OBJECT:
 			return 0;
 		case IPC_REGISTER_LOWORD_COMMAND:

@@ -311,7 +311,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			lp_v = NULL;
 
 			h = _additem(hwnd, TVI_ROOT, getStringW(IDS_PREFS_SETUP, NULL, 0), 1, 0);
-			_additem(hwnd, h, getStringW(IDS_PREFS_FT, NULL, 0), 0, 1);
 			_additem(hwnd, h, getStringW(IDS_PREFS_SHUFFLE, NULL, 0), 0, 23);
 			_additem(hwnd, h, getStringW(IDS_PREFS_TITLES, NULL, 0), 0, 21);
 			_additem(hwnd, h, getStringW(IDS_PREFS_PLAYBACK, NULL, 0), 0, 42);
@@ -408,7 +407,6 @@ static LRESULT CALLBACK OuterProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 					switch (i.lParam)
 					{
 						case 0: id = IDD_NEWSETUP; proc = SetupProc; break; // general
-						case 1: id = (!IsWin8() ? IDD_NEWFTYPES : IDD_WIN8_FTYPES);	proc = FtypeProc; break; // filetypes
 //						case 2: id=IDD_NEWAGENT; proc=AgentProc; break;
 						case 21: id = IDD_NEWTITLE; proc = TitleProc; break;
 						case 22: id = IDD_PREFS_CLASSICSKIN; proc = classicSkinProc; break;

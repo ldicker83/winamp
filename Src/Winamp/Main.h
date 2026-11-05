@@ -34,7 +34,6 @@ extern "C"
 #include "../nu/trace.h"
 #ifndef NO_INPLACE_RESOLVE
 
-#include "IFileTypeRegistrar.h"
 
 #endif
 	/* configuration */
@@ -114,32 +113,17 @@ extern "C"
 	*/ 
 	// configuration variables/with defaults
 	#ifndef NO_INPLACE_RESOLVE
-	int GetRegistrar(IFileTypeRegistrar **registrar);
 	#endif
 	void init_config();
 	void setup_config(void);
 	void config_write(int);
 	void config_read(int);
-	BOOL config_setup_filetypes(int mode);
 	void config_adddesktop(void);
-	int config_isregistered(wchar_t *);
-	BOOL config_registermediaplayer(DWORD accessEnabled);
-	BOOL config_register_capability(wchar_t *ext, int mode);
-	void config_register(wchar_t *ext, int reg);
 	void config_setinifile(wchar_t *inifile);
 	void config_setinidir(const wchar_t *inidir);
 	void config_setm3udir(const wchar_t *m3udir);
 	void config_setm3ubase(const wchar_t *m3ubase);
-	int config_isdircontext(void);
-	BOOL config_setup_filetype(const wchar_t *winamp_file, const wchar_t *name, BOOL use_fallback);
-	BOOL config_adddircontext(BOOL use_fallback);
-	int config_iscdplayer(void);
-	BOOL config_removedircontext(BOOL use_fallback);
-	BOOL config_regcdplayer(int reg, int mode);
 	void config_remove_winamp_keys(void);
-	void config_agent_add(void);
-	void config_agent_remove(void);
-	void regmimetype(const wchar_t *mtype, const wchar_t *programname, const wchar_t *ext, int nsonly);
 
 	/***********************
 	*** convert.cpp
@@ -380,7 +364,6 @@ extern "C"
 				 g_submenus_play, v5_top_menu;
 	extern int unique_loword_command;
 	extern int g_dropaot_timer_set;
-	extern int is_install;
 	extern int g_fsapp;
 	extern int g_restoreaot_timer_set;
 	extern int bNoHwndOther;
@@ -389,7 +372,6 @@ extern "C"
 	void MoveOffscreen(HWND hwnd);
 	void ResolveEnvironmentVariables(wchar_t *string, size_t stringSize);
 	extern int g_main_created;
-	extern int g_noreg;
 	extern wchar_t szAppName[64]; //	window class name, generated on the fly.
 	extern int g_fullstop;
 	extern int vis_fullscreen;
@@ -781,7 +763,6 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	int IsAero(void);
 	BOOL IsVista(void);
 	BOOL IsVistaOrLower(void);
-	BOOL IsWin8(void);
 
 	HRESULT WAEnableThemeDialogTexture(HWND hwnd, DWORD dwFlags);
 
@@ -958,7 +939,6 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	void GetParameter(const wchar_t *commandLine, wchar_t *yourBuffer, size_t yourBufferSize);
 
 	// unsorted
-	void readwrite_client_uid(int isWrite, wchar_t uid_str[64]);
 	BOOL read_compatmode();
 
 		char *export_sa_get_deprecated();
@@ -999,12 +979,10 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	LRESULT Main_OnDropFiles(HWND hwnd, HDROP hdrop);
 	LRESULT Main_OnCopyData(HWND hwnd, COPYDATASTRUCT *cds);
 	extern int m_converting;
-	void DoInstall(int is_install);
 	wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *bHandle, int *nCmdShow, int *bCommand, int *bCmdParam, int *bAllowCompat);
 	#ifdef BETA
 	void ParseParametersExpired(wchar_t *lpszCmdParam);
 	#endif
-	void reg_associated_filetypes(int force);
 	wchar_t *FindNextCommand(wchar_t *cmdLine);
 	void parseCmdLine(wchar_t *cmdline, HWND hwnd);
 	wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit);

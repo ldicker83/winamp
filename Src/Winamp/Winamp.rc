@@ -158,73 +158,6 @@ BEGIN
     CONTROL         "",IDC_RECT,"Static",SS_BLACKRECT | NOT WS_VISIBLE,110,5,272,246
 END
 
-IDD_NEWFTYPES DIALOGEX 0, 0, 272, 246
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-    GROUPBOX        "File Types",IDC_STATIC,0,0,272,246
-    GROUPBOX        "Associated File Types",IDC_STATIC,5,11,130,230
-    LISTBOX         IDC_FTYPE_LIST,11,24,54,211,LBS_MULTIPLESEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Set selection:",IDC_STATIC,70,23,44,8
-    PUSHBUTTON      "All",IDC_SELALL,70,33,60,13,BS_CENTER | BS_MULTILINE
-    PUSHBUTTON      "Audio Only",IDC_SELALL2,70,50,60,13,BS_CENTER | BS_MULTILINE
-    PUSHBUTTON      "Video Only",IDC_SELALL3,70,66,60,13,BS_CENTER | BS_MULTILINE
-    PUSHBUTTON      "None",IDC_SELNONE,70,82,60,13,BS_CENTER | BS_MULTILINE
-    CONTROL         "Restore file associations on Winamp start",IDC_RSTART,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,70,101,62,26
-    GROUPBOX        "File Icon",IDC_STATIC,70,132,59,50,BS_CENTER
-    CONTROL         "Slider1",IDC_FILETYPES_ICONSCROLL,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | WS_GROUP | WS_TABSTOP,80,140,13,40
-    ICON            IDI_FILEICON,IDC_FILETYPES_ICON,99,151,20,20,NOT WS_VISIBLE
-    GROUPBOX        "Playlist Icon",IDC_STATIC,70,186,59,50,BS_CENTER
-    CONTROL         "Slider1",IDC_FILETYPES_ICONSCROLL2,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | WS_GROUP | WS_TABSTOP,80,194,13,40
-    ICON            IDI_FILEICON,IDC_FILETYPES_ICON2,99,204,20,20,NOT WS_VISIBLE
-    GROUPBOX        "Windows Explorer Settings",IDC_STATIC,141,11,124,57
-    CONTROL         "Enqueue files on double click\n(default is unchecked)",IDC_ADDFILES,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,148,24,110,18
-    CONTROL         "Show Winamp actions in the folder context menus",IDC_DIRCONTEXT,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,148,45,110,18
-    GROUPBOX        "Audio CDs",IDC_STATIC,141,72,124,28
-    CONTROL         "Launch Winamp for Audio CDs",IDC_CD,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,148,84,110,10
-    GROUPBOX        "Winamp Agent",IDC_WATEXT2,141,104,124,86
-    CONTROL         "Enable Winamp agent",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,116,84,10
-    LTEXT           "Winamp Agent will allow you to start Winamp if it is not already running, allow quick access to bookmarks, etc and show an icon in the notification area.",IDC_WATEXT1,148,130,108,41
-    CONTROL         "Show icon in notification area",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,175,109,10
-    LTEXT           "Tip: Hold down the 'Control' key down when closing this preference page to force a refresh of the file associations.",IDC_STATIC,141,204,124,36
-END
-
-IDD_WIN8_FTYPES DIALOGEX 0, 0, 272, 246
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-    GROUPBOX        "File Types",IDC_STATIC,0,0,272,246
-    GROUPBOX        "Recognized File Types",IDC_STATIC,5,11,130,230
-    LTEXT           "To associate files with Winamp you need to use ",IDC_STATIC,11,24,119,16
-    CONTROL         "Set Default Programs",IDC_SET_DEF_PROGRAM,"Button",BS_OWNERDRAW | WS_TABSTOP,51,32,75,10,WS_EX_TRANSPARENT
-    LISTBOX         IDC_FTYPE_LIST,11,46,54,176,LBS_MULTIPLESEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "This list shows all of the supported file extensions which can be associated with Winamp via the link shown above.",IDC_STATIC,70,60,60,62
-    GROUPBOX        "File Icon",IDC_STATIC,70,132,59,50,BS_CENTER
-    CONTROL         "Slider1",IDC_FILETYPES_ICONSCROLL,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | WS_GROUP | WS_TABSTOP,80,140,13,40
-    ICON            IDI_FILEICON,IDC_FILETYPES_ICON,99,151,20,20,NOT WS_VISIBLE
-    GROUPBOX        "Playlist Icon",IDC_STATIC,70,186,59,50,BS_CENTER
-    CONTROL         "Slider1",IDC_FILETYPES_ICONSCROLL2,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | WS_GROUP | WS_TABSTOP,80,194,13,40
-    ICON            IDI_FILEICON,IDC_FILETYPES_ICON2,99,204,20,20,NOT WS_VISIBLE
-    PUSHBUTTON      "Refresh",IDC_REFRESH,11,222,54,13,BS_CENTER | BS_MULTILINE
-    GROUPBOX        "Windows Explorer Settings",IDC_STATIC,141,11,124,57
-    CONTROL         "Enqueue files on double click\n(default is unchecked)",IDC_ADDFILES,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,148,24,110,18
-    CONTROL         "Show Winamp actions in the folder context menus",IDC_DIRCONTEXT,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,148,45,110,18
-    GROUPBOX        "Audio CDs",IDC_STATIC,141,72,124,28
-    CONTROL         "Launch Winamp for Audio CDs",IDC_CD,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,148,84,110,10
-    GROUPBOX        "Winamp Agent",IDC_WATEXT2,141,104,124,86
-    CONTROL         "Enable Winamp agent",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,116,84,10
-    LTEXT           "Winamp Agent will allow you to start Winamp if it is not already running, allow quick access to bookmarks, etc and show an icon in the notification area.",IDC_WATEXT1,148,130,108,41
-    CONTROL         "Show icon in notification area",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,175,109,10
-    LTEXT           "Tip: Hold down the 'Control' key down when closing this preference page to force a refresh of the file associations.",IDC_STATIC,141,204,124,36
-END
-
 IDD_NEWPLUG DIALOGEX 0, 0, 272, 247
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 EXSTYLE WS_EX_CONTROLPARENT
@@ -1922,7 +1855,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_CONFIG_BOOKMARKSTR  "Add to Winamp's &Bookmark list"
     IDS_P_O_ONPLAY          "Reads track info such as title or ID3 tag, as well as a track length estimate, on play only (rather than on view or load)."
     IDS_P_O_SMS             "This controls how quickly the playlist order changes (morphs) over time, when shuffle is on."
     IDS_PREFS_SHUFFLE       "Playlist"
@@ -1936,22 +1868,17 @@ END
 STRINGTABLE
 BEGIN
     IDS_DSP_NONE            "(none)"
-    IDS_CONFIG_PLAYSTR      "&Play in Winamp"
-    IDS_CONFIG_ENQUEUESTR   "&Enqueue in Winamp"
     IDS_PREFS_SKIN          "Skins"
     IDS_P_O_MPA             "This option controls whether Winamp automatically advances to the next track or not. You only want to enable it if you are DJing and want to be able to jump around without worrying about the playlist auto-advancing."
     IDS_P_SK_SEL            "This box lists available skins to enable."
     IDS_P_SK_RND            "When this is checked, Winamp will switch skins randomly on every new file played."
     IDS_P_SK_CHDR           "This button lets you change the directory where you keep your skins."
     IDS_PREFS_CLASSICSKIN   "Classic Skins"
-    IDS_P_A_ENABLE          "This option enables the Winamp Agent, which runs at all times and lets you have enhanced functionality."
-    IDS_P_A_TRAY            "This option, when the Agent is enabled, shows an icon in the notification area that lets you run Winamp, load your bookmarks/playlists, etc."
 END
 
 STRINGTABLE
 BEGIN
     IDS_PLFONT_CHARSET      "1"
-    IDS_P_FT_RSTART         "This option will make Winamp retake its filetypes when other programs steal them. It is recommended."
     IDS_P_DISP_BIFONT       "This option makes Winamp use its own (skinnable) font for displaying track titles. Disable this if you want to be able to see titles with non-English characters in them."
     IDS_P_DISP_PLPOS        "If enabled this option makes Winamp display the current playlist position in the song scroller"
 END
@@ -1962,7 +1889,6 @@ BEGIN
     IDS_PREFS_PLUG_VIS      "Visualization"
     IDS_PREFS_PLUG_DSP      "DSP/Effect"
     IDS_PREFS_PLUG_GEN      "General Purpose"
-    IDS_P_FT_CD             "This option will associate Winamp with Audio CDs in explorer, so that when you insert a disc or click on the disc icon in explorer Winamp will automatically play it."
     IDS_DELETEAUTOLOAD1     "Delete auto-load preset"
     IDS_DELETEAUTOLOAD2     "&Delete..."
     IDS_DELETEPRE1          "Delete preset"
@@ -1974,14 +1900,12 @@ END
 STRINGTABLE
 BEGIN
     IDS_TOOLTIPS            "Toggle Windowshade Mode|Minimize|Close|Winamp Menu|Toggle Graphical Equalizer|Toggle Playlist Editor|Options Menu|Toggle Always-On-Top|File Info Box|Toggle Doublesize Mode|Visualization Menu|Volume Bar|Panning Bar|Seeking Bar|Toggle Shuffle|Toggle Repeat|About Winamp|Open file(s)|Previous Track|Play|Pause|Stop|Next Track|Time Display (click to toggle elapsed/remaining)|Song Title (right-click for options)"
-    IDS_P_FT_DIRCONTEXT     "Checking this option makes Winamp add a 'play' and 'enqueue' option to directories in explorer."
     IDS_P_DISP_SNAPW        "This value controls at what distance (in pixels) Winamp windows snap to each other and to the viewport."
     IDS_P_PLUG_VISDIR       "This button lets you select the directory for Winamp visualization plug-ins. The default is <yourwinampdirectory>\\Plugins"
     IDS_P_PLUG_DSPDIR       "This button lets you select the directory for Winamp DSP/effect plug-ins. The default is <yourwinampdirectory>\\Plugins"
     IDS_SELVISDIR           "Select visualization plug-in directory"
     IDS_SELDSPDIR           "Select effect plug-in directory"
     IDS_PREFS_SETUP         "General Preferences"
-    IDS_PREFS_FT            "File Types"
     IDS_PREFS_TITLES        "Titles"
     IDS_PREFS_PLUG          "Plug-ins"
     IDS_PREFS_PLUG_IN       "Input"
@@ -1989,7 +1913,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_P_FT_ICON2          "Selects the icon that Winamp playlist files use in Explorer."
     IDS_P_VIS_LIB           "This is a list of installed visualization plug-ins. You can select one, and start/stop or configure it."
     IDS_P_VIS_MOD           "Once you have selected a plug-in, you can select a different module with this combo box."
     IDS_P_PLUG_AUTO         "This option makes visualization plug-ins auto-execute when you start a file."
@@ -2018,11 +1941,6 @@ BEGIN
     IDS_P_DISP_PLFONT       "This box controls the size of the playlist font (in pixels). The default is 10."
     IDS_P_O_LITESTEP        "This box, when enabled, allows Winamp to stay offscreen, which is good for use with LiteStep's virtual window manager."
     IDS_P_O_AOVD            "This box makes Winamp always appear on virtual desktops in LiteStep."
-    IDS_P_FT_EXTENSIONS     "Extensions selected here will be registered by Winamp in Windows Explorer."
-    IDS_P_FT_ALL            "Selects all extensions."
-    IDS_P_FT_NO             "Selects no extensions."
-    IDS_P_FT_ENQUEUE        "Makes double-clicking on a file in explorer enqueue it into Winamp's playlist instead of instant playback"
-    IDS_P_FT_ICON           "Selects the icon that Winamp audio files use in Explorer."
 END
 
 STRINGTABLE
@@ -2097,11 +2015,8 @@ BEGIN
     IDS_COVER               "cover"
     IDS_METADATA_ERROR      "Cannot save metadata: Error writing to file or file is read-only."
     IDS_METADATA_ERROR_TITLE "Error saving metadata"
-    IDS_WINAMP_MEDIA_FILE   "Winamp media file"
-    IDS_WINAMP_PLAYLIST_FILE "Winamp playlist file"
     IDS_WINAMP_EXTENSION_INSTALLATION_FILE 
                             "Winamp extension installation file"
-    IDS_WINAMP_FILE_INSTALL "Install"
     IDS_WIN7TOOLBAR_TOOLTIP_PREVIOUS "Previous"
     IDS_WIN7TOOLBAR_TOOLTIP_PLAY "Play"
 END
@@ -2178,9 +2093,7 @@ BEGIN
     IDS_REPEAT_TRACK        "Repeat: Track"
     IDS_MAN_ADV_ON          "Manual Advance: On"
     IDS_MAN_ADV_OFF         "Manual Advance: Off"
-    IDS_DEF_PROG_LOAD_ERROR "Unable to open the 'Set Default Programs' window. You will need to manually go to the Control Panel and enter 'Set Default Programs' into the search bar to easily find it."
     IDS_P_DISP_BIFONT_ALT   "This option makes Winamp use an alternative style for the un-skinned font for displaying track titles which may make it easier to see the track titles when 'Double size' is enabled."
-    IDS_P_FILE_ASSOC        "Winamp File Association"
 END
 
 STRINGTABLE

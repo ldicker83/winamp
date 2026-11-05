@@ -21,7 +21,6 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK PlaybackOptionsProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK TitleProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
-INT_PTR CALLBACK FtypeProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK classicSkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam);
