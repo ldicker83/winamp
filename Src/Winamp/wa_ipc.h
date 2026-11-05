@@ -2911,35 +2911,6 @@ typedef struct {
 */
 
 
-typedef struct {
-  // fill these in...
-  size_t size; // init to sizeof(artFetchData)
-  HWND parent; // parent window of the dialogue
-
-  // fill as much of these in as you can, otherwise leave them 0
-  const wchar_t *artist;
-  const wchar_t *album;
-  int year, amgArtistId, amgAlbumId;
-
-  int showCancelAll; // if set to 1, this shows a "Cancel All" button on the dialogue
-
-  // winamp will fill these in if the call returns successfully:
-  void* imgData; // a buffer filled with compressed image data. free with WASABI_API_MEMMGR->sysFree()
-  int imgDataLen; // the size of the buffer
-  wchar_t type[10]; // eg: "jpg"
-  const wchar_t *gracenoteFileId; // if you know it
-} artFetchData;
-
-#define IPC_FETCH_ALBUMART 3036
-/* pass an artFetchData*. This will show a dialog guiding the use through choosing art, and return when it's finished
-** return values:
-** 1: error showing dialog
-** 0: success
-** -1: cancel was pressed
-** -2: cancel all was pressed
-*/
-
-
 #define IPC_JSAPI2_GET_DISPATCH_OBJECT 3037
 /* pass your service's unique ID, as a wchar_t * string, in wParam
 ** Winamp will copy the string, so don't worry about keeping it around

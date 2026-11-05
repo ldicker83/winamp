@@ -255,7 +255,6 @@ void config_write(int i)
 	WI(last_classic_skin_page);
 	WI(last_playback_page);
 	WI(last_fileinfo_page);
-	WSW(artwork_filter);
 	WI(zeropadplnum);
 	WI(accessibility_modalbeep);
 	WI(accessibility_modalflash);
@@ -427,7 +426,6 @@ void config_read(int i)
 	RI(last_playback_page);
 	RI(last_fileinfo_page);
 	RI(upd_mode);
-	RSW(artwork_filter);
 
 	RI(noml_ratings_prompt);
 	RI(noml_ratings);

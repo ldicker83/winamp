@@ -26,7 +26,7 @@ extern int config_fastvis;
 extern unsigned char config_miscopts;
 extern unsigned char config_downmix, config_downsample;
 extern int config_http_buffersize, config_http_prebuffer, config_http_prebuffer_underrun;
-extern unsigned char allow_sctitles,sctitle_format, allow_scartwork;
+extern unsigned char allow_sctitles,sctitle_format;
 extern char config_http_save_dir[MAX_PATH];
 
 extern wchar_t lastfn[8192];	// currently playing file (used for getting info on the current file)

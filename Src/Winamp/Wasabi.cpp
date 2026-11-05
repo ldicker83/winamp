@@ -20,7 +20,6 @@
 
 api_playlistmanager *playlistManager=0;
 api_language *WASABI_API_LNG=0;
-api_albumart *AGAVE_API_ALBUMART=0;
 // ----- Services -----
 api_service *serviceManager = 0;
 TagProvider *tagProvider = 0;
@@ -149,11 +148,6 @@ void Wasabi_FindSystemServices()
 	sf = WASABI_API_SVC->service_getServiceByGuid(api_playlistmanagerGUID);
 	if (sf)
 		AGAVE_API_PLAYLISTMANAGER = (api_playlistmanager *)sf->getInterface();
-
-
-		sf = WASABI_API_SVC->service_getServiceByGuid(albumArtGUID);
-	if (sf)
-		AGAVE_API_ALBUMART = (api_albumart *)sf->getInterface();
 }
 
 void Wasabi_ForgetSystemServices()
@@ -173,14 +167,5 @@ void Wasabi_ForgetSystemServices()
 		if (sf)
 			sf->releaseInterface(AGAVE_API_PLAYLISTMANAGER);
 		AGAVE_API_PLAYLISTMANAGER = 0;
-	}
-
-
-	if (AGAVE_API_ALBUMART)
-	{
-		sf = WASABI_API_SVC->service_getServiceByGuid(albumArtGUID);
-		if (sf)
-			sf->releaseInterface(AGAVE_API_ALBUMART);
-		AGAVE_API_ALBUMART = 0;
 	}
 }

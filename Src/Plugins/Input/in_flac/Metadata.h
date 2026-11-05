@@ -21,11 +21,6 @@ public:
 	int GetNumMetadataItems();
 	const char* EnumMetadata(int n, char *tag, int len);
 	void SetTag(int n, const char *tag);
-
-	bool GetPicture(FLAC__StreamMetadata_Picture_Type type, void **data, size_t *len, wchar_t **mimeType);
-	bool GetIndexPicture(int index, FLAC__StreamMetadata_Picture_Type *type, void **data, size_t *len, wchar_t **mimeType);
-	bool RemovePicture(FLAC__StreamMetadata_Picture_Type type);
-	bool SetPicture(FLAC__StreamMetadata_Picture_Type type, void *data, size_t len, const wchar_t *mimeType, int width, int height);
 private:
 	FLAC__Metadata_Chain *chain;
 	FLAC__Metadata_Iterator *itr;

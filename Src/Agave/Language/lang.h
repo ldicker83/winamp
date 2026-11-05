@@ -415,11 +415,6 @@ static const GUID GenSaveAsLangGUID =
 static const GUID GenYarLangGUID = 
 { 0x9725c8bf, 0xb577, 0x4d72, { 0x93, 0xef, 0x5f, 0xb4, 0x1d, 0x88, 0xff, 0xc2 } };
 
-// Album Art plugin (gen_classicart.dll)
-// {EAD1E933-6D75-4c2c-B9C4-B4D7F06B7D8D}
-static const GUID GenClasicArtGUID = 
-{ 0xead1e933, 0x6d75, 0x4c2c, { 0xb9, 0xc4, 0xb4, 0xd7, 0xf0, 0x6b, 0x7d, 0x8d } };
-
 // Windows 7 Taskbar Integration plugin (gen_win7shell.dll)
 // {7204A532-5D37-415d-B431-272C953B7459}
 static const GUID GenWin7ShellLangGUID = 

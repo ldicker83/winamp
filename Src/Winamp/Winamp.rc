@@ -574,26 +574,6 @@ BEGIN
     EDITTEXT        IDC_REPLAYGAIN,218,125,115,16,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
 END
 
-IDD_FILEINFO_ARTWORK DIALOGEX 0, 0, 341, 164
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_SYSMENU
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Artwork editor",IDC_STATIC,0,0,341,164
-    LISTBOX         IDC_ARTLIST,6,9,110,101,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Artwork type:",IDC_STATIC,6,115,46,8
-    COMBOBOX        IDC_COMBO_ARTTYPE,53,113,63,108,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Load Artwork...",IDC_BUTTON_LOAD,6,129,56,14
-    PUSHBUTTON      "Paste Artwork",IDC_BUTTON_PASTENEW,64,129,51,14
-    PUSHBUTTON      "Download Art",IDC_BUTTON_DOWNLOAD,6,146,50,14
-    GROUPBOX        "(no image)",IDC_STATIC_FRAME,120,5,216,154
-    CONTROL         "",IDC_ARTHOLDER,"Static",SS_BITMAP,125,14,152,140
-    PUSHBUTTON      "Change...",IDC_BUTTON_CHANGE,281,14,50,14
-    PUSHBUTTON      "Save As...",IDC_BUTTON_SAVEAS,281,30,50,14
-    PUSHBUTTON      "Copy",IDC_BUTTON_COPY,281,46,50,14
-    PUSHBUTTON      "Paste",IDC_BUTTON_PASTE,281,62,49,14
-    PUSHBUTTON      "Delete",IDC_BUTTON_DELETE,281,78,50,14
-END
-
 IDD_PLAYBACK DIALOGEX 0, 0, 260, 225
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 EXSTYLE WS_EX_CONTROLPARENT
@@ -1703,7 +1683,6 @@ BEGIN
     IDS_ADD_FOLDER          "Add Folder"
     IDS_SHOW_ALL_HISTORY    "Show All History"
     IDS_P_DISP_SPLEDPOS     "Shows the playlist item position in the Windows taskbar if selected."
-    IDS_IMAGE_FILES         "Image Files"
 END
 
 STRINGTABLE
@@ -1744,8 +1723,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_NOTPRESENT          "not present"
-    IDS_ARTDELETE           "Are you sure you want to delete this artwork? This action can't be undone."
-    IDS_AREYOUSURE          "Are you sure?"
 END
 
 STRINGTABLE
@@ -1817,7 +1794,6 @@ BEGIN
     IDS_P_EQ_FILE_WRITE     "Select file to write"
     IDS_P_FILE_ALL          "All Files"
     IDS_NO_BOOKMARKS        "No bookmarks found"
-    IDS_NO_IMAGE            "(no image)"
     IDS_PLAYLISTSTRING_NEW  "Playlist Files (%s)"
 END
 
@@ -1949,7 +1925,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_BASICINFO           "Basic Info"
-    IDS_ARTWORK             "Artwork"
     IDS_ADVANCED            "Advanced"
     IDS_NOOUTPUT            "Cannot find the selected output plug-in or a native output plug-in to fallback to for playback.\n\nGoto Preferences -> Plug-ins -> Output and select an appropriate output plug-in or re-install Winamp to restore its native plug-ins."
     IDS_ALLTYPES            "All supported types"
@@ -1984,10 +1959,6 @@ BEGIN
     IDS_EQ_HZ               "Hz"
     IDS_EQ_DB               "dB"
     IDS_EQ_KHZ              "KHz"
-    IDS_JPEG_FILE           "JPEG File"
-    IDS_PNG_FILE            "PNG File"
-    IDS_GIF_FILE            "GIF File"
-    IDS_BMP_FILE            "BMP File"
     IDS_P_EQ_TYPE_CHANGE    "Equalizer Type Change"
     IDS_P_EQ_TYPE_CHANGE_MSG 
                             "You will need to restart Winamp for the change of the Equalizer\ntype to be applied for use.  Choose Yes to restart Winamp now."
@@ -1995,7 +1966,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_COVER               "cover"
     IDS_METADATA_ERROR      "Cannot save metadata: Error writing to file or file is read-only."
     IDS_METADATA_ERROR_TITLE "Error saving metadata"
     IDS_WINAMP_EXTENSION_INSTALLATION_FILE 
@@ -2024,19 +1994,10 @@ BEGIN
     IDS_PL_TOOLTIPS         "Add Files to Playlist|Remove Files from Playlist|Select Files in Playlist|Misc Actions|Manage Playlist|Scroll Up|Scroll Down|Adjust Horizontal Size"
     IDS_P_FT_EXTENSIONS_WIN8 
                             "Extensions listed here are able to be registered to Winamp via the 'Set Default Programs' Control Panel in Windows."
-    IDS_ARTWORK_DETAILS     "%s: %dx%d, origin: %s, type: %s"
-    IDS_ORIGIN_NONE         "none"
-    IDS_ORIGIN_EMBEDDED     "embedded"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_ORIGIN_ALBUM_MATCH  "album name match"
-    IDS_ORIGIN_NFO          "nfo file"
-    IDS_ORIGIN_COVER_MATCH  "cover.* match"
-    IDS_ORIGIN_FOLDER_MATCH "folder.* match"
-    IDS_ORIGIN_FRONT_MATCH  "front.* match"
-    IDS_ORIGIN_ARTWORK_MATCH "artwork.* match"
     IDS_SKINS_INSTALL_ERROR "There was an error whilst installing the skin. Error code: %s\r\n\r\nFrom: %s\r\nTo: %s"
     IDS_PREFS_SAFE_MODE     "Winamp Preferences   [SAFE MODE]"
     IDS_START_SAFE_MODE     "Winamp Starting In Safe Mode"
@@ -2100,7 +2061,6 @@ STRINGTABLE
 BEGIN
     IDS_STREAMINFO          "Stream Info"
     IDS_P_SK_PROMPT         "When this option is checked, you will receive a prompt when installing new skins. If unchecked, always ensure you are installing skins from a safe source."
-    IDS_UNKNOWN_MIME        "unknown"
 END
 
 #endif    // English (United States) resources

@@ -4,9 +4,6 @@
     <ClCompile Include="About.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AlbumArt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DecodeThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
     <ClInclude Include="api__in_flv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AlbumArt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Agave\api\config\api_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -82,9 +76,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Winamp\IN2.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Agave\AlbumArt\svc_albumArtProvider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Winamp\wa_ipc.h">

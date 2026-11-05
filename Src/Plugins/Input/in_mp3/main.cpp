@@ -6,7 +6,6 @@
 #include "../Winamp/wa_ipc.h"
 #include "../nu/ServiceBuilder.h"
 #include "config.h"
-#include "AlbumArt.h"
 #include "MetadataFactory.h"
 #include "../nu/Singleton.h"
 #include "RawMediaReader.h"
@@ -26,7 +25,7 @@ unsigned char config_eqmode=4,config_http_proxynonport80=1;
 unsigned int winampVersion=0x00005010; // default version # to use if winamp version is 5.1 or less (and therefore doesn't have a valid HWND during Init)
 char config_http_save_dir[MAX_PATH] = "C:\\";
 int config_http_buffersize=64, config_http_prebuffer=40, config_http_prebuffer_underrun=10;
-unsigned char config_downmix=0, config_downsample=0, allow_scartwork=1;
+unsigned char config_downmix=0, config_downsample=0;
 
 int config_max_bufsize_k=128;
 int config_gapless=1;
@@ -61,7 +60,6 @@ api_application *WASABI_API_APP        = 0;
 api_config      *AGAVE_API_CONFIG      = 0;
 api_memmgr      *WASABI_API_MEMMGR     = 0;
 
-AlbumArtFactory albumArtFactory;
 MetadataFactory metadataFactory;
 
 static RawMediaReaderService raw_media_reader_service;
@@ -74,7 +72,6 @@ int init()
 
 	winampVersion = (unsigned int)SendMessage(mod.hMainWindow, WM_WA_IPC, 0, IPC_GETVERSION);
 	mod.service->service_register(&metadataFactory);
-	mod.service->service_register(&albumArtFactory);
 	raw_factory.Register(mod.service, &raw_media_reader_service);
 
 	ServiceBuild(AGAVE_API_CONFIG, AgaveConfigGUID);
@@ -104,7 +101,6 @@ void quit()
 	ServiceRelease(mod.service, AGAVE_API_CONFIG, AgaveConfigGUID);
 	ServiceRelease(mod.service, WASABI_API_APP, applicationApiServiceGuid);
 	ServiceRelease(mod.service, WASABI_API_MEMMGR, memMgrApiServiceGuid);
-	mod.service->service_deregister(&albumArtFactory);
 	raw_factory.Deregister(mod.service);
 }
 

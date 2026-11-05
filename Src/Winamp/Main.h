@@ -1030,9 +1030,6 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	/* IVideoD3DOSD.cpp */
 	HMODULE FindD3DX9();
 
-	/* AlbumArt.cpp */
-	void CleanNameForPath(wchar_t *name);
-
 	/* application.cpp */
 	BOOL IsDirectMouseWheelMessage(const UINT uMsg);
 	BOOL DirectMouseWheel_EnableConvertToMouseWheel(HWND hwnd, BOOL enable);
