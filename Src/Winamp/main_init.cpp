@@ -41,16 +41,6 @@ BOOL InitApplication(HINSTANCE hInstance)  // register Winamp's window class, re
 
 
 
-#ifdef WA2
-#ifndef NETSCAPE
-	wc.style         = CS_DBLCLKS;
-	wc.lpfnWndProc   = MB_WndProc;
-	wc.lpszClassName = "Winamp MB";
-	if (!RegisterClassW(&wc))
-		return 0;
-#endif
-#endif
-
 	/* now register unicode windows */
 	WNDCLASSW wcW = {0, };
 
@@ -146,9 +136,6 @@ void main_Create()
 
 	top_menu = LPLoadMenu(WINAMP_MAIN);
 
-#ifdef NETSCAPE
-	EnableMenuItem(top_menu, WINAMP_OPTIONS_MINIBROWSER, MF_BYCOMMAND | MF_GRAYED);
-#endif
 	main_menu = GetSubMenu(top_menu, 0);
 
 	g_submenus_play = GetSubMenu(main_menu, 2);

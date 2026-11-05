@@ -87,7 +87,6 @@ LRESULT Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 			if(IsWindow(parent) && IsWindowVisible(hPLWindow)){}
 			else ShowWindow(hPLWindow,SW_HIDE);
 		}
-		//if (config_mb_open&&hMBWindow) ShowWindow(hMBWindow,SW_HIDE);
 		if (config_eq_open && hEQWindow) ShowWindow(hEQWindow,SW_HIDE);
 		minimize_hack_winamp = 0;
 	}
@@ -110,7 +109,6 @@ LRESULT Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 		SendMessageW(hwnd, WM_TIMER, UPDATE_DISPLAY_TIMER + 4, 0);
 		if (!deferring_show) SetForegroundWindow(hwnd);
 		if (config_pe_open && hPLWindow) ShowWindow(hPLWindow, SW_SHOWNA);
-		//if (config_mb_open&&hMBWindow) ShowWindow(hMBWindow,SW_SHOWNA);
 		if (config_eq_open && hEQWindow) ShowWindow(hEQWindow,SW_SHOWNA);
 		set_aot(0);
 //		Browser_toggleVisible(1);

@@ -260,7 +260,6 @@ static int do_titlebar()
 					EstMainWindowRect(&a[0].r);
 					EstEQWindowRect(&a[1].r);a[1].open=config_eq_open;
 					EstPLWindowRect(&a[2].r);a[2].open=config_pe_open;
-					//EstMBWindowRect(&a[3].r);a[3].open=config_mb_open;
 
 					for (x = 5; x < cnt && p; x ++)
 					{
@@ -322,13 +321,11 @@ static int do_titlebar()
 				RECT eqr,plr,mwr,mbr,omwr;
 				embedWindowState *p;
 				int skip_eq = GetParent(hEQWindow) != NULL;
-				//int skip_mb = 1;//GetParent(hMBWindow) != NULL;
 				int skip_pl = GetParent(hPLWindow) != NULL;
 
 				EnterCriticalSection(&embedcs);
 
 				EstEQWindowRect(&eqr);
-				//EstMBWindowRect(&mbr);
 				EstPLWindowRect(&plr);
 				EstMainWindowRect(&mwr);
 
@@ -342,7 +339,6 @@ static int do_titlebar()
 					SnapToScreen(&mwr);
 					if (!skip_eq && config_eq_open && !(do_titlebar_clicking&2)) SnapWindowToWindow(&mwr,eqr);
 					if (!skip_pl && config_pe_open && !(do_titlebar_clicking&4)) SnapWindowToWindow(&mwr,plr);
-//					if (!skip_mb && config_mb_open && !(do_titlebar_clicking&8)) SnapWindowToWindow(&mwr,mbr);
 
 					while (state)
 					{
@@ -385,7 +381,6 @@ static int do_titlebar()
 							RECT *r=NULL;
 							if (x == 0) {op = config_eq_open && !skip_eq; r=&eqr; }
 							else if (x == 1) { op = config_pe_open && !skip_pl; r=&plr; }
-//							else if (x == 2) { op = config_mb_open && !skip_mb; r=&mbr; }
 							else
 							{
 								if (!p) break;
@@ -447,7 +442,6 @@ static int do_titlebar()
 							RECT *r=NULL;
 							if (x == 0) { op = config_eq_open; r=&eqr; }
 							else if (x == 1) { op = config_pe_open; r=&plr; }
-//							else if (x == 2) { op = config_mb_open; r=&mbr; }
 							else
 							{
 								if (!p) break;
@@ -470,7 +464,6 @@ static int do_titlebar()
 									int isa2=(m & mask2);
 									if (x2 == 0) { op2 = config_eq_open; r2=&eqr; }
 									else if (x2 == 1) { op2 = config_pe_open; r2=&plr; }
-//									else if (x2 == 2) { op2 = config_mb_open; r2=&mbr; }
 									else
 									{
 										if (!p2) break;

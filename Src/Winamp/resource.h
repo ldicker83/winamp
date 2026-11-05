@@ -223,7 +223,6 @@
 #define IDD_NEWVIS                      224
 #define IDD_NEWDSP                      225
 #define IDD_NEWGEN                      226
-#define IDB_MB                          228
 #define IDD_METRIC1                     230
 #define IDD_FIRSTSETUP                  231
 #define IDB_EQEX                        231
@@ -1085,7 +1084,6 @@
 #define WINAMP_PLAYLIST_ADVANCE         40294
 #define WINAMP_VIS_LIN                  40295
 #define WINAMP_VIS_BAR                  40296
-#define WINAMP_OPTIONS_MINIBROWSER      40298
 #define MB_FWD                          40299
 #define MB_BACK                         40300
 #define MB_RELOAD                       40301

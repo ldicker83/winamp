@@ -271,7 +271,6 @@ void config_read(int i)
 
 	RI(utf8);
 	RI(eq_ws);
-	RS(browserbrand);
 	RI(inet_mode);
 	RI(pe_fontsize);
 	RI(pe_direction);

@@ -393,7 +393,7 @@ extern "C"
 	extern int audit_ptr;
 
 	extern HWND hTooltipWindow, hEQTooltipWindow, hPLTooltipWindow/*, hPL2TooltipWindow*/;
-	extern HWND hMainWindow, hEQWindow, hPLWindow/*, hMBWindow*/;
+	extern HWND hMainWindow, hEQWindow, hPLWindow;
 	extern HINSTANCE hMainInstance;
 	extern HANDLE hMainThread;
 	extern DWORD mainThreadId;
@@ -677,8 +677,8 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	1 - text color - currently playing playlist entry
 	2 - background color - playlist
 	3 - background color - selected playlist entry
-	4 - text color - video window info, minibrowser info 
-	5 - background - video window info, minibrowser info */
+	4 - text color - video window info
+	5 - background - video window info */
 	extern int Skin_PLColors[6], Skin_UseGenNums;
 	extern char Skin_PLFont[128];
 	extern wchar_t Skin_PLFontW[128];

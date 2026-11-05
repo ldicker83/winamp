@@ -122,7 +122,6 @@ static LRESULT CALLBACK ClassicUIProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPA
 					    SetWindowLongPtrW(hMainWindow,GWLP_USERDATA,(config_keeponscreen&2)?0x49474541:0);
 					    SetWindowLongPtrW(hPLWindow,GWLP_USERDATA,(config_keeponscreen&2)?0x49474541:0);
 					    SetWindowLongPtrW(hEQWindow,GWLP_USERDATA,(config_keeponscreen&2)?0x49474541:0);
-//					    SetWindowLong(hMBWindow,GWL_USERDATA,(config_keeponscreen&2)?0x49474541:0);
 					}
 					break;
 			}

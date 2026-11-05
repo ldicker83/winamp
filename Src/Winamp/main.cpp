@@ -68,7 +68,7 @@ const std::string app_date{ __DATE__ };
 int g_stopaftercur;
 HWND hTooltipWindow, hEQTooltipWindow, hPLTooltipWindow;
 HWND hMainWindow = NULL;			// main window
-HWND hEQWindow, hPLWindow, /*hMBWindow, */hExternalVisWindow = NULL;
+HWND hEQWindow, hPLWindow, hExternalVisWindow = NULL;
 
 HWND g_dialog_box_parent = NULL; // used by IPC_SETDIALOGBOXPARENT (FG, 5/19/03)
 HINSTANCE hMainInstance;	// program instance
@@ -1123,7 +1123,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					SetForegroundWindow( hPLWindow );
 				else if ( config_eq_open )
 					SetForegroundWindow( hEQWindow );
-				// else if (config_mb_open) SetForegroundWindow(hMBWindow);
 				else
 				{
 					EnterCriticalSection( &embedcs );
@@ -1154,7 +1153,6 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					SetForegroundWindow( hPLWindow );
 				else if ( config_eq_open )
 					SetForegroundWindow( hEQWindow );
-				// else if (config_mb_open) SetForegroundWindow(hMBWindow);
 				else
 				{
 					EnterCriticalSection( &embedcs );

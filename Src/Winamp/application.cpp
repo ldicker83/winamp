@@ -352,7 +352,7 @@ void Application::app_unregisterGlobalWindow(HWND hwnd)
 
 bool Application::FilterMessage(MSG *msg) // returns 1 if you should Dispatch the message, will handle TranslateMessage for you
 {
-	if (msg->hwnd != NULL && msg->hwnd != hMainWindow && msg->hwnd != hEQWindow // && msg.hwnd != hMBWindow
+	if (msg->hwnd != NULL && msg->hwnd != hMainWindow && msg->hwnd != hEQWindow
 	    && msg->hwnd != hPLWindow)
 	{
 		HWND hWndParent = NULL;
@@ -381,7 +381,6 @@ bool Application::FilterMessage(MSG *msg) // returns 1 if you should Dispatch th
 		//if (msg->message == WM_KEYDOWN || msg->message == WM_SYSKEYDOWN ||
 		//    msg->message == WM_KEYUP || msg->message == WM_SYSKEYUP)
 		//{
-			//if (IsChild(hMBWindow,msg.hwnd) && TranslateAccelerator(hMBWindow,hAccel[3],&msg)) continue;
 			TranslateMessage(msg);
 		//}
 	}
