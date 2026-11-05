@@ -26,7 +26,7 @@
 #include <bfc/platform/types.h>
 #include <assert.h>
 #include "FLACFileCallbacks.h"
-#include "nswasabi/ReferenceCounted.h"
+#include <new>
 
 struct ExtendedRead
 {
@@ -76,36 +76,33 @@ extern "C"
 {
 	__declspec( dllexport ) intptr_t winampGetExtendedRead_openW(const wchar_t *fn, int *size, int *bps, int *nch, int *srate)
 	{
-		nx_file_t file;
-		ReferenceCountedNXString filename_nx;
-		ReferenceCountedNXURI filename_uri;
-		NXStringCreateWithUTF16(&filename_nx, fn);
-		NXURICreateWithNXString(&filename_uri, filename_nx);
-
-		int ret = NXFileOpenFile(&file, filename_uri, nx_file_FILE_read_binary);
-		if (ret != NErr_Success)
+		ExtendedRead * e = new (std::nothrow) ExtendedRead{};
+		if (!e)
 			return 0;
 
-		ExtendedRead * e = (ExtendedRead *)calloc(sizeof(ExtendedRead), 1);
-		e->decoder = FLAC__stream_decoder_new();
-		if (e->decoder == 0)
+		if (!e->client_data.Open(fn))
 		{
-			NXFileRelease(file);
-			free(e);
+			delete e;
 			return 0;
 		}
 
-		e->client_data.SetFile(file);
+		e->decoder = FLAC__stream_decoder_new();
+		if (e->decoder == 0)
+		{
+			delete e;
+			return 0;
+		}
+
 		e->client_data.SetObject(e);
 
 		FLAC__stream_decoder_set_md5_checking(e->decoder, true);
 		if(FLAC__stream_decoder_init_stream(
 			e->decoder,
-			FLAC_NXFile_Read,
-			FLAC_NXFile_Seek,
-			FLAC_NXFile_Tell,
-			FLAC_NXFile_Length,
-			FLAC_NXFile_EOF,  
+			FLAC_File_Read,
+			FLAC_File_Seek,
+			FLAC_File_Tell,
+			FLAC_File_Length,
+			FLAC_File_EOF,  
 			OnAudio,
 			OnMetadata,  
 			OnError,
@@ -113,8 +110,7 @@ extern "C"
 			) != FLAC__STREAM_DECODER_INIT_STATUS_OK) 
 		{
 			FLAC__stream_decoder_delete(e->decoder);
-			NXFileRelease(file);
-			free(e);
+			delete e;
 			return 0;	
 		}
 
@@ -160,7 +156,6 @@ extern "C"
 		ext->output.Free();
 		FLAC__stream_decoder_finish(ext->decoder);
 		FLAC__stream_decoder_delete(ext->decoder);
-		NXFileRelease(ext->client_data.GetFile());
-		free(ext);
+		delete ext;
 	}
 }

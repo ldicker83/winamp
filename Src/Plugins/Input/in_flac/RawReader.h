@@ -3,6 +3,7 @@
 #include "../Agave/DecodeFile/ifc_raw_media_reader.h"
 #include "FLACFileCallbacks.h"
 #include <FLAC/all.h>
+#include <filesystem>
 
 // {E906F4DC-3080-4B9B-951F-85950193ACBF}
 static const GUID flac_raw_reader_guid = 
@@ -24,7 +25,7 @@ class RawMediaReader : public ifc_raw_media_reader
 public:
 	RawMediaReader();
 	~RawMediaReader();
-	int Initialize(nx_file_t );
+	int Initialize(const std::filesystem::path &filename);
 	int Read(void *buffer, size_t buffer_size, size_t *bytes_read);
 	size_t Release();
 protected:
@@ -32,5 +33,4 @@ protected:
 private:
 	FLAC__StreamDecoder *decoder;
 	FLACClientData state;
-	nx_file_t file;
 };

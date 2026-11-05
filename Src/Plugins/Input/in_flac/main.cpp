@@ -31,7 +31,7 @@
 #include "AlbumArt.h"
 #include "RawReader.h"
 #include <strsafe.h>
-#include "nswasabi/ReferenceCounted.h"
+#include <filesystem>
 
 api_config *AGAVE_API_CONFIG = 0;
 api_memmgr *WASABI_API_MEMMGR=0;
@@ -141,12 +141,7 @@ int Play(const in_char *fn)
 	DWORD threadId;
 	threadStarted = CreateEvent(0, TRUE, FALSE, 0);
 
-	ReferenceCountedNXString filename_nx;
-	nx_uri_t filename_uri;
-	NXStringCreateWithUTF16(&filename_nx, fn);
-	NXURICreateWithNXString(&filename_uri, filename_nx);
-
-	playThread=CreateThread(0, 0, FLACThread, filename_uri, 0, &threadId);
+	playThread=CreateThread(0, 0, FLACThread, new std::filesystem::path(fn), 0, &threadId);
 	SetThreadPriority(playThread, AGAVE_API_CONFIG->GetInt(playbackConfigGroupGUID, L"priority", THREAD_PRIORITY_HIGHEST));
 	WaitForSingleObject(threadStarted, INFINITE);
 	CloseHandle(threadStarted);
