@@ -123,7 +123,6 @@ CONFIG_EXT int config_last_classic_skin_page DEF_VAL(0);
 CONFIG_EXT int config_last_playback_page DEF_VAL(0);
 CONFIG_EXT int config_last_fileinfo_page DEF_VAL(0);
 CONFIG_EXT int config_upd_mode DEF_VAL(0);
-CONFIG_EXT wchar_t config_artwork_filter[64] DEF_VAL(L"cover");
 
 CONFIG_EXT int config_noml_ratings_prompt DEF_VAL(1);
 CONFIG_EXT int config_noml_ratings DEF_VAL(0);

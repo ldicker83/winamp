@@ -359,5 +359,4 @@ void CopyExtendedFileInfo(const wchar_t *source, const wchar_t *destination)
 	COPY_METADATA(source, destination, L"GracenoteExtData", bigData, 32768);
 	in_write_extended_fileinfo();
 	
-	//albumArt->CopyAlbumArt(source, destination);
 }

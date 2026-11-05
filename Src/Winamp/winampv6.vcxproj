@@ -360,7 +360,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="..\Wasabi\api\syscb\callbacks\syscbx.cpp" />
     <ClCompile Include="About.cpp" />
     <ClCompile Include="AccessibilityConfigGroup.cpp" />
-    <ClCompile Include="AlbumArtRetrieval.cpp" />
     <ClCompile Include="application.cpp" />
     <ClCompile Include="AppRefCount.cpp" />
     <ClCompile Include="benskiQ\benskiQ.cpp" />

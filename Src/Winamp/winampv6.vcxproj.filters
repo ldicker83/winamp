@@ -7,9 +7,6 @@
     <ClCompile Include="AccessibilityConfigGroup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AlbumArtRetrieval.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Agave\Metadata\api_metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

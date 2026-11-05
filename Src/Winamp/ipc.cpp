@@ -1502,13 +1502,6 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				int a=0;
 				return (LRESULT)in_setmod_noplay((const wchar_t *)data, &a);
 			}
-		// disabled 30 May 2012 as per email from Tejas w.r.t. to Rovi deal ending
-		// if called it will now act like a failure and return 1 by default handling
-		/*case IPC_FETCH_ALBUMART:
-			{
-				extern int RetrieveAlbumArt(artFetchData * data);
-				return RetrieveAlbumArt((artFetchData *)data);
-			}*/
 		case IPC_JSAPI2_GET_DISPATCH_OBJECT:
 			return 0;
 		case IPC_HANDLE_URI:
