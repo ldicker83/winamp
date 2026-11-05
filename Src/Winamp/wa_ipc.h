@@ -3058,24 +3058,9 @@ typedef struct {
 
 #define IPC_GET_FILEREGISTRAR_OBJECT 3045
 /* (requires Winamp 5.58+)
-** IFileTypeRegistrar* registrar = (IFileTypeRegistrar*)SendMessageW(hwnd_winamp,WM_WA_IPC,0,IPC_GET_FILEREGISTRAR_OBJECT);
-**
-** You call this to retrieve a copy of a IFileTypeRegistrar object which Winamp will
-** create which provides some commonly used functions for registry and file access
-** which runs with the permissions Winamp was started with.
-**
-** // it is best to call this everytime that the object is required as there is no
-** // guarantee it will already have been created or if it's already been released
-** IFileTypeRegistrar *registrar = (IFileTypeRegistrar*)SendMessageW(hwnd_winamp,WM_WA_IPC,0,IPC_GET_FILEREGISTRAR_OBJECT);
-** // make sure that we've got a valid object (as 1 is an unsupported api return)
-** if(registrar && (registrar != (IFileTypeRegistrar*)1)){
-**   // we got a valid copy of the object
-**   // so now we can start using the IFileTypeRegistrar object as required
-**
-**   // once we're done using the IFileTypeRegistrar object for the immediate moment
-**   // then we should release the object so everything is kept as clean as possible
-**   registrar->Release();
-** }
+** No longer supported: this always returns 0, as Winamp doesn't handle file associations
+** or touch the registry any more. The message is still answered so that a plug-in which
+** checks the result, as it was always documented to, carries on without the object.
 */
 
 

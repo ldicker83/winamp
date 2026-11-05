@@ -1521,12 +1521,8 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				return (LRESULT)d3dx_lib;
 			}
 		case IPC_GET_FILEREGISTRAR_OBJECT:
-			{
-				IFileTypeRegistrar *registrar = 0;
-				if (GetRegistrar(&registrar) == 0 && registrar)
-					return (LRESULT)registrar;
-				return 0;
-			}
+			// file associations aren't handled any more. this returns a pointer, so it can't fall through to the 1 below
+			return 0;
 	} // switch(which)
 	return 1;
 }
