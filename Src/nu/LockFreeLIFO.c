@@ -35,13 +35,7 @@ queue_node_t *lifo_pop(lifo_t *lifo)
 	queue_node_t *lifo_malloc(size_t bytes)
 	{
 #ifdef __GNUC__
-#   ifdef __APPLE__
-		void *v = 0;
-		(void) posix_memalign(&v, sizeof(void *), bytes);
-		return v;
-#   else
 		return memalign(bytes, sizeof(void *));
-#   endif
 #elif defined(_WIN32)
 		return _aligned_malloc(bytes, MEMORY_ALLOCATION_ALIGNMENT);
 #else

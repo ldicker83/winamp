@@ -5,6 +5,4 @@
 #include "linux/nxstring.h"
 #elif defined(_WIN32)
 #include "win/nxstring.h"
-#elif defined(__APPLE__)
-#include "osx/nxstring.h"
 #endif

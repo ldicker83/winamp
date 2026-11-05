@@ -37,13 +37,6 @@ DECLARE_HANDLE(HMONITOR);
 #endif  // WIN32
 
 
-#ifdef __APPLE__
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <pthread.h>
-#include <unistd.h>
-#endif
 
 #ifdef _WIN32
 #include <malloc.h>
@@ -161,11 +154,6 @@ void Wasabi::Std::getMousePos(POINT *p) {
   ASSERT(p != NULL);
 #ifdef WIN32
   GetCursorPos(p);
-#elif defined(__APPLE__)
-  Point pt;
-  GetMouse(&pt);
-  p->x = pt.v;
-  p->y = pt.h;
 #else
   Window w1, w2;
   int a, b;
@@ -195,8 +183,6 @@ void Wasabi::Std::setMousePos(POINT *p) {
   ASSERT(p != NULL);
 #ifdef WIN32
   SetCursorPos(p->x, p->y);
-#elif defined(__APPLE__)
-  CGWarpMouseCursorPosition(HIPointFromPOINT(p));
 #else
   POINT p2;
   getMousePos( &p2 );
@@ -215,15 +201,6 @@ void Wasabi::Std::getViewport(RECT *r, POINT *p, int full)
 {
 #ifdef _WIN32
   getViewport(r, p, NULL, (HWND)0, full);
-#elif defined(__APPLE__)
-  CGDirectDisplayID display;
-  CGDisplayCount count;
-  if (CGGetDisplaysWithPoint(HIPointFromPOINT(p), 1, &display, &count) == kCGErrorSuccess)
-  {
-    HIRect rect = CGDisplayBounds(display);
-    *r = RECTFromHIRect(&rect);
-  // TODO: cut out dock if full == 0   maybe GetAvailableWindowPositioningBounds if we can get the GDHandle
-  }
 #endif
 }
 
@@ -231,15 +208,6 @@ void Wasabi::Std::getViewport(RECT *r, RECT *sr, int full)
 {
 #ifdef _WIN32
   getViewport(r, NULL, sr, (HWND)0, full);
-#elif defined(__APPLE__)
-  CGDirectDisplayID display;
-  CGDisplayCount count;
-  if (CGGetDisplaysWithRect(HIRectFromRECT(sr), 1, &display, &count) == kCGErrorSuccess)
-  {
-    HIRect rect = CGDisplayBounds(display);
-    *r = RECTFromHIRect(&rect);
-  // TODO: cut out dock if full == 0   maybe GetAvailableWindowPositioningBounds if we can get the GDHandle
-  }
 #endif
 }
 
@@ -247,25 +215,6 @@ void Wasabi::Std::getViewport(RECT *r, OSWINDOWHANDLE wnd, int full)
 {
 #ifdef _WIN32
 	getViewport(r, NULL, NULL, wnd, full);
-#elif defined(__APPLE__)
-	GDHandle gd;
-	Rect gdr;
-	GetWindowGreatestAreaDevice(wnd, kWindowStructureRgn, &gd, &gdr);
-	  
-	if (full)
-	{
-		CGDirectDisplayID display = QDGetCGDirectDisplayID(gd);
-		HIRect rect = CGDisplayBounds(display);
-		*r = RECTFromHIRect(&rect);
-	}
-	else
-	{
-		// TODO: maybe use GetAvailableWindowPositioningBounds instead
-		r->left = gdr.left;
-		r->top = gdr.top;
-		r->right = gdr.right;
-		r->bottom = gdr.bottom;
-	}
 #endif
 }
 #ifdef _WIN32
@@ -400,11 +349,6 @@ uint32_t Wasabi::Std::getTickCount()
 {
 #ifdef _WIN32
   return GetTickCount();
-#elif defined(__APPLE__)
-  struct timeval newtime;
-  
-	gettimeofday(&newtime, 0);
-  return newtime.tv_sec*1000 + newtime.tv_usec/1000;
 #endif
 //INLINE
 }
@@ -441,9 +385,6 @@ int Wasabi::Std::getScreenWidth()
   RECT r;
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
   return r.right-r.left;
-#elif defined(__APPLE__)
-  CGDirectDisplayID  mainID = CGMainDisplayID();
-  return CGDisplayPixelsWide(mainID);
 #elif defined(LINUX)
   return DisplayWidth(Linux::getDisplay(), Linux::getScreenNum());
 #endif
@@ -455,14 +396,10 @@ int Wasabi::Std::getScreenHeight()
   RECT r;
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
   return r.bottom-r.top;
-#elif defined(__APPLE__)
-  CGDirectDisplayID  mainID = CGMainDisplayID();
-  return CGDisplayPixelsHigh(mainID);  
 #else
   return DisplayHeight( Linux::getDisplay(), Linux::getScreenNum() );
 #endif
 }
-#ifndef __APPLE__ // PORT ME
 int Wasabi::Std::messageBox(const wchar_t *txt, const wchar_t *title, int flags) {
 #ifdef WIN32
   return MessageBoxW(NULL, txt, title, flags);
@@ -470,13 +407,10 @@ int Wasabi::Std::messageBox(const wchar_t *txt, const wchar_t *title, int flags)
  OutputDebugString(txt);
 #endif
 }
-#endif
 
 int Wasabi::Std::getDoubleClickDelay() {
 #ifdef WIN32
   return GetDoubleClickTime();
-#elif defined(__APPLE__)
-  return GetDblTime();
 #endif
 }
 
@@ -625,19 +559,6 @@ int Wasabi::Std::enumViewports( int monitor_n, RECT *r, int full )
     }
     SystemParametersInfoW( SPI_GETWORKAREA, 0, r, 0 );
     return 0;
-#elif defined(__APPLE__)
-    CGDirectDisplayID monitors[ 256 ]; // TODO: allocate dynamically
-    CGDisplayCount count;
-    if ( monitor_n >= 256 )
-        return 0;
-
-    CGGetActiveDisplayList( 256, monitors, &count );
-    if ( count <= monitor_n )
-        return 0;
-
-    HIRect rect = CGDisplayBounds( monitors[ monitor_n ] );
-    *r = RECTFromHIRect( &rect );
-    // TODO: cut out dock if full == 0   maybe GetAvailableWindowPositioningBounds if we can get the GDHandle
 #elif defined(LINUX)
     if ( monitor_n > 0 )
         return 0;
@@ -1059,8 +980,6 @@ int default_font_scale = 100;
 wchar_t default_font[256] =
 #ifdef WIN32
 WASABI_DEFAULT_FONTNAMEW L".ttf";
-#elif defined(__APPLE__)
-WASABI_DEFAULT_FONTNAMEW;
 #elif defined(LINUX)
   // even tho this isn't the way we'll port this, the style is fun.
 "-*-arial-medium-r-*--10-*-*-*-*-*-*-*";
@@ -1086,7 +1005,6 @@ void Wasabi::Std::setDefaultFontScale(int scale) {
   default_font_scale = scale;
 }
 
-#ifndef __APPLE__ // PORT ME
 int Wasabi::Std::createDirectory(const wchar_t *dirname) 
 {
 #ifdef WIN32
@@ -1112,7 +1030,6 @@ int Wasabi::Std::createDirectory(const wchar_t *dirname)
   }
   return 1;
 }
-#endif
 
 int Wasabi::Std::getFileInfos(const char *filename, fileInfoStruct *infos) {
 #ifdef WIN32

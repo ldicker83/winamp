@@ -5,6 +5,4 @@
 #include "linux/nxtime.h"
 #elif defined(_WIN32)
 #include "win/nxtime.h"
-#elif defined(__APPLE__)
-#include "osx/nxtime.h"
 #endif

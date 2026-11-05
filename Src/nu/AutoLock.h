@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #pragma warning (disable:4786)
 #include <windows.h>
-#elif defined(__linux__) || defined(__APPLE__)
+#elif defined(__linux__)
 #include <pthread.h>
 #else
 #error port me!!
@@ -260,12 +260,6 @@ namespace nu
            pthread_mutexattr_settype(&mtxattr,  PTHREAD_MUTEX_RECURSIVE_NP );           
            pthread_mutex_init(&mtx, &mtxattr);
            pthread_mutexattr_destroy(&mtxattr);
-#elif defined(__APPLE__)
-                pthread_mutexattr_t mtxattr;
-                pthread_mutexattr_init(&mtxattr);
-                pthread_mutexattr_settype(&mtxattr,  PTHREAD_MUTEX_RECURSIVE);           
-                pthread_mutex_init(&mtx, &mtxattr);
-                pthread_mutexattr_destroy(&mtxattr);
            #else
            #error port me
           #endif
@@ -274,7 +268,7 @@ namespace nu
 			{
       #ifdef _WIN32
 				DeleteCriticalSection(&m_cs);
-      #elif defined(__linux__) || defined(__APPLE__)
+      #elif defined(__linux__)
       pthread_mutex_destroy(&mtx);
       #else
       #error port me!
@@ -284,7 +278,7 @@ namespace nu
 			{
       #ifdef _WIN32
 				EnterCriticalSection(&m_cs);
-      #elif defined(__linux__) || defined(__APPLE__)
+      #elif defined(__linux__)
         pthread_mutex_lock(&mtx);
         #else
         #error por tme!
@@ -295,7 +289,7 @@ namespace nu
 			{
       #ifdef _WIN32
 				LeaveCriticalSection(&m_cs);
-      #elif defined(__linux__) || defined(__APPLE__)
+      #elif defined(__linux__)
         pthread_mutex_unlock(&mtx);
         #else
         #error port me!
@@ -304,7 +298,7 @@ namespace nu
 		private:
     #ifdef _WIN32
 			CRITICAL_SECTION m_cs;
-      #elif defined(__linux__) || defined(__APPLE__)
+      #elif defined(__linux__)
 			pthread_mutex_t mtx;
 			        #else
         #error port me!

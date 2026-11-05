@@ -5,6 +5,4 @@
 #include "linux/nxuri.h"
 #elif defined(_WIN32)
 #include "win/nxuri.h"
-#elif defined(__APPLE__)
-#include "osx/nxuri.h"
 #endif

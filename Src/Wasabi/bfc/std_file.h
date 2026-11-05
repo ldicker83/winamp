@@ -27,13 +27,6 @@
 #define WF_APPEND L"a"
 #define WF_APPEND_RW L"a+"
 #define OPEN_FAILED INVALID_HANDLE_VALUE
-#elif defined(__APPLE__)
-#define WF_READONLY_BINARY "r"
-#define WF_WRITE_TEXT "w"
-#define WF_WRITE_BINARY "w"
-#define WF_APPEND "a"
-#define WF_APPEND_RW "a+"
-#define OPEN_FAILED 0
 #endif
 
 #ifdef _WIN32
@@ -82,7 +75,6 @@ namespace StdFile {
 #ifdef WASABI_COMPILE_FILEREADER
 
 #ifndef REAL_STDIO
-#ifndef __APPLE__
 //#define fopen FOPEN
 //#define fclose FCLOSE
 //#define fseek FSEEK
@@ -93,7 +85,6 @@ namespace StdFile {
 //#define fprintf FPRINTF
 //#define unlink UNLINK
 //#define access ACCESS
-#endif
 #endif //real_stdio
 
 #endif //WASABI_COMPILE_FILEREADER

@@ -3,8 +3,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#elif defined(__APPLE__)
-#include <CoreServices/CoreServices.h>
 #endif
 
 #include "common.h"
@@ -58,8 +56,6 @@ private:
 #endif
 #ifdef _WIN32
   CRITICAL_SECTION cs;
-#elif defined(__APPLE__)
-  MPCriticalRegionID cr;
 #endif
   
 };

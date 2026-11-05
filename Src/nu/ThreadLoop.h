@@ -9,8 +9,6 @@
 #include "win/ThreadLoop.h"
 #elif   defined(__linux__)
 #include "linux/ThreadLoop.h"
-#elif defined(__APPLE__)
-#include "osx/ThreadLoop.h"
 #else
 #error port me!
 #endif

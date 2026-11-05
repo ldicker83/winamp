@@ -5137,22 +5137,7 @@ void NSEEL_code_free(NSEEL_CODEHANDLE code)
     nseel_evallib_stats[3]-=h->code_stats[3];
     nseel_evallib_stats[4]--;
 
-#if defined(__ppc__) && defined(__APPLE__)
-    {
-      FILE *fp = fopen("/var/db/receipts/com.apple.pkg.Rosetta.plist","r");
-      if (fp) 
-      {
-        fclose(fp);
-        // on PPC, but rosetta installed, do not free h->blocks, as rosetta won't detect changes to these pages
-      }
-      else
-      {
-        freeBlocks(&h->blocks);
-      }
-    }
-#else
   freeBlocks(&h->blocks);
-#endif
     
     freeBlocks(&h->blocks_data);
   }
