@@ -2,7 +2,7 @@
 #include "pl_entry.h"
 #include "plstring.h"
 #include <wchar.h>
-#include "../nu/strsafe.h"
+#include <strsafe.h>
 
 #include <iostream>
 
