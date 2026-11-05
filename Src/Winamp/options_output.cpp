@@ -7,6 +7,7 @@
  **/
 #include "main.h"
 #include "../nu/FilePath.h"
+#include "FileOperations.h"
 #include "resource.h"
 #include "Options.h"
 #include "../nu/AutoWide.h"
@@ -21,7 +22,7 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 		{IDC_OUTPUTS,IDS_P_OUT_OUTPUTS},
 		{IDC_CONF2,IDS_P_OUT_CONF},
 		{IDC_ABOUT2,IDS_P_OUT_ABOUT},
-		{IDC_UNINSTOUT,IDS_P_OUT_UNINST},
+		{IDC_OPENPLUGINDIR_OUT,IDS_P_OUT_OPENDIR},
 	};
 
 	DO_HELP();
@@ -139,7 +140,6 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 					int loaded = (lvi.lParam != -2);
 					EnableWindow(GetDlgItem(hwndDlg, IDC_CONF2), loaded);
 					EnableWindow(GetDlgItem(hwndDlg, IDC_ABOUT2), loaded);
-					EnableWindow(GetDlgItem(hwndDlg, IDC_UNINSTOUT), 1);
 
 					if (loaded && out_modules[lvi.lParam])
 					{
@@ -153,7 +153,6 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 				{
 					EnableWindow(GetDlgItem(hwndDlg, IDC_CONF2), 0);
 					EnableWindow(GetDlgItem(hwndDlg, IDC_ABOUT2), 0);
-					EnableWindow(GetDlgItem(hwndDlg, IDC_UNINSTOUT), 0);
 				}
 			}
 			else if (p->code == NM_DBLCLK || p->code == NM_CLICK)
@@ -216,96 +215,8 @@ INT_PTR CALLBACK OutputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam
 			}
 			return FALSE;
 
-			case IDC_UNINSTOUT:
-			{
-				HWND listWindow = GetDlgItem(hwndDlg, IDC_OUTPUTS);
-				int which_sel = ListView_GetSelectionMark(listWindow);
-				LVITEM lvi = {LVIF_PARAM, which_sel};
-				if (ListView_GetItem(listWindow, &lvi))
-				{
-					if (LPMessageBox(hwndDlg, IDS_P_PLUGIN_UNINSTALL,IDS_P_PLUGIN_UNINSTALL_CONFIRM,MB_YESNO|MB_ICONEXCLAMATION) == IDYES)
-					{
-						if (lvi.lParam >= 0 && lvi.lParam < 32 && out_modules[lvi.lParam])
-						{
-							int ret=0;
-							int (*pr)(HINSTANCE hDllInst, HWND hwndDlg, int param);
-
-							*(void**)&pr = (void*)GetProcAddress(out_modules[lvi.lParam]->hDllInstance,"winampUninstallPlugin");
-							// changed 28/11/2010 so that even if non-zero is returned then the plug-in will uninstall
-							if (pr)/*ret=*/pr(out_modules[lvi.lParam]->hDllInstance,hwndDlg,0);
-							if (!ret)
-							{
-								char buf[1024] = {0};
-								int w=-1;
-								char *p=buf;
-								int y;
-								GetModuleFileNameA(out_modules[lvi.lParam]->hDllInstance,buf,sizeof(buf));
-								_w_s("remove_genplug",buf);
-								_w_i("show_prefs",32);
-
-								buf[0]=0;
-
-								for (y = 0; out_modules[y]; y ++)
-								{
-									if (lvi.lParam != y)
-									{
-										GetModuleFileNameA(out_modules[y]->hDllInstance,buf,sizeof(buf));
-										p = FilePath::FindFileName(buf);
-
-										if (!_stricmp(p,"out_wave.dll") && w < 1) w=1;
-										if (!_stricmp(p,"out_ds.dll") && w < 0) w=0;
-
-										if (w>0) break;
-									}
-								}
-
-								if (w==1) StringCbCopyA(config_outname, sizeof(config_outname), "out_wave.dll");
-								else if (w==0) StringCbCopyA(config_outname,sizeof(config_outname), "out_ds.dll");
-								else StringCbCopyA(config_outname,sizeof(config_outname),p);
-								PostMessageW(hMainWindow,WM_USER,0,IPC_RESTARTWINAMP);
-							}
-						}
-						// will cope with not loaded plug-ins so we can still remove them, etc
-						else if (lvi.lParam == -2)
-						{
-							wchar_t buf[1024] = {0}, base[1024] = {0};
-							StringCchCopyW(base, 1024, PLUGINDIR);
-							FilePath::AddBackslash(base);
-
-							LVITEMW lvi = {LVIF_TEXT, which_sel};
-							lvi.pszText = buf;
-							lvi.cchTextMax = ARRAYSIZE(buf);
-							ListView_GetItemW(listWindow, &lvi);
-
-							wchar_t *p = wcschr(buf, L'.');
-							if (p && *p == L'.')
-							{
-								p += 4;
-								*p = 0;
-								FilePath::RemoveFileSpec(base);
-								FilePath::Append(base, buf);
-							}
-
-							IFileTypeRegistrar *registrar=0;
-							if (GetRegistrar(&registrar) == 0 && registrar)
-							{
-								if (registrar->DeleteItem(base) != S_OK)
-								{
-									_w_sW("remove_genplug", base);
-									_w_i("show_prefs", 32);
-									PostMessageW(hMainWindow, WM_USER, 0, IPC_RESTARTWINAMP);
-								}
-								else
-									ListView_DeleteItem(listWindow, which_sel);
-								registrar->Release();
-							}
-						}
-
-						// resets the focus to the listbox so it'll keep ui response working
-						SetFocus(GetDlgItem(hwndDlg,IDC_INPUTS));
-					}
-				}
-			}
+			case IDC_OPENPLUGINDIR_OUT:
+				OpenFolder(hwndDlg, PLUGINDIR);
 			break;
 
 		}

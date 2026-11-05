@@ -8,6 +8,7 @@
 
 #include "main.h"
 #include "../nu/FilePath.h"
+#include "FileOperations.h"
 #include "resource.h"
 #include "strutil.h"
 #include "../nu/AutoChar.h"
@@ -792,16 +793,11 @@ wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit)
 						StringCchCopyW(tmp, tmpsize, L".wal");
 			}
 
-			IFileTypeRegistrar *registrar=0;
-			if (GetRegistrar(&registrar) == 0 && registrar)
+			if (!InstallItem(p, buf, outname))
 			{
-				if (FAILED(registrar->InstallItem(p, buf, outname)))
-				{
-					wchar_t buffer[MAX_PATH*3] = {0};
-					StringCchPrintfW(buffer,sizeof(buffer),getStringW(IDS_SKINS_INSTALL_ERROR,NULL,0),outname,p,buf);
-					MessageBoxW(NULL, buffer, getStringW(IDS_SKINS_INSTALL_HEADER,NULL,0), MB_OK | MB_ICONEXCLAMATION);
-				}
-				registrar->Release();
+				wchar_t buffer[MAX_PATH*3] = {0};
+				StringCchPrintfW(buffer,sizeof(buffer),getStringW(IDS_SKINS_INSTALL_ERROR,NULL,0),outname,p,buf);
+				MessageBoxW(NULL, buffer, getStringW(IDS_SKINS_INSTALL_HEADER,NULL,0), MB_OK | MB_ICONEXCLAMATION);
 			}
 		}
 

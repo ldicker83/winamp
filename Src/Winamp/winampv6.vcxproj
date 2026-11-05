@@ -395,6 +395,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="EQConfigGroup.cpp" />
     <ClCompile Include="Equi.cpp" />
     <ClCompile Include="ExplorerFindFile.cpp" />
+    <ClCompile Include="FileOperations.cpp" />
     <ClCompile Include="ExtendedInfo.cpp" />
     <ClCompile Include="ExtendedReader.cpp" />
     <ClCompile Include="Fft.cpp" />
@@ -584,6 +585,7 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClInclude Include="eq10dsp.h" />
     <ClInclude Include="EQConfigGroup.h" />
     <ClInclude Include="ExplorerFindFile.h" />
+    <ClInclude Include="FileOperations.h" />
     <ClInclude Include="ExtendedReader.h" />
     <ClInclude Include="FFT.H" />
     <ClInclude Include="gen.h" />

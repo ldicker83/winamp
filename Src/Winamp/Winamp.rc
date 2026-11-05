@@ -264,11 +264,11 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     GROUPBOX        "Input plug-ins",IDC_STATIC,0,0,272,246
-    LTEXT           "The plug-ins below allow Winamp to play the various media types that it does. You can select a plug-in and configure, view about boxes, or uninstall them.",IDC_STATIC,6,12,257,17
+    LTEXT           "The plug-ins below allow Winamp to play the various media types that it does. You can select a plug-in to configure it or view its about box.",IDC_STATIC,6,12,257,17
     LISTBOX         IDC_INPUTS,5,35,260,189,LBS_SORT | LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
     PUSHBUTTON      "&Configure",IDC_CONF,5,228,50,13,WS_DISABLED
     PUSHBUTTON      "&About",IDC_ABOUT,59,228,50,13,WS_DISABLED
-    PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTINPUT,113,228,62,13,WS_DISABLED
+    PUSHBUTTON      "&Open plug-in folder",IDC_OPENPLUGINDIR_IN,113,228,74,13
 END
 
 IDD_NEWOUTPUT DIALOGEX 0, 0, 272, 246
@@ -281,7 +281,7 @@ BEGIN
     LISTBOX         IDC_OUTPUTS,5,35,260,189,LBS_SORT | LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&Configure",IDC_CONF2,5,228,50,13,WS_DISABLED
     PUSHBUTTON      "&About",IDC_ABOUT2,59,228,50,13,WS_DISABLED
-    PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTOUT,113,228,62,13,WS_DISABLED
+    PUSHBUTTON      "&Open plug-in folder",IDC_OPENPLUGINDIR_OUT,113,228,74,13
 END
 
 IDD_NEWVIS DIALOGEX 0, 0, 272, 246
@@ -297,7 +297,7 @@ BEGIN
     PUSHBUTTON      "&Start",IDC_VISTEST,5,228,36,13
     PUSHBUTTON      "&Stop",IDC_VISSTOP,45,228,36,13
     PUSHBUTTON      "&Configure",IDC_VISCONF,85,228,48,13
-    PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTVIS,137,228,62,13
+    PUSHBUTTON      "&Open plug-in folder",IDC_OPENPLUGINDIR_VIS,137,228,74,13
 END
 
 IDD_NEWDSP DIALOGEX 0, 0, 272, 246
@@ -311,7 +311,7 @@ BEGIN
     LTEXT           "Plug-in module:",IDC_PLUGINLABEL,7,213,50,8,WS_DISABLED
     COMBOBOX        IDC_DSPMOD,61,211,204,64,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&Configure active plug-in",IDC_DSPCONF,5,228,90,13,WS_DISABLED
-    PUSHBUTTON      "&Uninstall plug-in",IDC_UNINSTDSP,99,228,62,13,WS_DISABLED
+    PUSHBUTTON      "&Open plug-in folder",IDC_OPENPLUGINDIR_DSP,99,228,74,13
 END
 
 IDD_NEWGEN DIALOGEX 0, 0, 272, 246
@@ -323,7 +323,7 @@ BEGIN
     LTEXT           "Installed general purpose plug-ins (loaded at startup):",IDC_STATIC,6,12,251,8
     LISTBOX         IDC_GENLIB,5,26,259,198,LBS_SORT | LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&Configure selected plug-in",IDC_GENCONF,5,228,96,13,WS_DISABLED
-    PUSHBUTTON      "Uninstall selected plug-in",IDC_UNINST,105,228,90,13,WS_DISABLED
+    PUSHBUTTON      "&Open plug-in folder",IDC_OPENPLUGINDIR_GEN,105,228,74,13
 END
 
 IDD_NEWSKIN DIALOGEX 0, 0, 273, 246
@@ -338,8 +338,8 @@ BEGIN
     CONTROL         "&Random skin on play",IDC_RANDOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,185,45,81,10
     CONTROL         "&Prompt on install",IDC_SKIN_INSTALL_PROMPT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,185,58,81,10
     PUSHBUTTON      "Re&name current skin...",IDC_RENAME_SKIN,185,102,80,15,WS_DISABLED
-    PUSHBUTTON      "&Uninstall current skin...",IDC_DELETE_SKIN,185,120,80,14,WS_DISABLED
-    LTEXT           "To uninstall / rename a skin without switching skins, right click on the skin you wish to uninstall or rename.",IDC_STATIC,186,137,79,41
+    PUSHBUTTON      "&Open skins folder",IDC_OPEN_SKINDIR,185,120,80,14
+    LTEXT           "To rename a skin without switching skins, right click on the skin you wish to rename.",IDC_STATIC,186,137,79,41
     LTEXT           "Current skin information:",IDC_STATIC,6,182,82,8
     EDITTEXT        IDC_EDIT1,6,194,174,45,ES_MULTILINE | ES_READONLY | WS_VSCROLL
 END
@@ -1298,7 +1298,7 @@ BEGIN
             MENUITEM "&Switch to skin",             ID_PREFS_SKIN_SWITCHTOSKIN
             MENUITEM SEPARATOR
             MENUITEM "&Rename skin...",             ID_PREFS_SKIN_RENAMESKIN
-            MENUITEM "&Delete skin...",             ID_PREFS_SKIN_DELETESKIN
+            MENUITEM "&Open skins folder",           ID_PREFS_SKIN_OPENFOLDER
         END
     END
 END
@@ -1863,8 +1863,6 @@ BEGIN
     IDS_P_CLASSIC_35FPS     "35fps"
     IDS_P_CLASSIC_18FPS     "18fps"
     IDS_P_CLASSIC_9FPS      "9fps"
-    IDS_P_PLUGIN_UNINSTALL  "Permanently uninstall this plug-in?\n(This may require a restart of Winamp)"
-    IDS_P_PLUGIN_UNINSTALL_CONFIRM "Confirmation"
     IDS_P_PLAYBACK_RG_SOURCE_TRACK "Track"
     IDS_P_PLAYBACK_RG_SOURCE_ALBUM "Album"
     IDS_P_PLAYBACK_RG_MODE_AG "Apply Gain"
@@ -1910,11 +1908,9 @@ END
 STRINGTABLE
 BEGIN
     IDS_P_CLASSICVIS        "Classic Visualization"
-    IDS_P_IN_UNINST         "This button will uninstall the selected input plug-in. This may require a restart of Winamp."
-    IDS_P_VIS_UNINST        "This button will uninstall the selected visualization plug-in."
-    IDS_P_OUT_UNINST        "This button will uninstall the selected output plug-in. This may require a restart of Winamp."
-    IDS_P_SKINS_DELETESKIN  "Delete Skin?"
-    IDS_P_SKINS_DELETESKIN_PROMPT "Delete the skin '%s'?"
+    IDS_P_IN_OPENDIR        "This button will open the folder that input plug-ins are in."
+    IDS_P_VIS_OPENDIR       "This button will open the folder that visualization plug-ins are in."
+    IDS_P_OUT_OPENDIR       "This button will open the folder that output plug-ins are in."
     IDS_P_PLUG_DISSEHVIS    "Enabling this option disables structured exception handling (SEH) for visualization plug-ins, which lets plug-in developers more easily debug their plug-ins."
     IDS_P_PLUG_DISSEHDSP    "Enabling this option disables structured exception handling (SEH) for DSP plug-ins, which lets plug-in developers more easily debug their plug-ins."
     IDS_P_PLUG_DISSEHGEN    "Enabling this option disables structured exception handling (SEH) for general purpose plug-ins, which lets plug-in developers more easily debug their plug-ins."
