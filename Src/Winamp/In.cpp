@@ -474,9 +474,6 @@ typedef int(__cdecl* UseUnifiedFileInfoDlg)(const wchar_t* fn);
 
 int in_infobox(HWND hwnd, const wchar_t* fn)
 {
-	const wchar_t* p = wcsstr(fn, L"aol.com/uvox");
-	if ( p ) return 0;
-
 	if ( g_in_infobox ) return 0;
 
 	In_Module* mod = in_setmod_noplay(fn, 0);
