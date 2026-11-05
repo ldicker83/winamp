@@ -325,12 +325,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\albumart\albumart.vcxproj">
-      <Project>{388476b7-c0a1-4853-b6f4-9a64ca346ba9}</Project>
-      <IncludeIsGuid>true</IncludeIsGuid>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\playlist\playlist.vcxproj">
       <Project>{b2c0f048-c7fa-4864-b5b3-75e69458ba9e}</Project>
       <IncludeIsGuid>true</IncludeIsGuid>
