@@ -297,7 +297,6 @@ static int do_titlebar()
 						}
 						if (a[1].at) do_titlebar_clicking|=2;
 						if (a[2].at) do_titlebar_clicking|=4;
-						if (a[3].at) do_titlebar_clicking|=8;
 						for (x = 5; x < cnt && a[x].isemb; x ++) 
 							a[x].isemb->attached = a[x].at;
 					}
@@ -318,7 +317,7 @@ static int do_titlebar()
 		case 0:
 			if (do_titlebar_clicking)
 			{
-				RECT eqr,plr,mwr,mbr,omwr;
+				RECT eqr,plr,mwr,omwr;
 				embedWindowState *p;
 				int skip_eq = GetParent(hEQWindow) != NULL;
 				int skip_pl = GetParent(hPLWindow) != NULL;
@@ -356,7 +355,6 @@ static int do_titlebar()
 					int movey=mwr.top-omwr.top;
 					if (do_titlebar_clicking&2) MoveRect(&eqr,movex,movey);
 					if (do_titlebar_clicking&4) MoveRect(&plr,movex,movey);
-					if (do_titlebar_clicking&8) MoveRect(&mbr,movex,movey);
 					while (state)
 					{
 						if (!HasParent(state->me) && state->attached) MoveRect(&state->r,movex,movey);
@@ -400,7 +398,6 @@ static int do_titlebar()
 
 								if (m & 2) MoveRect(&eqr,r->left-oldr.left,r->top-oldr.top);
 								if (m & 4) MoveRect(&plr,r->left-oldr.left,r->top-oldr.top);
-								if (m & 8) MoveRect(&mbr,r->left-oldr.left,r->top-oldr.top);
 								while (p2)
 								{
 									if (&p2->r != r && p2->attached)
@@ -416,7 +413,6 @@ static int do_titlebar()
 						SnapToScreen(&mwr);
 						if (do_titlebar_clicking & 2) MoveRect(&eqr,mwr.left-omwr.left,mwr.top-omwr.top);
 						if (do_titlebar_clicking & 4) MoveRect(&plr,mwr.left-omwr.left,mwr.top-omwr.top);
-						if (do_titlebar_clicking & 8) MoveRect(&mbr,mwr.left-omwr.left,mwr.top-omwr.top);
 						p = embedwndlist;
 						while (p)
 						{
@@ -482,7 +478,6 @@ static int do_titlebar()
 										MoveRect(&mwr,r4.left-r3.left,r4.top-r3.top);
 										if (m & 2) MoveRect(&eqr,mwr.left-omwr.left,mwr.top-omwr.top);
 										if (m & 4) MoveRect(&plr,mwr.left-omwr.left,mwr.top-omwr.top);
-										if (m & 8) MoveRect(&mbr,mwr.left-omwr.left,mwr.top-omwr.top);
 										while (p3)
 										{
 											if (&p3->r != r && p3->attached)
