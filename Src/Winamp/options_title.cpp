@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "options.h"
 #include "api.h"
@@ -59,8 +60,8 @@ INT_PTR CALLBACK TitleProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				{
 					wchar_t dirmask[MAX_PATH] = {0};
 					GetTempPathW(MAX_PATH, dirmask);
-					PathCombineW(dirmask, dirmask, L"atf.htm");
-					if (!PathFileExistsW(dirmask))
+					FilePath::Combine(dirmask, dirmask, L"atf.htm");
+					if (!FilePath::Exists(dirmask))
 					{
 						DWORD size = 0, written = 0;
 						HGLOBAL hResource = langManager->LoadResourceFromFile(hMainInstance, hMainInstance, RT_HTML,MAKEINTRESOURCE(IDR_ATF_HTML), &size);

@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 
 #include "resource.h"
 #include <math.h>
@@ -66,7 +67,7 @@ static PLUGINORDER preload[] =
 static void LoadInputPlugin(const wchar_t* filename)
 {
 	wchar_t file[MAX_PATH] = { 0 };
-	PathCombineW(file, PLUGINDIR, filename);
+	FilePath::Combine(file, PLUGINDIR, filename);
 
 	HINSTANCE hLib = LoadLibraryW(file);
 	if ( hLib == NULL )
@@ -172,7 +173,7 @@ int in_init()
 	WIN32_FIND_DATAW d = { 0 };
 	wchar_t dirstr[MAX_PATH] = { 0 };
 
-	PathCombineW(dirstr, PLUGINDIR, L"IN_*.DLL");
+	FilePath::Combine(dirstr, PLUGINDIR, L"IN_*.DLL");
 	HANDLE h = FindFirstFileW(dirstr, &d);
 	if ( h != INVALID_HANDLE_VALUE )
 	{
@@ -281,7 +282,7 @@ In_Module* in_setmod_noplay(const wchar_t* filename, int* start_offs)
 		static int r;
 		const wchar_t* p;
 
-		if ( PathFindExtensionW(filename)[0] && (p = wcsstr(filename, L"://")) && (p = wcsstr(p, L"?")) )
+		if ( FilePath::FindExtension(filename)[0] && (p = wcsstr(filename, L"://")) && (p = wcsstr(p, L"?")) )
 		{
 			wchar_t* d = _wcsdup(filename);
 			In_Module* v;

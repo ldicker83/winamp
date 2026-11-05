@@ -1,4 +1,5 @@
 #include "functions.h"
+#include "../nu/FilePath.h"
 #include "string.h"
 #include "varlist.h"
 #include <windows.h>
@@ -655,14 +656,14 @@ MAKEFUNC(PathSafe)
 MAKEFUNC(FileName)
 {
 	if (n_src < 1) return ;
-	out->AddString(PathFindFileName(src[0]));
+	out->AddString(FilePath::FindFileName(src[0]));
 }
 
 MAKEFUNC(FilePart)
 {
 	if (n_src < 1) return;
-	LPTSTR beg = PathFindFileName(src[0]);
-	LPTSTR end = PathFindExtension(beg);
+	LPTSTR beg = FilePath::FindFileName(src[0]);
+	LPTSTR end = FilePath::FindExtension(beg);
 	while (beg != end)
 	{
 		out->AddChar(*beg++);
@@ -681,8 +682,8 @@ MAKEFUNC(PathRTrim)
 	lstrcpyn(folder, src[0], MAX_PATH);
 	while (cut--)
 	{
-		PathRemoveFileSpec(folder);
-		PathRemoveBackslash(folder);
+		FilePath::RemoveFileSpec(folder);
+		FilePath::RemoveBackslash(folder);
 	}
 
 	out->AddString(folder);
@@ -699,11 +700,11 @@ MAKEFUNC(PathLPart)
 	wchar_t *p = src[0];
 	while (cut-- && p)
 	{
-		p = PathFindNextComponent(p);
+		p = FilePath::FindNextComponent(p);
 	}
 	if (p)
 		*p = 0;
-	PathRemoveBackslash(src[0]);
+	FilePath::RemoveBackslash(src[0]);
 	out->AddString(src[0]);
 }
 
@@ -719,9 +720,9 @@ MAKEFUNC(PathRPart)
 	lstrcpyn(temp, src[0], MAX_PATH);
 	while (cut--)
 	{
-		PathRemoveBackslash(temp);
-		PathRemoveFileSpec(temp);
-		PathAddBackslash(temp);
+		FilePath::RemoveBackslash(temp);
+		FilePath::RemoveFileSpec(temp);
+		FilePath::AddBackslash(temp);
 	}
 
 	out->AddString(&(src[0][lstrlenW(temp)]));
@@ -738,7 +739,7 @@ MAKEFUNC(PathLTrim)
 	wchar_t *p = src[0];
 	while (cut-- && p)
 	{
-		p = PathFindNextComponent(p);
+		p = FilePath::FindNextComponent(p);
 	}
 	if (p)
 		out->AddString(p);
@@ -747,7 +748,7 @@ MAKEFUNC(PathLTrim)
 MAKEFUNC(FileExt)
 {
 	if (n_src < 1) return ;
-	LPTSTR ext = PathFindExtension(src[0]);
+	LPTSTR ext = FilePath::FindExtension(src[0]);
 	if (ext) ext = CharNext(ext);
 	out->AddString(ext);
 }
@@ -1128,10 +1129,10 @@ MAKEFUNC(Directory)
 	lstrcpyn(folder, (src[0] ? src[0] : L""), MAX_PATH);
 	while (numLevels--)
 	{
-		PathRemoveFileSpec(folder);
-		PathRemoveBackslash(folder);
+		FilePath::RemoveFileSpec(folder);
+		FilePath::RemoveBackslash(folder);
 	}
-	PathStripPath(folder);
+	FilePath::StripPath(folder);
 	out->AddString(folder);
 }
 

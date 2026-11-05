@@ -1,4 +1,5 @@
 #include <windowsx.h>
+#include "../nu/FilePath.h"
 
 #include "Main.h"
 #include "api.h"
@@ -481,7 +482,7 @@ static BOOL CALLBACK loadmp3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		SetWindowTextA(hwndDlg, getString(IDS_LOADAUTOLOAD, NULL, 0));
 		{
 			int x;
-			const wchar_t *filespec = PathFindFileNameW(FileName);
+			const wchar_t *filespec = FilePath::FindFileName(FileName);
 			WideCharToMultiByteSZ(CP_ACP, 0, filespec, -1, buf, 1024, 0, 0);
 			SetWindowTextA(GetDlgItem(hwndDlg, IDC_SAVEPRESET_EDIT), buf);
 			x = SendMessageW(GetDlgItem(hwndDlg, IDC_LOADEQLIST), LB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)buf);
@@ -618,7 +619,7 @@ static BOOL CALLBACK savemp3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		addEQtolistbox(EQDIR2, GetDlgItem(hwndDlg, IDC_LOADEQLIST));
 		{
 			int x;
-			const wchar_t *filespec = PathFindFileNameW(FileName);
+			const wchar_t *filespec = FilePath::FindFileName(FileName);
 						WideCharToMultiByteSZ(CP_ACP, 0, filespec, -1, buf, 1024, 0, 0);
 			SetWindowTextA(GetDlgItem(hwndDlg, IDC_SAVEPRESET_EDIT), buf);
 			x = SendMessageW(GetDlgItem(hwndDlg, IDC_LOADEQLIST), LB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)buf);
@@ -738,7 +739,7 @@ static BOOL CALLBACK delmp3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 				EnableWindow(GetDlgItem(hwndDlg, IDOK), 0);
 			SetWindowTextA(hwndDlg, getString(IDS_DELETEAUTOLOAD1, NULL, 0));
 			SetWindowTextA(GetDlgItem(hwndDlg, IDOK), getString(IDS_DELETEAUTOLOAD2, NULL, 0));
-			const wchar_t *filespec = PathFindFileNameW(FileName);
+			const wchar_t *filespec = FilePath::FindFileName(FileName);
 			WideCharToMultiByteSZ(CP_ACP, 0, filespec, -1, buf, 1024, 0, 0);
 			int x = SendMessageW(GetDlgItem(hwndDlg, IDC_LOADEQLIST), LB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)buf);
 			if (x != LB_ERR)

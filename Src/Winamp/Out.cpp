@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoChar.h"
 #include "../nu/AutoWide.h"
 
@@ -22,7 +23,7 @@ static PLUGINORDER preload[] =
 int LoadOutputPlugin(const wchar_t* plugin_filename, int index)
 {
 	wchar_t file[MAX_PATH] = { 0 };
-	PathCombineW(file, PLUGINDIR, plugin_filename);
+	FilePath::Combine(file, PLUGINDIR, plugin_filename);
 
 	HINSTANCE hLib = LoadLibraryW(file);
 	if ( hLib == NULL )
@@ -73,7 +74,7 @@ void out_init()
 
 	WIN32_FIND_DATAW d = { 0 };
 	wchar_t dirstr[MAX_PATH] = { 0 };
-	PathCombineW(dirstr, PLUGINDIR, L"OUT_*.DLL");
+	FilePath::Combine(dirstr, PLUGINDIR, L"OUT_*.DLL");
 	HANDLE h = FindFirstFileW(dirstr, &d);
 	if ( h != INVALID_HANDLE_VALUE )
 	{

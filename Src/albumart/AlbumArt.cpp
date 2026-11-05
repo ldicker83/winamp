@@ -1,4 +1,5 @@
 #include "AlbumArt.h"
+#include "../nu/FilePath.h"
 #include "api__albumart.h"
 #include "ParamList.h"
 #include <api/service/svcs/svc_imgload.h>
@@ -130,7 +131,7 @@ static ARGB32 *loadImgFromFile(const wchar_t *path, const wchar_t *filespec, int
 			return (ARGB32*)1;
 		}
 		wchar_t file[MAX_PATH] = {0};
-		PathCombineW(file, path, filespec);
+		FilePath::Combine(file, path, filespec);
 		HANDLE hf = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 		if (hf != INVALID_HANDLE_VALUE)
 		{
@@ -170,7 +171,7 @@ static bool loadImgDataFromFile(const wchar_t *path, const wchar_t *filespec, vo
 	if (loader)
 	{
 		wchar_t file[MAX_PATH] = {0};
-		PathCombineW(file, path, filespec);
+		FilePath::Combine(file, path, filespec);
 		HANDLE hf = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 		if (hf != INVALID_HANDLE_VALUE)
 		{
@@ -199,7 +200,7 @@ static bool loadImgDataFromFile(const wchar_t *path, const wchar_t *filespec, vo
 static ARGB32 *FindImage(const wchar_t *path, const wchar_t *mask, int *w, int *h, bool test=false, ifc_xmlreaderparams *params = NULL)
 {
 	wchar_t dirmask[MAX_PATH] = {0};
-	PathCombineW(dirmask, path, mask);
+	FilePath::Combine(dirmask, path, mask);
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(dirmask, &find);
 	if (hFind != INVALID_HANDLE_VALUE)
@@ -222,7 +223,7 @@ static ARGB32 *FindImage(const wchar_t *path, const wchar_t *mask, int *w, int *
 static bool FindImageData(const wchar_t *path, const wchar_t *mask, void **bits, size_t *len, wchar_t **mimeType)
 {
 	wchar_t dirmask[MAX_PATH] = {0};
-	PathCombineW(dirmask, path, mask);
+	FilePath::Combine(dirmask, path, mask);
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(dirmask, &find);
 	if (hFind != INVALID_HANDLE_VALUE)
@@ -243,7 +244,7 @@ static bool FindImageData(const wchar_t *path, const wchar_t *mask, void **bits,
 static bool FindImageOrigin(const wchar_t *path, const wchar_t *mask, wchar_t **mimeType)
 {
 	wchar_t dirmask[MAX_PATH] = {0};
-	PathCombineW(dirmask, path, mask);
+	FilePath::Combine(dirmask, path, mask);
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(dirmask, &find);
 	if (hFind != INVALID_HANDLE_VALUE)
@@ -265,7 +266,7 @@ static bool FindImageOrigin(const wchar_t *path, const wchar_t *mask, wchar_t **
 static bool DeleteImage(const wchar_t *path, const wchar_t *mask)
 {
 	wchar_t dirmask[MAX_PATH] = {0};
-	PathCombineW(dirmask, path, mask);
+	FilePath::Combine(dirmask, path, mask);
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(dirmask, &find);
 	if (hFind != INVALID_HANDLE_VALUE)
@@ -282,7 +283,7 @@ static bool DeleteImage(const wchar_t *path, const wchar_t *mask)
 				FindClose(hFind);
 				WASABI_API_MEMMGR->sysFree(bits);
 				wchar_t fullpath[MAX_PATH] = {0};
-				PathCombineW(fullpath, path, find.cFileName);
+				FilePath::Combine(fullpath, path, find.cFileName);
 				DeleteFileW(fullpath);
 				return true;
 			}
@@ -353,14 +354,14 @@ static int DeleteAlbumArtByProvider(int providertype, const wchar_t *filename, c
 static bool FindSceneNFO(const wchar_t *path, wchar_t *mask)
 {
 	wchar_t nfo_mask[MAX_PATH] = {0};
-	PathCombineW(nfo_mask, path, L"*.nfo");
+	FilePath::Combine(nfo_mask, path, L"*.nfo");
 
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(nfo_mask, &find);
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		StringCchCopyW(mask, MAX_PATH, find.cFileName);
-		PathRemoveExtensionW(mask);
+		FilePath::RemoveExtension(mask);
 		StringCchCatW(mask, MAX_PATH, L".*");
 		FindClose(hFind);
 		return true;
@@ -408,7 +409,7 @@ int AlbumArt::GetAlbumArt(const wchar_t *filename, const wchar_t *type, int *w, 
 		return ALBUMART_SUCCESS;
 
 	/* moved to allow for SHOUTcast 2 in-stream metadata which is best classed as embedded */
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	/* Next, Search the albumart in a cover library dir */
@@ -420,7 +421,7 @@ int AlbumArt::GetAlbumArt(const wchar_t *filename, const wchar_t *type, int *w, 
 	wchar_t path[MAX_PATH] = {0};
 	wchar_t mask[MAX_PATH] = {0};
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	/* Next, look for a file with the same name as the album name */
 	wchar_t albumname[MAX_PATH] = {0};
@@ -463,7 +464,7 @@ int AlbumArt::GetAlbumArtData(const wchar_t *filename, const wchar_t *type, void
 {
 	if (!filename || !*filename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	/* First, look for embedded album art */
@@ -499,7 +500,7 @@ int AlbumArt::GetAlbumArtData(const wchar_t *filename, const wchar_t *type, void
 	wchar_t path[MAX_PATH] = {0};
 	wchar_t mask[MAX_PATH] = {0};
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	/* Next, look for a file with the same name as the album name */
 	wchar_t albumname[MAX_PATH] = {0};
@@ -545,7 +546,7 @@ int AlbumArt::GetAlbumArt_NoAMG(const wchar_t *filename, const wchar_t *type, in
 
 	if (!filename || !*filename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	/* First, look for embedded album art */
@@ -561,7 +562,7 @@ int AlbumArt::GetAlbumArt_NoAMG(const wchar_t *filename, const wchar_t *type, in
 	wchar_t path[MAX_PATH] = {0};
 	wchar_t mask[MAX_PATH] = {0};
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	/* Next, look for a file with the same name as the album name */
 	wchar_t albumname[MAX_PATH] = {0};
@@ -604,7 +605,7 @@ int AlbumArt::GetAlbumArtOrigin(const wchar_t *filename, const wchar_t *type, wc
 {
 	if (!filename || !*filename)
 		return ALBUMART_NONE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_NONE;
 
 	/* First, look for embedded album art */
@@ -656,7 +657,7 @@ int AlbumArt::GetAlbumArtOrigin(const wchar_t *filename, const wchar_t *type, wc
 	wchar_t path[MAX_PATH] = {0};
 	wchar_t mask[MAX_PATH] = {0};
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	/* Next, look for a file with the same name as the album name */
 	wchar_t albumname[MAX_PATH] = {0};
@@ -700,7 +701,7 @@ int AlbumArt::DeleteAlbumArt(const wchar_t *filename, const wchar_t *type)
 {
 	if (!filename || !*filename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	/* First, look for embedded album art */
@@ -716,7 +717,7 @@ int AlbumArt::DeleteAlbumArt(const wchar_t *filename, const wchar_t *type)
 	wchar_t path[MAX_PATH] = {0};
 	wchar_t mask[MAX_PATH] = {0};
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	/* Next, look for a file with the same name as the album name */
 	wchar_t albumname[MAX_PATH] = {0};
@@ -791,7 +792,7 @@ int AlbumArt::GetAlbumArtTypes(const wchar_t *filename, wchar_t **types)
 {
 	if (!filename || !*filename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	wchar_t path[MAX_PATH] = {0};
@@ -800,7 +801,7 @@ int AlbumArt::GetAlbumArtTypes(const wchar_t *filename, wchar_t **types)
 
 	/* First, let's look in the folder for some art */
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	// TODO (mpdeimos) Make the stuff here configurable, add wildcards *front* / *cover* ...
 	StringCchPrintfW(mask, MAX_PATH, L"cover.*");
@@ -848,7 +849,7 @@ int AlbumArt::GetValidAlbumArtTypes(const wchar_t *filename, wchar_t **type)
 {
 	if (!filename || !*filename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	strbuilder str;
@@ -920,7 +921,7 @@ int AlbumArt::SetAlbumArt(const wchar_t *filename, const wchar_t *type, int w, i
 
 	if (!filename || !*filename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(filename))
+	if (FilePath::IsUrl(filename))
 		return ALBUMART_FAILURE;
 
 	if (!type) type = L"cover";
@@ -940,7 +941,7 @@ int AlbumArt::SetAlbumArt(const wchar_t *filename, const wchar_t *type, int w, i
 	wchar_t fn[MAX_PATH] = {0};
 
 	StringCchCopyW(path, MAX_PATH, filename);
-	PathRemoveFileSpecW(path);
+	FilePath::RemoveFileSpec(path);
 
 	wchar_t albumname[MAX_PATH] = {0};
 	if (!_wcsicmp(type,L"cover") && AGAVE_API_METADATA->GetExtendedFileInfo(filename, L"album", albumname, MAX_PATH) && albumname[0])
@@ -970,7 +971,7 @@ int AlbumArt::SetAlbumArt(const wchar_t *filename, const wchar_t *type, int w, i
 static bool CopySceneNFO(const wchar_t *sourcePath, const wchar_t *destinationPath)
 {
 	wchar_t nfo_mask[MAX_PATH] = {0};
-	PathCombineW(nfo_mask, sourcePath, L"*.nfo");
+	FilePath::Combine(nfo_mask, sourcePath, L"*.nfo");
 
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(nfo_mask, &find);
@@ -978,8 +979,8 @@ static bool CopySceneNFO(const wchar_t *sourcePath, const wchar_t *destinationPa
 	{
 		wchar_t sourceFile[MAX_PATH] = {0};
 		wchar_t destinationFile[MAX_PATH] = {0};
-		PathCombineW(sourceFile, sourcePath, find.cFileName);
-		PathCombineW(destinationFile, destinationPath, find.cFileName);
+		FilePath::Combine(sourceFile, sourcePath, find.cFileName);
+		FilePath::Combine(destinationFile, destinationPath, find.cFileName);
 		CopyFileW(sourceFile, destinationFile, TRUE);
 		FindClose(hFind);
 		return true;
@@ -990,7 +991,7 @@ static bool CopySceneNFO(const wchar_t *sourcePath, const wchar_t *destinationPa
 static void CopyMask(const wchar_t *sourcePath, const wchar_t *destinationPath, const wchar_t *mask)
 {
 	wchar_t findMask[MAX_PATH] = {0};
-	PathCombineW(findMask, sourcePath, mask);
+	FilePath::Combine(findMask, sourcePath, mask);
 
 	WIN32_FIND_DATAW find = {0};
 	HANDLE hFind = FindFirstFileW(findMask, &find);
@@ -1006,8 +1007,8 @@ static void CopyMask(const wchar_t *sourcePath, const wchar_t *destinationPath, 
 			{
 				wchar_t sourceFile[MAX_PATH] = {0};
 				wchar_t destinationFile[MAX_PATH] = {0};
-				PathCombineW(sourceFile, sourcePath, find.cFileName);
-				PathCombineW(destinationFile, destinationPath, find.cFileName);
+				FilePath::Combine(sourceFile, sourcePath, find.cFileName);
+				FilePath::Combine(destinationFile, destinationPath, find.cFileName);
 				CopyFileW(sourceFile, destinationFile, TRUE);
 				factory->releaseInterface(loader);
 			}
@@ -1021,7 +1022,7 @@ int AlbumArt::CopyAlbumArt(const wchar_t *sourceFilename, const wchar_t *destina
 {
 	if (!sourceFilename || !*sourceFilename || !destinationFilename || !*destinationFilename)
 		return ALBUMART_FAILURE;
-	if (PathIsURLW(sourceFilename) || PathIsURLW(destinationFilename))
+	if (FilePath::IsUrl(sourceFilename) || FilePath::IsUrl(destinationFilename))
 		return ALBUMART_FAILURE;
 
 	// first, copy embedded album art
@@ -1052,9 +1053,9 @@ int AlbumArt::CopyAlbumArt(const wchar_t *sourceFilename, const wchar_t *destina
 	// now, if they're in different directories, copy folder.jpg, cover.jpg, front.jpg and %album%.jpg
 	wchar_t sourcePath[MAX_PATH] = {0}, destinationPath[MAX_PATH] = {0};
 	StringCchCopyW(sourcePath, MAX_PATH, sourceFilename);
-	PathRemoveFileSpecW(sourcePath);
+	FilePath::RemoveFileSpec(sourcePath);
 	StringCchCopyW(destinationPath, MAX_PATH, destinationFilename);
-	PathRemoveFileSpecW(destinationPath);
+	FilePath::RemoveFileSpec(destinationPath);
 
 	if (_wcsicmp(sourcePath, destinationPath) != 0) // if they're different 
 	{

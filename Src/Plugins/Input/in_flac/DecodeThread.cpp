@@ -27,7 +27,6 @@
 #include <assert.h>
 #include <locale.h>
 #include <FLAC/all.h>
-#include "StreamFileWin32.h"
 #include "../Winamp/wa_ipc.h"
 #include "QuickBuf.h"
 #include "api__in_flv.h"

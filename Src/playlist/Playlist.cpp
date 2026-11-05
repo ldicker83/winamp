@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "Playlist.h"
 #include <algorithm>
 #include "../nu/AutoChar.h"
@@ -146,8 +147,8 @@ static bool PlayList_sortByTitle( pl_entry *&a, pl_entry *&b )
 
 static bool PlayList_sortByFile( pl_entry *&a, pl_entry *&b ) //const void *a, const void *b)
 {
-	const wchar_t *file1 = PathFindFileNameW( a->filename );
-	const wchar_t *file2 = PathFindFileNameW( b->filename );
+	const wchar_t *file1 = FilePath::FindFileName( a->filename );
+	const wchar_t *file2 = FilePath::FindFileName( b->filename );
 
 	int comp = CompareStringW( LOCALE_USER_DEFAULT, NORM_IGNORECASE |   /*NORM_IGNOREKANATYPE |*/ NORM_IGNOREWIDTH, file1, -1, file2, -1 );
 

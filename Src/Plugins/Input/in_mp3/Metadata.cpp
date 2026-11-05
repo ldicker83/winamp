@@ -1,4 +1,5 @@
 #include "Metadata.h"
+#include "../nu/FilePath.h"
 #include "main.h"
 #include "api__in_mp3.h"
 #include "LAMEInfo.h"
@@ -14,7 +15,7 @@
 
 Metadata::Metadata( CGioFile *_file, const wchar_t *_filename )
 {
-	if ( !PathIsURL( _filename ) )
+	if ( !FilePath::IsUrl( _filename ) )
 		filename = _wcsdup( _filename );
 
 	ReadTags( _file );
@@ -91,7 +92,7 @@ static int ID3Write(const wchar_t *filename, HANDLE infile, DWORD offset, void *
 {
 	wchar_t tempFile[MAX_PATH] = {0};
 	StringCchCopyW(tempFile, MAX_PATH, filename);
-	PathRemoveExtension(tempFile);
+	FilePath::RemoveExtension(tempFile);
 	StringCchCatW(tempFile, MAX_PATH, L".tmp");
 
 	// check to make sure the filename was actually different!

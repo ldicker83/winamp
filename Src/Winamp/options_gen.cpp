@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "Options.h"
 #include "gen.h"
@@ -62,7 +63,7 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				{
 					wchar_t fn[MAX_PATH] = {0}, buf[512] = {0};
 					GetModuleFileNameW(gen_plugins[x]->hDllInstance, fn, MAX_PATH);
-					PathStripPathW(fn);
+					FilePath::StripPath(fn);
 
 					LVITEMW lvi = {LVIF_TEXT | LVIF_PARAM, (int)x, 0};
 					lstrcpyn(buf, (gen_plugins[x]->version == GPPHDR_VER_U ? (wchar_t*)gen_plugins[x]->description : AutoWide(gen_plugins[x]->description)), 512);
@@ -78,13 +79,13 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			wchar_t dirstr[MAX_PATH] = {0};
-			PathCombineW(dirstr, PLUGINDIR, L"GEN_*.DLL");
+			FilePath::Combine(dirstr, PLUGINDIR, L"GEN_*.DLL");
 			HANDLE h = FindFirstFileW(dirstr, &d);
 			if (h != INVALID_HANDLE_VALUE)
 			{
 				do
 				{
-					PathCombineW(dirstr, PLUGINDIR, d.cFileName);
+					FilePath::Combine(dirstr, PLUGINDIR, d.cFileName);
 					HMODULE b = LoadLibraryExW(dirstr, NULL, LOAD_LIBRARY_AS_DATAFILE);
 					for (x = 0; b && (x != gen_plugins.size()); x ++)
 					{
@@ -257,7 +258,7 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							{
 								wchar_t buf[1024] = {0}, base[1024] = {0};
 								StringCchCopyW(base, 1024, PLUGINDIR);
-								PathAddBackslashW(base);
+								FilePath::AddBackslash(base);
 
 								LVITEMW lvi = {LVIF_TEXT, which_sel};
 								lvi.pszText = buf;
@@ -269,8 +270,8 @@ INT_PTR CALLBACK GenProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 								{
 									p += 4;
 									*p = 0;
-									PathRemoveFileSpecW(base);
-									PathAppendW(base, buf);
+									FilePath::RemoveFileSpec(base);
+									FilePath::Append(base, buf);
 								}
 
 								IFileTypeRegistrar *registrar=0;

@@ -7,6 +7,7 @@
  **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include <windowsx.h>
 
 #include "../Agave/Language/lang.h"
@@ -129,7 +130,7 @@ int bNoHwndOther = 0;
 
 static void CreateEQPresets()
 {
-	if (!PathFileExistsW(EQDIR1))
+	if (!FilePath::Exists(EQDIR1))
 	{
 		struct EQSET
 		{
@@ -453,8 +454,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR unused /*lps
 	SetDllDirectoryW( L"" );
 
 	GetModuleFileNameW( NULL, SHAREDDIR, MAX_PATH );
-	PathRemoveFileSpecW( SHAREDDIR );
-	PathAppendW( SHAREDDIR, L"Shared" );
+	FilePath::RemoveFileSpec( SHAREDDIR );
+	FilePath::Append( SHAREDDIR, L"Shared" );
 	// load supporting dlls from the Winamp\Shared directory
 	SetDllDirectoryW( SHAREDDIR );
 
@@ -955,7 +956,7 @@ LRESULT CALLBACK Main_WndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				l_menu_info.fMask = MIIM_TYPE | MIIM_DATA | MIIM_ID | MIIM_STATE;
 				l_menu_info.fType = MFT_STRING;
 				l_menu_info.wID = 32768;
-				PathCombineW( dirmask, SKINDIR, L"*" );
+				FilePath::Combine( dirmask, SKINDIR, L"*" );
 
 				if ( !config_skin[ 0 ] )
 					CheckMenuItem( hMenu, 32767, MF_CHECKED );

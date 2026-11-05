@@ -268,7 +268,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClCompile Include="Preferences.cpp" />
     <ClCompile Include="RawReader.cpp" />
     <ClCompile Include="Stopper.cpp" />
-    <ClCompile Include="StreamFileWin32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Agave\AlbumArt\svc_albumArtProvider.h" />
@@ -287,7 +286,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClInclude Include="RawReader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stopper.h" />
-    <ClInclude Include="StreamFileWin32.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="in_flac.rc" />

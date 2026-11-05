@@ -1,5 +1,6 @@
 #define STRICT
 #include <windows.h>
+#include "../nu/FilePath.h"
 #include <windowsx.h>
 #include <commctrl.h>
 #include <shlobj.h>
@@ -1056,7 +1057,7 @@ void do_cfg()
 	if (!_cfg_store)
 	{
 		GetDefaultSaveToFolder(cfg_output_dir);
-		PathCombine(cfg_singlefile_output, cfg_output_dir, "output.wav");
+		FilePath::Combine(cfg_singlefile_output, cfg_output_dir, "output.wav");
 	}
 
 	do_string(cfg_output_dir);

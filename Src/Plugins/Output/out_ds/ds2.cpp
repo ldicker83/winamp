@@ -2,6 +2,7 @@
 //^^ for debug logging to c:\ds2.txt
 
 #include "ds2.h"
+#include <fstream>
 
 #include <dsound.h>
 #include <math.h>
@@ -108,10 +109,8 @@ static void _log_write(char* msg, DS2* foo)
 	GetSystemTime(&st);
 	wsprintf(tmp, "DS2: %02u:%02u.%03u %08x %s\n", st.wMinute, st.wSecond, st.wMilliseconds, foo, msg);
 #if 1
-	static HANDLE hLog;
-	if (!hLog) hLog = CreateFile("c:\\ds2.txt", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
-	DWORD bw = 0;
-	WriteFile(hLog, tmp, strlen(tmp), &bw, 0);
+	static std::ofstream log("c:\\ds2.txt", std::ios::binary);
+	log << tmp << std::flush;
 #else
 	OutputDebugString(tmp);//bleh flood, getting holes in the log, blame micro$oft
 #endif

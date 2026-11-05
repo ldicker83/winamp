@@ -1,4 +1,5 @@
 #include "wasabi_std.h"
+#include "../nu/FilePath.h"
 
 #include "parse/pathparse.h"
 
@@ -505,7 +506,7 @@ const wchar_t * Wasabi::Std::dotDotDir()
 #ifdef _WIN32 // PORT ME
 bool Wasabi::Std::isRootPath(const wchar_t *path) 
 {
-	return PathIsRootW(path)==TRUE;
+	return FilePath::IsRoot(path)==TRUE;
 }
 #endif
 
@@ -590,7 +591,7 @@ const char * Wasabi::Std::scanstr_back(const char *str, const char *toscan, cons
 const wchar_t * Wasabi::Std::extension(const wchar_t *fn)
 {
 #ifdef _WIN32 // PORT ME
-	wchar_t *x = PathFindExtensionW(fn);
+	const wchar_t *x = FilePath::FindExtension(fn);
 	if (x && *x)
 		return CharNextW(x);
 	else
@@ -604,7 +605,7 @@ const wchar_t * Wasabi::Std::extension(const wchar_t *fn)
 const wchar_t * Wasabi::Std::filename(const wchar_t *fn)
 {
 #ifdef _WIN32
-	return PathFindFileNameW(fn);
+	return FilePath::FindFileName(fn);
 #else
 #warning port me
   return 0;

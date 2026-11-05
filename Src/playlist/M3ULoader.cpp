@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
 #include <strsafe.h>
 #include <fstream>
@@ -102,17 +103,17 @@ int M3ULoader::OnFileHelper( ifc_playlistloadercallback *playlist, const wchar_t
 	
 	int ret;
 
-	if ( wcsstr( wideFilename, L"://" ) || PathIsRootW( wideFilename ) )
+	if ( wcsstr( wideFilename, L"://" ) || FilePath::IsRoot( wideFilename ) )
 	{
 		ret = playlist->OnFile( wideFilename, title, length, extraInfo );
 	}
 	else
 	{
 		wchar_t fullPath[ MAX_PATH ] = { 0 };
-		if ( PathCombineW( fullPath, rootPath, wideFilename ) )
+		if ( FilePath::Combine( fullPath, rootPath, wideFilename ) )
 		{
 			wchar_t canonicalizedPath[ MAX_PATH ] = { 0 };
-			PathCanonicalizeW( canonicalizedPath, fullPath );
+			FilePath::Canonicalize( canonicalizedPath, fullPath );
 			ret = playlist->OnFile( canonicalizedPath, title, length, extraInfo );
 		}
 		else
@@ -187,7 +188,7 @@ int M3ULoader::Load( const wchar_t *p_filename, ifc_playlistloadercallback *play
 	else
 	{
 		StringCchCopyW( rootPath, MAX_PATH, p_filename );
-		PathRemoveFileSpecW( rootPath );
+		FilePath::RemoveFileSpec( rootPath );
 	}
 
 	unsigned char BOM[ 3 ] = { 0, 0, 0 };

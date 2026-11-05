@@ -10,6 +10,7 @@
 #define CONFIG_IMPL
 #endif
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "config.h"
 #include "WinampAttributes.h"
 #include "../nu/AutoWide.h"
@@ -523,7 +524,7 @@ void config_read(int i)
 
 	if (!i)
 	{
-		if (!PathFileExistsW(M3U_FILE))
+		if (!FilePath::Exists(M3U_FILE))
 		{
 			LoadPlaylistByExtension(OLD_M3U_FILE, L".m3u", 1, 1);
 			savem3ufn(M3U_FILE, 0, 1);
@@ -756,8 +757,8 @@ void regmimetype(const wchar_t *mtype, const wchar_t *programname, const wchar_t
 
 void trimPathW(wchar_t *pathStart)
 {
-	PathRemoveBlanksW(pathStart);
-	PathRemoveBackslashW(pathStart);
+	FilePath::RemoveBlanks(pathStart);
+	FilePath::RemoveBackslash(pathStart);
 }
 
 void config_setinifile(wchar_t *inifile)
@@ -792,11 +793,11 @@ void config_setm3ubase(const wchar_t *m3ubase)
 void init_config()
 {
 	GetModuleFileNameW(hMainInstance, PROGDIR, MAX_PATH);
-	PathRemoveFileSpecW(PROGDIR);
+	FilePath::RemoveFileSpec(PROGDIR);
 	SetEnvironmentVariableW(L"WINAMP_PROGRAM_DIR", PROGDIR);
 	wchar_t winamp_root[MAX_PATH] = {0};
 	StringCchCopyW(winamp_root, MAX_PATH, PROGDIR);
-	PathStripToRootW(winamp_root);
+	FilePath::StripToRoot(winamp_root);
 	SetEnvironmentVariableW(L"WINAMP_ROOT_DIR", winamp_root);
 }
 
@@ -815,36 +816,36 @@ void setup_config(void)
 	CreateDirectoryW(CONFIGDIR, NULL);
 
 	// basic config files
-	PathCombineW(OLD_M3U_FILE, M3UDIR, L"Winamp.m3u");
-	PathCombineW(M3U_FILE, M3UDIR, L"Winamp.m3u8");
-	PathCombineW(BOOKMARKFILE, CONFIGDIR, L"Winamp.bm");
-	PathCombineW(BOOKMARKFILE8, CONFIGDIR, L"Winamp.bm8");
+	FilePath::Combine(OLD_M3U_FILE, M3UDIR, L"Winamp.m3u");
+	FilePath::Combine(M3U_FILE, M3UDIR, L"Winamp.m3u8");
+	FilePath::Combine(BOOKMARKFILE, CONFIGDIR, L"Winamp.bm");
+	FilePath::Combine(BOOKMARKFILE8, CONFIGDIR, L"Winamp.bm8");
 	// just make sure if a winamp.bm8 doesn't exist then
 	// go make one from winamp.bm - implemented for 5.58+
-	if(!PathFileExistsW(BOOKMARKFILE8))
+	if(!FilePath::Exists(BOOKMARKFILE8))
 	{
 		CopyFileW(BOOKMARKFILE,BOOKMARKFILE8,FALSE);
 	}
-	PathCombineW(EQDIR1, CONFIGDIR, L"Winamp.q1");
-	PathCombineW(EQDIR2, CONFIGDIR, L"Winamp.q2");
+	FilePath::Combine(EQDIR1, CONFIGDIR, L"Winamp.q1");
+	FilePath::Combine(EQDIR2, CONFIGDIR, L"Winamp.q2");
 	wchar_t tempPath[MAX_PATH] = {0};
 	GetTempPathW(MAX_PATH, tempPath);
-	PathCombineW(TEMP_FILE, tempPath, L"Winamp.tmp");
-	PathCombineW(DEMOMP3, M3UDIR, L"demo.mp3");
-	PathCombineW(ML_INI_FILE, CONFIGDIR, L"Plugins\\gen_ml.ini");
+	FilePath::Combine(TEMP_FILE, tempPath, L"Winamp.tmp");
+	FilePath::Combine(DEMOMP3, M3UDIR, L"demo.mp3");
+	FilePath::Combine(ML_INI_FILE, CONFIGDIR, L"Plugins\\gen_ml.ini");
 
 	// override INI_FILE if specified
 	if (INI_FILE[0])
 	{
-		if (PathIsFileSpecW(INI_FILE) || PathIsRelativeW(INI_FILE))
+		if (FilePath::IsFileSpec(INI_FILE) || FilePath::IsRelative(INI_FILE))
 		{
 			wchar_t temp[MAX_PATH] = {0};
-			PathCombineW(temp, CONFIGDIR, INI_FILE);
+			FilePath::Combine(temp, CONFIGDIR, INI_FILE);
 			lstrcpynW(INI_FILE, temp, MAX_PATH);
 		}
 	}
 	else
-		PathCombineW(INI_FILE, CONFIGDIR, L"Winamp.ini");
+		FilePath::Combine(INI_FILE, CONFIGDIR, L"Winamp.ini");
 
 	// maintain a ansi version of INI_FILE for some aspects
 	StringCchCopyA(INI_FILEA, MAX_PATH, AutoCharFn(INI_FILE));
@@ -852,13 +853,13 @@ void setup_config(void)
 	RI(utf8);
 
 	// skin and plugin directories
-	PathCombineW(SKINDIR, PROGDIR, L"Skins");
-	PathCombineW(PLUGINDIR, PROGDIR, L"Plugins");
-	PathCombineW(SYSPLUGINDIR, PROGDIR, L"System");
-	PathCombineW(SKINDIR, PROGDIR, L"Skins");
-	PathCombineW(LANGDIR, PROGDIR, L"Lang");
-	PathCombineW(VISDIR, PROGDIR, L"Plugins");
-	PathCombineW(DSPDIR, PROGDIR, L"Plugins");
+	FilePath::Combine(SKINDIR, PROGDIR, L"Skins");
+	FilePath::Combine(PLUGINDIR, PROGDIR, L"Plugins");
+	FilePath::Combine(SYSPLUGINDIR, PROGDIR, L"System");
+	FilePath::Combine(SKINDIR, PROGDIR, L"Skins");
+	FilePath::Combine(LANGDIR, PROGDIR, L"Lang");
+	FilePath::Combine(VISDIR, PROGDIR, L"Plugins");
+	FilePath::Combine(DSPDIR, PROGDIR, L"Plugins");
 
 	// override skin/plugin directories from config
 	{
@@ -973,9 +974,9 @@ void config_agent_add(void)
 	{
 		wchar_t exe_name[MAX_PATH + 2] = {0};
 		GetModuleFileNameW(hMainInstance, exe_name, sizeof(exe_name)/sizeof(wchar_t));
-		PathRemoveFileSpecW(exe_name);
-		PathCombineW(exe_name, exe_name, L"winampa.exe");
-		PathQuoteSpacesW(exe_name);
+		FilePath::RemoveFileSpec(exe_name);
+		FilePath::Combine(exe_name, exe_name, L"winampa.exe");
+		FilePath::QuoteSpaces(exe_name);
 
 		registrar->AddAgent(exe_name);
 		registrar->Release();

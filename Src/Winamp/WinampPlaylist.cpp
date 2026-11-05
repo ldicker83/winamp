@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "WinampPlaylist.h"
 #include "../nu/AutoChar.h"
 #include "../nu/AutoWide.h"
@@ -93,7 +94,7 @@ void WinampPlaylist::OnFile(const wchar_t *filename, const wchar_t *title, int l
 	*/
 
 	// see if it's a directory
-	if ( loadDirectories && !PathIsURLW( filename ) && !PathIsNetworkPathW( filename ) )
+	if ( loadDirectories && !FilePath::IsUrl( filename ) && !PathIsNetworkPathW( filename ) )
 	{
 		HANDLE h;
 		WIN32_FIND_DATAW d;

@@ -9,6 +9,7 @@
 #endif
 
 #include <windows.h>
+#include "../nu/FilePath.h"
 #include "AutoWide.h"
 #include "AutoChar.h"
 #include <shlwapi.h> 
@@ -146,13 +147,13 @@ public:
 	{
 		MultiByteToWideChar(CP_ACP, 0, path, -1, out, FILENAME_SIZE);
 
-		if (PathIsURLW(out))
+		if (FilePath::IsUrl(out))
 			return ;
 
 		if (!StrChrW(out, L'?'))
 			return ; // no unconvertables?  Great!
 
-//		if (PathFileExistsW(out))
+//		if (FilePath::Exists(out))
 	//		return ; // no unconvertables?  Great!
 
 		bool found = false;

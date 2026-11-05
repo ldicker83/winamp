@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "tagz.h"
 #include "../tagz/ifc_tagprovider.h"
 #include "../tagz/ifc_tagparams.h"
@@ -142,7 +143,7 @@ void FormatTitleExtended(waFormatTitleExtended *format)
 		else
 		{
 			lstrcpynW(format->out, format->filename, format->out_len);
-			PathStripPathW(format->out);
+			FilePath::StripPath(format->out);
 		}
 	}
 }
@@ -150,7 +151,7 @@ void FormatTitleExtended(waFormatTitleExtended *format)
 int FormatTitle(waHookTitleStructW *hts)
 {
 	if (hts && hts->title && 
-		((hts->force_useformatting&1) || !(PathIsURLW(hts->filename) && StrCmpNIW(hts->filename, L"cda://", 6))))
+		((hts->force_useformatting&1) || !(FilePath::IsUrl(hts->filename) && StrCmpNIW(hts->filename, L"cda://", 6))))
 	{
 		wchar_t buf[32] = {0};
 		wchar_t buf2[32] = {0};
@@ -191,9 +192,9 @@ namespace Winamp
 			if (folder)
 			{
 				lstrcpynW(folder, filename, MAX_PATH);
-				PathRemoveFileSpecW(folder);
-				PathRemoveBackslashW(folder);
-				PathStripPathW(folder);
+				FilePath::RemoveFileSpec(folder);
+				FilePath::RemoveBackslash(folder);
+				FilePath::StripPath(folder);
 				return folder;
 			}
 		}

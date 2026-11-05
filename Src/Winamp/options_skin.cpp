@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "language.h"
 #include "../nu/AutoWide.h"
 #include "resource.h"
@@ -31,7 +32,7 @@ static BOOL FillEnumRec(ENUMSKIN *pes, LPCWSTR pszFileName, BOOL bDirectory, LPW
 	}
 	else 
 	{
-		pExt = PathFindExtensionW(pszFileName);
+		pExt = FilePath::FindExtension(pszFileName);
 		if (L'.' != *pExt) return FALSE; 
 		pExt++;
 		if (CSTR_EQUAL == CompareStringW(lcid, NORM_IGNORECASE, pExt, -1, L"zip", -1)) pes->nType = SKIN_FILETYPE_ZIP;
@@ -40,7 +41,7 @@ static BOOL FillEnumRec(ENUMSKIN *pes, LPCWSTR pszFileName, BOOL bDirectory, LPW
 		else return FALSE;
 	}
 
-	pszFile = PathFindFileNameW(pszFileName);
+	pszFile = FilePath::FindFileName(pszFileName);
 	StringCchCopyNW(pszName, cchName, pszFile, (size_t)(pExt - pszFile - 1));
 
 	pes->pszFileName = pszFileName;
@@ -64,11 +65,11 @@ int EnumerateSkins(ENUMSKINPROC fnEnumSkin, void *user)
 
 	if (*config_skin)
 	{
-		pszActive = PathFindFileNameW(config_skin);
+		pszActive = FilePath::FindFileName(config_skin);
 		if (pszActive != config_skin && BuildFullPath(SKINDIR, config_skin, szName, sizeof(szName)/sizeof(wchar_t))) 
 		{
 			INT cr = ComparePath(szName, pszActive, SKINDIR);
-			if(cr && CSTR_EQUAL != cr && PathFileExistsW(szName))
+			if(cr && CSTR_EQUAL != cr && FilePath::Exists(szName))
 			{
 				if (FillEnumRec(&es, config_skin, FALSE, szName, sizeof(szName)/sizeof(wchar_t), NULL))
 				{
@@ -81,7 +82,7 @@ int EnumerateSkins(ENUMSKINPROC fnEnumSkin, void *user)
 	}
 	else pszActive = NULL;
 
-	PathCombineW(dirmask, SKINDIR, L"*");
+	FilePath::Combine(dirmask, SKINDIR, L"*");
 	h = FindFirstFileW(dirmask,&d);
 	if (h != INVALID_HANDLE_VALUE) 
 	{
@@ -196,22 +197,22 @@ static void _setreadme(HWND hwndDlg)
 		else
 		{
 			wchar_t s[MAX_PATH]={0};
-			PathCombineW(s, skin_directory, L"readme.txt");      
+			FilePath::Combine(s, skin_directory, L"readme.txt");      
 			FILE *fp=_wfopen(s,L"rt");
 			if (!fp)
 			{
-				PathCombineW(s, skin_directory, L"read me.txt");
+				FilePath::Combine(s, skin_directory, L"read me.txt");
 				fp=_wfopen(s,L"rt");
 			}
 			if (!fp)
 			{
-				PathCombineW(s, skin_directory, L"file_id.diz");
+				FilePath::Combine(s, skin_directory, L"file_id.diz");
 				fp=_wfopen(s,L"rt");
 			}
 			if (!fp)
 			{
 				WIN32_FIND_DATAW d;
-				PathCombineW(s, skin_directory, L"*.txt");
+				FilePath::Combine(s, skin_directory, L"*.txt");
 
 				HANDLE h = FindFirstFileW(s,&d);
 				s[0]=0;
@@ -223,7 +224,7 @@ static void _setreadme(HWND hwndDlg)
 							_wcsicmp(d.cFileName,L"viscolor.txt") &&
 							_wcsicmp(d.cFileName,L"region.txt")) 
 						{
-							PathCombineW(s, skin_directory, d.cFileName);
+							FilePath::Combine(s, skin_directory, d.cFileName);
 							break;
 						}
       				} while (FindNextFileW(h,&d));
@@ -295,7 +296,7 @@ static void SkinDeleteSkin(HWND hwndDlg, LRESULT x)
 
 		if (MessageBoxW(hwndDlg,buf,getStringW(IDS_P_SKINS_DELETESKIN,NULL,0),MB_YESNO|MB_ICONQUESTION) == IDYES)
 		{
-			PathCombineW(buf, SKINDIR, skin);
+			FilePath::Combine(buf, SKINDIR, skin);
 			IFileTypeRegistrar *registrar=0;
 			if (GetRegistrar(&registrar) == 0 && registrar)
 			{
@@ -349,8 +350,8 @@ static void SkinRenameSkin(HWND hwndDlg, LRESULT x, int* timer_active)
 		{
 			wchar_t oldname[MAX_PATH] = {0}, newname[MAX_PATH] = {0};
 						
-			PathCombineW(oldname, SKINDIR, oldskin);
-			PathCombineW(newname, SKINDIR, rename_skin);
+			FilePath::Combine(oldname, SKINDIR, oldskin);
+			FilePath::Combine(newname, SKINDIR, rename_skin);
 
 			switch (nType)
 			{
@@ -572,7 +573,7 @@ INT_PTR CALLBACK SkinProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 						SHGetPathFromIDListW(idlist, path);
 						Shell_Free(idlist);
 
-						if(!PathIsRootW(path)) {
+						if(!FilePath::IsRoot(path)) {
 							wchar_t orig[MAX_PATH] = {0};
 							StringCchCopyW(orig, MAX_PATH, SKINDIR);
 							StringCchCopyW(SKINDIR, MAX_PATH, path);

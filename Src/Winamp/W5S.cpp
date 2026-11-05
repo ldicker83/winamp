@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "../Agave/Component/ifc_wa5component.h"
 #include <vector>
 #include "api.h"
@@ -166,10 +167,10 @@ void w5s_init()
 	wchar_t dirstr[MAX_PATH] = {0};
 
 	// pre-load so we're definitely available to other services which need this
-	PathCombineW(dirstr, SYSPLUGINDIR, L"wasabi2.w5s");
+	FilePath::Combine(dirstr, SYSPLUGINDIR, L"wasabi2.w5s");
 	w5s_load(dirstr);
 
-	PathCombineW(dirstr, SYSPLUGINDIR, L"*.W5S");
+	FilePath::Combine(dirstr, SYSPLUGINDIR, L"*.W5S");
 	HANDLE h = FindFirstFileW(dirstr, &d);
 	if (h != INVALID_HANDLE_VALUE)
 	{
@@ -187,10 +188,10 @@ void w5s_init()
 			if (lstrcmpiW(L"wasabi2.w5s", d.cFileName))
 			{
 				wchar_t manifeststr[MAX_PATH] = {0}, namestr[MAX_PATH] = {0};
-				PathCombineW(manifeststr, SYSPLUGINDIR, d.cFileName);
-				PathRemoveExtensionW(manifeststr);
-				PathAddExtensionW(manifeststr, L".wbm");
-				PathCombineW(namestr, SYSPLUGINDIR, d.cFileName);
+				FilePath::Combine(manifeststr, SYSPLUGINDIR, d.cFileName);
+				FilePath::RemoveExtension(manifeststr);
+				FilePath::AddExtension(manifeststr, L".wbm");
+				FilePath::Combine(namestr, SYSPLUGINDIR, d.cFileName);
 				if (w5s_load_binary_manifest(manifeststr, namestr) == W5S_LOAD)
 				{
 					w5s_load(namestr);

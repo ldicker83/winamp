@@ -1,4 +1,5 @@
 #include "api__playlist.h"
+#include "../nu/FilePath.h"
 #include "Handler.h"
 #include "resource.h"
 #include "M3ULoader.h"
@@ -7,8 +8,8 @@
 
 void GetExtension(const wchar_t *filename, wchar_t *ext, size_t extCch)
 {
-	const wchar_t *s = PathFindExtensionW(filename);
-	if (!PathIsURLW(filename)
+	const wchar_t *s = FilePath::FindExtension(filename);
+	if (!FilePath::IsUrl(filename)
 		|| (!wcsstr(s, L"?") && !wcsstr(s, L"&") && !wcsstr(s, L"=") && *s))
 	{
 		lstrcpynW(ext, s, (int)extCch);
@@ -24,7 +25,7 @@ void GetExtension(const wchar_t *filename, wchar_t *ext, size_t extCch)
 			if (p)
 			{
 				*p = 0;
-				s = PathFindExtensionW(copy);
+				s = FilePath::FindExtension(copy);
 				if (!*s) goto again;
 			}
 			lstrcpynW(ext, s, (int)extCch);

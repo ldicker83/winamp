@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "Options.h"
 #include "vis.h"
@@ -25,7 +26,7 @@ static void VisUpdateSel(HWND hwndDlg, HWND listWindow, INT iItem)
 
 		StringCchCopyW(config_visplugin_name, MAX_PATH, fn);
 		SendDlgItemMessageA(hwndDlg,IDC_VISMOD,CB_RESETCONTENT,0,0);
-		PathCombineW(b, VISDIR, fn);
+		FilePath::Combine(b, VISDIR, fn);
 
 		HINSTANCE hLib = LoadLibraryW(b);
 		if (hLib)
@@ -111,7 +112,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 
 			WIN32_FIND_DATAW d = {0};
 			wchar_t dirstr[MAX_PATH+128] = {0};
-			PathCombineW(dirstr,VISDIR,L"*.DLL");
+			FilePath::Combine(dirstr,VISDIR,L"*.DLL");
 			HANDLE h = FindFirstFileW(dirstr,&d);
 			if (h != INVALID_HANDLE_VALUE) 
 			{
@@ -127,7 +128,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 						&& _wcsnicmp(d.cFileName, L"pmp_", 4))
 					{
 						wchar_t b[1024] = {0}, namestr[MAX_PATH] = {0};
-						PathCombineW(b, VISDIR, d.cFileName);
+						FilePath::Combine(b, VISDIR, d.cFileName);
 						HINSTANCE hLib = LoadLibrary(b);
 						if (hLib)
 						{
@@ -306,7 +307,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 							wchar_t b[MAX_PATH] = {0}, fn[MAX_PATH*2] = {0};
 							ListView_GetItemTextW(listWindow, which, 1, fn, ARRAYSIZE(fn));
 
-							PathCombineW(b, VISDIR, fn);
+							FilePath::Combine(b, VISDIR, fn);
 							HINSTANCE hLib = LoadLibraryW(b);
 							if (hLib)
 							{
@@ -380,7 +381,7 @@ INT_PTR CALLBACK VisProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 						int which = ListView_GetNextItem(listWindow, -1, LVIS_SELECTED);
 						wchar_t b[MAX_PATH] = {0}, fn[FILENAME_SIZE] = {0};
 						ListView_GetItemTextW(listWindow, which, 1, fn, ARRAYSIZE(fn));
-						PathCombineW(b, VISDIR, fn);
+						FilePath::Combine(b, VISDIR, fn);
 
 						HINSTANCE hLib = LoadLibraryW(b);
 						if (hLib)

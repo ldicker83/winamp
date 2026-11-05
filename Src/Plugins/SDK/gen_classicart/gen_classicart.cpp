@@ -58,6 +58,7 @@
 */
 
 #include <windows.h>
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
 #include <strsafe.h>
 
@@ -174,7 +175,7 @@ BOOL DetectModernSkinLoaded(void)
 	wchar_t skindir[MAX_PATH]={0};
 	SendMessage(plugin.hwndParent,WM_WA_IPC,(WPARAM)skindir,IPC_GETSKINW);
 	StringCchCat(skindir,MAX_PATH,L"\\skin.xml");
-	return PathFileExists(skindir);
+	return FilePath::Exists(skindir);
 }
 
 void InsertItemIntoMainMenu(void){
@@ -873,7 +874,7 @@ static INT_PTR CALLBACK art_dlgproc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 				{
 					wchar_t fn[MAX_PATH];
 					lstrcpynW(fn,filename,MAX_PATH);
-					PathRemoveFileSpecW(fn);
+					FilePath::RemoveFileSpec(fn);
 					ShellExecuteW(NULL,L"open",fn,NULL,NULL,SW_SHOW);
 				}
 			}

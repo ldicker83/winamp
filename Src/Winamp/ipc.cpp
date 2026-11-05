@@ -7,6 +7,7 @@
  **/
 
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "language.h"
 #define APSTUDIO_INVOKED
 #include "resource.h"
@@ -966,7 +967,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 					if ( p->title )
 					{
 						wa::strings::wa_string l_ext( p->filename );
-						PlayList_append_withinfo( AutoWideFn( p->filename ), AutoWide( p->title ), PathFindExtensionW( l_ext.GetW().c_str() ), p->length, 0 );
+						PlayList_append_withinfo( AutoWideFn( p->filename ), AutoWide( p->title ), FilePath::FindExtension( l_ext.GetW().c_str() ), p->length, 0 );
 					}
 					else
 						PlayList_appendthing(AutoWideFn(p->filename), 0, 0);
@@ -1309,7 +1310,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 				basicFileInfoStruct *bfis = (basicFileInfoStruct*)data;
 				if (bfis->quickCheck == 2 && config_riol == 1) bfis->quickCheck = 0;
 				AutoWideFn wfn(bfis->filename);
-				if (PathIsURLW(wfn))
+				if (FilePath::IsUrl(static_cast<const wchar_t *>(wfn)))
 				{
 					const wchar_t *cachedTitle = PlayList_GetCachedTitle(wfn);
 					if (cachedTitle && cachedTitle[0])
@@ -1327,7 +1328,7 @@ LRESULT Main_OnIPC(HWND hwnd, int which, WPARAM data)
 		{
 			basicFileInfoStructW *bfis = (basicFileInfoStructW *)data;
 			if ( bfis->quickCheck == 2 && config_riol == 1 ) bfis->quickCheck = 0;
-			if ( bfis->filename && *bfis->filename && PathIsURLW( bfis->filename ) )
+			if ( bfis->filename && *bfis->filename && FilePath::IsUrl( bfis->filename ) )
 			{
 				const wchar_t *cachedTitle = PlayList_GetCachedTitle( bfis->filename );
 				if ( cachedTitle && cachedTitle[ 0 ] )

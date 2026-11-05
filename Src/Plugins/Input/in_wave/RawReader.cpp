@@ -1,10 +1,11 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "RawReader.h"
 #include <shlwapi.h>
 	 /*
 bool IsMyExtension(const wchar_t *filename)
 {
-	const wchar_t *ext = PathFindExtension(filename);
+	const wchar_t *ext = FilePath::FindExtension(filename);
 	if (ext && *ext)
 	{
 		ext++;
@@ -16,7 +17,7 @@ bool IsMyExtension(const wchar_t *filename)
 int RawMediaReaderService::CreateRawMediaReader(const wchar_t *filename, ifc_raw_media_reader **out_reader)
 {
 	// TODO:if (IsMyExtension(filename))
-	if (!_wcsicmp(L".WAV", PathFindExtensionW(filename)))
+	if (!_wcsicmp(L".WAV", FilePath::FindExtension(filename)))
 	{
 		RawMediaReader *raw_reader = new RawMediaReader();
 		if (!raw_reader)

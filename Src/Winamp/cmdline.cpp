@@ -7,6 +7,7 @@
 **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "strutil.h"
 #include "../nu/AutoChar.h"
@@ -711,7 +712,7 @@ void parseCmdLine(wchar_t *cmdline, HWND hwnd)
 		{
 			COPYDATASTRUCT cds;
 			wchar_t *p2 = 0;
-			if (!PathIsURLW(param) && GetFullPathNameW(param, MAX_PATH, tmp, &p2) && tmp[0])
+			if (!FilePath::IsUrl(param) && GetFullPathNameW(param, MAX_PATH, tmp, &p2) && tmp[0])
 			{
 				cds.dwData = IPC_PLAYFILEW;
 				cds.lpData = (void *) tmp;
@@ -747,9 +748,9 @@ wchar_t *CheckSkin(wchar_t *lpszCmdParam, HWND hwnd_other, int *exit)
 		if (p && *p == L'\"') { p++; if (wcsstr(p, L"\"")) wcsstr(p, L"\"")[0] = 0; }
 
 		// this is roughly equivalent to PathUndecorate, which we can't use because it requires IE 5.0+
-		StringCchCopyW(outname, MAX_PATH, PathFindFileNameW(p));
+		StringCchCopyW(outname, MAX_PATH, FilePath::FindFileName(p));
 		StringCchCopyW(buf, MAX_PATH, SKINDIR);
-		PathCombineW(buf2, buf, outname);
+		FilePath::Combine(buf2, buf, outname);
 
 		_r_sW("skin", current, MAX_PATH);
 

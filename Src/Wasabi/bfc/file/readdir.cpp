@@ -1,4 +1,5 @@
 #include "..\..\bfc\precomp_wasabi_bfc.h"
+#include "../nu/FilePath.h"
 
 #include "readdir.h"
 
@@ -40,7 +41,7 @@ int ReadDir::next()
         if ( first )
         {
             wchar_t fullpath[ MAX_PATH ];
-            PathCombineW( fullpath, path.getValue(), match.getValue() );
+            FilePath::Combine( fullpath, path.getValue(), match.getValue() );
             files = FindFirstFileW( fullpath, &data );
         }
         if ( files == INVALID_HANDLE_VALUE ) return 0;

@@ -7,6 +7,7 @@
  **/
 
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include <stdarg.h>
 #include "strutil.h"
 
@@ -33,7 +34,7 @@ void systray_minimize(wchar_t *tip)
 		if(newindex == -666) {
 			wchar_t tmp[MAX_PATH] = {0};
 			StringCchPrintfW(tmp,MAX_PATH,L"%s\\winamp.ico",CONFIGDIR);
-			if(!PathFileExistsW(tmp)) {
+			if(!FilePath::Exists(tmp)) {
 				hhIcon = (HICON)LoadImageW(hMainInstance,MAKEINTRESOURCEW(ICON_XP),IMAGE_ICON,16,16,LR_SHARED);
 			}
 			else {

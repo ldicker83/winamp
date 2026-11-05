@@ -8,6 +8,7 @@
 
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoWide.h"
 #include "../nu/AutoChar.h"
 #include "../nu/ns_wc.h"
@@ -17,7 +18,7 @@ void LoadPathsIni()
 	wchar_t pathsini[MAX_PATH] = {0};
 	wchar_t dir[1024] = {0};
 
-	PathCombineW(pathsini, PROGDIR, L"paths.ini");
+	FilePath::Combine(pathsini, PROGDIR, L"paths.ini");
 
 	GetPrivateProfileStringW(L"Winamp", L"inidir", L"", dir, 1024, pathsini);
 	if (dir[0])

@@ -1,4 +1,5 @@
 #include "FileTypeRegistrar.h"
+#include "../nu/FilePath.h"
 #include <windows.h>
 #include <shlwapi.h>
 #include <shellapi.h>
@@ -716,7 +717,7 @@ HRESULT FileTypeRegistrar::InstallItem(LPCWSTR sourceFile, LPCWSTR destinationFo
 	op.pFrom = srcFile;
 
 	wchar_t destFile[MAX_PATH+1] = {0};
-	PathCombineW(destFile, destinationFolder, destinationFilename);
+	FilePath::Combine(destFile, destinationFolder, destinationFilename);
 	destFile[wcslen(destFile)+1]=0; // double null terminate
 	op.pTo = destFile;
 
@@ -791,14 +792,14 @@ HRESULT FileTypeRegistrar::CleanupDirectory(LPCWSTR directory)
 {
 	wchar_t dirmask[MAX_PATH] = {0};
 	WIN32_FIND_DATAW d = {0};
-	PathCombineW(dirmask, directory, L"*.*");
+	FilePath::Combine(dirmask, directory, L"*.*");
 	HANDLE h = FindFirstFileW(dirmask, &d);
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		do
 		{
 			wchar_t v[MAX_PATH] = {0};
-			PathCombineW(v, directory, d.cFileName);
+			FilePath::Combine(v, directory, d.cFileName);
 			if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
 				if (wcscmp(d.cFileName,L".") && wcscmp(d.cFileName,L".."))

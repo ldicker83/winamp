@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "Options.h"
 #include "dsp.h"
@@ -45,7 +46,7 @@ static void DSPUpdateSel( HWND hwndDlg, HWND listWindow, INT iItem )
 		if ( *libname && !skip )
 		{
 			wchar_t b[ 1024 ] = { 0 };
-			PathCombineW( b, DSPDIR, libname );
+			FilePath::Combine( b, DSPDIR, libname );
 
 			HINSTANCE hLib = LoadLibraryW( b );
 
@@ -152,7 +153,7 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 			WIN32_FIND_DATAW d = { 0 };
 			wchar_t dirstr[ MAX_PATH ] = { 0 };
-			PathCombineW( dirstr, DSPDIR, L"DSP_*.DLL" );
+			FilePath::Combine( dirstr, DSPDIR, L"DSP_*.DLL" );
 
 			HANDLE h = FindFirstFileW( dirstr, &d );
 			if ( h != INVALID_HANDLE_VALUE )
@@ -162,7 +163,7 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 					if ( !g_safeMode )
 					{
 						wchar_t dsp_dir[ 1024 ] = { 0 }, namestr[ MAX_PATH + 256 ] = { 0 };
-						PathCombineW( dsp_dir, DSPDIR, d.cFileName );
+						FilePath::Combine( dsp_dir, DSPDIR, d.cFileName );
 
 						HINSTANCE hLib = LoadLibraryW( dsp_dir );
 						if ( hLib )
@@ -354,7 +355,7 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 				if ( IsWindowEnabled( GetDlgItem( hwndDlg, IDC_DSPCONF ) ) )
 				{
 					wchar_t b[ 1024 ] = { 0 };
-					PathCombineW( b, DSPDIR, config_dspplugin_name );
+					FilePath::Combine( b, DSPDIR, config_dspplugin_name );
 					HINSTANCE hLib = LoadLibraryW( b );
 					if ( hLib )
 					{
@@ -419,7 +420,7 @@ INT_PTR CALLBACK DspProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam 
 					{
 						wchar_t b[ MAX_PATH ] = { 0 };
 						dsp_quit();
-						PathCombineW( b, DSPDIR, fn );
+						FilePath::Combine( b, DSPDIR, fn );
 
 						HINSTANCE hLib = LoadLibraryW( b );
 						if ( hLib )

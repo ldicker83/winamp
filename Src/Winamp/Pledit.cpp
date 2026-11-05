@@ -1,4 +1,5 @@
 #include <windowsx.h>
+#include "../nu/FilePath.h"
 
 #include "Main.h"
 #include "ipc_pe.h"
@@ -1380,7 +1381,7 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							wchar_t fn[FILENAME_SIZE] = {0};
 
 							PlayList_getitem(x, fn, NULL);
-							if (!PathIsURLW(fn))
+							if (!FilePath::IsUrl(fn))
 							{
 								SHFILEOPSTRUCTW fileOp = {0};
 								wchar_t file[FILENAME_SIZE] = {0};
@@ -1427,7 +1428,7 @@ LRESULT CALLBACK PE_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						FILE *fp = NULL;
 						PlayList_getitem(x, fn, NULL);
 						fp = _wfopen(fn, L"rb");
-						if (!PathIsURLW(fn) && !(fp/* = _wfopen(fn, L"rb")*/))
+						if (!FilePath::IsUrl(fn) && !(fp/* = _wfopen(fn, L"rb")*/))
 						{
 							PlayList_deleteitem(x);
 						}

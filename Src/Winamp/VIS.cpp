@@ -1,4 +1,5 @@
 #include <windowsx.h>
+#include "../nu/FilePath.h"
 
 #include "Main.h"
 #include "vis.h"
@@ -28,7 +29,7 @@ static HWND external_window = NULL;
 static HWND external_window_host = NULL;
 
 #ifdef _M_IX86
-__inline static int lrint(float flt)
+__inline static int FastRound(float flt)
 {
 	int intgr;
 
@@ -41,7 +42,7 @@ __inline static int lrint(float flt)
 	return intgr;
 }
 #else
-__inline static int lrint(float flt)
+__inline static int FastRound(float flt)
 {
 	return (int)flt;
 }
@@ -153,7 +154,7 @@ void vis_start(HWND hwnd, wchar_t *fn)
 	killThread=0;
 	if (!fn || !*fn)
 	{
-		PathCombineW(_visplugin_name, VISDIR, config_visplugin_name);
+		FilePath::Combine(_visplugin_name, VISDIR, config_visplugin_name);
 		_visplugin_num=config_visplugin_num;
 	}
 	else
@@ -168,8 +169,8 @@ void vis_start(HWND hwnd, wchar_t *fn)
 			_visplugin_num=_wtoi(p);
 		}
 		else _visplugin_num=0;
-		if (PathIsFileSpecW(buf) || PathIsRelativeW(buf))
-			PathCombineW(_visplugin_name, VISDIR, buf);
+		if (FilePath::IsFileSpec(buf) || FilePath::IsRelative(buf))
+			FilePath::Combine(_visplugin_name, VISDIR, buf);
 		else
 			StringCchCopyW(_visplugin_name,512,buf);
 	}
@@ -730,15 +731,15 @@ void vsa_addpcmdata(void *_data_buf, int numChannels, int numBits, int ts)
 					thisBand++;
 
 					FASTMIN(thisValue, 255.f);
-					data[data_offs++] = lrint((thisValue + la)/2.f);
-					//data[data_offs++] = lrint((thisValue + thisValue + la)/3.f);
-					data[data_offs++] = lrint(thisValue);
+					data[data_offs++] = FastRound((thisValue + la)/2.f);
+					//data[data_offs++] = FastRound((thisValue + thisValue + la)/3.f);
+					data[data_offs++] = FastRound(thisValue);
 					la=thisValue;
 				}
 				while ((data_offs % 576)!=0)
 				{
 					la/=2;
-					data[data_offs++]=lrint(la);
+					data[data_offs++]=FastRound(la);
 				}
 
 				assert((data_offs % 576)==0);

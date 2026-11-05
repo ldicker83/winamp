@@ -1,6 +1,7 @@
 ﻿// the modern file info box
 
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "api.h"
 #include "../nu/AutoWide.h"
@@ -1158,8 +1159,8 @@ static INT_PTR CALLBACK FileInfo_Artwork(HWND hwndDlg, UINT uMsg, WPARAM wParam,
 				OPENFILENAMEW fn = {sizeof(OPENFILENAMEW),0};
 				// set the ofd to the current file's folder
 				lstrcpynW(folder,p->filename,MAX_PATH);
-				PathRemoveFileSpecW(folder);
-				PathAddBackslashW(folder);
+				FilePath::RemoveFileSpec(folder);
+				FilePath::AddBackslash(folder);
 				fn.lpstrInitialDir = folder;
 				fn.hwndOwner = hwndDlg;
 				fn.lpstrFile = file;
@@ -1248,8 +1249,8 @@ static INT_PTR CALLBACK FileInfo_Artwork(HWND hwndDlg, UINT uMsg, WPARAM wParam,
 				OPENFILENAMEW fn = {sizeof(OPENFILENAMEW),0};
 				// set the ofd to the current file's folder
 				lstrcpynW(folder,p->filename,MAX_PATH);
-				PathRemoveFileSpecW(folder);
-				PathAddBackslashW(folder);
+				FilePath::RemoveFileSpec(folder);
+				FilePath::AddBackslash(folder);
 				fn.lpstrInitialDir = folder;
 				fn.hwndOwner = hwndDlg;
 				fn.lpstrFile = file;
@@ -1783,7 +1784,7 @@ INT_PTR CALLBACK EditInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					wchar_t fn[FILENAME_SIZE] = {0};
 					if (PlayList_getselect2(i, fn))
 					{
-						if (!PathIsURLW(fn) || !_wcsnicmp(fn, L"cda://", 6))
+						if (!FilePath::IsUrl(fn) || !_wcsnicmp(fn, L"cda://", 6))
 						{
 							queryStructW *query = (queryStructW *)calloc(1, sizeof(queryStructW));
 							if (query)

@@ -7,6 +7,7 @@
  **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include <windows.h>
 #include "strutil.h"
 #include "../nu/ns_wc.h"
@@ -547,19 +548,19 @@ LPCWSTR BuildFullPath(LPCWSTR pszPathRoot, LPCWSTR pszPath, LPWSTR pszDest, INT 
 		pszDest[0] = 0x00;
 		return pszDest;
 	}
-	pszFile = PathFindFileNameW(pszPath);
+	pszFile = FilePath::FindFileName(pszPath);
 	if (pszFile != pszPath) 
 	{		
-		if (PathIsRelativeW(pszPath))
+		if (FilePath::IsRelative(pszPath))
 		{	
 			wchar_t szTemp[MAX_PATH] = {0};
-			PathCombineW(szTemp, pszPathRoot, pszPath);
-			PathCanonicalizeW(pszDest, szTemp);
+			FilePath::Combine(szTemp, pszPathRoot, pszPath);
+			FilePath::Canonicalize(pszDest, szTemp);
 		}
 		else StringCchCopyW(pszDest, cchDest, pszPath);
 	}
 	else {
-		if (pszPathRoot && *pszPathRoot) PathCombineW(pszDest, pszPathRoot, pszPath);
+		if (pszPathRoot && *pszPathRoot) FilePath::Combine(pszDest, pszPathRoot, pszPath);
 		else StringCchCopyW(pszDest, cchDest, pszPath);
 	}
 	
@@ -576,8 +577,8 @@ INT ComparePath(LPCWSTR pszPath1, LPCWSTR pszPath2, LPCWSTR pszPathRoot)  // com
 
 	lcid = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 	
-	pszFile1 = PathFindFileNameW(pszPath1);
-	pszFile2 = PathFindFileNameW(pszPath2);
+	pszFile1 = FilePath::FindFileName(pszPath1);
+	pszFile2 = FilePath::FindFileName(pszPath2);
 
 	cr = CompareStringW(lcid, NORM_IGNORECASE, pszFile1, -1, pszFile2, -1);
 	

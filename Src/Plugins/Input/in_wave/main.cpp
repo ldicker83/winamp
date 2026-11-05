@@ -2,6 +2,7 @@
 #define PLUGIN_VERSION L"3.27"
 
 #include "../Winamp/in2.h"
+#include "../nu/FilePath.h"
 #include "../Winamp/wa_ipc.h"
 #include "main.h"
 #include "AudioThread.h"
@@ -184,7 +185,7 @@ void GetFileInfo( const wchar_t *file, wchar_t *title, int *length_in_ms )
 			else
 			{
 				lstrcpynW( title, fn, GETFILEINFO_TITLE_LENGTH );
-				PathStripPathW( title );
+				FilePath::StripPath( title );
 			}
 		}
 
@@ -196,7 +197,7 @@ void GetFileInfo( const wchar_t *file, wchar_t *title, int *length_in_ms )
 		if ( title )
 		{
 			lstrcpynW( title, fn, GETFILEINFO_TITLE_LENGTH );
-			PathStripPathW( title );
+			FilePath::StripPath( title );
 		}
 	}
 }
@@ -371,7 +372,7 @@ extern "C"	__declspec( dllexport ) int winampGetExtendedFileInfoW( const wchar_t
 
 	if ( KeywordMatch( data, "family" ) )
 	{
-		LPCWSTR ext = PathFindExtensionW( fn );
+		LPCWSTR ext = FilePath::FindExtension( fn );
 		if ( L'.' != *ext )
 			return 0;
 
@@ -380,7 +381,7 @@ extern "C"	__declspec( dllexport ) int winampGetExtendedFileInfoW( const wchar_t
 
 	if ( KeywordMatch( data, "mime" ) )
 	{
-		LPCWSTR ext = PathFindExtensionW( fn );
+		LPCWSTR ext = FilePath::FindExtension( fn );
 		if ( ext && !_wcsicmp( ext, L".wav" ) )
 		{
 			StringCchCopyW( dest, destlen, L"audio/wav" );

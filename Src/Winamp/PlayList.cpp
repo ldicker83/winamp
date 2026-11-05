@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "../nu/FilePath.h"
 #include <assert.h>
 #include "MoreItems.h"
 #include "../nu/AutoLock.h"
@@ -84,7 +85,7 @@ void plstring_init()
 	if ( !ndestring_tried_load )
 	{
 		wchar_t path[ MAX_PATH ] = { 0 };
-		PathCombineW( path, SHAREDDIR, L"nde.dll" );
+		FilePath::Combine( path, SHAREDDIR, L"nde.dll" );
 
 		HMODULE ndelib = LoadLibraryW( path );
 		if ( ndelib )
@@ -911,10 +912,10 @@ extern "C"
 		if (!title[0])
 		{
 			StringCchCopyW(title, titleCch, filename);
-			if (!PathIsURLW(filename))
+			if (!FilePath::IsUrl(filename))
 			{
-				PathStripPathW(title);
-				PathRemoveExtensionW(title);
+				FilePath::StripPath(title);
+				FilePath::RemoveExtension(title);
 			}
 		}
 
@@ -934,7 +935,7 @@ extern "C"
 		hts.length = -1;
 		hts.title = narrowTitle;
 
-		if ( PathIsURLW( filename ) )
+		if ( FilePath::IsUrl( filename ) )
 		{
 			wchar_t buf[ 32 ] = { 0 };
 			extendedFileInfoStructW s = { filename, L"streammetadata", buf, sizeof( buf ) / sizeof( wchar_t ) };
@@ -947,7 +948,7 @@ extern "C"
 
 		/*
 		wchar_t buf[32]=L"";
-		if (PathIsURLW(filename) && in_get_extended_fileinfoW(filename, L"streammetadata", buf, sizeof(buf)/sizeof(wchar_t)) && buf[0]=='1')
+		if (FilePath::IsUrl(filename) && in_get_extended_fileinfoW(filename, L"streammetadata", buf, sizeof(buf)/sizeof(wchar_t)) && buf[0]=='1')
 			hts.force_useformatting = 1;
 		*/
 
@@ -982,7 +983,7 @@ extern "C"
 		hts.length = -1;
 		hts.title = title;
 
-		if (PathIsURLW(filename))
+		if (FilePath::IsUrl(filename))
 		{
 			wchar_t buf[32] = {0};
 			extendedFileInfoStructW s = {filename, L"streammetadata", buf, sizeof(buf)/sizeof(wchar_t)};
@@ -996,7 +997,7 @@ extern "C"
 
 		/*
 		wchar_t buf[32]=L"";
-		if (PathIsURLW(filename) && in_get_extended_fileinfoW(filename, L"streammetadata", buf, 32) && buf[0]=='1')
+		if (FilePath::IsUrl(filename) && in_get_extended_fileinfoW(filename, L"streammetadata", buf, 32) && buf[0]=='1')
 			hts.force_useformatting = 1;
 
 		*/
@@ -1030,7 +1031,7 @@ extern "C"
 		AutoLock lock (playlistGuard);
 		static wchar_t title[GETFILEINFO_TITLE_LENGTH] = {0};
 		CHECK_STUFF();
-		if (useID3 || (filename[0] && !StrCmpIW(PathFindExtensionW(filename), L"aip")))
+		if (useID3 || (filename[0] && !StrCmpIW(FilePath::FindExtension(filename), L"aip")))
 		{
 			if (filename[0])
 			{
@@ -1073,7 +1074,7 @@ extern "C"
 		else
 		{
 			_lastlen = -1;
-			if (filename[0] && PathIsURLW(filename))
+			if (filename[0] && FilePath::IsUrl(filename))
 			{
 				if (title) StringCchCopyW(title, GETFILEINFO_TITLE_LENGTH, filename);
 			}
@@ -1081,8 +1082,8 @@ extern "C"
 			{
 				wchar_t buf[1024] = {0};
 				StringCchCopyW(buf, 1024, filename);
-				StringCchCopyW(title, GETFILEINFO_TITLE_LENGTH, PathFindFileNameW(buf));
-				PathRemoveExtensionW(title);
+				StringCchCopyW(title, GETFILEINFO_TITLE_LENGTH, FilePath::FindFileName(buf));
+				FilePath::RemoveExtension(title);
 			}
 		}
 		return title;
@@ -1094,7 +1095,7 @@ extern "C"
 		bool cached = true;
 		wchar_t fn[FILENAME_SIZE] = {0};
 		CHECK_STUFF();
-		if (!(is_nde_string & 1) && !PathIsURLW(filename))
+		if (!(is_nde_string & 1) && !FilePath::IsUrl(filename))
 		{
 			if (wcsstr(fn, L"\\"))
 			{
@@ -1164,7 +1165,7 @@ extern "C"
 		bool cached = true;
 		wchar_t fn[FILENAME_SIZE] = {0};
 		CHECK_STUFF();
-		if (!PathIsURLW(filename))
+		if (!FilePath::IsUrl(filename))
 		{
 			if (wcsstr(fn, L"\\"))
 			{
@@ -1293,7 +1294,7 @@ extern "C"
 			else
 				PlayList_append(url, is_nde_string);
 		}
-		else if (PathIsURLW(url))
+		else if (FilePath::IsUrl(url))
 		{
 			if (LoadPlaylist(url, 1, doMIMEcheck) == -1) // if it's not a playlist file
 				PlayList_append(url, is_nde_string);
@@ -1835,8 +1836,8 @@ extern "C"
 
 	static bool PlayList_sortByFile(pl_entry &a, pl_entry &b) //const void *a, const void *b)
 	{
-		const wchar_t *file1 = PathFindFileNameW(a.strFile);
-		const wchar_t *file2 = PathFindFileNameW(b.strFile);
+		const wchar_t *file1 = FilePath::FindFileName(a.strFile);
+		const wchar_t *file2 = FilePath::FindFileName(b.strFile);
 
 		//		int comp = CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE | /*NORM_IGNOREKANATYPE |*/ NORM_IGNOREWIDTH, file1, -1, file2 , -1);
 		//return comp == CSTR_LESS_THAN;
@@ -1957,8 +1958,8 @@ extern "C"
 		{
 			wchar_t path[MAX_PATH] = {0};
 			StringCchCopyW(path, MAX_PATH, listfile);
-			PathRemoveFileSpecW(path);
-			PathRemoveBackslashW(path);
+			FilePath::RemoveFileSpec(path);
+			FilePath::RemoveBackslash(path);
 			MakeRelativePathName(filename, filename, path);
 		}
 	}
@@ -1999,7 +2000,7 @@ int LoadPlaylistByExtension(const wchar_t *fn, const wchar_t *ext, int whattodo,
 
 	int i = 0;
 
-	if (PathIsURLW(fn))
+	if (FilePath::IsUrl(fn))
 		return 1;
 
 	if (PlayList_getlength())
@@ -2029,7 +2030,7 @@ int LoadPlaylist(const wchar_t *filename, int whattodo, int doMIMEcheck)
 	wchar_t ext[65]=L".";
 	extension_exW(filename, ext+1, 64); // TODO: make api_playlistmanager use this function
 	int x = LoadPlaylistByExtension(filename, ext, whattodo, 0);
-	if (doMIMEcheck && x == -1 && PathIsURLW(filename))
+	if (doMIMEcheck && x == -1 && FilePath::IsUrl(filename))
 	{
 		/*
 		benski> disabled for now

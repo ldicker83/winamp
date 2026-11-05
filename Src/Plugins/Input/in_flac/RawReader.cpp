@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include "RawReader.h"
+#include "../nu/FilePath.h"
 #include "main.h"
 #include <limits.h>
 #include <shlwapi.h>
@@ -12,7 +13,7 @@
 
 static bool IsMyExtension(const wchar_t *filename)
 {
-	const wchar_t *extension = PathFindExtensionW(filename);
+	const wchar_t *extension = FilePath::FindExtension(filename);
 	if (extension && *extension)
 	{
 		wchar_t exts[128] = {0};

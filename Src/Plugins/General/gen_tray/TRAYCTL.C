@@ -5,6 +5,9 @@
 // Copyright (C) 1997, Justin Frankel/Nullsoft
 // Modifications and useability enhancements by DrO aka Darren Owen 2006-2014
 #include <windows.h>
+#include "../nu/FilePath.h"
+#include <string>
+#include <vector>
 #include <commctrl.h>
 #include <shlwapi.h>
 #include "../winamp/gen.h"
@@ -263,7 +266,7 @@ void do_icons(int force)
 		{
 			// check if an icon pack has not been set or it's not a valid file that's being passed
 			// if so then need to use the default icons
-			if (!ico_pack[0] || !PathFileExists(ico_pack) )
+			if (!ico_pack[0] || !FilePath::Exists(ico_pack) )
 			{
 				if (!Icons[i]) Icons[i] = LoadIcon(plugin.hDllInstance,MAKEINTRESOURCE(IDI_ICON1+i));
 				if (i == 5) {
@@ -1210,64 +1213,40 @@ BOOL CALLBACK ConfigProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
 			
 			dlg_init = 0;
 
-			WIN32_FIND_DATA findfile = {0};
-			wchar_t use[MAX_PATH] = {0};
-
-			StringCchPrintf(use,MAX_PATH,L"%s\\Plugins\\Tray_Control\\*.*",wa_path);
-			HANDLE hFind = FindFirstFile(use, &findfile);
-
-			while(hFind && hFind != INVALID_HANDLE_VALUE)
+			// a pack can also sit directly in Tray_Control or Plugins, which is listed as ".\pack" or "..\pack"
+			const std::filesystem::path trayControl = std::filesystem::path(wa_path) / L"Plugins" / L"Tray_Control";
+			std::vector<std::wstring> packDirectories;
+			if (FilePath::IsDirectory(trayControl))
 			{
-				if(findfile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
-				WIN32_FIND_DATA subfile = {0};
-					StringCchPrintf(use,MAX_PATH,L"%s\\Plugins\\Tray_Control\\%s\\*.icp",
-									wa_path,findfile.cFileName,findfile.cFileName);
+				packDirectories.push_back(L".");
+				packDirectories.push_back(L"..");
+			}
+			for (const auto &entry : FilePath::List(trayControl))
+			{
+				if (FilePath::IsDirectory(entry))
+					packDirectories.push_back(entry.path().filename().native());
+			}
 
-					HANDLE hsubFind = FindFirstFile(use,&subfile);
-
-					while(hsubFind && hsubFind != INVALID_HANDLE_VALUE){
-					wchar_t icpname[MAX_PATH] = {0};
-						StringCchPrintf(icpname,MAX_PATH,
-										L"%s\\Plugins\\Tray_Control\\%s\\%s",
-										wa_path,findfile.cFileName,subfile.cFileName);
-
-						if(PathFileExists(icpname))
+			for (const std::wstring &directory : packDirectories)
+			{
+				for (const auto &icp : FilePath::List(trayControl / directory, L"*.icp"))
+				{
+					const std::wstring name = icp.path().stem().native();
+					if(!lstrcmpiW(directory.c_str(),name.c_str()))
+					{
+						SendDlgItemMessageW(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)name.c_str());
+					}
+					else
+					{
+						wchar_t str[MAX_PATH] = {0};
+						int insertpos = 0;
+						StringCchPrintf(str,MAX_PATH,L"%s\\%s",directory.c_str(),name.c_str());
+						insertpos = (int)SendDlgItemMessage(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)str);
+						if(insertpos != CB_ERR)
 						{
-							// need to ideally make this one work with CharPrev(..)
-							wchar_t* p = subfile.cFileName + lstrlen(subfile.cFileName) - 1;
-							while(p && *p && *p != L'.'){p = CharPrevW(subfile.cFileName, p);}
-							if (p) *p = 0;
-							if(!lstrcmpiW(findfile.cFileName,subfile.cFileName))
-							{
-								SendDlgItemMessageW(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)subfile.cFileName);
-							}
-							else
-							{
-								wchar_t str[MAX_PATH] = {0};
-								int insertpos = 0;
-								StringCchPrintf(str,MAX_PATH,L"%s\\%s",findfile.cFileName,subfile.cFileName);
-								insertpos = (int)SendDlgItemMessage(hwndDlg,IDC_COMBO2,CB_ADDSTRING,0,(LPARAM)str);
-								if(insertpos != CB_ERR)
-								{
-									SendDlgItemMessage(hwndDlg,IDC_COMBO2,CB_SETITEMDATA,insertpos,1);
-								}
-							}
-						}
-
-						// if there are no more files then stop the search
-						if(hsubFind && !FindNextFile(hsubFind, &subfile))
-						{
-							FindClose(hsubFind);
-							hsubFind = 0;
+							SendDlgItemMessage(hwndDlg,IDC_COMBO2,CB_SETITEMDATA,insertpos,1);
 						}
 					}
-				}
-
-				// if there are no more files then stop the search
-				if(hFind && !FindNextFileW(hFind, &findfile))
-				{
-					FindClose(hFind);
-					hFind = 0;
 				}
 			}
 
@@ -1292,10 +1271,10 @@ BOOL CALLBACK ConfigProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
 
 					if(StrStrI(base,use))
 					{
-						pack = PathFindFileName(base);
+						pack = FilePath::FindFileName(base);
 						if (pack && *pack)
 						{
-							PathRemoveExtension(pack);
+							FilePath::RemoveExtension(pack);
 						}
 					}
 

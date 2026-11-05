@@ -1,16 +1,15 @@
 #include "SimpleLoader.h"
-#include <stdio.h>
+#include <filesystem>
+#include <fstream>
+#include <string>
 int SimpleLoader::Load(const wchar_t *filename, ifc_playlistloadercallback *playlist)
 {
-	FILE *simpleFile = _wfopen(filename, L"rt");
+	std::wifstream simpleFile{std::filesystem::path(filename)};
 	if (simpleFile)
 	{
-		wchar_t nextFile[1024];
-		while (!feof(simpleFile))
-		{
-			if (fgetws(nextFile, 1024, simpleFile))
-				playlist->OnFile(nextFile, 0, -1, 0);
-		}
+		std::wstring nextFile;
+		while (std::getline(simpleFile, nextFile))
+			playlist->OnFile(nextFile.c_str(), 0, -1, 0);
 		return IFC_PLAYLISTLOADER_SUCCESS;
 	}
 

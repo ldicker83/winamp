@@ -9,6 +9,7 @@
 
 
 #include <windows.h>
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
 
 class AutoCharFn
@@ -19,7 +20,7 @@ public:
 		out[0]=0;
 		if (!filename)
 			return;
-		if (PathIsURLW(filename))
+		if (FilePath::IsUrl(filename))
 		{
 			WideCharToMultiByte(CP_ACP, 0, filename, -1, out, FILENAME_SIZE, NULL, NULL);
 			return ;

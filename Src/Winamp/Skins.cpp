@@ -7,6 +7,7 @@
 **/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "../nu/AutoWide.h"
 #include "../nu/AutoChar.h"
 #include "../nu/ns_wc.h"
@@ -23,14 +24,14 @@ BOOL _cleanupDirW(const wchar_t *dir)
 	wchar_t dirmask[MAX_PATH] = {0};
 	HANDLE h;
 	WIN32_FIND_DATAW d = {0};
-	PathCombineW(dirmask, dir, L"*.*");
+	FilePath::Combine(dirmask, dir, L"*.*");
 	h = FindFirstFileW(dirmask, &d);
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		do
 		{
 			wchar_t v[MAX_PATH] = {0};
-			PathCombineW(v, dir, d.cFileName);
+			FilePath::Combine(v, dir, d.cFileName);
 			if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
 				if (wcscmp(d.cFileName,L".") && wcscmp(d.cFileName,L".."))
@@ -109,8 +110,8 @@ static void make_skin_dir(void)
 	{
 		if (_wcsicmp(extensionW(config_skin), L"zip") && _wcsicmp(extensionW(config_skin), L"wsz") && _wcsicmp(extensionW(config_skin), L"wal"))
 		{
-			if (PathIsFileSpecW(config_skin) || PathIsRelativeW(config_skin))
-				PathCombineW(skin_directory, SKINDIR, config_skin);
+			if (FilePath::IsFileSpec(config_skin) || FilePath::IsRelative(config_skin))
+				FilePath::Combine(skin_directory, SKINDIR, config_skin);
 			else 
 				StringCchCopyW(skin_directory, MAX_PATH, config_skin);
 		}
@@ -124,8 +125,8 @@ static void make_skin_dir(void)
 			_w_sW(str, SKINTEMPDIR);
 			{
 				unzFile f;
-				if (PathIsFileSpecW(config_skin) || PathIsRelativeW(config_skin))
-					PathCombineW(dirmask, SKINDIR, config_skin);
+				if (FilePath::IsFileSpec(config_skin) || FilePath::IsRelative(config_skin))
+					FilePath::Combine(dirmask, SKINDIR, config_skin);
 				else
 					StringCchCopyW(dirmask, MAX_PATH, config_skin);
 				f = unzOpen(AutoChar(dirmask)); 
@@ -190,7 +191,7 @@ static void make_skin_dir(void)
 										!_stricmp(p, "mpeg") || !_stricmp(p, "url") || !_stricmp(p, "jpg") ||
 										!_stricmp(p, "mi") ) ) )
 									{
-										PathCombineW(dirmask, SKINTEMPDIR, AutoWide(fn));
+										FilePath::Combine(dirmask, SKINTEMPDIR, AutoWide(fn));
 										CreateDirectoryForFileW(dirmask, SKINTEMPDIR);
 										goto do_write;
 									}
@@ -207,7 +208,7 @@ static void make_skin_dir(void)
 									{
 										HANDLE fp;
 
-										PathCombineW(dirmask, SKINTEMPDIR, AutoWide(fn));
+										FilePath::Combine(dirmask, SKINTEMPDIR, AutoWide(fn));
 
 do_write:
 										//fp = fopen(dirmask,"wb");
@@ -486,7 +487,7 @@ static void Skin_LoadCursors( void )
 		if ( config_skin[ 0 ] )
 		{
 			wchar_t sn[ MAX_PATH ] = { 0 };
-			PathCombineW( sn, skin_directory, cursor_loads[ x ].fn );
+			FilePath::Combine( sn, skin_directory, cursor_loads[ x ].fn );
 			hc = (HCURSOR) LoadImageW( NULL, sn, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE );
 		}
 
@@ -506,18 +507,18 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory)
 		return !_wcsicmp(extensionW((wchar_t *)name), L"wal");
 
 	wchar_t path[MAX_PATH] = {0};
-	PathCombineW(path, SKINDIR, name);
-	PathAppendW(path, L"skin.xml");
-	return PathFileExistsW(path);
+	FilePath::Combine(path, SKINDIR, name);
+	FilePath::Append(path, L"skin.xml");
+	return FilePath::Exists(path);
 }
 
 BOOL Skin_Check_Modern_Support()
 {
 	wchar_t fn[ MAX_PATH ] = { 0 };
 
-	PathCombineW( fn, skin_directory, L"skin.xml" );
+	FilePath::Combine( fn, skin_directory, L"skin.xml" );
 
-	if ( PathFileExistsW( fn ) && !GetModuleHandleW( L"gen_ff.dll" ) )
+	if ( FilePath::Exists( fn ) && !GetModuleHandleW( L"gen_ff.dll" ) )
 	{
 		g_skinmissinggenff = 1;
 
@@ -595,7 +596,7 @@ void Skin_Load(void)
 		}
 
 		wchar_t fn[MAX_PATH] = {0};
-		PathCombineW(fn, skin_directory, L"region.txt");
+		FilePath::Combine(fn, skin_directory, L"region.txt");
 		skin_rgn_numpoints_tot = getnums("Normal", "NumPoints", fn, &skin_rgn_numpoints);
 		if (skin_rgn_numpoints_tot)
 		{
@@ -729,7 +730,7 @@ s4:
 #if 0
 		{
 			char str[1024] = {0};
-			PathCombine(fn, skin_directory, "mb.ini");
+			FilePath::Combine(fn, skin_directory, "mb.ini");
 			GetPrivateProfileString("Winamp", "MBOpen", "", str, sizeof(str), fn);
 			str[1023] = 0;
 			if (str[0])
@@ -749,7 +750,7 @@ s4:
 		}
 #endif
 
-		PathCombineW(fn, skin_directory, L"pledit.txt");
+		FilePath::Combine(fn, skin_directory, L"pledit.txt");
 
 		Skin_PLColors[0] = hexGetPrivateProfileInt("Text", "Normal",     Skin_PLColors[0], fn);
 		Skin_PLColors[1] = hexGetPrivateProfileInt("Text", "Current",    Skin_PLColors[1], fn);
@@ -778,7 +779,7 @@ void Skin_Random(void)
 		WIN32_FIND_DATAW d = {0};
 		int v, x;
 		wchar_t dirmask[MAX_PATH] = {0};
-		PathCombineW(dirmask, SKINDIR, L"*");
+		FilePath::Combine(dirmask, SKINDIR, L"*");
 		x = 1;
 		h = FindFirstFileW(dirmask, &d);
 		if (h != INVALID_HANDLE_VALUE)

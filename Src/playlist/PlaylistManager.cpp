@@ -1,4 +1,5 @@
 #include <strsafe.h>
+#include "../nu/FilePath.h"
 #include <shlwapi.h>
 #include <algorithm>
 
@@ -51,14 +52,14 @@ static void MakeRelativePathName( const wchar_t *filename, wchar_t *outFile, siz
 {
 	wchar_t outPath[ MAX_PATH ] = { 0 };
 
-	int common = PathCommonPrefixW( path, filename, outPath );
+	int common = FilePath::CommonPrefix( path, filename, outPath );
 	if ( common && common == wcslen( path ) )
 	{
-		PathAddBackslashW( outPath );
+		FilePath::AddBackslash( outPath );
 		const wchar_t *p = filename + wcslen( outPath );
 		lstrcpynW( outFile, p, (int)cch );
 	}
-	else if ( !PathIsUNCW( filename ) && PathIsSameRootW( filename, path ) )
+	else if ( !FilePath::IsUnc( filename ) && FilePath::IsSameRoot( filename, path ) )
 	{
 		if ( outFile[ 1 ] == ':' )
 			lstrcpynW( outFile, filename + 2, (int)cch );
@@ -158,7 +159,7 @@ int PlaylistManager::LoadFromDialog( const wchar_t *fns, ifc_playlistloadercallb
 	while ( fns && *fns )
 	{
 		if ( *path )
-			PathCombineW( buf, path, fns );
+			FilePath::Combine( buf, path, fns );
 		else
 			StringCchCopyW( buf, MAX_PATH, fns );
 
@@ -182,7 +183,7 @@ int PlaylistManager::LoadFromANSIDialog( const char *fns, ifc_playlistloadercall
 	while ( fns && *fns )
 	{
 		if ( *path )
-			PathCombineA( buf, path, fns );
+			FilePath::Combine( buf, path, fns );
 		else
 			lstrcpynA( buf, fns, MAX_PATH );
 
@@ -201,7 +202,7 @@ int PlaylistManager::LoadFromANSIDialog( const char *fns, ifc_playlistloadercall
 
 int PlaylistManager::Save( const wchar_t *filename, ifc_playlist *playlist )
 {
-	const wchar_t *ext = PathFindExtensionW( filename );
+	const wchar_t *ext = FilePath::FindExtension( filename );
 	PlaylistWriter *writer = 0;
 
 	if ( !lstrcmpiW( ext, L".M3U" ) )
@@ -215,8 +216,8 @@ int PlaylistManager::Save( const wchar_t *filename, ifc_playlist *playlist )
 
 	wchar_t base[ MAX_PATH ] = { 0 };
 	StringCchCopyW( base, MAX_PATH, filename );
-	PathRemoveFileSpecW( base );
-	PathRemoveBackslashW( base );
+	FilePath::RemoveFileSpec( base );
+	FilePath::RemoveBackslash( base );
 
 	if ( !writer->Open( filename ) )
 	{
@@ -391,7 +392,7 @@ void PlaylistManager::LoadDirectory( const wchar_t *directory, ifc_playlistloade
 {
 	WIN32_FIND_DATAW found = { 0 };
 	wchar_t filespec[ MAX_PATH ] = { 0 };
-	PathCombineW( filespec, directory, L"*.*" );
+	FilePath::Combine( filespec, directory, L"*.*" );
 
 	HANDLE i = FindFirstFileW( filespec, &found );
 	if ( i != INVALID_HANDLE_VALUE )
@@ -403,7 +404,7 @@ void PlaylistManager::LoadDirectory( const wchar_t *directory, ifc_playlistloade
 				 && wcscmp( found.cFileName, L"." ) && wcscmp( found.cFileName, L".." ) // but not . or ..
 				 && ( !dirCallback || dirCallback->ShouldRecurse( found.cFileName ) ) ) // and we're allowed to recurse
 			{
-				if ( PathCombineW( filespec, directory, found.cFileName ) )
+				if ( FilePath::Combine( filespec, directory, found.cFileName ) )
 				{
 					LoadDirectory( filespec, callback, dirCallback );
 				}
@@ -411,14 +412,14 @@ void PlaylistManager::LoadDirectory( const wchar_t *directory, ifc_playlistloade
 
 			if ( !( found.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
 			{
-				const wchar_t *ext = PathFindExtensionW( found.cFileName );
+				const wchar_t *ext = FilePath::FindExtension( found.cFileName );
 				if ( ext[ 0 ] )
 				{
 					if ( !_wcsicmp( ext, L".lnk" ) )
 					{
 						wchar_t thisf[ MAX_PATH ] = { 0 };
 						wchar_t temp2[ MAX_PATH ] = { 0 };
-						PathCombineW( temp2, directory, found.cFileName );
+						FilePath::Combine( temp2, directory, found.cFileName );
 						if ( ResolveShortCut( NULL, temp2, thisf ) && GetLongPathNameW( thisf, temp2, MAX_PATH ) && lstrcmpiW( temp2, directory ) )
 						{
 							WIN32_FIND_DATAW d2 = { 0 };
@@ -457,7 +458,7 @@ void PlaylistManager::LoadDirectory( const wchar_t *directory, ifc_playlistloade
 					else // !shortcut
 					{
 
-						if ( PathCombineW( filespec, directory, found.cFileName ) &&
+						if ( FilePath::Combine( filespec, directory, found.cFileName ) &&
 							 ( !dirCallback || dirCallback->ShouldLoad( filespec ) ) )
 						{
 							if ( callback->OnFile( filespec, 0, -1, 0 ) != ifc_playlistloadercallback::LOAD_CONTINUE )

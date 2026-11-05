@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "ExplorerFindFile.h"
 
 ExplorerFindFile::ExplorerFindFile()
@@ -71,19 +72,19 @@ BOOL ExplorerFindFile::AddFile( wchar_t *file )
 		// and now get the folder path of the file
 		lstrcpynW( folder, file, MAX_PATH );
 
-		if ( PathIsRelativeW( folder ) )
+		if ( FilePath::IsRelative( folder ) )
 		{
 			// sort out relative files based against winamp.exe
 			wchar_t szTemp[ MAX_PATH ] = { 0 }, szTemp2[ MAX_PATH ] = { 0 };
 			GetModuleFileNameW( hMainInstance, szTemp, sizeof( szTemp ) );
-			PathRemoveFileSpecW( szTemp );
-			PathCombineW( szTemp2, szTemp, folder );
-			PathCanonicalizeW( folder, szTemp2 );
+			FilePath::RemoveFileSpec( szTemp );
+			FilePath::Combine( szTemp2, szTemp, folder );
+			FilePath::Canonicalize( folder, szTemp2 );
 			// and once calculated then we copy the file back
 			lstrcpynW( file, folder, MAX_PATH );
 		}
 
-		PathRemoveFileSpecW( folder );
+		FilePath::RemoveFileSpec( folder );
 
 		HRESULT hr = pDesktopFolder->ParseDisplayName( NULL, 0, folder, 0, &folderpidl, 0 );
 		if ( FAILED( hr ) )

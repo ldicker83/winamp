@@ -15,6 +15,7 @@
 /* ------------------------ includes --------------------------------------*/
 
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "api__in_mp3.h"
 #include <time.h>
 #include <locale.h>
@@ -234,7 +235,7 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 	if ( !_wcsnicmp( pszName, L"file://", 7 ) )
 		pszName += 7;
 
-	if ( PathIsURL( pszName ) )
+	if ( FilePath::IsUrl( pszName ) )
 		return NErr_ConnectionFailed;
 	else
 	{

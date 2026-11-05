@@ -1,4 +1,5 @@
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "adts.h"
 #include <memory.h>
 #include <malloc.h>
@@ -165,7 +166,7 @@ bool ExtendedRead::Open(const wchar_t *fn, int *size, int *bps, int *nch, int *s
 		*bps = 16;
 	}
 
-	wchar_t *ext = PathFindExtensionW(fn);
+	const wchar_t *ext = FilePath::FindExtension(fn);
 	if (!_wcsicmp(ext, L".vlb"))
 	{
 		return false;

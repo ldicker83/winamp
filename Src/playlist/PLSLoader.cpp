@@ -1,4 +1,5 @@
 #include "PLSLoader.h"
+#include "../nu/FilePath.h"
 
 #include "../nu/AutoChar.h"
 #include "../nu/AutoWide.h"
@@ -46,17 +47,17 @@ int PLSLoader::OnFileHelper( ifc_playlistloadercallback *playlist, const wchar_t
 		length = -1;
 
 	int ret;
-	if ( wcsstr( trackName, L"://" ) || PathIsRootW( trackName ) )
+	if ( wcsstr( trackName, L"://" ) || FilePath::IsRoot( trackName ) )
 	{
 		ret = playlist->OnFile( trackName, title, length, extraInfo );
 	}
 	else
 	{
 		wchar_t fullPath[ MAX_PATH ] = { 0 };
-		if ( PathCombineW( fullPath, rootPath, trackName ) )
+		if ( FilePath::Combine( fullPath, rootPath, trackName ) )
 		{
 			wchar_t canonicalizedPath[ MAX_PATH ] = { 0 };
-			PathCanonicalizeW( canonicalizedPath, fullPath );
+			FilePath::Canonicalize( canonicalizedPath, fullPath );
 			ret = playlist->OnFile( canonicalizedPath, title, length, extraInfo );
 		}
 		else
@@ -83,7 +84,7 @@ int PLSLoader::Load( const wchar_t *filename, ifc_playlistloadercallback *playli
 	else
 	{
 		lstrcpynW( rootPath, filename, MAX_PATH );
-		PathRemoveFileSpecW( rootPath );
+		FilePath::RemoveFileSpec( rootPath );
 	}
 
 	tmp[ 0 ] = (char)rootPath[ 0 ];

@@ -1,4 +1,5 @@
 #include "plstring.h"
+#include "../nu/FilePath.h"
 #include "api__playlist.h"
 #include <shlwapi.h>
 #include <stdint.h>
@@ -63,7 +64,7 @@ void plstring_init()
 		wchar_t        path[ MAX_PATH ] = { 0 };
 		const wchar_t *PROGDIR          = WASABI_API_APP->path_getAppPath();
 
-		PathCombineW( path, PROGDIR, L"winamp.exe" );
+		FilePath::Combine( path, PROGDIR, L"winamp.exe" );
 		HMODULE ndelib = LoadLibraryW( path );
 		if ( ndelib )
 		{

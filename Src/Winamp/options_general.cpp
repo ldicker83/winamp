@@ -6,6 +6,7 @@
  ** Created:
  **/
 #include "main.h"
+#include "../nu/FilePath.h"
 #include "resource.h"
 #include "options.h"
 #include "winampattributes.h"
@@ -47,7 +48,7 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 			CheckDlgButton(hwndDlg,IDC_PREFS_SPLASH,config_splash?1:0);
 
 			if(!icon_tmp[0]) StringCchPrintfW(icon_tmp,MAX_PATH,L"%s\\winamp.ico",CONFIGDIR);
-			int custom_icon = PathFileExistsW(icon_tmp);
+			int custom_icon = FilePath::Exists(icon_tmp);
 			if(!custom_icon && geticonid(config_sticon) == -666) {
 				config_sticon = 0;
 			}
@@ -161,7 +162,7 @@ INT_PTR CALLBACK SetupProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM lParam)
 				hIcon = (HICON)LoadImageW(hMainInstance,MAKEINTRESOURCEW(icon_idx),IMAGE_ICON,16,16,LR_SHARED);
 			}
 			else {
-				if(!PathFileExistsW(icon_tmp)) {
+				if(!FilePath::Exists(icon_tmp)) {
 					hIcon = (HICON)LoadImageW(hMainInstance,MAKEINTRESOURCEW(ICON_XP),IMAGE_ICON,16,16,LR_SHARED);
 				}
 				else {

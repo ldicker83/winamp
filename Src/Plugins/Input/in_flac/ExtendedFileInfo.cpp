@@ -20,6 +20,9 @@
 */
 
 #include "main.h"
+#include <filesystem>
+#include <system_error>
+#include "../nu/FilePath.h"
 #include "Metadata.h"
 #include "../nu/ns_wc.h"
 #include "../nu/AutoChar.h"
@@ -61,30 +64,29 @@ bool KeywordMatch(const char *mainString, const char *keyword)
 Info *info = 0;
 FLACMetadata *getMetadata = 0;
 wchar_t *getFileInfoFn = 0;
-static FILETIME ftLastWriteTime;
+static std::filesystem::file_time_type lastWriteTime;
 
 // is used to determine if the last write time of the file has changed when
 // asked to get the metadata for the same cached file so we can update things
 BOOL HasFileTimeChanged(const wchar_t *fn)
 {
-	WIN32_FILE_ATTRIBUTE_DATA fileData = {0};
-	if (GetFileAttributesExW(fn, GetFileExInfoStandard, &fileData) == TRUE)
+	std::error_code error;
+	const auto time = std::filesystem::last_write_time(fn, error);
+	if (!error && time != lastWriteTime)
 	{
-		if(CompareFileTime(&ftLastWriteTime, &fileData.ftLastWriteTime))
-		{
-			ftLastWriteTime = fileData.ftLastWriteTime;
-			return TRUE;
-		}
+		lastWriteTime = time;
+		return TRUE;
 	}
 	return FALSE;
 }
 
 void UpdateFileTimeChanged(const wchar_t *fn)
 {
-	WIN32_FILE_ATTRIBUTE_DATA fileData;
-	if (GetFileAttributesExW(fn, GetFileExInfoStandard, &fileData) == TRUE)
+	std::error_code error;
+	const auto time = std::filesystem::last_write_time(fn, error);
+	if (!error)
 	{
-		ftLastWriteTime = fileData.ftLastWriteTime;
+		lastWriteTime = time;
 	}
 }
 
@@ -131,7 +133,7 @@ extern "C" __declspec( dllexport ) int winampGetExtendedFileInfoW(const wchar_t 
 		LPCWSTR e;
 		int pID = -1;
 		DWORD lcid;
-		e = PathFindExtensionW(fn);
+		e = FilePath::FindExtension(fn);
 		if (L'.' != *e) return 0;
 		e++;
 		lcid = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
