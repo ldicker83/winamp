@@ -10,6 +10,9 @@
 #include "../winamp/wa_ipc.h"
 #include <shlwapi.h>
 #include <strsafe.h>
+#include <filesystem>
+#include <fstream>
+#include <system_error>
 
 // wasabi based services for localisation support
 api_service *WASABI_API_SVC = 0;
@@ -524,15 +527,19 @@ static void GetName(char* out, int outCch, const char* format_ext)
 	*out=0;
 }
 
-static HANDLE hOut=INVALID_HANDLE_VALUE;
+static std::fstream hOut;
 
 static HACMSTREAM hStream;
 
 static DWORD fact_ofs,data_ofs;
 static bool riff;
 
-static DWORD FileTell(HANDLE hFile) {return SetFilePointer(hFile,0,0,FILE_CURRENT);}
-static void FileAlign(HANDLE hFile) {if (FileTell(hFile)&1) SetFilePointer(hFile,1,0,FILE_CURRENT);}
+static DWORD FileTell() {return (DWORD)static_cast<std::streamoff>(hOut.tellp());}
+static void FileAlign() {if (FileTell()&1) hOut.seekp(1,std::ios::cur);}
+static DWORD FileSize() {hOut.seekp(0,std::ios::end); return FileTell();}
+static void WriteOut(const void *data, size_t size) {hOut.write(static_cast<const char *>(data),static_cast<std::streamsize>(size));}
+static void ReadOut(void *data, size_t size) {hOut.read(static_cast<char *>(data),static_cast<std::streamsize>(size));}
+static bool OpenOut(const std::filesystem::path &file, std::ios::openmode mode) {hOut.clear(); hOut.open(file,mode|std::ios::in|std::ios::out|std::ios::binary); return hOut.is_open();}
 
 #define BUFSIZE 0x20000
 
@@ -559,16 +566,15 @@ static int pos_delta;
 int Open(int sr,int nch,int bps,int xx,int xxx)
 {
 	// if someone didn't call Close(), close the file for them
-	if (hOut!=INVALID_HANDLE_VALUE)
+	if (hOut.is_open())
 	{
-		CloseHandle(hOut);
-		hOut=INVALID_HANDLE_VALUE;
+		hOut.close();
 	}
 	int failFlags = 0;
 	SYNCFUNC;
 	char fn[512] = {0};
 	use_convert=cfg_convert_enabled;
-	DWORD bw = 0, t = 0;
+	DWORD t = 0;
 	WAVEFORMATEX wfx=
 	{
 		WAVE_FORMAT_PCM,
@@ -642,74 +648,67 @@ int Open(int sr,int nch,int bps,int xx,int xxx)
 	g_bps=bps;
 	paused=0;
 
-	SetLastError(0);
-	hOut=CreateFile(fn,GENERIC_WRITE,0,NULL,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,0);
-
-	if (hOut==INVALID_HANDLE_VALUE)
+	if (FilePath::Exists(fn))
 	{
-		DWORD e=GetLastError();
-
-		if (e==ERROR_ALREADY_EXISTS || e==0x50)
+		if (cfg_singlefile_enabled)
 		{
-			if (cfg_singlefile_enabled)
-			{
-				append=1;
-				goto _ap;
-			}
-			wchar_t tmp[512+128] = {0};
-			StringCchPrintfW(tmp, 512+128, WASABI_API_LNGSTRINGW(IDS_FILE_ALREADY_EXISTS_OVERWRITE),fn);
-			if (MessageBoxW(mod.hMainWindow,tmp,szDescription,MB_ICONQUESTION|MB_OKCANCEL)==IDOK)
-			{
-				hOut=CreateFile(fn,GENERIC_WRITE,0,0,CREATE_ALWAYS,0,0);
-			}
-			else return -1;
+			append=1;
+			goto _ap;
 		}
-		if (hOut==INVALID_HANDLE_VALUE)
-		{
-			file_err(fn, WASABI_API_LNGSTRINGW(IDS_CANNOT_CREATE_OUTPUT_FILE));
+		wchar_t tmp[512+128] = {0};
+		StringCchPrintfW(tmp, 512+128, WASABI_API_LNGSTRINGW(IDS_FILE_ALREADY_EXISTS_OVERWRITE),fn);
+		if (MessageBoxW(mod.hMainWindow,tmp,szDescription,MB_ICONQUESTION|MB_OKCANCEL)!=IDOK)
 			return -1;
-		}
+	}
+	if (!OpenOut(fn,std::ios::trunc))
+	{
+		file_err(fn, WASABI_API_LNGSTRINGW(IDS_CANNOT_CREATE_OUTPUT_FILE));
+		return -1;
 	}
 _ap:
 	fact_ofs=data_ofs=0;
 	if (append)
 	{
 
-		hOut=CreateFile(fn,GENERIC_WRITE|GENERIC_READ,0,0,OPEN_EXISTING,0,0);
-		if (hOut==INVALID_HANDLE_VALUE)
+		if (!OpenOut(fn,std::ios::openmode(0)))
 		{
 			file_err(fn, WASABI_API_LNGSTRINGW(IDS_CANNOT_OPEN_FILE));
 			return -1;
 		}
 		{
-			DWORD br=0;
 			DWORD rf=0,wfs=0;
-			ReadFile(hOut,&rf,4,&br,0);
+			ReadOut(&rf,4);
 			if (rf!='FFIR') goto ap_f;
-			SetFilePointer(hOut,4,0,FILE_CURRENT);
-			br=0; ReadFile(hOut,&rf,4,&br,0);
+			hOut.seekg(4,std::ios::cur);
+			ReadOut(&rf,4);
 			if (rf!='EVAW') goto ap_f;
-			br=0; ReadFile(hOut,&rf,4,&br,0);
+			ReadOut(&rf,4);
 			if (rf!=' tmf') goto ap_f;
 			static WAVEFORMATEX ap_wfx;
-			br=0; ReadFile(hOut,&wfs,4,&br,0);
+			ReadOut(&wfs,4);
 			if (wfs<sizeof(ap_wfx)-2 || wfs>sizeof(ap_wfx)) goto ap_f;
-			br=0; ReadFile(hOut,&ap_wfx,wfs,&br,0);
+			ReadOut(&ap_wfx,wfs);
 			if (ap_wfx.wFormatTag!=WAVE_FORMAT_PCM) goto ap_f;
-			br=0; ReadFile(hOut,&rf,4,&br,0);
+			ReadOut(&rf,4);
 			pDst=&ap_wfx;
 			if (rf!='atad') goto ap_f;
 			data_ofs=8+4+8+wfs+4;
 			DWORD data_size=0;
-			br=0; ReadFile(hOut,&data_size,4,&br,0);
-			SetFilePointer(hOut,data_size,0,FILE_CURRENT);
-			SetEndOfFile(hOut);
+			ReadOut(&data_size,4);
+			// anything after the audio is dropped, and new audio carries on from there
+			const std::streamoff data_end = static_cast<std::streamoff>(hOut.tellg()) + data_size;
+			hOut.clear();
+			hOut.seekp(data_end);
+			hOut.flush();
+			std::error_code resize_error;
+			std::filesystem::resize_file(fn,static_cast<uintmax_t>(data_end),resize_error);
+			hOut.seekp(data_end);
 			use_convert = !!memcmp(&wfx,&ap_wfx,sizeof(wfx));
 		}
 		goto ap_ok;
 ap_f:
 		file_err(fn, WASABI_API_LNGSTRINGW(IDS_NOT_A_PCM_WAV_FILE));
-		if (hOut && hOut!=INVALID_HANDLE_VALUE) {CloseHandle(hOut);hOut=INVALID_HANDLE_VALUE;}
+		hOut.close();
 		return -1;
 ap_ok:;
 	}
@@ -717,12 +716,12 @@ ap_ok:;
 	if (riff && !append)
 	{
 		t=rev32('RIFF');
-		bw = 0; WriteFile(hOut,&t,4,&bw,0);
-		SetFilePointer(hOut,4,0,FILE_CURRENT);
+		WriteOut(&t,4);
+		hOut.seekp(4,std::ios::cur);
 		t=rev32('WAVE');
-		bw = 0; WriteFile(hOut,&t,4,&bw,0);
+		WriteOut(&t,4);
 		t=rev32('fmt ');
-		bw = 0; WriteFile(hOut,&t,4,&bw,0);
+		WriteOut(&t,4);
 	}
 
 	if (use_convert)
@@ -779,36 +778,36 @@ ap_ok:;
 		{
 			if (pDst->wFormatTag==WAVE_FORMAT_PCM) t=0x10;
 			else t=sizeof(WAVEFORMATEX)+pDst->cbSize;
-			bw = 0; WriteFile(hOut,&t,4,&bw,0);
-			bw = 0; WriteFile(hOut,pDst,t,&bw,0);
-			FileAlign(hOut);
+			WriteOut(&t,4);
+			WriteOut(pDst,t);
+			FileAlign();
 
 			if (pDst->wFormatTag!=WAVE_FORMAT_PCM)
 			{
 				t=rev32('fact');
-				bw = 0; WriteFile(hOut,&t,4,&bw,0);
+				WriteOut(&t,4);
 				t=4;
-				bw = 0; WriteFile(hOut,&t,4,&bw,0);
-				fact_ofs=FileTell(hOut);
-				SetFilePointer(hOut,4,0,FILE_CURRENT);
+				WriteOut(&t,4);
+				fact_ofs=FileTell();
+				hOut.seekp(4,std::ios::cur);
 			}
 
 			t=rev32('data');
-			bw = 0; WriteFile(hOut,&t,4,&bw,0);
-			data_ofs=FileTell(hOut);
-			SetFilePointer(hOut,4,0,FILE_CURRENT);
+			WriteOut(&t,4);
+			data_ofs=FileTell();
+			hOut.seekp(4,std::ios::cur);
 		}
 	}
 	else if (riff && !append)
 	{
 		t=0x10;
 		//t=sizeof(WAVEFORMATEX)+pDst->cbSize;
-		bw = 0; WriteFile(hOut,&t,4,&bw,0);
-		bw = 0; WriteFile(hOut,&wfx,t,&bw,0);
+		WriteOut(&t,4);
+		WriteOut(&wfx,t);
 		t=rev32('data');
-		bw = 0; WriteFile(hOut,&t,4,&bw,0);
-		data_ofs=FileTell(hOut);
-		SetFilePointer(hOut,4,0,FILE_CURRENT);		
+		WriteOut(&t,4);
+		data_ofs=FileTell();
+		hOut.seekp(4,std::ios::cur);		
 	}
 	inbuf1=inbuf=0;
 
@@ -819,13 +818,11 @@ ap_ok:;
 	return 0;
 
 fail:
-	if (hOut && hOut!=INVALID_HANDLE_VALUE)
+	if (hOut.is_open())
 	{
-		CloseHandle(hOut);
-		hOut=INVALID_HANDLE_VALUE;
-		DeleteFile(fn);
+		hOut.close();
+		FilePath::Remove(fn);
 	}
-	hOut=0;
 	acm_close();
 	MessageBoxW(mod.hMainWindow,WASABI_API_LNGSTRINGW(IDS_ERROR_INITIALIZING_OUTPUT),
 				szDescription,MB_ICONERROR);
@@ -876,31 +873,31 @@ void Close()
 		do_cvt(0,0);
 		acm_close();
 	}
-	if (hOut!=INVALID_HANDLE_VALUE)
+	if (hOut.is_open())
 	{
 		if (riff)
 		{
-			FileAlign(hOut);
+			FileAlign();
 
-			DWORD t,bw = 0;
-			SetFilePointer(hOut,4,0,FILE_BEGIN);
-			t=GetFileSize(hOut,0)-8;
-			WriteFile(hOut,&t,4,&bw,0);
+			// seeking past the end doesn't extend a file, so the alignment above only counts if something follows it
+			const DWORD size=FileSize();
+			DWORD t=size-8;
+			hOut.seekp(4,std::ios::beg);
+			WriteOut(&t,4);
 			if (data_ofs)
 			{
-				DWORD data_size=GetFileSize(hOut,0)-(data_ofs+4);
-				SetFilePointer(hOut,data_ofs,0,FILE_BEGIN);
-				bw = 0; WriteFile(hOut,&data_size,4,&bw,0);
+				DWORD data_size=size-(data_ofs+4);
+				hOut.seekp(data_ofs,std::ios::beg);
+				WriteOut(&data_size,4);
 			}
 			if (fact_ofs)
 			{
-				SetFilePointer(hOut,fact_ofs,0,FILE_BEGIN);
+				hOut.seekp(fact_ofs,std::ios::beg);
 				t=nsam;
-				bw = 0; WriteFile(hOut,&t,4,&bw,0);
+				WriteOut(&t,4);
 			}
 		}
-		CloseHandle(hOut);
-		hOut=INVALID_HANDLE_VALUE;
+		hOut.close();
 	}
 }
 
@@ -914,8 +911,7 @@ void do_cvt(BYTE* data,UINT size)
 
 		UINT out_size;
 		void *out = res->GetBuffer(&out_size);
-		DWORD bw = 0;
-		WriteFile(hOut,out,out_size,&bw,0);
+		WriteOut(out,out_size);
 		res->Read(out_size);
 
 	}
@@ -957,8 +953,7 @@ void do_cvt(BYTE* data,UINT size)
 			acmStreamConvert(hStream,&ahd,flags);
 			inbuf-=ahd.cbSrcLengthUsed;
 			memmove(acm_buf,acm_buf+ahd.cbSrcLengthUsed,inbuf);//memmove
-			DWORD bw = 0;
-			WriteFile(hOut,acm_outbuf,ahd.cbDstLengthUsed,&bw,0);
+			WriteOut(acm_outbuf,ahd.cbDstLengthUsed);
 	}
 }
 
@@ -979,8 +974,7 @@ int Write(char *data, int len)
 	}
 	else
 	{
-		DWORD bw = 0;
-		WriteFile(hOut,data,len,&bw,0);
+		WriteOut(data,len);
 	}
 
 

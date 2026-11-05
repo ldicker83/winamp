@@ -18,6 +18,7 @@
 
 /* ------------------------ includes --------------------------------------*/
 #include <windows.h>
+#include <fstream>
 
 #include "CVbriHeader.h"
 
@@ -109,8 +110,6 @@ public:
 	int m_vbr_flag;
 	CVbriHeader *m_vbr_hdr;
 
-	FILETIME last_write_time;
-
 	void *GetID3v1()
 	{
 		if (m_id3v1_len == 128)
@@ -181,7 +180,7 @@ private:
 
 
 
-	HANDLE hFile;
+	mutable std::ifstream m_file;
 	bool   fEof;
 	
 

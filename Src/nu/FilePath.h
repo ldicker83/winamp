@@ -617,17 +617,23 @@ namespace FilePath
 		return entries;
 	}
 
+	// constructing a std::filesystem::path from a null pointer crashes, and callers of the Win32
+	// functions these replace were allowed to pass one. so the common queries also take raw pointers
 	inline bool Exists(const std::filesystem::path &path)
 	{
 		std::error_code error;
 		return std::filesystem::exists(path, error);
 	}
+	inline bool Exists(const wchar_t *path) { return path && Exists(std::filesystem::path(path)); }
+	inline bool Exists(const char *path) { return path && Exists(std::filesystem::path(path)); }
 
 	inline bool IsDirectory(const std::filesystem::path &path)
 	{
 		std::error_code error;
 		return std::filesystem::is_directory(path, error);
 	}
+	inline bool IsDirectory(const wchar_t *path) { return path && IsDirectory(std::filesystem::path(path)); }
+	inline bool IsDirectory(const char *path) { return path && IsDirectory(std::filesystem::path(path)); }
 
 	inline bool IsReadOnly(const std::filesystem::path &path)
 	{
@@ -635,12 +641,15 @@ namespace FilePath
 		const auto status = std::filesystem::status(path, error);
 		return !error && (status.permissions() & std::filesystem::perms::owner_write) == std::filesystem::perms::none;
 	}
+	inline bool IsReadOnly(const wchar_t *path) { return path && IsReadOnly(std::filesystem::path(path)); }
 
 	inline bool Remove(const std::filesystem::path &path)
 	{
 		std::error_code error;
 		return std::filesystem::remove(path, error);
 	}
+	inline bool Remove(const wchar_t *path) { return path && Remove(std::filesystem::path(path)); }
+	inline bool Remove(const char *path) { return path && Remove(std::filesystem::path(path)); }
 
 	inline bool Rename(const std::filesystem::path &from, const std::filesystem::path &to)
 	{

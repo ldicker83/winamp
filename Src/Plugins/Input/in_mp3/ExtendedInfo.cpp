@@ -17,6 +17,9 @@ static std::filesystem::file_time_type lastWriteTime;
 // asked to get the metadata for the same cached file so we can update things
 BOOL HasFileTimeChanged(const wchar_t *fn)
 {
+	if (!fn)
+		return FALSE;
+
 	std::error_code error;
 	const auto time = std::filesystem::last_write_time(fn, error);
 	if (!error && time != lastWriteTime)
@@ -29,6 +32,9 @@ BOOL HasFileTimeChanged(const wchar_t *fn)
 
 void UpdateFileTimeChanged(const wchar_t *fn)
 {
+	if (!fn)
+		return;
+
 	std::error_code error;
 	const auto time = std::filesystem::last_write_time(fn, error);
 	if (!error)

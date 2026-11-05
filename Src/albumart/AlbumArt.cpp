@@ -9,6 +9,10 @@
 #include "../Agave/AlbumArt/svc_albumArtProvider.h"
 #include <api/syscb/callbacks/metacb.h>
 #include <strsafe.h>
+#include <filesystem>
+#include <fstream>
+#include <system_error>
+#include <vector>
 
 static svc_imageLoader *FindImageLoader(const wchar_t *filespec, waServiceFactory **factory)
 {
@@ -88,33 +92,12 @@ static ARGB32 *loadImgFromFile(const wchar_t *file, int *w, int *h)
 	svc_imageLoader *loader = FindImageLoader(file, &sf);
 	if (loader)
 	{
-		HANDLE hf = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-		if (hf != INVALID_HANDLE_VALUE)
-		{
-			int len = GetFileSize(hf, 0);
-			HANDLE hmap = CreateFileMapping(hf, 0, PAGE_READONLY, 0, 0, 0);
-			if (hmap)
-			{
-				void *data = MapViewOfFile(hmap, FILE_MAP_READ, 0, 0, 0);
-				if (data)
-				{
-					if (loader->testData(data,len))
-					{
-						ARGB32* im = loader->loadImage(data,len,w,h);
-						UnmapViewOfFile(data);
-						CloseHandle(hmap);
-						CloseHandle(hf);
-						sf->releaseInterface(loader);
-						return im;
-					}
-					UnmapViewOfFile(data);
-				}
-
-				CloseHandle(hmap);
-			}
-			CloseHandle(hf);
-		}
+		ARGB32 *im = 0;
+		std::vector<char> data;
+		if (FilePath::ReadAll(file, data) && !data.empty() && loader->testData(data.data(),(int)data.size()))
+			im = loader->loadImage(data.data(),(int)data.size(),w,h);
 		sf->releaseInterface(loader);
+		return im;
 	}
 	return 0;
 }
@@ -130,36 +113,12 @@ static ARGB32 *loadImgFromFile(const wchar_t *path, const wchar_t *filespec, int
 			sf->releaseInterface(loader);
 			return (ARGB32*)1;
 		}
-		wchar_t file[MAX_PATH] = {0};
-		FilePath::Combine(file, path, filespec);
-		HANDLE hf = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-		if (hf != INVALID_HANDLE_VALUE)
-		{
-			int len = GetFileSize(hf, 0);
-			HANDLE hmap = CreateFileMapping(hf, 0, PAGE_READONLY, 0, 0, 0);
-			if (hmap)
-			{
-				void *data = MapViewOfFile(hmap, FILE_MAP_READ, 0, 0, 0);
-				if (data)
-				{
-					if (loader->testData(data,len))
-					{
-						ARGB32* im = loader->loadImage(data,len,w,h, params);
-						UnmapViewOfFile(data);
-						CloseHandle(hmap);
-						CloseHandle(hf);
-						sf->releaseInterface(loader);
-						return im;
-					}
-					UnmapViewOfFile(data);
-				}
-
-				CloseHandle(hmap);
-			}
-			CloseHandle(hf);
-		}
-
+		ARGB32 *im = 0;
+		std::vector<char> data;
+		if (FilePath::ReadAll(std::filesystem::path(path) / filespec, data) && !data.empty() && loader->testData(data.data(),(int)data.size()))
+			im = loader->loadImage(data.data(),(int)data.size(),w,h, params);
 		sf->releaseInterface(loader);
+		return im;
 	}
 	return 0;
 }
@@ -170,126 +129,78 @@ static bool loadImgDataFromFile(const wchar_t *path, const wchar_t *filespec, vo
 	svc_imageLoader *loader = FindImageLoader(filespec, &sf);
 	if (loader)
 	{
-		wchar_t file[MAX_PATH] = {0};
-		FilePath::Combine(file, path, filespec);
-		HANDLE hf = CreateFileW(file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-		if (hf != INVALID_HANDLE_VALUE)
+		const std::filesystem::path file = std::filesystem::path(path) / filespec;
+		std::ifstream hf(file, std::ios::binary);
+		if (hf)
 		{
 			if(!originTest)
 			{
-				int flen = GetFileSize(hf, 0);
-				*bits = WASABI_API_MEMMGR->sysMalloc(flen);
-				DWORD bytes_read = 0;
-				ReadFile(hf, *bits, flen, &bytes_read, 0);
-				*len = bytes_read;
+				std::error_code error;
+				const auto flen = std::filesystem::file_size(file, error);
+				*bits = WASABI_API_MEMMGR->sysMalloc(error ? 0 : (size_t)flen);
+				if (!error)
+					hf.read(static_cast<char *>(*bits), static_cast<std::streamsize>(flen));
+				*len = static_cast<size_t>(hf.gcount());
 			}
 			if (mimeType)
 			{
 				*mimeType = (wchar_t *)WASABI_API_MEMMGR->sysMalloc(12 * sizeof(wchar_t));
 				wcsncpy(*mimeType, loader->mimeType(), 12);
 			}
-			CloseHandle(hf);
 			sf->releaseInterface(loader);
 			return true;
 		}
 		sf->releaseInterface(loader);
-	}	
+	}
 	return false;
 }
 
 static ARGB32 *FindImage(const wchar_t *path, const wchar_t *mask, int *w, int *h, bool test=false, ifc_xmlreaderparams *params = NULL)
 {
-	wchar_t dirmask[MAX_PATH] = {0};
-	FilePath::Combine(dirmask, path, mask);
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(path, mask))
 	{
-		do
-		{
-			ARGB32 *bits = loadImgFromFile(path, find.cFileName, w, h, test, params);
-			if (bits)
-			{
-				FindClose(hFind);
-				return bits;
-			}
-		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
+		ARGB32 *bits = loadImgFromFile(path, entry.path().filename().c_str(), w, h, test, params);
+		if (bits)
+			return bits;
 	}
 	return 0;
 }
 
 static bool FindImageData(const wchar_t *path, const wchar_t *mask, void **bits, size_t *len, wchar_t **mimeType)
 {
-	wchar_t dirmask[MAX_PATH] = {0};
-	FilePath::Combine(dirmask, path, mask);
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(path, mask))
 	{
-		do
-		{
-			if (loadImgDataFromFile(path, find.cFileName, bits, len, mimeType))
-			{
-				return true;
-			}
-		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
+		if (loadImgDataFromFile(path, entry.path().filename().c_str(), bits, len, mimeType))
+			return true;
 	}
 	return false;
 }
 
 static bool FindImageOrigin(const wchar_t *path, const wchar_t *mask, wchar_t **mimeType)
 {
-	wchar_t dirmask[MAX_PATH] = {0};
-	FilePath::Combine(dirmask, path, mask);
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(path, mask))
 	{
-		do
-		{
-			if (loadImgDataFromFile(path, find.cFileName, NULL, NULL, mimeType, true))
-			{
-				FindClose(hFind);
-				return true;
-			}
-		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
+		if (loadImgDataFromFile(path, entry.path().filename().c_str(), NULL, NULL, mimeType, true))
+			return true;
 	}
 	return false;
 }
 
 static bool DeleteImage(const wchar_t *path, const wchar_t *mask)
 {
-	wchar_t dirmask[MAX_PATH] = {0};
-	FilePath::Combine(dirmask, path, mask);
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(dirmask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(path, mask))
 	{
-		do
+		// i know this seems stupid, but we need to load the image
+		// since this is supposed to delete the image that would show up
+		// from a GetAlbumArt call
+		int w = 0, h = 0;
+		ARGB32 *bits = loadImgFromFile(path, entry.path().filename().c_str(), &w, &h);
+		if (bits)
 		{
-			// i know this seems stupid, but we need to load the image
-			// since this is supposed to delete the image that would show up
-			// from a GetAlbumArt call
-			int w = 0, h = 0;
-			ARGB32 *bits = loadImgFromFile(path, find.cFileName, &w, &h);
-			if (bits)
-			{
-				FindClose(hFind);
-				WASABI_API_MEMMGR->sysFree(bits);
-				wchar_t fullpath[MAX_PATH] = {0};
-				FilePath::Combine(fullpath, path, find.cFileName);
-				DeleteFileW(fullpath);
-				return true;
-			}
+			WASABI_API_MEMMGR->sysFree(bits);
+			FilePath::Remove(entry.path());
+			return true;
 		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
 	}
 	return false;
 }
@@ -353,20 +264,14 @@ static int DeleteAlbumArtByProvider(int providertype, const wchar_t *filename, c
 
 static bool FindSceneNFO(const wchar_t *path, wchar_t *mask)
 {
-	wchar_t nfo_mask[MAX_PATH] = {0};
-	FilePath::Combine(nfo_mask, path, L"*.nfo");
+	const auto entries = FilePath::List(path, L"*.nfo");
+	if (entries.empty())
+		return false;
 
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(nfo_mask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		StringCchCopyW(mask, MAX_PATH, find.cFileName);
-		FilePath::RemoveExtension(mask);
-		StringCchCatW(mask, MAX_PATH, L".*");
-		FindClose(hFind);
-		return true;
-	}
-	return false;
+	StringCchCopyW(mask, MAX_PATH, entries.front().path().filename().c_str());
+	FilePath::RemoveExtension(mask);
+	StringCchCatW(mask, MAX_PATH, L".*");
+	return true;
 }
 
 static void CleanNameForPath(wchar_t *name)
@@ -892,14 +797,10 @@ static void * writeImg(const ARGB32 *data, int w, int h, int *length, const wcha
 
 static int writeFile(const wchar_t *file, const void * data, int length)
 {
-	FILE *f=_wfopen(file,L"wb");
+	std::ofstream f{std::filesystem::path(file), std::ios::binary};
 	if (!f) return ALBUMART_FAILURE;
-	if (fwrite(data,length,1,f) != 1)
-	{
-		fclose(f);
+	if (!f.write(static_cast<const char *>(data), length))
 		return ALBUMART_FAILURE;
-	}
-	fclose(f);
 	return ALBUMART_SUCCESS;
 }
 
@@ -970,51 +871,29 @@ int AlbumArt::SetAlbumArt(const wchar_t *filename, const wchar_t *type, int w, i
 
 static bool CopySceneNFO(const wchar_t *sourcePath, const wchar_t *destinationPath)
 {
-	wchar_t nfo_mask[MAX_PATH] = {0};
-	FilePath::Combine(nfo_mask, sourcePath, L"*.nfo");
+	const auto entries = FilePath::List(sourcePath, L"*.nfo");
+	if (entries.empty())
+		return false;
 
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(nfo_mask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
-	{
-		wchar_t sourceFile[MAX_PATH] = {0};
-		wchar_t destinationFile[MAX_PATH] = {0};
-		FilePath::Combine(sourceFile, sourcePath, find.cFileName);
-		FilePath::Combine(destinationFile, destinationPath, find.cFileName);
-		CopyFileW(sourceFile, destinationFile, TRUE);
-		FindClose(hFind);
-		return true;
-	}
-	return false;
+	FilePath::Copy(entries.front().path(), std::filesystem::path(destinationPath) / entries.front().path().filename(), false);
+	return true;
 }
 
 static void CopyMask(const wchar_t *sourcePath, const wchar_t *destinationPath, const wchar_t *mask)
 {
-	wchar_t findMask[MAX_PATH] = {0};
-	FilePath::Combine(findMask, sourcePath, mask);
-
-	WIN32_FIND_DATAW find = {0};
-	HANDLE hFind = FindFirstFileW(findMask, &find);
-	if (hFind != INVALID_HANDLE_VALUE)
+	for (const auto &entry : FilePath::List(sourcePath, mask))
 	{
-		do
-		{
-			// make sure it's an actual loadable image
-			waServiceFactory *factory = 0;
-			svc_imageLoader *loader = FindImageLoader(find.cFileName, &factory);
+		const std::filesystem::path name = entry.path().filename();
 
-			if (loader)
-			{
-				wchar_t sourceFile[MAX_PATH] = {0};
-				wchar_t destinationFile[MAX_PATH] = {0};
-				FilePath::Combine(sourceFile, sourcePath, find.cFileName);
-				FilePath::Combine(destinationFile, destinationPath, find.cFileName);
-				CopyFileW(sourceFile, destinationFile, TRUE);
-				factory->releaseInterface(loader);
-			}
+		// make sure it's an actual loadable image
+		waServiceFactory *factory = 0;
+		svc_imageLoader *loader = FindImageLoader(name.c_str(), &factory);
+
+		if (loader)
+		{
+			FilePath::Copy(entry.path(), std::filesystem::path(destinationPath) / name, false);
+			factory->releaseInterface(loader);
 		}
-		while (FindNextFileW(hFind, &find));
-		FindClose(hFind);
 	}
 }
 
