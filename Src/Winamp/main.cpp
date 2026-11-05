@@ -56,7 +56,6 @@ static UINT WM_TASKBARBUTTONCREATED;
 LARGE_INTEGER freq;
 UINT g_scrollMsg;
 UINT songChangeBroadcastMessage = 0;
-int g_noreg;
 int disable_skin_borders = 0;
 int no_notify_play = 0;
 int last_no_notify_play = 0;
@@ -67,7 +66,6 @@ int g_fullstop;
 //char *app_date = __DATE__;
 const std::string app_date{ __DATE__ };
 int g_stopaftercur;
-int is_install;
 HWND hTooltipWindow, hEQTooltipWindow, hPLTooltipWindow;
 HWND hMainWindow = NULL;			// main window
 HWND hEQWindow, hPLWindow, /*hMBWindow, */hExternalVisWindow = NULL;
@@ -508,7 +506,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR unused /*lps
 	mode = _r_i( "safemode", 0 );
 	if ( mode ) g_safeMode = 3;
 
-	if ( 0 == ( 128 & is_install ) )
 	{
 		HWND hwnd_other = find_otherwinamp( lpszCmdParam );
 		if ( IsWindow( hwnd_other ) )
@@ -660,11 +657,6 @@ DWORD CALLBACK MainThread( LPVOID param )
 		config_read( 0 );
 
 	CreateEQPresets();
-
-	if ( is_install )
-		DoInstall( is_install );
-
-	reg_associated_filetypes( 0 );
 
 	if ( config_splash ) splashDlg( SPLASH_DELAY );	// display splash screen if desired
 

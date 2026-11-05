@@ -352,7 +352,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)1.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)1.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="FileTypeRegistrar.cpp" />
     <ClCompile Include="..\nu\ServiceWatcher.cpp" />
     <ClCompile Include="..\nu\threadpool\ThreadFunctions.cpp" />
     <ClCompile Include="..\nu\threadpool\ThreadID.cpp" />
@@ -409,7 +408,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)3.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)3.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="install.cpp" />
     <ClCompile Include="IntAttribute.cpp" />
     <ClCompile Include="InW.cpp" />
     <ClCompile Include="ipc.cpp" />
@@ -454,7 +452,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)6.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)6.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="options_filetypes.cpp" />
     <ClCompile Include="options_gen.cpp" />
     <ClCompile Include="options_general.cpp" />
     <ClCompile Include="options_in.cpp" />
@@ -508,7 +505,6 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
     <ClCompile Include="plush\text.c" />
     <ClCompile Include="precomp.cpp" />
     <ClCompile Include="rand.cpp" />
-    <ClCompile Include="registry.cpp" />
     <ClCompile Include="Resampler.cpp" />
     <ClCompile Include="ResamplingReader.cpp" />
     <ClCompile Include="Sa.cpp" />

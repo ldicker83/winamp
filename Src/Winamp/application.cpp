@@ -791,39 +791,14 @@ int Application::GetUserID(GUID *id)
 {
 	if (userID == GUID_NULL)
 	{
-		config_uid_ft = (char)GetPrivateProfileIntW(L"Winamp", L"uid_ft", 0, INI_FILE);
-
-		wchar_t uid_str[512] = {0};
 		if (!GetPrivateProfileStructA(app_name, "uid", (LPVOID)&userID, sizeof(userID), INI_FILEA) || userID == GUID_NULL)
 		{
-			// attempt to restore the client uid after an uninstall, lost config file, etc
-			readwrite_client_uid(0, uid_str);
-			if (uid_str[0])
-			{
-				WritePrivateProfileStringW(AutoWide(app_name), L"uid", uid_str, INI_FILE);
-			}
-
-			if (!GetPrivateProfileStructA(app_name, "uid", (LPVOID)&userID, sizeof(userID), INI_FILEA) || userID == GUID_NULL)
-			{
-				UuidCreate(&userID);
-				WritePrivateProfileStructA(app_name, "uid", (LPVOID)&userID, sizeof(userID), INI_FILEA);
-				GetPrivateProfileStringW(AutoWide(app_name), L"uid", L"", uid_str, ARRAYSIZE(uid_str), INI_FILE);
-				readwrite_client_uid(1, uid_str);
-				// if done then no need to re-do it at a later point
-				config_uid_ft = 1;
-			}
-		}
-
-		// and just to make sure, if this is like a new run then we'll need to force into the registry
-		if (!config_uid_ft)
-		{
-			config_uid_ft = 1;
-			GetPrivateProfileStringW(AutoWide(app_name), L"uid", L"", uid_str, ARRAYSIZE(uid_str), INI_FILE);
-			readwrite_client_uid(1, uid_str);
+			UuidCreate(&userID);
+			WritePrivateProfileStructA(app_name, "uid", (LPVOID)&userID, sizeof(userID), INI_FILEA);
 		}
 	}
 
-	*id = userID;
+*id = userID;
 
 	return API_APPLICATION_SUCCESS;
 }

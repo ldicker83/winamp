@@ -136,9 +136,6 @@
     <ClCompile Include="FileInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileTypeRegistrar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FloatAttribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -149,9 +146,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="In.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="install.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IntAttribute.cpp">
@@ -212,9 +206,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="options_dsp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="options_filetypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="options_gen.cpp">
@@ -332,9 +323,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="registry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plush\render.c">

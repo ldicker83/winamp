@@ -323,33 +323,6 @@ BOOL windowOffScreen(HWND hwnd, POINT pt)
 	return !PtInRect(&r, pt);
 }
 
-void readwrite_client_uid(int isWrite, wchar_t uid_str[64])
-{
-	HKEY hkey;
-	wchar_t path[MAX_PATH] = {0};
-	GetModuleFileNameW(0, path, MAX_PATH);
-
-	if (isWrite)
-	{
-		IFileTypeRegistrar *registrar=0;
-		if (GetRegistrar(&registrar) == 0 && registrar)
-		{
-			registrar->WriteClientUIDKey(path, uid_str);
-			registrar->Release();
-		}
-		return;
-	}
-
-	if (!isWrite) *uid_str = 0;
-	if (RegCreateKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Nullsoft\\Winamp", 0, 0, 0, KEY_READ, NULL, &hkey, NULL) == ERROR_SUCCESS)
-	{
-		DWORD s = 512, t = REG_SZ;
-		if (RegQueryValueExW(hkey, path, 0, &t, (LPBYTE)uid_str, &s) != ERROR_SUCCESS || t != REG_SZ) uid_str[0] = 0;
-		RegCloseKey(hkey);
-	}
-}
-
-
 BOOL read_compatmode()
 {
 	HKEY hkey = NULL;
@@ -422,20 +395,6 @@ BOOL IsVistaOrLower(void)
 	}
 
 	return (1 == fVistaOrLower);
-}
-
-BOOL IsWin8(void)
-{
-	static INT fWin8 = -1; 
-
-	if (-1 == fWin8)
-	{
-		OSVERSIONINFO osver = {0};
-		osver.dwOSVersionInfoSize = sizeof( OSVERSIONINFO );
-		fWin8 = ( ::GetVersionEx(&osver) && osver.dwPlatformId == VER_PLATFORM_WIN32_NT && (osver.dwMajorVersion > 6 || (osver.dwMajorVersion == 6 && osver.dwMinorVersion >= 2))) ? 1 : 0;
-	}
-
-	return (1 == fWin8);
 }
 
 //XP Theme crap
