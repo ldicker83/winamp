@@ -299,7 +299,6 @@ extern "C"
 	/*****************
 	*** html.c 
 	*/
-	void doHtmlPlaylist(void);
 
 	/*****************
 	*** http.c 

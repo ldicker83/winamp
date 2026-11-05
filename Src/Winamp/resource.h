@@ -226,7 +226,6 @@
 #define IDD_METRIC1                     230
 #define IDD_FIRSTSETUP                  231
 #define IDB_EQEX                        231
-#define IDS_HTML_ERROR_WRITE            231
 #define IDD_FS_FILES                    233
 #define IDD_FS_REG                      234
 #define IDD_FS_REG2                     235
@@ -1079,7 +1078,6 @@
 #define ID_PE_SCUP                      40289
 #define ID_PE_SCDOWN                    40290
 #define WINAMP_REFRESHSKIN              40291
-#define ID_PE_PRINT                     40292
 #define ID_PE_EXTINFO                   40293
 #define WINAMP_PLAYLIST_ADVANCE         40294
 #define WINAMP_VIS_LIN                  40295
