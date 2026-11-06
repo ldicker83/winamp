@@ -73,15 +73,8 @@ public:
 	}
 	bool IsEof() const;
 	bool lengthVerified;
-	bool isSeekReset() { return false; }
-	bool IsStreamSeekable() { return false; }
 
 	int GetHeaderOffset();
-
-	int PercentAvailable() { return 0; }
-	int RunStream() { return 0; }
-	int IsStream() { return 0; }
-	void GetStreamInfo(wchar_t *, size_t len);
 
 	DWORD GetContentLength(void)   const;
 	DWORD GetCurrentPosition(void) const;

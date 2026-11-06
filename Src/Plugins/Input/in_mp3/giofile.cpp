@@ -81,9 +81,6 @@ HWND GetDialogBoxParent()
 //   constructor
 //-------------------------------------------------------------------------*
 
-
-extern int lastfn_status_err;
-
 CGioFile::CGioFile()
 {
 	mpeg_length=0;
@@ -846,10 +843,6 @@ void CGioFile::Seek(int posms, int br)
 bool CGioFile::IsSeekable()
 {
 	return true;
-}
-
-void CGioFile::GetStreamInfo(wchar_t *, size_t)
-{
 }
 
 static inline const wchar_t *IncSafe(const wchar_t *val, int x)

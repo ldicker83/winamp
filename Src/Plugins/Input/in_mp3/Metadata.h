@@ -26,7 +26,6 @@ class Metadata
 {
 public:
 	Metadata()                                                        {}
-	Metadata(CGioFile *_file, const wchar_t *_filename);
 	~Metadata();
 
 	int Open(const wchar_t *filename);

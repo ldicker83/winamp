@@ -3,11 +3,9 @@
 // Used by script1.rc
 //
 #define IDS_NULLSOFT_MPEG_AUDIO_DECODER_OLD 0
-#define IDS_BUFFER_X                    2
 #define IDC_ID3_REMOVE                  3
 #define IDC_ID3V1_REMOVE                3
 #define IDC_REVERTTAG                   3
-#define IDS_ERROR_SYNCING_TO_STREAM     3
 #define IDC_ID3V2_REMOVE                4
 #define IDC_ID3V1_SAVE                  5
 #define IDC_ID3_REMOVE_ALL              6
