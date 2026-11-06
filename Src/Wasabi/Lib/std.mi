@@ -494,7 +494,6 @@ extern String system.getDecoderName(string playitem);
 
  Play the requested file. Path and filename are required
  with proper extension (example: playFile("c:\music\mp3\file.mp3"); ).
- It also works with URL's (example: playFile("http://myshoutcast.com:8000"); ).
 
  @param  playitem  The path and filename to play.
 */
@@ -525,7 +524,6 @@ extern System.setDownloadPath(String new_path);	// Requires 5.53 // Sets the CD 
 
  Enqueque the requested file. Path and filename are required
  with proper extension (example: playFile("c:\music\mp3\file.mp3"); ).
- It also works with URL's (example: playFile("http://myshoutcast.com:8000"); ).
 
  @param  playitem  The path and filename to play.
 */
