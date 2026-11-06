@@ -45,13 +45,6 @@ BEGIN
         BOTTOMMARGIN, 156
     END
 
-    IDD_HTTP, DIALOG
-    BEGIN
-        LEFTMARGIN, 6
-        RIGHTMARGIN, 220
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 148
-    END
 
     IDD_TAGOPTS, DIALOG
     BEGIN
@@ -61,13 +54,6 @@ BEGIN
         BOTTOMMARGIN, 163
     END
 
-    IDD_HTTPAUTH, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 153
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 71
-    END
 
     IDD_ADVANCED_TAGGING, DIALOG
     BEGIN
@@ -147,27 +133,6 @@ BEGIN
     CONTROL         "Fast Layer 1/2 EQ",IDC_FASTL12EQ,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,144,106,10
 END
 
-IDD_HTTP DIALOGEX 0, 0, 226, 154
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
-CAPTION "Streaming"
-FONT 8, "MS Shell Dlg", 0, 0, 0x0
-BEGIN
-    GROUPBOX        "Streaming Data Buffer",IDC_STATIC,6,6,86,64
-    EDITTEXT        IDC_BUFFERS_NUMBUFS,12,18,27,12
-    LTEXT           "KB",IDC_STATIC,42,20,10,8
-    LTEXT           "Increase this value to give better skip protection on slower connections.",IDC_STATIC,12,33,73,33
-    GROUPBOX        "Streaming Prebuffer",IDC_STATIC,96,6,124,100
-    CONTROL         "Slider1",IDC_PREBUFSLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,102,18,111,10
-    CTEXT           "0%                    50%               100%",IDC_STATIC,103,31,110,8
-    CTEXT           "(how much to prebuffer at the start of a stream)",IDC_STATIC,105,42,105,16
-    CONTROL         "Slider1",IDC_PREBUFSLIDER2,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,102,61,111,10
-    CTEXT           "0%                    50%               100%",IDC_STATIC,103,74,110,8
-    CTEXT           "(how much to prebuffer after a buffer underrun)",IDC_STATIC,105,85,105,16
-    GROUPBOX        "Saving",IDC_STATIC,96,110,124,38
-    CONTROL         "Save files to:",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,120,57,10
-    PUSHBUTTON      "",IDC_BUTTON2,102,132,112,11
-END
-
 IDD_TAGOPTS DIALOGEX 0, 0, 226, 168
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "ID3 Tags"
@@ -192,19 +157,6 @@ BEGIN
     GROUPBOX        "ID3v2 Tag Rating Field Email Address",IDC_STATIC,6,132,214,31
     EDITTEXT        IDC_RATING_EMAIL,13,144,162,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Reset",IDC_RATING_EMAIL_RESET,179,143,36,14
-END
-
-IDD_HTTPAUTH DIALOGEX 0, 0, 160, 76
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "HTTP Login Required"
-FONT 8, "MS Shell Dlg", 0, 0, 0x0
-BEGIN
-    LTEXT           "Realm: ",IDC_STATIC,7,7,25,8
-    LTEXT           "",IDC_REALM,40,7,113,8
-    LTEXT           "Enter your login and password in the form of:\n\tlogin:password",IDC_STATIC,7,18,146,17
-    EDITTEXT        IDC_EDIT1,7,39,146,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,7,58,50,13
-    PUSHBUTTON      "Cancel",IDCANCEL,61,58,50,13
 END
 
 IDD_INFO_ID3V1 DIALOGEX 0, 0, 341, 164
@@ -331,15 +283,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NULLSOFT_MPEG_AUDIO_DECODER_OLD "Nullsoft MPEG Audio Decoder"
-    IDS_CANNOT_WRITE_STREAMS_TO_DISK "Sorry cannot write streams to disk"
     IDS_BUFFER_X            "Buffer: %d%%"
     IDS_ERROR_SYNCING_TO_STREAM "Error syncing to stream"
-    IDS_CONNECTING          "Connecting"
-    IDS_NO_VALID_MULTICONNECT_URL "No valid Multiconnect URL"
-    IDS_REDIRECT_LIMIT_EXCEEDED "Redirect limit exceeded"
-    IDS_READING_ID3         "Reading ID3"
-    IDS_STREAM_TERMINATED   "Stream terminated"
-    IDS_STREAM_TEMPORARILY_INTERRUPTED "Stream temporarily interrupted"
 END
 
 STRINGTABLE 
@@ -350,17 +295,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_NETWORK_RECEIVED_X_BYTES "Network received: %llu bytes\n"
-    IDS_SERVER              "Server: %s\n"
-    IDS_CONTENT_TYPE        "Content-Type: %s\n"
-    IDS_METADATA_RECEIVED   "Metadata received: %d bytes\n"
-    IDS_METADATA_INTERVAL   "Metadata interval: %d bytes\n"
     IDS_ID3v2_TAG           "ID3v2 tag: %d bytes\n"
     IDS_VBR_LEADING_FRAME   "VBR leading frame: %d bytes\n"
-    IDS_STREAM_NAME         "Stream name: %s\n"
-    IDS_CURRENT_TITLE       "Current title: %s\n"
-    IDS_CONTENT_LENGTH      "Content length: %d bytes\n"
-    IDS_SAVING_TO           "Saving to: %s\n"
 END
 
 STRINGTABLE 
@@ -439,7 +375,6 @@ BEGIN
     IDS_LATIN_1             "Latin-1"
     IDS_SYSTEM_LANGUAGE     "System Language"
     IDS_UNICODE_UTF_16      "Unicode (UTF-16)"
-    IDS_SELECT_DIRECTORY_TO_SAVE_TO "Select directory to save streamed mp3s"
 END
 
 STRINGTABLE 
@@ -464,7 +399,6 @@ BEGIN
     IDS_METADATA_ERROR_ID3V1 "Cannot save metadata: ID3v1 tag writing failed."
     IDS_METADATA_ERROR_ID3V2 "Cannot save metadata: ID3v2 tag writing failed."
     IDS_METADATA_ERROR_UNSPECIFIED "Cannot save metadata: Unspecified error."
-    IDS_TIMED_OUT           "timed out"
     IDS_FAMILY_STRING_MP3   "MPEG Layer 3 Audio File"
     IDS_FAMILY_STRING_MP2   "MPEG Layer 2 Audio File"
     IDS_FAMILY_STRING_MP1   "MPEG Layer 1 Audio File"

@@ -1,13 +1,10 @@
 #include "main.h"
-#include <shlobj.h>
 #include <commctrl.h>
 #include <windows.h>
 #include "../winamp/wa_ipc.h"
 #include "config.h"
 #include "api__in_mp3.h"
 #include "resource.h"
-
-char g_http_tmp[MAX_PATH] = {0};
 
 int config_write_mode = WRITE_UTF16;
 int config_read_mode = READ_LOCAL;
@@ -27,35 +24,6 @@ int config_create_apev2 = 0;
 
 int config_apev2_header = RETAIN_HEADER;
 int config_lp = 0;
-
-BOOL CALLBACK browseEnumProc(HWND hwnd, LPARAM lParam)
-{
-	wchar_t cl[32] = {0};
-	GetClassNameW(hwnd, cl, ARRAYSIZE(cl));
-	if (!lstrcmpiW(cl, WC_TREEVIEW))
-	{
-		PostMessage(hwnd, TVM_ENSUREVISIBLE, 0, (LPARAM)TreeView_GetSelection(hwnd));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-static int CALLBACK BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
-{
-	switch (uMsg)
-	{
-		case BFFM_INITIALIZED:
-		{
-			SetWindowText(hwnd, WASABI_API_LNGSTRINGW(IDS_SELECT_DIRECTORY_TO_SAVE_TO));
-			if (g_http_tmp[0]) SendMessage(hwnd, BFFM_SETSELECTIONA, 1, (LPARAM)g_http_tmp);
-
-			// this is not nice but it fixes the selection not working correctly on all OSes
-			EnumChildWindows(hwnd, browseEnumProc, 0);
-		}
-	}
-	return 0;
-}
 
 static char app_name[] = "Nullsoft MPEG Decoder";
 
@@ -132,24 +100,11 @@ char config_rating_email[255] = {0};
 void config_read()
 {
 	config_init();
-	RI(config_http_buffersize);
-	RI(config_http_prebuffer);
-	RI(config_http_prebuffer_underrun);
 	RI(config_downmix);
 	RI(config_downsample);
 	RI(config_max_bufsize_k);
 	RI(config_eqmode);
 	RI(config_gapless);
-
-	if(FAILED(SHGetFolderPathA(NULL, CSIDL_MYMUSIC, NULL, SHGFP_TYPE_CURRENT, config_http_save_dir)))
-	{
-		if(FAILED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, config_http_save_dir)))
-		{
-			lstrcpynA(config_http_save_dir, "C:\\", MAX_PATH);
-		}
-	}
-
-	RS(config_http_save_dir);
 	RI(config_miscopts);
 	RI(config_fastvis);
 
@@ -186,15 +141,10 @@ void config_write()
 {
 	WI(config_fastvis);
 	WI(config_miscopts);
-	WI(config_http_buffersize);
-	WI(config_http_buffersize);
-	WI(config_http_prebuffer);
-	WI(config_http_prebuffer_underrun);
 	WI(config_downmix);
 	WI(config_downsample);
 	WI(config_max_bufsize_k);
 	WI(config_eqmode);
-	WS(config_http_save_dir);
 #ifdef AAC_SUPPORT
 	WS(config_extlist_aac);
 #else
@@ -227,7 +177,6 @@ void config_write()
 static INT_PTR CALLBACK prefsProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK id3Proc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK advancedTaggingProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static INT_PTR CALLBACK httpProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK outputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 #define ISSEP(x) ((x) == ' ' || (x) == ';' || (x) == ',' || (x) == ':' || (x) == '.')
@@ -273,7 +222,7 @@ void config(HWND hwndParent)
 	wchar_t title[128] = {0};
 	int x;
 	PROPSHEETHEADER pshead;
-	PROPSHEETPAGE pspage[5];
+	PROPSHEETPAGE pspage[4];
 	ZeroMemory(&pshead, sizeof(PROPSHEETHEADER));
 	pshead.dwSize = sizeof(PROPSHEETHEADER);
 	pshead.hwndParent = hwndParent;
@@ -281,7 +230,8 @@ void config(HWND hwndParent)
 	pshead.hInstance = WASABI_API_LNG_HINST;
 	pshead.pszCaption = WASABI_API_LNGSTRINGW_BUF(IDS_MPEG_AUDIO_DECODER_SETTINGS,title,128);//"MPEG Audio Decoder Settings";
 	pshead.nPages = sizeof(pspage) / sizeof(pspage[0]);
-	pshead.nStartPage = config_lp;
+	// config_lp can still name the old Streaming page (4) from an older INI
+	pshead.nStartPage = (config_lp >= 0 && (UINT)config_lp < pshead.nPages) ? config_lp : 0;
 	pshead.ppsp = pspage;
 
 	ZeroMemory(pspage, sizeof(pspage));
@@ -293,12 +243,10 @@ void config(HWND hwndParent)
 	pspage[1].pszTemplate = MAKEINTRESOURCE(IDD_TAGOPTS);
 	pspage[2].pszTemplate = MAKEINTRESOURCE(IDD_ADVANCED_TAGGING);
 	pspage[3].pszTemplate = MAKEINTRESOURCE(IDD_OUTPUT);
-	pspage[4].pszTemplate = MAKEINTRESOURCE(IDD_HTTP);
 	pspage[0].pfnDlgProc = prefsProc;
 	pspage[1].pfnDlgProc = id3Proc;
 	pspage[2].pfnDlgProc = advancedTaggingProc;
 	pspage[3].pfnDlgProc = outputProc;
-	pspage[4].pfnDlgProc = httpProc;
 	PropertySheet((PROPSHEETHEADER*)&pshead);
 	config_write();
 	extern char *g_fileassos;
@@ -533,121 +481,6 @@ static INT_PTR CALLBACK outputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		}
 		return FALSE;
 	}
-	return FALSE;
-}
-
-void SetHTTPSaveButtonText(HWND hwndDlg, char* path)
-{
-	HWND control = GetDlgItem(hwndDlg, IDC_BUTTON2);
-	HDC hdc = GetDC(control);
-	RECT r = {0};
-	char temp[MAX_PATH] = {0};
-
-	lstrcpynA(temp, path, MAX_PATH);
-	SelectObject(hdc, (HFONT)SendMessage(control, WM_GETFONT, 0, 0));
-	GetClientRect(control, &r);
-	r.left += 5;
-	r.right -= 5;
-	DrawTextA(hdc, temp, -1, &r, DT_PATH_ELLIPSIS|DT_WORD_ELLIPSIS|DT_MODIFYSTRING);
-	SetWindowTextA(control, temp);
-	ReleaseDC(control, hdc);
-}
-
-static INT_PTR CALLBACK httpProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch (uMsg)
-	{
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDC_CHECK2:
-			EnableWindow(GetDlgItem(hwndDlg, IDC_BUTTON2), IsDlgButtonChecked(hwndDlg, IDC_CHECK2));
-			break;
-		case IDC_BUTTON2:
-			{
-				BROWSEINFO bi = {0};
-				wchar_t name[MAX_PATH] = {0};
-				bi.hwndOwner = hwndDlg;
-				bi.pszDisplayName = name;
-				bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-				bi.lpfn = BrowseCallbackProc;
-				LPITEMIDLIST idlist = SHBrowseForFolder(&bi);
-				if (idlist)
-				{
-					SHGetPathFromIDListA(idlist, g_http_tmp);
-					IMalloc *m = 0;
-					SHGetMalloc(&m);
-					m->Free(idlist);
-					SetHTTPSaveButtonText(hwndDlg, g_http_tmp);
-				}
-			}
-
-			return 0;
-		}
-		return 0;
-	case WM_INITDIALOG:
-		SetDlgItemInt(hwndDlg, IDC_BUFFERS_NUMBUFS, config_http_buffersize, 0);
-		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER), TBM_SETRANGEMAX, 0, 50);
-		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER), TBM_SETRANGEMIN, 0, 0);
-		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER), TBM_SETPOS, 1, config_http_prebuffer / 2);
-		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER2), TBM_SETRANGEMAX, 0, 50);
-		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER2), TBM_SETRANGEMIN, 0, 0);
-		SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER2), TBM_SETPOS, 1, config_http_prebuffer_underrun / 2);
-
-		if (config_miscopts&16)
-		{
-			CheckDlgButton(hwndDlg, IDC_CHECK2, BST_CHECKED);
-		}
-		EnableWindow(GetDlgItem(hwndDlg, IDC_BUTTON2), (config_miscopts&16));
-		SetHTTPSaveButtonText(hwndDlg, config_http_save_dir);
-		lstrcpynA(g_http_tmp, config_http_save_dir, MAX_PATH);
-
-		return FALSE;
-	case WM_NOTIFY:
-		{
-			LPNMHDR pnmh = (LPNMHDR) lParam;
-			if (pnmh->code == PSN_SETACTIVE)
-			{
-				config_lp = 4;
-			}
-
-			if (pnmh->code == PSN_APPLY)
-			{
-				{
-					int s;
-					int t;
-					t = GetDlgItemInt(hwndDlg, IDC_BUFFERS_NUMBUFS, &s, 0);
-					if (s) config_http_buffersize = t;
-					if (config_http_buffersize < 16) config_http_buffersize = 16;
-				}
-				config_http_prebuffer = (int)SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER), TBM_GETPOS, 0, 0) * 2;
-				config_http_prebuffer_underrun = (int)SendMessage(GetDlgItem(hwndDlg, IDC_PREBUFSLIDER2), TBM_GETPOS, 0, 0) * 2;
-				lstrcpynA(config_http_save_dir, g_http_tmp, MAX_PATH);
-				if (IsDlgButtonChecked(hwndDlg, IDC_CHECK2))
-				{
-					config_miscopts |= 16;
-				}
-				else
-				{
-					config_miscopts &= ~16;
-				}
-
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	const int controls[] = 
-	{
-		IDC_PREBUFSLIDER,
-		IDC_PREBUFSLIDER2,
-	};
-	if (FALSE != WASABI_API_APP->DirectMouseWheel_ProcessDialogMessage(hwndDlg, uMsg, wParam, lParam, controls, ARRAYSIZE(controls)))
-	{
-		return TRUE;
-	}
-
 	return FALSE;
 }
 
