@@ -59,6 +59,32 @@ namespace FilePath
 		return *p == C(':') && p - path >= 2;
 	}
 
+	// a URL whose scheme reaches over the network; local schemes such as cda://, linein:// and
+	// file:// are not network URLs, and neither are schemes a plug-in invents for itself
+	template <typename C>
+	bool IsNetworkUrl(const C *path)
+	{
+		if (!IsUrl(path))
+			return false;
+
+		static constexpr const char *schemes[] = {
+			"http", "https", "ftp", "ftps", "mms", "mmsh", "mmst", "mmsu",
+			"rtsp", "rtspu", "rtmp", "rtmps", "rtp", "udp", "icy", "sc", "uvox", "unsv",
+		};
+		size_t length = 0;
+		while (path[length] != C(':'))
+			length++;
+		for (const char *scheme : schemes)
+		{
+			size_t i = 0;
+			while (i < length && scheme[i] && detail::Fold(path[i]) == detail::Fold(C(scheme[i])))
+				i++;
+			if (i == length && !scheme[i])
+				return true;
+		}
+		return false;
+	}
+
 	template <typename C>
 	bool IsRelative(const C *path)
 	{
