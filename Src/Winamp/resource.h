@@ -409,7 +409,6 @@
 #define IDS_UPDATING_X                  520
 #define IDS_ERROR_UPDATING_FILE         521
 #define IDS_INFO_UPDATING_ERROR         522
-#define IDS_STREAMINFO                  532
 #define IDS_P_SK_PROMPT                 533
 #define IDS_STRING80                    535
 #define IDS_RC_CHANNEL_CHECKBOX         542
@@ -534,7 +533,6 @@
 #define IDC_GENRE                       1090
 #define IDC_EQ_SAVEMPX                  1091
 #define IDC_COMMENT                     1091
-#define IDC_STATION                     1091
 #define IDC_EQ_DELETE                   1092
 #define IDC_COMPOSER                    1092
 #define IDC_EQ_LOAD                     1093
@@ -557,12 +555,10 @@
 #define IDC_ADDSTART                    1109
 #define IDC_MAINPARENT                  1109
 #define IDC_REMSTART                    1110
-#define IDC_URL                         1110
 #define IDC_HIGHLIGHT                   1110
 #define IDC_ADDICON                     1110
 #define IDC_SAVE                        1111
 #define IDC_ADDDESKTOP                  1111
-#define IDC_PLAY_URL                    1111
 #define IDC_VOLUMEENABLED               1112
 #define IDC_ADDQL                       1112
 #define IDC_PANREV                      1113
@@ -820,7 +816,6 @@
 #define IDC_STATIC_GENRE                1348
 #define IDC_EDIT_PODCAST_CHANNEL        1348
 #define IDC_STATIC_COMMENT              1349
-#define IDC_STATIC_STATION              1349
 #define IDC_CHECK_PODCAST_CHANNEL       1349
 #define IDC_STATIC_COMPOSER             1350
 #define IDC_STATIC_PUBLISHER            1351
@@ -883,7 +878,6 @@
 #define IDC_STATIC5                     1398
 #define IDR_ATF_HTML                    1398
 #define IDC_REGGROUP2                   1399
-#define IDD_FILEINFO_STREAMDATA         1399
 #define IDC_STATIC10                    1400
 #define IDC_STATIC9                     1401
 #define IDC_RGAS                        1402
@@ -891,9 +885,6 @@
 #define IDC_RELEASED                    1404
 #define IDC_USE_SILENCE_DETECT          1406
 #define IDC_CMDLINE                     1407
-#define IDC_STATIC_URL                  1417
-#define IDC_EXTRA_METADATA              1418
-#define IDC_STATIC_PLAY_URL             1419
 #define IDC_SKIN_INSTALL_PROMPT         1421
 #define WINAMP_FILE_QUIT                40001
 #define WINAMP_OPTIONS_PREFS            40012
@@ -947,7 +938,6 @@
 #define IDM_EQ_DELPRE                   40178
 #define IDM_EQ_DELMP3                   40180
 #define IDC_PLAYLIST_PLAY               40184
-#define WINAMP_FILE_LOC                 40185
 #define WINAMP_OPTIONS_EASYMOVE         40186
 #define WINAMP_FILE_DIR                 40187
 #define WINAMP_EDIT_ID3                 40188

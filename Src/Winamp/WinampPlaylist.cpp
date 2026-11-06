@@ -80,6 +80,11 @@ void WinampPlaylist::OnFile(const wchar_t *filename, const wchar_t *title, int l
 	wchar_t fileExt[ 10 ] = L"";
 	//wchar_t fbrowser[FILENAME_SIZE] = L"";
 
+	// skip network entries here, before the repeat count and range below get applied to
+	// whatever entry happens to be last
+	if (FilePath::IsNetworkUrl(filename))
+		return;
+
 	if (LoadPlaylist(filename, 1, 0) == 0) //(playlistManager->Load(filename, this) == PLAYLISTMANAGER_SUCCESS) // if it's another playlist file, load recursively
 		return ;
 

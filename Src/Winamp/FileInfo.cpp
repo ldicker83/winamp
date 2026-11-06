@@ -17,12 +17,7 @@
 extern Nullsoft::Utility::LockGuard getMetadataGuard;
 #define TEXTBUFFER_MAX	65536
 
-enum FileInfoMode {
-	FILEINFO_MODE_0,
-	FILEINFO_MODE_1,
-};
-
-int ModernInfoBox(In_Module * in, FileInfoMode mode, const wchar_t * filename, HWND parent);
+int ModernInfoBox(In_Module * in, const wchar_t * filename, HWND parent);
 
 static INT_PTR CALLBACK FileInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK FileInfo_Metadata(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -35,13 +30,12 @@ public:
 	const wchar_t * filename;
 	In_Module * in;
 	std::vector<HWND> tabs;
-	FileInfoMode mode;
  	size_t initial_position, length;
 	void (*infoBoxExCallback)(size_t position, wchar_t filepath[FILENAME_SIZE]);
 private:
 	wchar_t *buffer_; // to track allocations made by this object
 public:
-	info_params(FileInfoMode mode, const wchar_t* filename, In_Module * in)
+	info_params(const wchar_t* filename, In_Module * in)
 	{
 		if (filename) {
 			// In order to prevent jtfe 1.33 from crashing winamp, we need to make sure that 
@@ -70,7 +64,6 @@ public:
 			this->filename = filename;
 		}
 		
-		this->mode = mode;
 		this->in = in;
 		this->initial_position = 0;
 		this->length = 0;
@@ -81,9 +74,9 @@ public:
 	}
 };
 
-int ModernInfoBox(In_Module * in, FileInfoMode mode, const wchar_t * filename, HWND parent)
+int ModernInfoBox(In_Module * in, const wchar_t * filename, HWND parent)
 {
-	info_params params(mode, filename, in);
+	info_params params(filename, in);
  
  	int ret = (int)LPDialogBoxParamW(IDD_FILEINFO, parent, FileInfo, (LPARAM)&params);
   	return ret;
@@ -102,23 +95,16 @@ static VOID WINAPI OnSelChanged(HWND hwndDlg, HWND hwndTab, info_params * p)
 	}
 }
 
-static HWND CreateTab(FileInfoMode mode, int n, const wchar_t *file, HWND parent, wchar_t * name, size_t namelen, AddUnifiedFileInfoPane aufip)
+static HWND CreateTab(int n, const wchar_t *file, HWND parent, wchar_t * name, size_t namelen, AddUnifiedFileInfoPane aufip)
 {
 	switch (n)
 	{
 		case 0:
-			if (mode == FILEINFO_MODE_0) {
-				getStringW(IDS_BASICINFO, name, namelen);
-				return LPCreateDialogW(IDD_FILEINFO_METADATA , parent, (WNDPROC)FileInfo_Metadata);
-			} else {
-				getStringW(IDS_STREAMINFO, name, namelen);
-				return LPCreateDialogW(IDD_FILEINFO_STREAMDATA, parent, (WNDPROC)FileInfo_Metadata);
-			}
+			getStringW(IDS_BASICINFO, name, namelen);
+			return LPCreateDialogW(IDD_FILEINFO_METADATA , parent, (WNDPROC)FileInfo_Metadata);
 		default:
-			if (mode == FILEINFO_MODE_0) {
-				getStringW(IDS_ADVANCED,name,namelen);
-				if (aufip) return aufip(n-1,file,parent,name,namelen);
-			}
+			getStringW(IDS_ADVANCED,name,namelen);
+			if (aufip) return aufip(n-1,file,parent,name,namelen);
 			return NULL;
 	}
 }
@@ -135,13 +121,8 @@ static INT_PTR CALLBACK FileInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 			SetWindowLongPtrW(hwndDlg,GWLP_USERDATA,lParam);
 
 			HWND ok = GetDlgItem(hwndDlg, IDOK);
-			if (p->mode == FILEINFO_MODE_0) {
-				EnableWindow(ok, TRUE);
-				ShowWindow(ok, SW_SHOW);
-			} else {
-				EnableWindow(ok, FALSE);
-				ShowWindow(ok, SW_HIDE);
-			}
+			EnableWindow(ok, TRUE);
+			ShowWindow(ok, SW_SHOW);
 
 			SetDlgItemTextW(hwndDlg,IDC_FN,p->filename);
 
@@ -158,7 +139,7 @@ static INT_PTR CALLBACK FileInfo(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 			HWND tab=NULL;
 			int n=0;
 
-			while (NULL != (tab = CreateTab(p->mode, n, p->filename, hwndDlg, name, 100, aufip)))
+			while (NULL != (tab = CreateTab(n, p->filename, hwndDlg, name, 100, aufip)))
 			{
 				p->tabs.push_back(tab);
 				ShowWindow(tab,SW_HIDE);
@@ -335,35 +316,6 @@ const int staticstrfieldctrls[] =
 	0
 };
 
-const wchar_t * streamStrfields[] =
- {
- 	L"streamtitle",
- 	L"streamgenre",
- 	L"streamurl",
- 	L"streamname",
- 	L"streamcurrenturl",
- 	L"streammetadata",
- };
- 
- const int streamStrfieldctrls[] =
- {
- 	IDC_TITLE,
- 	IDC_GENRE,
- 	IDC_URL,
- 	IDC_STATION,
- 	IDC_PLAY_URL,
- 	IDC_EXTRA_METADATA,
- };
- 
- const int staticStreamStrfieldctrls[] =
- {
- 	IDC_STATIC_TITLE,
- 	IDC_STATIC_GENRE,
- 	IDC_STATIC_URL,
- 	IDC_STATIC_STATION,
- 	IDC_STATIC_PLAY_URL,
- 	0,
- };
 LPCWSTR RepairMutlilineString(LPWSTR pszBuffer, INT cchBufferMax)
 {
 	if (NULL == pszBuffer || cchBufferMax < 1)
@@ -416,105 +368,50 @@ static INT_PTR CALLBACK FileInfo_Metadata(HWND hwndDlg, UINT uMsg, WPARAM wParam
 
 		LPWSTR pszBuffer = (LPWSTR)calloc(TEXTBUFFER_MAX, sizeof(WCHAR));
 
-		if (p->mode == FILEINFO_MODE_0) {
-			for (int i=0; i<sizeof(strfields)/sizeof(wchar_t*); i++)
-			{
-				memset(pszBuffer, 0, sizeof(WCHAR) * TEXTBUFFER_MAX);
-				int result = in_get_extended_fileinfoW(p->filename,strfields[i],pszBuffer,TEXTBUFFER_MAX);
-				SetDlgItemTextW(hwndDlg, strfieldctrls[i], pszBuffer);
-				EnableWindow(GetDlgItem(hwndDlg, strfieldctrls[i]), result?TRUE:FALSE);
-				EnableWindow(GetDlgItem(hwndDlg, staticstrfieldctrls[i]), result?TRUE:FALSE);
-			}
-		} else {
-			for (int i=0; i<sizeof(streamStrfields)/sizeof(wchar_t*); i++)
-			{
-				memset(pszBuffer, 0, sizeof(WCHAR) * TEXTBUFFER_MAX);
-				int result = in_get_extended_fileinfoW(p->filename,streamStrfields[i],pszBuffer,TEXTBUFFER_MAX);
-				if (streamStrfieldctrls[i] != IDC_EXTRA_METADATA) {
-					SetDlgItemTextW(hwndDlg, streamStrfieldctrls[i], pszBuffer);
-				} else {
-					CheckDlgButton(hwndDlg, streamStrfieldctrls[i], result && pszBuffer[0] == L'1' ? TRUE : FALSE);
-				}
-				EnableWindow(GetDlgItem(hwndDlg, streamStrfieldctrls[i]), result ? TRUE : FALSE);
-				EnableWindow(GetDlgItem(hwndDlg, staticStreamStrfieldctrls[i]), result ? TRUE : FALSE);
-			}
+		for (int i=0; i<sizeof(strfields)/sizeof(wchar_t*); i++)
+		{
+			memset(pszBuffer, 0, sizeof(WCHAR) * TEXTBUFFER_MAX);
+			int result = in_get_extended_fileinfoW(p->filename,strfields[i],pszBuffer,TEXTBUFFER_MAX);
+			SetDlgItemTextW(hwndDlg, strfieldctrls[i], pszBuffer);
+			EnableWindow(GetDlgItem(hwndDlg, strfieldctrls[i]), result?TRUE:FALSE);
+			EnableWindow(GetDlgItem(hwndDlg, staticstrfieldctrls[i]), result?TRUE:FALSE);
 		}
 
 		pszBuffer[0]=0;
-		if (p->mode == FILEINFO_MODE_0) {
-			in_get_extended_fileinfoW(p->filename,L"formatinformation",pszBuffer, TEXTBUFFER_MAX);
-		} else {
-			in_get_extended_fileinfoW(p->filename,L"streaminformation",pszBuffer, TEXTBUFFER_MAX);
-		}
+		in_get_extended_fileinfoW(p->filename,L"formatinformation",pszBuffer, TEXTBUFFER_MAX);
 		// due to quirks with the more common resource editors, is easier to just store the string
 		// internally only with \n and post-process to be \r\n (as here) so it will appear correctly
 		// on new lines as is wanted (silly multiline edit controls)
 		SetDlgItemTextW(hwndDlg, IDC_FORMATINFO, RepairMutlilineString(pszBuffer, TEXTBUFFER_MAX));
 
-		if (p->mode == FILEINFO_MODE_0) {
-			wchar_t tg[64]=L"", ag[64]=L"";
-			in_get_extended_fileinfoW(p->filename,L"replaygain_track_gain",tg,64);
-			in_get_extended_fileinfoW(p->filename,L"replaygain_album_gain",ag,64);
+		wchar_t tg[64]=L"", ag[64]=L"";
+		in_get_extended_fileinfoW(p->filename,L"replaygain_track_gain",tg,64);
+		in_get_extended_fileinfoW(p->filename,L"replaygain_album_gain",ag,64);
 
-			if (!tg[0]) getStringW(IDS_NOTPRESENT,tg,64);
-			else
-			{
-				// this isn't nice but it localises the RG values
-				// for display as they're saved in the "C" locale
-				double value = _wtof_l(tg,langManager->Get_C_NumericLocale());
-				StringCchPrintfW(tg,64,L"%-+.2f dB", value);
-			}
-			if (!ag[0]) getStringW(IDS_NOTPRESENT,ag,64);
-			else
-			{
-				// this isn't nice but it localises the RG values
-				// for display as they're saved in the "C" locale
-				double value = _wtof_l(ag,langManager->Get_C_NumericLocale());
-				StringCchPrintfW(ag,64,L"%-+.2f dB", value);
-			}
-			wchar_t tgagstr[128] = {0};
-			StringCbPrintfW(pszBuffer, TEXTBUFFER_MAX, getStringW(IDS_TRACK_GAIN_AND_ALBUM_GAIN,tgagstr,128),tg,ag);
-			SetDlgItemTextW(hwndDlg, IDC_REPLAYGAIN, RepairMutlilineString(pszBuffer, TEXTBUFFER_MAX));
-			my_change=0;
-			free(pszBuffer);
-		} else {
-			SetTimer(hwndDlg, 1, 1000, 0);
+		if (!tg[0]) getStringW(IDS_NOTPRESENT,tg,64);
+		else
+		{
+			// this isn't nice but it localises the RG values
+			// for display as they're saved in the "C" locale
+			double value = _wtof_l(tg,langManager->Get_C_NumericLocale());
+			StringCchPrintfW(tg,64,L"%-+.2f dB", value);
 		}
+		if (!ag[0]) getStringW(IDS_NOTPRESENT,ag,64);
+		else
+		{
+			// this isn't nice but it localises the RG values
+			// for display as they're saved in the "C" locale
+			double value = _wtof_l(ag,langManager->Get_C_NumericLocale());
+			StringCchPrintfW(ag,64,L"%-+.2f dB", value);
+		}
+		wchar_t tgagstr[128] = {0};
+		StringCbPrintfW(pszBuffer, TEXTBUFFER_MAX, getStringW(IDS_TRACK_GAIN_AND_ALBUM_GAIN,tgagstr,128),tg,ag);
+		SetDlgItemTextW(hwndDlg, IDC_REPLAYGAIN, RepairMutlilineString(pszBuffer, TEXTBUFFER_MAX));
+		my_change=0;
+		free(pszBuffer);
 
 	}
 	break;
-		case WM_TIMER:
- 		if (wParam == 1) {
- 			info_params * p = (info_params *)GetWindowLongPtrW(GetParent(hwndDlg),GWLP_USERDATA);
- 			if (p && p->mode == FILEINFO_MODE_1) {
- 				LPWSTR pszBuffer = (LPWSTR)calloc(TEXTBUFFER_MAX, sizeof(WCHAR));
- 				if (pszBuffer) {
- 					int start = -1, end = 0;
- 					SendDlgItemMessage(hwndDlg, IDC_FORMATINFO, EM_GETSEL, (WPARAM)&start, (LPARAM)&end);
- 					in_get_extended_fileinfoW(p->filename, L"streaminformation", pszBuffer, TEXTBUFFER_MAX);
- 					// due to quirks with the more common resource editors, is easier to just store the string
- 					// internally only with \n and post-process to be \r\n (as here) so it will appear correctly
- 					// on new lines as is wanted (silly multiline edit controls)
- 					SetDlgItemTextW(hwndDlg, IDC_FORMATINFO, RepairMutlilineString(pszBuffer, TEXTBUFFER_MAX));
- 					SendDlgItemMessage(hwndDlg, IDC_FORMATINFO, EM_SETSEL, start, end);
- 
- 					for (int i=0; i<sizeof(streamStrfields)/sizeof(wchar_t*); i++) {
- 						memset(pszBuffer, 0, sizeof(WCHAR) * TEXTBUFFER_MAX);
- 						int result = in_get_extended_fileinfoW(p->filename,streamStrfields[i],pszBuffer,TEXTBUFFER_MAX);
- 						if (streamStrfieldctrls[i] != IDC_EXTRA_METADATA) {
- 							SendDlgItemMessage(hwndDlg, streamStrfieldctrls[i], EM_GETSEL, (WPARAM)&start, (LPARAM)&end);
- 							SetDlgItemTextW(hwndDlg, streamStrfieldctrls[i], pszBuffer);
- 							SendDlgItemMessage(hwndDlg, streamStrfieldctrls[i], EM_SETSEL, start, end);
- 						} else {
- 							CheckDlgButton(hwndDlg, streamStrfieldctrls[i], result && pszBuffer[0] == L'1' ? TRUE : FALSE);
- 						}
- 						EnableWindow(GetDlgItem(hwndDlg, streamStrfieldctrls[i]), result ? TRUE : FALSE);
- 						EnableWindow(GetDlgItem(hwndDlg, staticStreamStrfieldctrls[i]), result ? TRUE : FALSE);
- 					}
- 				}
- 			}
- 		}
- 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{

@@ -936,23 +936,6 @@ extern "C"
 		hts.length = -1;
 		hts.title = narrowTitle;
 
-		if ( FilePath::IsUrl( filename ) )
-		{
-			wchar_t buf[ 32 ] = { 0 };
-			extendedFileInfoStructW s = { filename, L"streammetadata", buf, sizeof( buf ) / sizeof( wchar_t ) };
-
-			if ( 0 != SendMessageW( hMainWindow, WM_WA_IPC, (WPARAM)&s, IPC_GET_EXTENDED_FILE_INFOW_HOOKABLE ) && L'1' == buf[ 0 ] )
-			{
-				hts.force_useformatting = 1;
-			}
-		}
-
-		/*
-		wchar_t buf[32]=L"";
-		if (FilePath::IsUrl(filename) && in_get_extended_fileinfoW(filename, L"streammetadata", buf, sizeof(buf)/sizeof(wchar_t)) && buf[0]=='1')
-			hts.force_useformatting = 1;
-		*/
-
 		if ( config_useexttitles && SendMessageW( hMainWindow, WM_WA_IPC, (WPARAM)&hts, IPC_HOOK_TITLES ) )
 		{
 			MultiByteToWideCharSZ( CP_ACP, 0, narrowTitle, -1, title, (int)titleCch );
@@ -983,25 +966,6 @@ extern "C"
 		hts.filename = filename;
 		hts.length = -1;
 		hts.title = title;
-
-		if (FilePath::IsUrl(filename))
-		{
-			wchar_t buf[32] = {0};
-			extendedFileInfoStructW s = {filename, L"streammetadata", buf, sizeof(buf)/sizeof(wchar_t)};
-
-			if (0 != SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&s, IPC_GET_EXTENDED_FILE_INFOW_HOOKABLE) && 
-				L'1' == buf[0])
-			{
-				hts.force_useformatting = 1;
-			}
-		}
-
-		/*
-		wchar_t buf[32]=L"";
-		if (FilePath::IsUrl(filename) && in_get_extended_fileinfoW(filename, L"streammetadata", buf, 32) && buf[0]=='1')
-			hts.force_useformatting = 1;
-
-		*/
 
 		if (config_useexttitles && SendMessageW(hMainWindow, WM_WA_IPC, (WPARAM)&hts, IPC_HOOK_TITLESW))
 		{
@@ -1092,6 +1056,9 @@ extern "C"
 
 	void PlayList_append_withinfo_curtain(const wchar_t *filename, const wchar_t *title, int length, char *curtain, const wchar_t *ext, int is_nde_string)
 	{
+		if (FilePath::IsNetworkUrl(filename))
+			return; // no network playback
+
 		AutoLock lock (playlistGuard);
 		bool cached = true;
 		wchar_t fn[FILENAME_SIZE] = {0};
@@ -1162,6 +1129,9 @@ extern "C"
 
 	void PlayList_append_withinfo_hidden(const wchar_t *filename, const wchar_t *title, int length, char *curtain/*, char *browser*/)
 	{
+		if (FilePath::IsNetworkUrl(filename))
+			return; // no network playback
+
 		AutoLock lock (playlistGuard);
 		bool cached = true;
 		wchar_t fn[FILENAME_SIZE] = {0};
@@ -1273,6 +1243,9 @@ extern "C"
 
 	void PlayList_appendthing(const wchar_t *url, int doMIMEcheck, int is_nde_string)
 	{
+		if (FilePath::IsNetworkUrl(url))
+			return; // no network playback, and no fetching playlists from the network either
+
 		wchar_t temp2[MAX_PATH] = {0};
 		AutoLock lock (playlistGuard);
 		if (!_wcsicmp(extensionW(url), L"lnk"))
@@ -1338,6 +1311,9 @@ extern "C"
 	void PlayList_SetLastItem_Range(unsigned long start, unsigned long end)
 	{
 		int index = 0;
+
+		if ( !list_size )
+			return;
 
 		if ( list[list_size - 1].curitems ) index = list[list_size - 1].curitems;
 		else if ( list[list_size - 1].more - 1 > 0 ) index = list[list_size - 1].more - 1;
@@ -1983,8 +1959,6 @@ int IsPlaylistExtensionA(const char *ext)
 	return IsPlaylistExtension(AutoWide(ext));
 }
 
-void GetMIMEType(const char *url, char *mimeType, int mimeTypeCch);
-
 int LoadPlaylistByExtension(const wchar_t *fn, const wchar_t *ext, int whattodo, int useBase)
 {
 	if (!playlistManager || !playlistManager->CanLoad(ext))
@@ -2025,22 +1999,7 @@ int LoadPlaylist(const wchar_t *filename, int whattodo, int doMIMEcheck)
 {
 	wchar_t ext[65]=L".";
 	extension_exW(filename, ext+1, 64); // TODO: make api_playlistmanager use this function
-	int x = LoadPlaylistByExtension(filename, ext, whattodo, 0);
-	if (doMIMEcheck && x == -1 && FilePath::IsUrl(filename))
-	{
-		/*
-		benski> disabled for now
-		GetMIMEType(AutoChar(filename), ext, 64);
-		if (*ext)
-		{
-			if (!_stricmp(ext, "video/x-ms-asf"))
-				return LoadPlaylistByExtension(filename, L".asx", whattodo, 0); // TODO: make "load playlist by MIME type" API
-			else if (!_stricmp(ext, "video/asx"))
-				return LoadPlaylistByExtension(filename, L".asx", whattodo, 0);
-		}
-		*/
-	}
-	return x;
+	return LoadPlaylistByExtension(filename, ext, whattodo, 0);
 }
 
 void PlayList_insert(int position, const wchar_t *filename)

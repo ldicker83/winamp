@@ -463,13 +463,7 @@ void in_close(void)
 	timingPrint();
 }
 
-enum FileInfoMode
-{
-	FILEINFO_MODE_0,
-	FILEINFO_MODE_1,
-};
-
-int ModernInfoBox(In_Module* in, FileInfoMode mode, const wchar_t* filename, HWND parent);
+int ModernInfoBox(In_Module* in, const wchar_t* filename, HWND parent);
 typedef int(__cdecl* UseUnifiedFileInfoDlg)(const wchar_t* fn);
 
 int in_infobox(HWND hwnd, const wchar_t* fn)
@@ -492,10 +486,9 @@ int in_infobox(HWND hwnd, const wchar_t* fn)
 	if ( uufid ) {
 		ret = uufid(fn);
 		if ( ret == 1 ) {
-			a = ModernInfoBox(mod, FILEINFO_MODE_0, fn, hwnd);
+			a = ModernInfoBox(mod, fn, hwnd);
 		}
-		else if ( ret == 2 )
-			a = ModernInfoBox(mod, FILEINFO_MODE_1, fn, hwnd);
+		// 2 used to ask for the stream info view, which is gone; show nothing
 	}
 
 	if ( ret == 0 ) {

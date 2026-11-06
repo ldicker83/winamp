@@ -18,12 +18,6 @@
 
 #undef GetSystemMetrics
 
-int IsUrl(const char *url)
-{
-	return !!strstr(url, "://");
-}
-
-
 void link_startsubclass(HWND hwndDlg, UINT id){
 HWND ctrl = GetDlgItem(hwndDlg, id);
 	if(!GetPropW(ctrl, L"link_proc"))
@@ -239,31 +233,6 @@ unsigned int getDay(void)
 	memcpy(&l2, &ft2, sizeof(l2));
 	day = (int) ((l1.QuadPart - l2.QuadPart) / (10 * 1000 * 1000) / (60 * 60 * 24));
 	return day;
-}
-
-void recent_add(const wchar_t *loc)
-{
-	wchar_t ls[MAX_PATH] = {0};
-	_r_sW("RecentURL1", ls, MAX_PATH);
-	_w_sW("RecentURL1", loc);
-
-	if (wcscmp(ls, loc))
-	{
-		int x = 2;
-		while(1)
-		{
-			char s[123] = {0};
-			wchar_t temp[MAX_PATH] = {0};
-			StringCchPrintfA(s, 123, "RecentURL%d", x);
-
-			_r_sW(s, temp, MAX_PATH);
-			if (ls[0]) _w_sW(s, ls);
-			if (!_wcsicmp(temp, loc) || !temp[0])
-				break;
-			lstrcpynW(ls, temp, MAX_PATH);
-			x++;
-		}
-	}
 }
 
 #include <assert.h>
