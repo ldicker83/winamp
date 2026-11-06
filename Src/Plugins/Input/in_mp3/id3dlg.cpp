@@ -989,8 +989,6 @@ extern "C"
 	// if returning 1, remember to implement winampGetExtendedFileInfo("formatinformation")!
 	__declspec(dllexport) int winampUseUnifiedFileInfoDlg(const wchar_t * fn)
 	{
-		if (!_wcsnicmp(fn, L"file://", 7)) fn += 7;
-		if (FilePath::IsUrl(fn)) return 2;
 		return 1;
 	}
 

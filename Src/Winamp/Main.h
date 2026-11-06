@@ -723,8 +723,6 @@ BOOL Skin_IsModern(const wchar_t *name, BOOL is_directory);
 	*** util.c 
 	*/
 	LPCWSTR RepairMutlilineString(LPWSTR pszBuffer, INT cchBufferMax);
-	void recent_add(const wchar_t *loc);
-	int IsUrl(const char *url);
 	//int IsCharSpace(char digit);
 	//int IsCharSpaceW(wchar_t digit);
 	int IsCharDigit(char digit);
