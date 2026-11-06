@@ -18,8 +18,6 @@ burnlib/lib/
 Elevator/ReleasePS/
 flac/obj/
 freetype/objs/
-in_mod/lib/temp/
-in_mod/mikamp/Release/
 in_vorbis/Win32/
 libmp4v2/libmp4v2___Win32_Release/
 libogg/win32/Release/
@@ -36,7 +34,6 @@ winampAll/Win32/
 nsutil/nsutil.lib
 nsutil/nsutil.exp
 resources/WaSDP/*.exe
-in_mod/lib/
 mp3/utillib/lib/
 mp3/mathlib/lib/
 *.user
