@@ -701,4 +701,16 @@ xcopy /Y /D /S "..\resources\data\dsp_sps\*.sps" "..\..\Build\Winamp_$(PlatformS
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <!-- winamp.exe delay-loads nsutil.dll and tataki.dll from Shared\. Their own post-build events
+       copy them there, but only when those projects are built, so building winamp on its own
+       (BuildProjectReferences=false, or just this project in the IDE) never restores a missing
+       Shared\. This runs on every build of winamp and fails if either DLL hasn't been built. -->
+  <Target Name="CopySharedDlls" AfterTargets="Build">
+    <ItemGroup>
+      <SharedDll Include="$(ProjectDir)..\nsutil\$(PlatformShortName)_$(Configuration)\nsutil.dll" />
+      <SharedDll Include="$(ProjectDir)..\tataki\$(PlatformShortName)_$(Configuration)\tataki.dll" />
+    </ItemGroup>
+    <Error Condition="!Exists('%(SharedDll.FullPath)')" Text="%(SharedDll.Filename)%(SharedDll.Extension) has not been built for $(Configuration)|$(Platform); winamp.exe cannot start without it. Build %(SharedDll.Filename).vcxproj first." />
+    <Copy SourceFiles="@(SharedDll)" DestinationFolder="$(ProjectDir)..\..\Build\Winamp_$(PlatformShortName)_$(Configuration)\Shared\" SkipUnchangedFiles="true" />
+  </Target>
 </Project>
