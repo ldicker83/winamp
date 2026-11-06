@@ -72,7 +72,6 @@
 			<link name="Customize.org" url="http://customize.org/winamp3"/>
 		</subMenu>
 		<link name="Winamp" url="http://www.winamp.com"/>
-		<link name="Shoutcast" url="http://www.shoutcast.com"/>
 	</browserQuickLinks>
 	<browserDefaultHomes>
 		<home lngId="default" url="http://www.winamp.com"/>

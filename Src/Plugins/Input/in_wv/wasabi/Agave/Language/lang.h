@@ -584,11 +584,6 @@ static const GUID MlIconControlLangGUID=
 static const GUID GenFileCopierLangGUID = 
 { 0xa2121fc9, 0x6fc3, 0x4a56, { 0x88, 0xf2, 0xa3, 0x6f, 0xf6, 0x4d, 0x10, 0xea } };
 
-// Shoutcast Source DSP plug-in
-// {FD4D4A01-C337-4144-85D7-00678B3B2D2D}
-static const GUID DspShoutcastLangGUID = 
-{ 0xfd4d4a01, 0xc337, 0x4144, { 0x85, 0xd7, 0x0, 0x67, 0x8b, 0x3b, 0x2d, 0x2d } };
-
 #ifdef __cplusplus
 } // extern "C"
 #endif

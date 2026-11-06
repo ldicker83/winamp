@@ -7,7 +7,6 @@ Winamp 5.0:
 * Vastly more powerful media library:
    - Automatic background directory scanning options
    - Customizable views and columns, graphical view editor
-   - Internet Radio (SHOUTcast) and TV listings 
    - Context-sensitive item info viewer
 * CD ripping support (AAC@2x in free version, MP3 at unlimited speeds in pro)
 * CD burning support (limited to 2x in free version)

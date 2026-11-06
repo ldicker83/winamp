@@ -207,7 +207,6 @@ Winamp 5.6.4	[Jun 19 2013]
 * Improved: [gen_ff] Multi-monitor support for Bento/Modern skin notifier
 * Improved: [gen_ff] Windows 8 multi-monitor/taskbar mode compatibility
 * Improved: [in_flac] FLAC streaming support 
-* Improved: [in_mp3] Shoutcast v2 in-stream artwork support (and other misc fixes)
 * Improved: [in_mp3] Use MIME to determine decoder before assuming ext. is correct
 * Improved: [in_mp4] Native ALAC playback support
 * Improved: [in_mp4] Optimize MP4 Raw Reader by using chunks instead of samples
@@ -339,7 +338,6 @@ Winamp 5.6.2	[Jun 30 2011]
 * Fixed: [vp6] Integer underrun in Deblocking filter when picture size is 0,0
 * Misc: Default "Restore file associations at Winamp start" setting to "off" on Vista+
 * Misc: More general tweaks, improvements, fixes and optimizations
-* Misc: Redesigned SHOUTcast Radio online service view (new school & classic options)
 * Misc: Replaced CT aacPlusDecoder.w5s with new FhG aacdec.w5s
 * Misc: Replaced CT enc_aacplus.dll with new FhG enc_fhgaac.dll
 * Misc: Toolbar now compatible with Firefox 5
@@ -371,7 +369,6 @@ Winamp 5.6.1	[Mar 22 2011]
 * Fixed: [pmp_ipod] Nano & Shuffle 4G sync issues
 * Misc: More general tweaks, improvements, fixes and optimizations
 * Misc: Online Help Docs moved to AOL Help site
-* Misc: SHOUTcast2 support tweaks for in_mp3 & Bento file info
 * Misc: [in_flac/in_vorbis] Changed internal rating scale from 0-5 to 0-100
 * Misc: [ml_local] Right-click menu tweaks (Display tracks in this view)
 * Reverted: Milkdrop from v2.23 to v2.2 and AVS from v2.83 to v2.81d (for now)
@@ -595,7 +592,6 @@ Winamp 5.5.6	[Jul  2 2009]
 * Improved: [ml_pmp] Added support for drag+drop from Explorer to device playlists
 * Fixed: iexplore process not ending when browser closed after opened via Winamp
 * Fixed: Save EQ preset name duplication bug
-* Fixed: [Bento skin] SHOUTcast homepage url's redirecting to Winamp search
 * Fixed: [gen_jumpex] Up/down buttons reversed, 'stop after current' & other issues
 * Fixed: [in_mod] Crash on some .s3m modules (w.i.p.)
 * Fixed: [in_mod] Playback glitch during background transcoding
@@ -831,7 +827,6 @@ Winamp 5.5.2	[Jan 15 2008]
 * Improved: [vis_milk2] Pixel shaders now work on onboard Intel graphics chips
 * Fixed: Comment field character limitation in Basic Info tab of File Editor
 * Fixed: Playback Thread Priority middle setting resets to Lowest
-* Fixed: [in_mp3] Ultravox streaming metadata stack overflow (Thanks: Secunia)
 * Fixed: [in_mp4] Crash when attempting to play non-existent files
 * Fixed: [in_vorbis] Crash when clearing existing metadata fields in File Info
 * Fixed: [in_wave] Transcoding of floating point WAV files
@@ -1257,7 +1252,6 @@ Winamp 5.3.1	[Oct 24 2006]
 * Fixed: [in_mp3] gapless glitch
 * Fixed: [in_mp3] maximum number of redirects raised to 3 to allow playback on some podcasts with crazy php scripts
 * Fixed: [in_mp3] lyrics3 security vulnerability (thanks iDefense)
-* Fixed: [in_mp3] ultravox security vulnerability (thanks iDefense)
 * Fixed: [in_mp3] seek problems on files with multiple id3v2 tags
 * Fixed: [ml_disc] ripping discs with international titles
 * Fixed: [ml_local] breaks 'always on top' for other programs
@@ -1610,7 +1604,6 @@ Winamp 5.1 Surround Edition	[Sep  1 2005]
 	Awesome at low bitrates too!
 * New: Grand Prize Winner of the Internet Surround Music Project!
 	KAJE - Hey Buddy (featuring Afrika Bambaataa)
-* New: SHOUTcast Wire - A Media RSS Browser and Subscription Service
 * New: Predixis Smart Playlist Generator 
 	(Mix your tracks based on what they sound like!)
 * New: AOL Radio featuring (((XM))) Free Sampler!
@@ -1737,7 +1730,6 @@ Winamp 5.0.4	[Jul 28 2004]
 * Added script/ActiveX disabling for Media Library's minibrowser (on by default)
 * Fixed memory leak on MP3 files with messed up ID3v2 tags
 * Fixed visualization when playing CD tracks
-* Fixed proxy user:pass@server:port string getting cut when playing Shoutcast streams
 * Made in_dshow not to handle mms:// streams ending with .wma
 * Fixed %tracknumber% tag for CD tracks
 * Fixed some crash bugs in in_mp4
@@ -1930,7 +1922,6 @@ Winamp 5.0	[Dec 14 2003]
 * Vastly more powerful media library:
    - Automatic background directory scanning options
    - Customizable views and columns, graphical view editor
-   - Internet Radio (SHOUTcast) and TV listings 
    - Context-sensitive item info viewer
 * CD ripping support (AAC@2x in free version, MP3 at unlimited speeds in pro)
 * CD burning support (limited to 2x in free version)

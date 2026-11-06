@@ -37,10 +37,7 @@ Global String songinfo_streamAlbumArt;	// _full_ URL to an image on the web, lik
 Global Boolean songinfo_isStream;	// true if current song is a stream
 
 Global Int songinfo_streamType;		// use in conjunction with the values below
-#define SONGINFO_STREAMTYPE_SHOUTCAST	2
-#define SONGINFO_STREAMTYPE_AOLRADIO	3
 #define SONGINFO_STREAMTYPE_CBSRADIO	4
-#define SONGINFO_STREAMTYPE_SHOUTCAST2	5
 #define SONGINFO_STREAMTYPE_NOSTREAM	0
 #define SONGINFO_STREAMTYPE_UNKNOWN	666
 
@@ -61,10 +58,7 @@ songinfo_reload()
 	songinfo_isStream	= (songinfo_streamType > 0);
 	if (songinfo_isStream) // STREAM!
 	{
-		if (!(songinfo_streamType == SONGINFO_STREAMTYPE_SHOUTCAST
-			|| songinfo_streamType == SONGINFO_STREAMTYPE_AOLRADIO
-			|| songinfo_streamType == SONGINFO_STREAMTYPE_CBSRADIO
-			|| songinfo_streamType == SONGINFO_STREAMTYPE_SHOUTCAST2))
+		if (songinfo_streamType != SONGINFO_STREAMTYPE_CBSRADIO)
 		{
 			songinfo_streamType = SONGINFO_STREAMTYPE_UNKNOWN;
 		}
@@ -74,20 +68,12 @@ songinfo_reload()
 		songinfo_streamTitle	= getPlayItemMetaDataString("streamtitle");
 		songinfo_streamURL	= getPlayItemMetaDataString("streamurl");
 
-		if (songinfo_streamType == SONGINFO_STREAMTYPE_AOLRADIO)
-		{
-			metaPrefix = "uvox/";
-		}
-		else if (songinfo_streamType == SONGINFO_STREAMTYPE_CBSRADIO)
+		if (songinfo_streamType == SONGINFO_STREAMTYPE_CBSRADIO)
 		{
 			metaPrefix = "cbs/";
 		}
 
 		songinfo_streamAlbumArt	= getPlayItemMetaDataString(metaPrefix + "albumart");
-		if (songinfo_streamType == SONGINFO_STREAMTYPE_AOLRADIO)
-		{
-			songinfo_streamAlbumArt = "http://broadband-albumart.music.aol.com/scan/" + songinfo_streamAlbumArt;
-		}
 	}
 	else //NO STREAM!
 	{

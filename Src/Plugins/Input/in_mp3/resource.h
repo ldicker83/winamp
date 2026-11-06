@@ -25,9 +25,6 @@
 #define IDS_NETWORK_RECEIVED_X_BYTES    16
 #define IDS_SERVER                      17
 #define IDS_CONTENT_TYPE                18
-#define IDS_ULTRAVOX_SYNC               19
-#define IDS_ULTRAVOX_DATA_MESSAGE       20
-#define IDS_ULTRAVOX_SID_AVGBR_MAXBR    21
 #define IDS_METADATA_RECEIVED           22
 #define IDS_METADATA_INTERVAL           23
 #define IDS_ID3v2_TAG                   24
@@ -190,7 +187,6 @@
 #define IDC_ID3FORMAT                   1127
 #define IDC_NORMFORMAT                  1128
 #define IDC_BUFMAX                      1136
-#define IDC_CHECK3                      1138
 #define IDC_ID3V2_STATUS_TEXT           1139
 #define IDC_EASTER                      1143
 #define IDC_USEID3                      1145
