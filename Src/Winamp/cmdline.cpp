@@ -174,11 +174,41 @@ static LRESULT WINAPI cmdLineProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,LPARAM 
 	return 0;
 }
 
+// Launchers that quote every argument hand us "/ADD" rather than /ADD, which the checks below
+// would treat as a filename. Rewrite a quoted switch in place so they see it: "/ADD" becomes
+// /ADD, and "/CONFIG=C:\a b.ini" becomes /CONFIG="C:\a b.ini", which GetParameter already reads.
+// The text only ever gets shorter or stays the same length.
+static void UnquoteSwitch(wchar_t *p)
+{
+	if (!p || p[0] != L'\"' || p[1] != L'/')
+		return;
+
+	wchar_t *close = wcschr(p + 1, L'\"');
+	if (!close)
+		return;
+
+	wchar_t *equals = wcschr(p + 1, L'=');
+	if (equals && equals < close)
+	{
+		// slide "/NAME=" left over the opening quote and reopen the quote after the '='
+		wmemmove(p, p + 1, equals - p);
+		*equals = L'\"';
+	}
+	else
+	{
+		// drop both quotes
+		const size_t inside = close - (p + 1);
+		wmemmove(p, p + 1, inside);
+		wmemmove(p + inside, close + 1, wcslen(close + 1) + 1);
+	}
+}
+
 wchar_t *ParseParameters(wchar_t *lpszCmdParam, int *bAdd, int *bBookmark, int *bHandle, int *nCmdShow, int *bCommand, int *bCmdParam, int *bAllowCompat)
 {
 	for (;;)
 	{
 		lpszCmdParam = EatSpaces(lpszCmdParam);
+		UnquoteSwitch(lpszCmdParam);
 		if (IsCommand(lpszCmdParam, L"-embedding", 10))
 		{
 			lpszCmdParam = SkipXW(lpszCmdParam, 10);
