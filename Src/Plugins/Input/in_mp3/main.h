@@ -25,8 +25,7 @@ extern int config_gapless;
 extern int config_fastvis;
 extern unsigned char config_miscopts;
 extern unsigned char config_downmix, config_downsample;
-extern int config_http_buffersize, config_http_prebuffer, config_http_prebuffer_underrun;
-extern char config_http_save_dir[MAX_PATH];
+extern int config_http_prebuffer, config_http_prebuffer_underrun;
 
 extern wchar_t lastfn[8192];	// currently playing file (used for getting info on the current file)
 extern char g_stream_title[256];

@@ -19,10 +19,9 @@ int lastfn_data_ready;
 
 int config_fastvis=0;
 unsigned char config_miscopts=0;
-unsigned char config_eqmode=4,config_http_proxynonport80=1;
+unsigned char config_eqmode=4;
 unsigned int winampVersion=0x00005010; // default version # to use if winamp version is 5.1 or less (and therefore doesn't have a valid HWND during Init)
-char config_http_save_dir[MAX_PATH] = "C:\\";
-int config_http_buffersize=64, config_http_prebuffer=40, config_http_prebuffer_underrun=10;
+int config_http_prebuffer=40, config_http_prebuffer_underrun=10;
 unsigned char config_downmix=0, config_downsample=0;
 
 int config_max_bufsize_k=128;
