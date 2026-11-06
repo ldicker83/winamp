@@ -1,7 +1,6 @@
 #include "api__in_mod.h"
 #include "../Winamp/wa_ipc.h"
 #include "MODPlayer.h"
-#include <libopenmpt/libopenmpt_stream_callbacks_file.h>
 #include "../nsutil/pcm.h"
 
 openmpt_module *OpenMod(const wchar_t *filename);
@@ -110,7 +109,7 @@ DWORD CALLBACK MODPlayer::ThreadFunction()
 	if (!mod) {
 		goto btfo;
 	}
-	openmpt_module_ctl_set(mod, "seek.sync_sample", "1");
+	openmpt_module_ctl_set_boolean(mod, "seek.sync_sample", 1);
 	g_duration = (int)(openmpt_module_get_duration_seconds(mod) * 1000);
 	audio_output.Open(0, channels, kModSampleRate, bits);
 
@@ -156,7 +155,6 @@ btfo: // bail the fuck out
 		PostMessage(plugin.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
 	}
 	audio_output.Close();
-	openmpt_module_destroy(mod);
 	free(float_buffer);
 	free(int_buffer);
 	return 1;
