@@ -44,9 +44,6 @@ typedef struct tag_cdlghdr
 } CFG_DLGHDR; 
 
 
-// Winamp Stuff
-UBYTE    config_savestr  = 0;                   // save stream to disk
-
 // Output Settings
 UBYTE    config_nch = 2;
 UBYTE    config_cpu;
@@ -328,9 +325,6 @@ static MLCONF l_mod[C_NUMLOADERS];                  // local copy, for cancelabi
     uint   t;
 
     config_init();
-	
-
-	RI(config_savestr);
 
     RI(config_nch);
     RI(config_srate);
@@ -398,8 +392,6 @@ static MLCONF l_mod[C_NUMLOADERS];                  // local copy, for cancelabi
 // =====================================================================================
 {
 	uint t = 0;
-
-	WI(config_savestr);
 
     WI(config_nch);
     WI(config_srate);
@@ -621,7 +613,6 @@ static void OnSelChanged(HWND hwndDlg, int initonly);
             HWND        hwndMisc;
 		    CFG_DLGHDR *pHdr = (CFG_DLGHDR *)GetWindowLong(GetParent(hwndDlg), GWL_USERDATA);
 
-            CheckDlgButton(hwndDlg, IDC_SAVESTR, config_savestr ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hwndDlg,OQ_INTERP,      (config_interp & 1)  ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hwndDlg,OQ_NOCLICK,     (config_interp & 2)  ? BST_CHECKED : BST_UNCHECKED);
 			CheckDlgButton(hwndDlg,OQ_CUBIC,       (config_interp & 4)  ? BST_CHECKED : BST_UNCHECKED);
@@ -681,8 +672,6 @@ static void OnSelChanged(HWND hwndDlg, int initonly);
                     config_panrev   = IsDlgButtonChecked(hwndDlg,OUTMODE_REVERSE)  ? 1 : 0;
 
 	    			config_voices   = _mm_boundscheck(config_voices, 2,1024);
-
-	            			config_savestr  = IsDlgButtonChecked(hwndDlg,IDC_SAVESTR)   ? 1 : 0;
                 }
                 break;
 

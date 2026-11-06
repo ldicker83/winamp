@@ -18,7 +18,7 @@ typedef struct
 } PlayParams;
 extern "C" int GetSampleSizeFlag();
 extern "C" MMSTREAM *_mm_fopen_rf(const CHAR *fname);	//rf_wrapper.c
-BOOL GetPlayParams(const char *fileName, BOOL open, PlayParams *params);
+BOOL GetPlayParams(const char *fileName, PlayParams *params);
 BOOL InitPlayer(UNIMOD *mf, MPLAYER **ps, const PlayParams *params, BOOL quick);
 // TODO; is there a way to get floating point out of this stuff?
 extern "C" 
@@ -26,7 +26,7 @@ extern "C"
 	__declspec(dllexport) intptr_t winampGetExtendedRead_open(const char *fn, int *size, int *bps, int *nch, int *srate)
 	{
 		PlayParams params;
-		if (!GetPlayParams(fn, FALSE, &params))
+		if (!GetPlayParams(fn, &params))
 			return 0;
 
 		int requested_channels = *nch;
@@ -63,21 +63,18 @@ extern "C"
 		if (!fp)
 		{
 			Mikmod_Exit(md);
-			//CleanupTemp();
 			return 0;
 		}
 		UNIMOD *mf=Unimod_Load_FP(md, params.file,fp);
 		_mm_fclose(fp);
 		if (mf==NULL)
-		{				
+		{
 			Mikmod_Exit(md);
-			//                CleanupTemp();
 			return 0;
 		}
 
 		if (!InitPlayer(mf, &mp, &params, FALSE))
 		{
-			//CleanupTemp();
 			Unimod_Free(mf);
 			Mikmod_Exit(md);
 			return 0;
