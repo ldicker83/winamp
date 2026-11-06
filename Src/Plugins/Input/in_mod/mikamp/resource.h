@@ -44,11 +44,7 @@
 #define IDS_X_X_X_OF_X_NOT_PLAYING      40
 #define IDS_X_X_X_OF_X_X_OF_X_X_OF_X    41
 #define IDS_X_BTYES_X_OF_X_MINUTES      42
-#define IDS_URLS_ONLY_SUPPORTED_IN_2_10_PLUS 43
 #define IDS_MOD_PLUGIN_ERROR            44
-#define IDS_SAVE_MODULE                 45
-#define IDS_ALL_FILES                   46
-#define IDS_RETRIEVING_MODULE           47
 #define IDS_ERROR_KILLING_DECODING_THREAD 48
 #define IDS_LOOP                        49
 #define IDS_ON                          50
@@ -90,7 +86,6 @@
 #define OQ_INTERP                       1100
 #define IDLDR_EFFOPT1                   1102
 #define OQ_NOCLICK                      1103
-#define IDC_SAVESTR                     1105
 #define IDC_VOICES                      1106
 #define IDC_INSTLIST                    1108
 #define TB_SAMPLELIST                   1109

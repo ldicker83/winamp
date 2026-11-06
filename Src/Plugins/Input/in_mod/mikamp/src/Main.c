@@ -7,7 +7,6 @@ extern "C" {
 #include "../nu/AutoWide.h"
 #include "../nu/AutoCharFn.h"
 #include <shlwapi.h>
-#include <commdlg.h>
 
 extern "C" MMSTREAM *_mm_fopen_rf(const CHAR *fname);	//rf_wrapper.c
 
@@ -58,8 +57,7 @@ void infobox_setmodule(HWND hwnd);
 extern "C" int GetSampleSizeFlag();
 static char ERROR_TITLE[64];
 
-static int          is_tempfile = 0;
-static char         cmdName[2048], saveName[MAX_PATH];
+static char         cmdName[2048];
 static char         songTitle[400];                         // as in Winamp
 static PlayParams   currParams; 
 
@@ -149,8 +147,6 @@ static MDRIVER  *md;
 //  file open shiz
 // =====================================================================================
 
-#define IPC_GETHTTPGETTER 240
-
 __inline char *GetFileName(const char *fullname)
 {
     const char *c = fullname + strlen(fullname) - 1;
@@ -168,21 +164,7 @@ __inline char *GetFileName(const char *fullname)
     return (char*)c;
 }
 
-char* BuildFilterString(void)
-{
-	static char filterStr[128] = {0};
-	if(!filterStr[0])
-	{
-		char* temp = filterStr;
-		WASABI_API_LNGSTRING_BUF(IDS_ALL_FILES,filterStr,128);
-		temp += lstrlen(filterStr)+1;
-		lstrcpy(temp, "*.*");
-		*(temp = temp + lstrlen(temp) + 1) = 0;
-	}
-	return filterStr;
-}
-
-BOOL GetPlayParams(const char *fileName, BOOL open, PlayParams *params)
+BOOL GetPlayParams(const char *fileName, PlayParams *params)
 {
     mm_clearerror();
 
@@ -290,90 +272,7 @@ BOOL GetPlayParams(const char *fileName, BOOL open, PlayParams *params)
 
     params->file = fileName;
 
-    // check for URLs
-    if (open)
-    {
-        saveName[0] = 0;
-        is_tempfile = 0;
-
-	    if (!_strnicmp(fileName, "http://", 7) || !_strnicmp(fileName, "https://", 8) ||
-            !_strnicmp(fileName, "ftp://", 6))                // FTP is now currently supported, but still...
-	    {
-            typedef int (__cdecl *HttpRetrieveFile)(HWND hwnd, const char *url, const char *file, const char *dlgtitle);
-
-		    HttpRetrieveFile fileGetter;
-		    int t = SendMessage(mikmod.hMainWindow,WM_USER,0,IPC_GETHTTPGETTER);
-		    // try to get httpGetter
-		    if (!t || t==1)
-		    {	
-	            MessageBox(mikmod.hMainWindow,
-						   WASABI_API_LNGSTRING(IDS_URLS_ONLY_SUPPORTED_IN_2_10_PLUS),
-						   ERROR_TITLE, MB_ICONERROR);
-	            return FALSE;	
-		    }
-		    
-		    fileGetter = (HttpRetrieveFile)t;
-            // save stream if required
-		    if (config_savestr)
-		    {	
-				OPENFILENAME l = {0};
-			    lstrcpyn(saveName, GetFileName(fileName), MAX_PATH);
-			    l.lStructSize       = sizeof(l);
-			    l.hwndOwner         = mikmod.hMainWindow;
-			    l.hInstance         = NULL;
-			    l.lpstrFilter       = BuildFilterString();
-			    l.lpstrCustomFilter = NULL;
-			    l.nMaxCustFilter    = 0;
-			    l.nFilterIndex      = 0;
-			    l.lpstrFile         = saveName;
-			    l.nMaxFile          = sizeof(saveName);
-			    l.lpstrFileTitle    = 0;;
-			    l.nMaxFileTitle     = 0;
-			    l.lpstrInitialDir   = NULL;
-			    l.lpstrTitle        = WASABI_API_LNGSTRING(IDS_SAVE_MODULE);
-			    l.lpstrDefExt       = "mod";
-			    l.Flags             = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_OVERWRITEPROMPT; 	        
-
-			    if (!GetSaveFileName(&l)) 
-                    saveName[0] = 0;
-		    }
-		    // generate temp name, if not saving
-		    if (!saveName[0])
-		    {	
-		        char p[MAX_PATH] = {0};
-
-                GetTempPath(sizeof(p), p);
-			    GetTempFileName(p, "mod", 0, saveName);
-			    is_tempfile = 1;
-		    }
-		    // get file
-		    if (fileGetter(mikmod.hMainWindow, fileName, saveName, WASABI_API_LNGSTRING(IDS_RETRIEVING_MODULE)))
-            {
-			    is_tempfile = 0;
-                saveName[0] = 0;
-                return FALSE;
-            }
-		    params->file = saveName;
-	    }
-    }
-    else
-    {
-        if (saveName[0] && !_stricmp(fileName, cmdName))
-            params->file = saveName;
-    }
-
     return TRUE;
-}
-
-static void CleanupTemp()
-{
-	if (is_tempfile && saveName[0])
-	{	
-		DeleteFile(saveName);
-		is_tempfile = 0;
-	}
-
-    saveName[0] = 0;
 }
 
 BOOL InitPlayer(UNIMOD *mf, MPLAYER **ps, const PlayParams *params, BOOL quick)
@@ -492,7 +391,7 @@ static int __cdecl play(const char *fileName)
     uint       md_mode = 0;
 
     // parse parameters
-    if (!GetPlayParams(fileName, TRUE, &params))
+    if (!GetPlayParams(fileName, &params))
         return 1;
 
     // save strings locally
@@ -519,10 +418,7 @@ static int __cdecl play(const char *fileName)
 
     md = Mikmod_Init(config_srate, 1000, NULL, GetNumChannels()==1 ? MD_MONO : MD_STEREO, config_cpu, md_mode, &drv_amp);
 	if (!md)
-    {
-        CleanupTemp();
         return 1;
-    }
 
     md->pansep = config_pansep;
 
@@ -584,7 +480,6 @@ static int __cdecl play(const char *fileName)
 			if (!fp)
 			{
                 Mikmod_Exit(md);
-                CleanupTemp();
 				return -1;
 			}
 //MMEXPORT UNIMOD  *Unimod_LoadFP(MDRIVER *md, MMSTREAM *modfp, MMSTREAM *smpfp, int mode);
@@ -593,24 +488,19 @@ static int __cdecl play(const char *fileName)
             mf=Unimod_Load_FP(md, params.file,fp);
 			_mm_fclose(fp);
 			if (mf==NULL)
-            {				
+            {
                 Mikmod_Exit(md);
-                CleanupTemp();
                 return -1;
             }
         }
     }
 
     // file name is stored in module now
-    if (!saveName[0])
-        params.file = mf->filename;
+    params.file = mf->filename;
 
     // init player
     if (!InitPlayer(mf, &mp, &params, FALSE))
-    {
-        CleanupTemp();
         return -1;
-    }
 
     Player_Start(mp);
 
@@ -654,7 +544,6 @@ static void __cdecl stop(void)
 
         CloseHandle(thread_handle);
         thread_handle = INVALID_HANDLE_VALUE;
-        CleanupTemp();
     }
 
     Player_Free(mp);
@@ -715,7 +604,7 @@ static int __cdecl infobox(const char *fileName, HWND hwnd)
     PlayParams params;
 
     // parse params
-    if (!GetPlayParams(fileName, FALSE, &params))
+    if (!GetPlayParams(fileName, &params))
         return 1;
 
     // First we check our array of loaded dialog boxes.  If there are any filename matches,
@@ -754,7 +643,7 @@ static int __cdecl infobox(const char *fileName, HWND hwnd)
 		return GetTypeInfo(e, dest, destlen);
 	}
 	
-	if (!GetPlayParams(fn, FALSE, &params))
+	if (!GetPlayParams(fn, &params))
 		return 0;
 
 	m=GetModuleInfo(&params);
@@ -826,7 +715,7 @@ extern "C" __declspec(dllexport) int winampGetExtendedFileInfoW(const wchar_t *f
 		return GetTypeInfo(e, dest, destlen);
 	}
 	
-	if (!GetPlayParams(AutoCharFn(fn), FALSE, &params))
+	if (!GetPlayParams(AutoCharFn(fn), &params))
 		return 0;
 
 	m=GetModuleInfo(&params);
@@ -888,7 +777,7 @@ static void __cdecl getfileinfo(const char *fileName, char *title, int *length_i
     // empty string stands for the current file
     if (fileName!=NULL && *fileName)
     {
-        if (!GetPlayParams(fileName, FALSE, &params))
+        if (!GetPlayParams(fileName, &params))
         {
             lstrcpyn(title, fileName, GETFILEINFO_TITLE_LENGTH);
             if (length_in_ms)

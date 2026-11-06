@@ -46,7 +46,7 @@ typedef struct INFOBOX
 extern "C" {
 #endif
 
-extern UBYTE      config_nopan, config_savestr;
+extern UBYTE      config_nopan;
 extern MD_DEVICE  drv_amp;
 extern MD_DEVICE drv_buffer;
 extern In_Module  mikmod;

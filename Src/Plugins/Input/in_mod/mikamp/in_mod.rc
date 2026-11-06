@@ -131,8 +131,6 @@ BEGIN
     CONTROL         "Reverse Stereo",OUTMODE_REVERSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,15,72,10
     LTEXT           "Max voices:",IDC_STATIC,12,31,39,8
     COMBOBOX        IDC_VOICES,60,29,42,88,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Streaming",IDC_STATIC,4,49,134,29
-    CONTROL         "Prompt to save to disk",IDC_SAVESTR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,61,85,11
     GROUPBOX        "Output Quality",IDC_STATIC,143,1,134,149
     LTEXT           "Mixing Rate:",IDC_STATIC,149,17,41,9
     COMBOBOX        OQ_QUALITY,195,15,66,76,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -335,11 +333,7 @@ BEGIN
     IDS_X_X_X_OF_X_NOT_PLAYING "%d\n%d\n0 of %d\n\nNot Playing..."
     IDS_X_X_X_OF_X_X_OF_X_X_OF_X "%d\n%d\n%d of %d (%d)\n%d of %d\n%d (%d)"
     IDS_X_BTYES_X_OF_X_MINUTES "%d bytes\n%d:%02d minutes\n%d\n%d\n%d"
-    IDS_URLS_ONLY_SUPPORTED_IN_2_10_PLUS "URLs only supported in Winamp 2.10+"
     IDS_MOD_PLUGIN_ERROR    "Module Plug-in Error"
-    IDS_SAVE_MODULE         "Save Module"
-    IDS_ALL_FILES           "All files"
-    IDS_RETRIEVING_MODULE   "Retrieving Module"
 END
 
 STRINGTABLE 
