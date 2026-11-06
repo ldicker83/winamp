@@ -320,7 +320,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClInclude Include="Lyrics3.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Metadata.h" />
-    <ClInclude Include="MetadataFactory.h" />
     <ClInclude Include="MP3Info.h" />
     <ClInclude Include="mpegutil.h" />
     <ClInclude Include="OFL.h" />
@@ -328,7 +327,6 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClInclude Include="RawMediaReader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stopper.h" />
-    <ClInclude Include="WasabiMetadata.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\nu\listview.cpp" />
@@ -355,14 +353,12 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClCompile Include="Lyrics3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Metadata.cpp" />
-    <ClCompile Include="MetadataFactory.cpp" />
     <ClCompile Include="MP3Info.cpp" />
     <ClCompile Include="mpegutil.cpp" />
     <ClCompile Include="OFL.cpp" />
     <ClCompile Include="pdtimer.cpp" />
     <ClCompile Include="RawMediaReader.cpp" />
     <ClCompile Include="Stopper.cpp" />
-    <ClCompile Include="WasabiMetadata.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="in_mp3.rc" />

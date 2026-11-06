@@ -283,8 +283,6 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NULLSOFT_MPEG_AUDIO_DECODER_OLD "Nullsoft MPEG Audio Decoder"
-    IDS_BUFFER_X            "Buffer: %d%%"
-    IDS_ERROR_SYNCING_TO_STREAM "Error syncing to stream"
 END
 
 STRINGTABLE 

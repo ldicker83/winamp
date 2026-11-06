@@ -52,9 +52,6 @@
     <ClCompile Include="Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MetadataFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MP3Info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -71,9 +68,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Stopper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WasabiMetadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nu\listview.cpp">
@@ -138,9 +132,6 @@
     <ClInclude Include="Metadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MetadataFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MP3Info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,9 +151,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Stopper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WasabiMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\nu\RingBuffer.h">

@@ -20,9 +20,6 @@ static const GUID adts_aac_guid =
 static const GUID adts_mp2_guid = 
 { 0x4192fe3f, 0xe843, 0x445c, { 0x8d, 0x62, 0x51, 0xbe, 0x5e, 0xe5, 0xe6, 0x8c } };
 
-extern int m_is_stream;
-extern bool m_is_stream_seekable;
-
 // post this to the main window at end of file (after playback as stopped)
 #define WM_WA_MPEG_EOF WM_USER+2
 
@@ -35,15 +32,12 @@ int g_ds;
 
 size_t g_bits;
 int g_sndopened;
-int g_bufferstat;
 int g_length = -1000;
 int g_vis_enabled;
 volatile int g_closeaudio = 0;
 
-CGioFile *g_playing_file=0;
 /* private data */
 static size_t g_samplebuf_used;
-static int need_prebuffer;
 static int g_srate, g_nch, g_br_add, g_br_div, g_avg_vbr_br;
 int g_br;
 
@@ -144,7 +138,6 @@ public:
 		isAac = 0;
 		isEAAC = 0;
 
-		last_bpos = -1;
 		need_synclight = true;
 		done = 0;
 		br = 0;
@@ -169,12 +162,10 @@ public:
 	DWORD Loop();
 	DWORD OpenDecoder();
 	void Seek(int seekPosition);
-	void PreBuffer();
 	void Decode();
 	void Viz();
 	void CalculateCodecDelay();
 	DWORD OpenOutput(int numChannels, int sampleRate, int bitsPerSample);
-	void SetupStream();
 
 	BYTE g_samplebuf[6*3*2*2*1152];
 
@@ -185,7 +176,6 @@ public:
 	CGioFile file;
 
 	int maxlatency;
-	int last_bpos;
 	bool need_synclight;
 	int done; // set to TRUE if decoding has finished, 2 if all has been written
 	size_t br;
@@ -194,32 +184,6 @@ public:
 	int sampleFrameSize;
 	adts *decoder;
 };
-
-static int CalcPreBuffer(int buffer_setting, int bitrate)
-{
-	if (bitrate < 8) 
-		bitrate = 8;
-	else if (bitrate > 320) 
-		bitrate = 320;
-	int prebuffer = (buffer_setting * bitrate) / 128;
-	if (prebuffer > 100)
-		prebuffer=100;
-	return prebuffer;
-}
-
-void DecodeLoop::SetupStream()
-{
-	char buf[1024] = {0};
-	int len;
-
-	m_is_stream = file.IsStream();
-
-	//Wait until we have data...
-	while (!killDecodeThread && file.Peek(buf, 1024, &len) == NErr_Success && !len)
-		Sleep(50);
-
-	m_is_stream_seekable = file.IsStreamSeekable();
-}
 
 DWORD DecodeLoop::OpenOutput(int numChannels, int sampleRate, int bitsPerSample)
 {
@@ -367,14 +331,6 @@ void DecodeLoop::Decode()
 		}
 		else if (res == adts::NEEDMOREDATA)
 		{
-			if (file.IsStream() && !need_synclight)
-			{
-				need_synclight = true; mod.SetInfo(-1, -1, -1, 0);
-			}
-			if (file.IsStream() && !mod.outMod->IsPlaying())
-			{
-				need_prebuffer = CalcPreBuffer(config_http_prebuffer_underrun, (int)br);
-			}
 			break;
 		}
 		else
@@ -386,78 +342,11 @@ void DecodeLoop::Decode()
 	}
 }
 
-void DecodeLoop::PreBuffer()
-{
-	int p = file.RunStream();
-	int pa = file.PercentAvailable();
-	if (pa >= need_prebuffer || p == 2)
-	{
-		EnterCriticalSection(&g_lfnscs);
-		lastfn_status[0] = 0;
-		LeaveCriticalSection(&g_lfnscs);
-		PostMessage(mod.hMainWindow, WM_USER, 0, IPC_UPDTITLE);
-		need_prebuffer = 0;
-		g_bufferstat = 0;
-		last_bpos = -1;
-	}
-	else
-	{
-		int bpos = pa * 100 / need_prebuffer;
-		if (!g_bufferstat) g_bufferstat = decode_pos_ms;
-		if (bpos != last_bpos)
-		{
-			last_bpos = bpos;
-			EnterCriticalSection(&g_lfnscs);
-			if (stricmp(lastfn_status, "stream temporarily interrupted"))
-			{
-				char langbuf[512] = {0};
-				wsprintfA(lastfn_status, WASABI_API_LNGSTRING_BUF(IDS_BUFFER_X,langbuf,512), bpos);
-			}
-			LeaveCriticalSection(&g_lfnscs);
-
-			int csa = mod.SAGetMode();
-			char tempdata[75*2] = {0, };
-			int x;
-			if (csa&1)
-			{
-				for (x = 0; x < bpos*75 / 100; x ++)
-				{
-					tempdata[x] = x * 16 / 75;
-				}
-			}
-			if (csa&2)
-			{
-				int offs = (csa & 1) ? 75 : 0;
-				x = 0;
-				while (x < bpos*75 / 100)
-				{
-					tempdata[offs + x++] = -6 + x * 14 / 75;
-				}
-				while (x < 75)
-				{
-					tempdata[offs + x++] = 0;
-				}
-			}
-			if (csa == 4)
-			{
-				tempdata[0] = tempdata[1] = (bpos * 127 / 100);
-			}
-
-			if (csa) mod.SAAdd(tempdata, ++g_bufferstat, (csa == 3) ? 0x80000003 : csa);
-			PostMessage(mod.hMainWindow, WM_USER, 0, IPC_UPDTITLE);
-		}
-	}
-}
-
 void DecodeLoop::Seek(int seekPosition)
 {
 	if (done == 3)
 		return;
 	done=0;
-	int br = (int)decoder->GetCurrentBitrate();
-
-	need_prebuffer = CalcPreBuffer(config_http_prebuffer_underrun, br);
-	if (need_prebuffer < 1) need_prebuffer = 5;
 
 	last_decode_pos_ms = decode_pos_ms = seekPosition;
 
@@ -470,7 +359,6 @@ void DecodeLoop::Seek(int seekPosition)
 	int r = g_br;
 	if (g_br_div) r = (g_br_add + g_br_div / 2) / g_br_div;
 	file.Seek(decode_pos_ms, r);
-	//      need_prebuffer=config_http_prebuffer/8;
 	//			g_br_add=g_br_div=0;
 
 }
@@ -519,21 +407,10 @@ DWORD DecodeLoop::OpenDecoder()
 				return 1;
 			case adts::FAILURE:
 			case adts::ENDOFFILE:
-				if (!killDecodeThread)
-				{
-					if (!lastfn_status_err)
-					{
-						EnterCriticalSection(&g_lfnscs);
-						WASABI_API_LNGSTRING_BUF(IDS_ERROR_SYNCING_TO_STREAM,lastfn_status,256);
-						LeaveCriticalSection(&g_lfnscs);
-						PostMessage(mod.hMainWindow, WM_USER, 0, IPC_UPDTITLE);
-					}
-				}
 				if (!killDecodeThread) Sleep(200);
-				if (!killDecodeThread) 			PostMessage(mod.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
+				if (!killDecodeThread) PostMessage(mod.hMainWindow, WM_WA_MPEG_EOF, 0, 0);
 				return 0;
 			case adts::NEEDMOREDATA:
-				if (!killDecodeThread && file.IsStream()) Sleep(25);
 				if (killDecodeThread) return 0;
 			}
 		}
@@ -560,35 +437,17 @@ DWORD DecodeLoop::Loop()
 	    || !_wcsicmp(ext, L".vlb")
 	    || !_wcsicmp(ext, L".apl"))
 	{
-		if (file.IsStream())
-			SetupStream();
-		else
-		{
-			isAac = 1;
-			if (!_wcsicmp(ext, L".aac") || !_wcsicmp(ext, L".apl")) isEAAC = 1;
-		}
+		isAac = 1;
+		if (!_wcsicmp(ext, L".aac") || !_wcsicmp(ext, L".apl")) isEAAC = 1;
 	}
-	else if (file.IsStream())
-		SetupStream();
 
 	if (OpenDecoder() == 0)
 		return 0;
-
-	EnterCriticalSection(&streamInfoLock);
-	g_playing_file = &file;
-	LeaveCriticalSection(&streamInfoLock);
-	
-
-	EnterCriticalSection(&g_lfnscs);
-	lastfn_status[0] = 0;
-	LeaveCriticalSection(&g_lfnscs);
 
 	lastfn_data_ready = 1;
 
 // TODO?	if (decoder != &aacp) // hack because aac+ bitrate isn't accurate at this point
 		br = decoder->GetCurrentBitrate();
-
-	need_prebuffer = CalcPreBuffer(config_http_prebuffer, (int)br);
 
 	if (((!(config_eqmode&4) && decoder->GetLayer() == 3) ||
 	                    ((config_eqmode&8) && decoder->GetLayer() < 3)))
@@ -600,13 +459,6 @@ DWORD DecodeLoop::Loop()
 
 	decoder->CalculateFrameSize(&g_framesize);
 	decoder->GetOutputParameters(&g_bits, &g_nch, &g_srate);
-
-	if (!killDecodeThread && file.IsStream() == 1)
-	{
-		DWORD_PTR dw;
-		if (!killDecodeThread) SendMessageTimeout(mod.hMainWindow, WM_USER, 0, IPC_UPDTITLE, SMTO_BLOCK, 100, &dw);
-		if (!killDecodeThread) SendMessageTimeout(mod.hMainWindow, WM_TIMER, 38, 0, SMTO_BLOCK, 100, &dw);
-	}
 
 	sampleFrameSize = g_nch * ((int)g_bits/8);
 
@@ -636,19 +488,10 @@ DWORD DecodeLoop::Loop()
 		else g_length = file.m_vbr_ms;
 	}
 
-	if (file.IsStream())
-	{
-		if (need_prebuffer < config_http_prebuffer / 2)
-			need_prebuffer = config_http_prebuffer / 2;
-	}
-
 	while (!killDecodeThread)
 	{
 		if (seek_needed != -1)
 			Seek(seek_needed);
-
-		if (need_prebuffer && file.IsStream() && maxlatency && !file.EndOf())
-			PreBuffer();
 
 		int needsleep = 1;
 
@@ -669,7 +512,7 @@ DWORD DecodeLoop::Loop()
 		{
 			int fs = (g_framesize * ((mod.dsp_isactive() == 1) ? 2 : 1));
 			// TODO: we should really support partial writes, there's no gaurantee that CanWrite() will EVER get big enough
-			if (mod.outMod->CanWrite() >= fs && (!need_prebuffer || !file.IsStream() || !maxlatency))
+			if (mod.outMod->CanWrite() >= fs)
 				// CanWrite() returns the number of bytes you can write, so we check that
 				// to the block size. the reason we multiply the block size by two if
 				// mod.dsp_isactive() is that DSP plug-ins can change it by up to a
@@ -689,10 +532,7 @@ DWORD DecodeLoop::Loop()
 				if ((g_samplebuf_used >= (size_t)g_framesize || (done && g_samplebuf_used > 0)) && seek_needed == -1)
 				{
 					// adjust decode position variable
-					if (file.isSeekReset())
-						last_decode_pos_ms = decode_pos_ms = 0;
-					else
-						decode_pos_ms += ((int)g_samplebuf_used / sampleFrameSize  * 1000) / g_srate;
+					decode_pos_ms += ((int)g_samplebuf_used / sampleFrameSize  * 1000) / g_srate;
 
 					// if we have a DSP plug-in, then call it on our samples
 					if (mod.dsp_isactive())
@@ -723,10 +563,6 @@ DWORD DecodeLoop::Loop()
 	}
 
 	/* ---- change some globals to let everyone know we're done */
-	EnterCriticalSection(&g_lfnscs);
-	lastfn_status[0] = 0;
-	LeaveCriticalSection(&g_lfnscs);
-	g_bufferstat = 0;
 	g_closeaudio = 1;
 	/* ----  */
 
@@ -736,14 +572,6 @@ DWORD DecodeLoop::Loop()
 DWORD WINAPI DecodeThread(LPVOID b)
 {
 	DecodeLoop loop;
-
-	
-
-	DWORD ret = loop.Loop();
-
-	EnterCriticalSection(&streamInfoLock);
-	g_playing_file = 0;
-	LeaveCriticalSection(&streamInfoLock);
-	return ret;
+	return loop.Loop();
 }
 

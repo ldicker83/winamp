@@ -18,10 +18,6 @@
 #include "config.h"
 #include <strsafe.h>
 
-
-// TODO: benski> CUT!!!
-char g_stream_title[256] = {0};
-
 int fixAACCBRbitrate(int br)
 {
 	static short brs[] =
@@ -64,33 +60,7 @@ void getfileinfo(const wchar_t *filename, wchar_t *title, int *length_in_ms)
 	if (FilePath::IsUrl(fn))
 	{
 		if (title)
-		{
-			if (fn != filename || !_wcsicmp(fn, lastfn))
-			{
-				EnterCriticalSection(&g_lfnscs);
-				if (lastfn_status[0])
-				{
-					char buf[4096] = {0};
-					StringCchPrintfA(buf, 4096, "[%s] %s", lastfn_status, lastfn_data_ready ? g_stream_title : (char *)AutoChar(fn));
-					ConvertTryUTF8(buf, title, 256);
-				}
-				else
-				{
-					if (!lastfn_data_ready)
-						lstrcpynW(title, fn, 256);
-					else
-					{
-						ConvertTryUTF8(g_stream_title, title, 256);
-					}
-				}
-				LeaveCriticalSection(&g_lfnscs);
-				if (length_in_ms) *length_in_ms = getlength();
-			}
-			else
-			{
-				lstrcpynW(title, fn, 256);
-			}
-		}
+			lstrcpynW(title, fn, 256);
 		return ;
 	}
 	else

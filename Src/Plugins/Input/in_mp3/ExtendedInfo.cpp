@@ -10,7 +10,6 @@
 #include "../Agave/Language/api_language.h"
 #include <strsafe.h>
 
-extern CGioFile *g_playing_file;
 static std::filesystem::file_time_type lastWriteTime;
 
 // is used to determine if the last write time of the file has changed when
@@ -86,70 +85,8 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 		if (!_wcsicmp(p, L"VLB")) { StringCchCopyW(dest, destlen, L"audio/vlb"); return 1; }
 		return 0;
 	}
-	else if (!_stricmp(data, "streamtype"))
-	{
-		if (lstrcmpW(lastfn, fn))
-			return 0;
-
-		if (g_playing_file)
-		{
-			EnterCriticalSection(&streamInfoLock);
-			if (g_playing_file) // check again now that we've acquired the lock
-			{
-				StringCchPrintfW(dest, destlen, L"%d", g_playing_file->IsStream());
-				LeaveCriticalSection(&streamInfoLock);
-				return 1;
-			}
-			LeaveCriticalSection(&streamInfoLock);
-		}
-
-		return 0;
-	}
-	else if (!_stricmp(data, "streammetadata"))
-	{
-		if (lstrcmpW(lastfn, fn))
-			return 0;
-
-		if (g_playing_file)
-		{
-			uint32_t len=0;
-			EnterCriticalSection(&streamInfoLock);
-			if (g_playing_file && g_playing_file->GetID3v2(&len) && len > 0) // check again now that we've acquired the lock
-			{
-				lstrcpynW(dest, L"1", (int)destlen);
-				LeaveCriticalSection(&streamInfoLock);
-				return 1;	// always return 1 to ensure we can do title lookups
-			}
-			LeaveCriticalSection(&streamInfoLock);
-		}
-		return 0;
-	}
-	else if (!_stricmp(data, "streaminformation"))
- 	{
- 		EnterCriticalSection(&streamInfoLock);
- 		if (g_playing_file)
- 			g_playing_file->GetStreamInfo(dest, destlen);
- 		else
- 			dest[0]=0;
- 		LeaveCriticalSection(&streamInfoLock);
- 		return 1;
- 	}
 
 	if (!fn || !fn[0]) return 0;
-
-	if (g_playing_file && FilePath::IsUrl(fn) && !lstrcmpW(lastfn, fn))
-	{
-		EnterCriticalSection(&streamInfoLock);
-		uint32_t len = 0;
-		if (g_playing_file && g_playing_file->GetID3v2(&len) && len > 0) // check again now that we've acquired the lock
-		{
-			Metadata meta(g_playing_file, fn);
-			int ret = meta.GetExtendedData(data, dest, (int)destlen);
-			LeaveCriticalSection(&streamInfoLock);
-			return ret;
-		}
-		LeaveCriticalSection(&streamInfoLock);
-	}
 
 	if (FilePath::IsUrl(fn))
 		return 0;

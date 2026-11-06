@@ -6,14 +6,8 @@
 #include "../Winamp/wa_ipc.h"
 #include "../nu/ServiceBuilder.h"
 #include "config.h"
-#include "MetadataFactory.h"
 #include "../nu/Singleton.h"
 #include "RawMediaReader.h"
-
-char lastfn_status[256] = {0};
-int lastfn_status_err = 0;
-CRITICAL_SECTION g_lfnscs;
-CRITICAL_SECTION streamInfoLock;
 
 int lastfn_data_ready;
 
@@ -21,7 +15,6 @@ int config_fastvis=0;
 unsigned char config_miscopts=0;
 unsigned char config_eqmode=4;
 unsigned int winampVersion=0x00005010; // default version # to use if winamp version is 5.1 or less (and therefore doesn't have a valid HWND during Init)
-int config_http_prebuffer=40, config_http_prebuffer_underrun=10;
 unsigned char config_downmix=0, config_downsample=0;
 
 int config_max_bufsize_k=128;
@@ -32,9 +25,6 @@ wchar_t lastfn[8192] = {0};	// currently playing file (used for getting info on 
 
 // Used for correcting DSP plug-in pitch changes
 int paused = 0;				// are we paused?
-
-int m_is_stream = 0;
-bool m_is_stream_seekable = true;
 
 volatile int killDecodeThread=0;			// the kill switch for the decode thread
 HANDLE thread_handle=INVALID_HANDLE_VALUE;	// the handle to the decode thread
@@ -57,8 +47,6 @@ api_application *WASABI_API_APP        = 0;
 api_config      *AGAVE_API_CONFIG      = 0;
 api_memmgr      *WASABI_API_MEMMGR     = 0;
 
-MetadataFactory metadataFactory;
-
 static RawMediaReaderService raw_media_reader_service;
 static SingletonServiceFactory<svc_raw_media_reader, RawMediaReaderService> raw_factory;
 
@@ -68,7 +56,6 @@ int init()
 		return IN_INIT_FAILURE;
 
 	winampVersion = (unsigned int)SendMessage(mod.hMainWindow, WM_WA_IPC, 0, IPC_GETVERSION);
-	mod.service->service_register(&metadataFactory);
 	raw_factory.Register(mod.service, &raw_media_reader_service);
 
 	ServiceBuild(AGAVE_API_CONFIG, AgaveConfigGUID);
@@ -83,8 +70,6 @@ int init()
 	swprintf(szDescription, 256, WASABI_API_LNGSTRINGW(IDS_NULLSOFT_MPEG_AUDIO_DECODER), PLUGIN_VERSION);
 	mod.description = (char*)szDescription;
 
-	InitializeCriticalSection(&g_lfnscs);
-	InitializeCriticalSection(&streamInfoLock);
 	mod.UsesOutputPlug|=2;
 	config_read();
 	mod.FileExtensions=getfileextensions();
@@ -93,8 +78,6 @@ int init()
 
 void quit()
 {
-	DeleteCriticalSection(&g_lfnscs);
-	DeleteCriticalSection(&streamInfoLock);
 	ServiceRelease(mod.service, AGAVE_API_CONFIG, AgaveConfigGUID);
 	ServiceRelease(mod.service, WASABI_API_APP, applicationApiServiceGuid);
 	ServiceRelease(mod.service, WASABI_API_MEMMGR, memMgrApiServiceGuid);
@@ -115,19 +98,14 @@ int m_force_seek=-1;
 int play(const in_char *fn)
 {
 	DWORD thread_id;
-	lastfn_status_err=0;
 	paused=0;
 	g_length=-1000;
 	decode_pos_ms=0;
 	seek_needed=m_force_seek;
 	m_force_seek=-1;
-	m_is_stream = 0;
-	m_is_stream_seekable = false;
 	killDecodeThread=0;
 	g_sndopened=0;
 	lastfn_data_ready=0;
-	lastfn_status[0]=0;
-	g_bufferstat=0;
 	g_closeaudio=0;
 	lstrcpynW(lastfn,fn, 8192);
 	mod.is_seekable = 0;
@@ -197,9 +175,6 @@ int getlength()
 // that wrong.
 int getoutputtime()
 {
-	if (g_bufferstat)
-		return g_bufferstat;
-
 	if (!lastfn_data_ready||!g_sndopened)
 		return 0;
 
@@ -217,13 +192,8 @@ int getoutputtime()
 // and the decode thread checks seek_needed.
 void setoutputtime(int time_in_ms)
 {
-
-
-	if (m_is_stream == 0 || (m_is_stream !=0 && m_is_stream_seekable))
-	{
-		seek_needed=time_in_ms;
-		m_force_seek=-1;
-	}
+	seek_needed=time_in_ms;
+	m_force_seek=-1;
 }
 
 

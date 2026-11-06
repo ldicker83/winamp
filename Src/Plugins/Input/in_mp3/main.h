@@ -25,19 +25,11 @@ extern int config_gapless;
 extern int config_fastvis;
 extern unsigned char config_miscopts;
 extern unsigned char config_downmix, config_downsample;
-extern int config_http_prebuffer, config_http_prebuffer_underrun;
 
 extern wchar_t lastfn[8192];	// currently playing file (used for getting info on the current file)
-extern char g_stream_title[256];
-extern char lastfn_status[256];
-extern int lastfn_status_err;
 extern int paused;				// are we paused?
 extern void  config_read();
 extern void about(HWND hwndParent);
-
-extern void strmBuf_Quit();
-extern int strmBuf_Start(char *streamurl, int num_bytes, int pre_buffer_top, int pre_buffer_bottom);
-extern int strmBuf_Read(void *data, int bytes_requested);
 
 extern void config(HWND hwndParent);
 extern volatile int killDecodeThread;
@@ -48,9 +40,6 @@ extern unsigned char eq_tab[10];
 extern unsigned char config_eqmode;
 extern unsigned int winampVersion;
 extern int g_eq_ok;
-
-extern CRITICAL_SECTION g_lfnscs;
-extern CRITICAL_SECTION streamInfoLock;
 
 #if !defined(__alpha) && !defined(_WIN64)
 static __inline long float_to_long(double t)
@@ -81,7 +70,6 @@ extern char config_extlist[129];
 #endif
 
 extern int m_force_seek;
-extern CGioFile *g_playing_file;
 
 int _r_i(char *name, int def);
 void _w_i(char *name, int d);

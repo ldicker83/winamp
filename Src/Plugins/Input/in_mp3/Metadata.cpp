@@ -16,19 +16,6 @@
 
 #define INFO_READ_SIZE 32768
 
-Metadata::Metadata( CGioFile *_file, const wchar_t *_filename )
-{
-	if ( !FilePath::IsUrl( _filename ) )
-		filename = _wcsdup( _filename );
-
-	ReadTags( _file );
-	if ( bitrate = _file->GetAvgVBRBitrate() * 1000 )
-	{
-		length_ms = _file->m_vbr_ms;
-		vbr       = _file->m_vbr_flag || _file->m_vbr_hdr;
-	}
-}
-
 void GetFileDescription(const wchar_t *file, CGioFile &_file, wchar_t *data, size_t datalen);
 void GetAudioInfo(const wchar_t *filename, CGioFile *file, int *len, int *channels, int *bitrate, int *vbr, int *sr);
 
