@@ -6,6 +6,9 @@
 #include "MODPlayer.h"
 #include "../nu/AutoWide.h"
 #include <libopenmpt/libopenmpt.h>
+#include <cctype>
+#include <string>
+#include "FormatNames.h"
 
 static MODPlayer *player;
 DWORD CALLBACK MODThread(LPVOID param);
@@ -47,23 +50,46 @@ static int Init()
 	plugin.description = (char *)plugin_name;
 
 
-	static char fileExtensionsString[2048] = "";
-	char* end = fileExtensionsString;
-	size_t remaining=sizeof(fileExtensionsString);
-	const char *extensions = openmpt_get_supported_extensions();
-	char *next_token;
-	for (const char *extension = strtok_s((char *)extensions, ";", &next_token); extension; extension = strtok_s(NULL, ";", &next_token)) {
-		StringCbCopyExA(end, remaining, extension, &end, &remaining, 0);
-		char tracker[32] = {0};
-		StringCbPrintfA(tracker, sizeof(tracker), "%s Module", extension);
-		StringCbCopyExA(end+1, remaining-1, tracker, &end, &remaining, 0);
-		end++; remaining--;
+	// Winamp wants "ext\0Description\0ext\0Description\0...\0". libopenmpt gives "ext;ext;...".
+	// The list holds about 75 extensions, so it's built in a string that can grow.
+	static std::string fileExtensions;
+	fileExtensions.clear();
 
+	std::string supported;
+	if (const char *extensions = openmpt_get_supported_extensions()) {
+		supported = extensions;
+		openmpt_free_string(extensions);
 	}
-	plugin.FileExtensions = fileExtensionsString;
-	*end = 0;	
 
-	openmpt_free_string(extensions);
+	for (size_t start = 0; start < supported.size();) {
+		size_t end = supported.find(';', start);
+		if (end == std::string::npos) {
+			end = supported.size();
+		}
+		std::string extension = supported.substr(start, end - start);
+		start = end + 1;
+		if (extension.empty()) {
+			continue;
+		}
+
+		std::string description;
+		if (const char *name = GetModFormatName(extension.c_str())) {
+			description = name;
+		} else {
+			for (char c : extension) {
+				description += (char)toupper((unsigned char)c);
+			}
+		}
+		description += " Module";
+
+		fileExtensions += extension;
+		fileExtensions += '\0';
+		fileExtensions += description;
+		fileExtensions += '\0';
+	}
+	fileExtensions += '\0'; // with the string's own terminator, this ends the list with two nulls
+	plugin.FileExtensions = fileExtensions.data();
+
 	return IN_INIT_SUCCESS;
 }
 

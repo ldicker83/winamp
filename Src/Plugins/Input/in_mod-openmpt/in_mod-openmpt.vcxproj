@@ -246,6 +246,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
     <ClCompile Include="..\..\..\nu\SpillBuffer.cpp" />
     <ClCompile Include="ExtendedInfo.cpp" />
     <ClCompile Include="ExtendedRead.cpp" />
+    <ClCompile Include="FormatNames.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MODThread.cpp" />
     <ClCompile Include="OpenMod.cpp" />
@@ -253,6 +254,7 @@ xcopy /Y /D $(IntDir)$(TargetName).pdb ..\..\..\..\Build\Winamp_$(PlatformShortN
   <ItemGroup>
     <ClInclude Include="..\..\..\nu\SpillBuffer.h" />
     <ClInclude Include="api__in_mod.h" />
+    <ClInclude Include="FormatNames.h" />
     <ClInclude Include="MODPlayer.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

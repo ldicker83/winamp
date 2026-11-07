@@ -4,7 +4,9 @@
 #include "api__in_mod.h"
 #include "resource.h"
 #include <libopenmpt/libopenmpt.h>
+#include <shlwapi.h>
 #include <string>
+#include "FormatNames.h"
 
 static wchar_t *open_filename = 0;
 static openmpt_module *info_mod = 0;
@@ -42,17 +44,26 @@ extern "C" __declspec(dllexport)
 	}
 	else if (!_stricmp(data, "family"))
 	{
-		size_t len;
-		const wchar_t *p;
+		// answered from the extension alone, like other input plug-ins: callers may pass a
+		// name like "x.it" and this runs for every playlist entry, so the file isn't opened
 		if (!fn || !fn[0]) {
 			return 0;
 		}
-		len = wcslen(fn);
-		if (len < 4 || L'.' != fn[len - 4]) {
+		const wchar_t *extension = PathFindExtensionW(fn);
+		if (*extension != L'.' || !extension[1]) {
 			return 0;
 		}
-		p = &fn[len - 3];
-		StringCchPrintfW(dest, destlen, L"%s Module", p);
+		extension++;
+
+		if (const char *name = GetModFormatName(extension)) {
+			StringCchPrintfW(dest, destlen, L"%S Module", name);
+		} else {
+			// an extension newer than the name table: fall back to "EXT Module"
+			wchar_t upper[16] = {};
+			StringCchCopyW(upper, ARRAYSIZE(upper), extension);
+			CharUpperW(upper);
+			StringCchPrintfW(dest, destlen, L"%s Module", upper);
+		}
 		return 1;
 	} else {
 		if (!open_filename || _wcsicmp(open_filename,fn)) {
