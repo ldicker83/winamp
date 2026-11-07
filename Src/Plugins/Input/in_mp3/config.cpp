@@ -79,40 +79,27 @@ static void config_init()
 	}
 }
 
-#ifdef AAC_SUPPORT
-#define DEF_EXT_LIST "MP3;MP2;MP1;AAC;VLB"
-#else
 #define DEF_EXT_LIST "MP3;MP2;MP1"
-#endif
 
 #define __STR2WSTR(str) L##str
 #define WIDEN(str) __STR2WSTR(str)
 #define DEF_EXT_LISTW WIDEN(DEF_EXT_LIST)
 
-#ifdef AAC_SUPPORT
-char config_extlist_aac[129] = DEF_EXT_LIST;
-#else
+// stored as "extlist"; builds with AAC support used "extlist_aac", which is
+// left alone so a list naming AAC files isn't picked up
 char config_extlist[129] = DEF_EXT_LIST;
-#endif
 
 char config_rating_email[255] = {0};
 
 void config_read()
 {
 	config_init();
-	RI(config_downmix);
 	RI(config_downsample);
 	RI(config_max_bufsize_k);
-	RI(config_eqmode);
 	RI(config_gapless);
 	RI(config_miscopts);
-	RI(config_fastvis);
 
-#ifdef AAC_SUPPORT
-	RS(config_extlist_aac);
-#else
 	RS(config_extlist);
-#endif
 
 	RI(config_write_mode);
 	RI(config_read_mode);
@@ -139,17 +126,10 @@ void config_read()
 
 void config_write()
 {
-	WI(config_fastvis);
 	WI(config_miscopts);
-	WI(config_downmix);
 	WI(config_downsample);
 	WI(config_max_bufsize_k);
-	WI(config_eqmode);
-#ifdef AAC_SUPPORT
-	WS(config_extlist_aac);
-#else
 	WS(config_extlist);
-#endif
 
 	WI(config_write_mode);
 	WI(config_read_mode);
@@ -438,14 +418,7 @@ static INT_PTR CALLBACK outputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	switch (uMsg)
 	{
 	case WM_INITDIALOG:
-		if (config_eqmode&1) CheckDlgButton(hwndDlg, IDC_RADIO2, 1);
-		else CheckDlgButton(hwndDlg, IDC_RADIO1, 1);
-
-		if (!(config_eqmode&4)) CheckDlgButton(hwndDlg, IDC_FASTL3EQ, 1);
-		if (config_eqmode&8) CheckDlgButton(hwndDlg, IDC_FASTL12EQ, 1);
-		if (config_miscopts&1) CheckDlgButton(hwndDlg, IDC_CHECK1, BST_CHECKED);
 		if (config_miscopts&2) CheckDlgButton(hwndDlg, IDC_CHECK2, BST_CHECKED);
-		if (config_downmix == 2) CheckDlgButton(hwndDlg, IDC_REVSTEREO, BST_CHECKED);
 		if (config_downsample == 1)
 			CheckDlgButton(hwndDlg, IDC_HALFRATE, BST_CHECKED);
 		else if (config_downsample == 2)
@@ -464,14 +437,7 @@ static INT_PTR CALLBACK outputProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			if (pnmh->code == PSN_APPLY)
 			{
 				config_miscopts &= ~3;
-				config_miscopts |= IsDlgButtonChecked(hwndDlg, IDC_CHECK1) ? 1 : 0;
 				config_miscopts |= IsDlgButtonChecked(hwndDlg, IDC_CHECK2) ? 2 : 0;
-
-				config_eqmode = IsDlgButtonChecked(hwndDlg, IDC_RADIO1) ? 0 : 1;
-				config_eqmode |= IsDlgButtonChecked(hwndDlg, IDC_FASTL3EQ) ? 0 : 4;
-				config_eqmode |= IsDlgButtonChecked(hwndDlg, IDC_FASTL12EQ) ? 8 : 0;
-
-				config_downmix = IsDlgButtonChecked(hwndDlg, IDC_REVSTEREO) ? 2 : 0;
 
 				config_downsample = IsDlgButtonChecked(hwndDlg, IDC_HALFRATE) ? 1 : 0;
 				config_downsample = IsDlgButtonChecked(hwndDlg, IDC_QRATE) ? 2 : config_downsample;

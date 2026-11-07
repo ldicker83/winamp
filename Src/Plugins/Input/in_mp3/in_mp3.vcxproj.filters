@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="AACFrame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="apev2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -14,9 +11,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DecodeThread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DXHEAD.C">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExtendedInfo.cpp">
@@ -52,10 +46,10 @@
     <ClCompile Include="Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MP3Info.cpp">
+    <ClCompile Include="MP3Decoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mpegutil.cpp">
+    <ClCompile Include="MP3Info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OFL.cpp">
@@ -78,12 +72,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AACFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="adts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="apev2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,9 +85,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DecodeThread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXHEAD.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FactoryHelper.h">
@@ -117,9 +102,6 @@
     <ClInclude Include="ID3v2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ifc_mpeg_stream_reader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LAMEinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,10 +114,10 @@
     <ClInclude Include="Metadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MP3Info.h">
+    <ClInclude Include="MP3Decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mpegutil.h">
+    <ClInclude Include="MP3Info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OFL.h">

@@ -3,7 +3,6 @@
 #include "main.h"
 #include "api__in_mp3.h"
 #include "LAMEInfo.h"
-#include "AACFrame.h"
 #include "config.h"
 #include "LAMEInfo.h"
 #include <shlwapi.h>
@@ -593,5 +592,3 @@ int Metadata::GetString(const char *tag, wchar_t *data, int dataLen)
 		return 0;
 	return 1;
 }
-
-int fixAACCBRbitrate(int br);

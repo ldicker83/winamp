@@ -86,6 +86,7 @@ CGioFile::CGioFile()
 	mpeg_length=0;
 	file_position=0;
 	mpeg_position=0;
+	audio_start=0;
 	no_peek_hack=false;
 	encodingMethod=0;
 	ZeroMemory(id3v1_data, sizeof(id3v1_data));
@@ -234,7 +235,8 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 	mpeg_length     = 0;
 	mpeg_position   = 0;
 	file_position   = 0;
-	
+	audio_start     = 0;
+
 	if ( !_wcsnicmp( pszName, L"file://", 7 ) )
 		pszName += 7;
 
@@ -466,12 +468,14 @@ int CGioFile::Open(const wchar_t *pszName, int maxbufsizek)
 				}
 			}
 
+			audio_start = mpeg_position; // the Xing/LAME/VBRI frame below is skipped here, but libmpg123 needs it
+
 			{
 				Seek64( m_file, mpeg_position, std::ios::beg );
 
 				len = 0;
 				len = ReadStream( m_file, buf, sizeof( buf ) );
-				
+
 				delete m_vbr_hdr;
 				m_vbr_hdr = NULL;
 				
@@ -817,34 +821,6 @@ int CGioFile::GetHeaderOffset()
 }
 /*-------------------------------------------------------------------------*/
 
-void CGioFile::Seek(int posms, int br)
-{
-	int offs = 0;
-	if (m_vbr_hdr)
-	{
-		offs = m_vbr_hdr->seekPointByTime((float)posms);
-	}
-	else if (!m_vbr_flag)
-		offs = MulDiv(posms, br, 8);
-	else
-	{
-		int ms = 0;
-		int fl = GetContentLength();
-		if (!m_vbr_frames)
-		{
-			ms = MulDiv(fl, 8 * 1000, br);
-		}
-		else ms = m_vbr_ms;
-		offs = SeekPoint(m_vbr_toc, fl, (float)posms / ((float)ms / 100.0f));
-	}
-	SetCurrentPosition(offs, GIO_FILE_BEGIN);
-}
-
-bool CGioFile::IsSeekable()
-{
-	return true;
-}
-
 static inline const wchar_t *IncSafe(const wchar_t *val, int x)
 {
 	while (x--)
@@ -868,12 +844,3 @@ void CGioFile::ReadiTunesGaps()
 			postpad = _wtoi(str);
 	}
 }
-
-#define CBCLASS CGioFile
-START_DISPATCH;
-CB( MPEGSTREAM_PEEK, Peek )
-CB( MPEGSTREAM_READ, Read )
-CB( MPEGSTREAM_EOF,  EndOf )
-CB( MPEGSTREAM_GAIN, GetGain )
-END_DISPATCH;
-#undef CBCLASS

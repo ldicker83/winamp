@@ -68,8 +68,6 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 		if (!_wcsicmp(p, L"MP3")) { WASABI_API_LNGSTRINGW_BUF(IDS_FAMILY_STRING_MP3, dest, destlen); return 1; }
 		if (!_wcsicmp(p, L"MP2")) { WASABI_API_LNGSTRINGW_BUF(IDS_FAMILY_STRING_MP2, dest, destlen); return 1; }
 		if (!_wcsicmp(p, L"MP1")) { WASABI_API_LNGSTRINGW_BUF(IDS_FAMILY_STRING_MP1, dest, destlen); return 1; }
-		if (!_wcsicmp(p, L"AAC")) { WASABI_API_LNGSTRINGW_BUF(IDS_FAMILY_STRING_MPEG2_AAC, dest, destlen); return 1; }
-		if (!_wcsicmp(p, L"VLB")) { WASABI_API_LNGSTRINGW_BUF(IDS_FAMILY_STRING_DOLBY, dest, destlen); return 1; }
 		return 0;
 	}
 	else if (!_stricmp(data, "mime"))
@@ -81,8 +79,6 @@ int winampGetExtendedFileInfoW(const wchar_t *fn, const char *data, wchar_t *des
 		if (!_wcsicmp(p, L"MP3")) { StringCchCopyW(dest, destlen, L"audio/mpeg"); return 1; }
 		if (!_wcsicmp(p, L"MP2")) { StringCchCopyW(dest, destlen, L"audio/mpeg"); return 1; }
 		if (!_wcsicmp(p, L"MP1")) { StringCchCopyW(dest, destlen, L"audio/mpeg"); return 1; }
-		if (!_wcsicmp(p, L"AAC")) { StringCchCopyW(dest, destlen, L"audio/aac"); return 1; }
-		if (!_wcsicmp(p, L"VLB")) { StringCchCopyW(dest, destlen, L"audio/vlb"); return 1; }
 		return 0;
 	}
 

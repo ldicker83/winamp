@@ -1,7 +1,6 @@
 #include "main.h"
 #include "../nu/FilePath.h"
 #include "LAMEInfo.h"
-#include "AACFrame.h"
 #include "config.h"
 #include "../winamp/wa_ipc.h"
 #include <Richedit.h>
@@ -10,93 +9,6 @@
 #include <shlwapi.h>
 #include <strsafe.h>
 #include <foundation/error.h>
-
-int fixAACCBRbitrate(int br);
-
-#if 0
-/*
-
-*/
-/*
-int MP3Info::remove_id3v1()
-{
-char temp[3] = {0, 0, 0};
-DWORD x;
-int err = 0;
-HANDLE hFile = CreateFile(file, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, 0,
-                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-if (hFile == INVALID_HANDLE_VALUE)
-{
-	return 0; //1;
-}
-SetFilePointer(hFile, -128, NULL, FILE_END);
-ReadFile(hFile, temp, 3, &x, NULL);
-if (!memcmp(temp, "TAG", 3))
-{
-	SetFilePointer(hFile, -128, NULL, FILE_END);
-	if (!SetEndOfFile(hFile))
-	{
-		err = 1;
-	}
-}
-CloseHandle(hFile);
-if (!err) fbuf[0] = 0;
-return err;
-
-return 0;
-}
-*/
-
-
-
-
-/*
-da_tag.SetUnsync(false);
-da_tag.SetExtendedHeader(true);
-da_tag.SetCompression(false);
-da_tag.SetPadding(true);
-*/
-
-
-#endif
-
-
-int FindAverageAACBitrate(unsigned __int8 *data, int sizeBytes)
-{
-	AACFrame aacFrame;
-	aacFrame.ReadBuffer(data);
-
-	if (aacFrame.OK())
-	{
-		int aac_frame_length = aacFrame.frameLength;
-		int no_rawdb = aacFrame.numDataBlocks;
-
-		int fc_tot = aac_frame_length;
-		int fc_cnt = no_rawdb + 1;
-
-		unsigned char *aa = data + aac_frame_length;
-		int tt = sizeBytes - aac_frame_length;
-		while (tt >= 8)
-		{
-			AACFrame nextFrame;
-			nextFrame.ReadBuffer(aa);
-			if (!nextFrame.OK()) break; // error
-			int fcaac_frame_length = nextFrame.frameLength;
-			int fcno_rawdb = nextFrame.numDataBlocks;
-
-			fc_cnt += fcno_rawdb + 1;
-			fc_tot += fcaac_frame_length;
-
-			aa += fcaac_frame_length;
-			tt -= fcaac_frame_length;
-		}
-
-
-		int avg_framesize = fc_tot / (fc_cnt ? fc_cnt : 1);
-		return fixAACCBRbitrate(MulDiv(avg_framesize * 8, aacFrame.GetSampleRate(), 1024 * 1000));
-	}
-	return 0;
-}
 
 static bool ScanForFrame(CGioFile *file, int *bytesRead)
 {
@@ -236,286 +148,85 @@ static const wchar_t *GetChannelModeString(int channelMode)
 #define INFO_READ_SIZE 32768
 void GetFileDescription(const wchar_t *file, CGioFile &_file, wchar_t *data, size_t datalen)
 {
-	int hdroffs = 0;
 	size_t size = datalen;
 	wchar_t *mt = data;
-	const wchar_t *ext = FilePath::FindExtension(file);
 
 	wchar_t langbuf[256] = {0};
 	int flen = _file.GetContentLength();
 	StringCchPrintfExW(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_PAYLOAD_SIZE, langbuf, 256), _file.GetContentLength());
-	if (!_wcsicmp(ext, L".aac") || !_wcsicmp(ext, L".vlb"))
-	{
-		#if 0 // TODO!
-		if (_wcsicmp(ext, L".vlb")) // aacplus can't do VLB
-		{
-			if (aacPlus)
-			{
-				aacPlus->EasyOpen(AACPLUSDEC_OUTPUTFORMAT_INT16_HOSTENDIAN, 6);
-				AACPLUSDEC_EXPERTSETTINGS *pConf = aacPlus->GetDecoderSettingsHandle();
-				pConf->bEnableOutputLimiter = 1;
-				pConf->bDoUpsampling = 1;
-				aacPlus->SetDecoderSettings();
+	unsigned char mp3syncbuf[INFO_READ_SIZE] = {0};
+	int inputRead = 0;
 
-				StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW_BUF(IDS_FORMAT_AAC, langbuf, 256), &mt, &size, 0);
+	DWORD start = _file.GetCurrentPosition();
+	// find position of first sync
+	if (!mp3sync(&_file))
+		return;
+	int syncposition = _file.GetCurrentPosition()-start;
 
-				char buffer[INFO_READ_SIZE] = {0};
-				int inputRead;
-				_file.Read(buffer, INFO_READ_SIZE, &inputRead);
-				AACPLUSDEC_BITSTREAMBUFFERINFO bitbufInfo = { inputRead, 0, 0};
-				aacPlus->StreamFeed((unsigned char *)buffer, &bitbufInfo);
+	// advance to first sync
+	_file.Peek(mp3syncbuf, INFO_READ_SIZE, &inputRead);
 
-				unsigned char tempBuf[65536] = {0}; // grr, can't we find a better way to do this?
-				AACPLUSDEC_AUDIOBUFFERINFO audioBufInfo = {65536, 0, 0};
-				aacPlus->StreamDecode(tempBuf, &audioBufInfo, 0, 0);
-				audioBufInfo.nBytesBufferSizeIn -= audioBufInfo.nBytesWrittenOut;
-				aacPlus->StreamDecode(tempBuf + audioBufInfo.nBytesWrittenOut, &audioBufInfo, 0, 0);
-				AACPLUSDEC_STREAMPROPERTIES *streamProperties = aacPlus->GetStreamPropertiesHandle();
-				if (streamProperties->nDecodingState == AACPLUSDEC_DECODINGSTATE_STREAMVERIFIED)
-				{
-					AACPLUSDEC_PROGRAMPROPERTIES *currentProgram = &(streamProperties->programProperties[streamProperties->nCurrentProgram]);
+	unsigned int padding = 0;
+	unsigned int encoderDelay = 0;
 
-					switch (currentProgram->nStreamType)
-					{
-					case AACPLUSDEC_MPEG2_PROFILE_AACMAIN:
-						StringCchCatEx(mt, size, L"\r\nMPEG-2 AAC", &mt, &size, 0);
-						break;
-					case AACPLUSDEC_MPEG2_PROFILE_AACLC:
-						if (currentProgram->bProgramSbrEnabled)
-							StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW_BUF(IDS_MPEG2_HE_AAC_IS, langbuf, 256), &mt, &size, 0);
-						else
-							StringCchCatEx(mt, size, L"\r\nMPEG-2 AAC LC", &mt, &size, 0);
-						break;
-					case AACPLUSDEC_MPEG4_AOT_AACMAIN:
-						StringCchCatEx(mt, size, L"\r\nMPEG-4 AAC", &mt, &size, 0);
-						break;
-					case AACPLUSDEC_MPEG4_AOT_AACLC:
-						if (currentProgram->bProgramSbrEnabled)
-							StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW_BUF(IDS_MPEG4_HE_AAC_IS, langbuf, 256), &mt, &size, 0);
-						else
-							StringCchCatEx(mt, size, L"\r\nMPEG-4 AAC LC", &mt, &size, 0);
-						break;
-					case AACPLUSDEC_MPEG4_AOT_SBR:
-						StringCchCatEx(mt, size, L"\r\nMPEG-4 HE-AAC", &mt, &size, 0);
-						break;
-					}
+	MPEGFrame frame;
+	frame.ReadBuffer(mp3syncbuf);
 
-					if (currentProgram->nAacSamplingRate != currentProgram->nOutputSamplingRate)
-						StringCchPrintfEx(mt, size, &mt, &size, 0,
-						                  WASABI_API_LNGSTRINGW(IDS_SAMPLE_RATE_OUTPUT),
-						                  currentProgram->nAacSamplingRate, currentProgram->nOutputSamplingRate);
-					else
-						StringCchPrintfEx(mt, size, &mt, &size, 0,
-						                  WASABI_API_LNGSTRINGW(IDS_SAMPLE_RATE),
-						                  currentProgram->nAacSamplingRate);
-					int srate = currentProgram->nOutputSamplingRate;
 
-					if (currentProgram->bProgramSbrEnabled)
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_SBR_PRESENT), &mt, &size, 0);
-					else
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_SBR_NOT_PRESENT), &mt, &size, 0);
+	int framelen = frame.FrameSize();
 
-					if (currentProgram->nAacChannels != currentProgram->nOutputChannels)
-						StringCchPrintfEx(mt, size, &mt, &size, 0,
-						                  WASABI_API_LNGSTRINGW(IDS_CHANNELS_OUTPUT),
-						                  currentProgram->nAacChannels, currentProgram->nOutputChannels);
-					else
-						StringCchPrintfEx(mt, size, &mt, &size, 0,
-						                  WASABI_API_LNGSTRINGW(IDS_CHANNELS),
-						                  currentProgram->nAacChannels);
-					switch (currentProgram->nChannelMode)
-					{
-					case AACPLUSDEC_CHANNELMODE_MONO:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_MONO), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_STEREO:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_STEREO), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_PARAMETRIC_STEREO:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_PARAMETRIC_STEREO), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_DUAL_CHANNEL:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_DUAL_CHANNEL), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_4_CHANNEL_2CPE:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_4_CHANNEL_2_CPE), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_4_CHANNEL_MPEG:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_4_CHANNEL_MPEG), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_5_CHANNEL:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_5_CHANNEL), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_5_1_CHANNEL:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_5_1), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_6_1_CHANNEL:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_6_1), &mt, &size, 0);
-						break;
-					case AACPLUSDEC_CHANNELMODE_7_1_CHANNEL:
-						StringCchCatEx(mt, size, WASABI_API_LNGSTRINGW(IDS_MODE_7_1), &mt, &size, 0);
-						break;
-					}
+	//const CMp3StreamInfo *info = decoder.GetStreamInfo();
+	//const CMpegHeader *header = decoder.m_Mbs.GetHdr();
 
-					if (streamProperties->nBitrate)
-					{
-						StringCchPrintfEx(mt, size, &mt, &size, 0,
-						                  WASABI_API_LNGSTRINGW(IDS_BITRATE),
-						                  streamProperties->nBitrate);
-					}
-					else
-					{
-						int avg_bitrate = FindAverageAACBitrate((unsigned char *)buffer, inputRead);
-						StringCchPrintfEx(mt, size, &mt, &size, 0,
-						                  WASABI_API_LNGSTRINGW(IDS_AVERAGE_BITRATE),
-						                  avg_bitrate);
-					}
-				}
-			}
-		}
+	StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_HEADER_FOUND_AT_X_BYTES, langbuf, 256), _file.GetHeaderOffset() + syncposition);
+	if (!padding) padding = _file.postpad;
+	if (!encoderDelay) encoderDelay = _file.prepad;
 
-		if (!aacPlus)
-			#endif
-		{
-			char buffer[INFO_READ_SIZE] = {0};
-			int inputRead = 0;
-			_file.Read(buffer, INFO_READ_SIZE, &inputRead);
+	if (padding || encoderDelay)
+		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_ENC_DELAY_ZERO_PADDING, langbuf, 256), encoderDelay, padding);
 
-			StringCchCopyEx(mt, size, WASABI_API_LNGSTRINGW(IDS_FORMAT_AAC), &mt, &size, 0);
-			unsigned char *a = (unsigned char *)buffer;
-			while (inputRead-- >= 8)
-			{
-				AACFrame aacFrame;
-				aacFrame.ReadBuffer(a);
-
-				if (aacFrame.OK())
-				{
-					int aac_frame_length = aacFrame.frameLength;
-					int no_rawdb = aacFrame.numDataBlocks;
-
-					/*size_t size = 1024;
-					char *mt = mpeg_description;*/
-					StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW(IDS_HEADER_FOUND_AT_X_BYTES), hdroffs);
-					StringCchPrintfEx(mt, size, &mt, &size, 0, L"\r\nMPEG-%d AAC", aacFrame.GetMPEGVersion());
-
-					int fc_tot = aac_frame_length;
-					int fc_cnt = no_rawdb + 1;
-
-					unsigned char *aa = a + aac_frame_length;
-					int tt = inputRead - aac_frame_length;
-					while (tt >= 8)
-					{
-						AACFrame nextFrame;
-						nextFrame.ReadBuffer(aa);
-						if (!nextFrame.OK()) break; // error
-						int fcaac_frame_length = nextFrame.frameLength;
-						int fcno_rawdb = nextFrame.numDataBlocks;
-
-						fc_cnt += fcno_rawdb + 1;
-						fc_tot += fcaac_frame_length;
-
-						aa += fcaac_frame_length;
-						tt -= fcaac_frame_length;
-					}
-
-					{
-						int avg_framesize = fc_tot / (fc_cnt ? fc_cnt : 1);
-						int srate = aacFrame.GetSampleRate();
-						int avg_bitrate = fixAACCBRbitrate(MulDiv(avg_framesize * 8, srate, 1024 * 1000));
-
-						int len_s = MulDiv(flen, 1024, avg_framesize * srate);
-
-						StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW(IDS_LENGTH_X_SECONDS), len_s);
-						StringCchPrintfEx(mt, size, &mt, &size, 0, L"\r\nCBR %d kbps", avg_bitrate);
-					}
-
-					StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW(IDS_PROFILE), aacFrame.GetProfileName());
-					StringCchPrintfEx(mt, size, &mt, &size, 0, L"\r\n%dHz %s", aacFrame.GetSampleRate(), aacFrame.GetChannelConfigurationName());
-					StringCchPrintfEx(mt, size, &mt, &size, 0, L"\r\nCRC: %s", WASABI_API_LNGSTRINGW((aacFrame.protection == 0 ? IDS_YES : IDS_NO)));
-					break;
-				}
-
-				a++;
-				hdroffs++;
-			}
-		}
-	}
+	int is_vbr_lens = _file.m_vbr_ms;
+	int iLen = (is_vbr_lens ? is_vbr_lens/1000 : ((flen * 8) / frame.GetBitrate()));
+	if(iLen > 0)
+		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_LENGTH_X_SECONDS, langbuf, 256), iLen);
 	else
 	{
-		unsigned char mp3syncbuf[INFO_READ_SIZE] = {0};
-		int inputRead = 0;
-
-		DWORD start = _file.GetCurrentPosition();
-		// find position of first sync
-		if (!mp3sync(&_file))
-			return;
-		int syncposition = _file.GetCurrentPosition()-start;
-
-		// advance to first sync
-		_file.Peek(mp3syncbuf, INFO_READ_SIZE, &inputRead);
-
-		unsigned int padding = 0;
-		unsigned int encoderDelay = 0;
-
-		MPEGFrame frame;
-		frame.ReadBuffer(mp3syncbuf);
-
-
-		int framelen = frame.FrameSize();
-
-		//const CMp3StreamInfo *info = decoder.GetStreamInfo();
-		//const CMpegHeader *header = decoder.m_Mbs.GetHdr();
-
-		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_HEADER_FOUND_AT_X_BYTES, langbuf, 256), _file.GetHeaderOffset() + syncposition);
-		if (!padding) padding = _file.postpad;
-		if (!encoderDelay) encoderDelay = _file.prepad;
-
-		if (padding || encoderDelay)
-			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_ENC_DELAY_ZERO_PADDING, langbuf, 256), encoderDelay, padding);
-
-		int is_vbr_lens = _file.m_vbr_ms;
-		int iLen = (is_vbr_lens ? is_vbr_lens/1000 : ((flen * 8) / frame.GetBitrate()));
-		if(iLen > 0)
-			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_LENGTH_X_SECONDS, langbuf, 256), iLen);
-		else
-		{
-			float fLen = (is_vbr_lens ? is_vbr_lens/1000.0f : ((flen * 8.0f) / frame.GetBitrate()));
-			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_LENGTH_X_PART_SECONDS, langbuf, 256), fLen);
-		}
-
-		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_S_LAYER_X, langbuf, 256), GetMPEGVersionString(frame.mpegVersion), frame.GetLayer());
-
-		int frames = _file.m_vbr_frames;
-
-		int is_vbr = _file.m_vbr_flag || _file.m_vbr_hdr;
-		if (!is_vbr || _file.encodingMethod == ENCODING_METHOD_CBR)
-		{
-			if (frames)
-			{
-				StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT, langbuf, 256), frame.GetBitrate() / 1000, frames);
-			}
-			else
-			{
-				StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT_APPROX, langbuf, 256), frame.GetBitrate() / 1000, MulDiv(flen, 8, framelen));
-			}
-		}
-		else if (is_vbr && _file.encodingMethod == ENCODING_METHOD_ABR)
-			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT_ABR, langbuf, 256), _file.GetAvgVBRBitrate(), frames);
-		else
-		{
-			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT_VBR, langbuf, 256), _file.GetAvgVBRBitrate(), _file.m_vbr_hdr?L"I":L"", frames);
-		}
-
-		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_HZ_S, langbuf, 256), frame.GetSampleRate(), GetChannelModeString(frame.channelMode));
-		StringCchPrintfEx(mt, size, &mt, &size, 0, L"\r\nCRC: %s", WASABI_API_LNGSTRINGW_BUF((frame.CRC ? IDS_YES : IDS_NO), langbuf, 256));
-		wchar_t tmp[16] = {0};
-		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_COPYRIGHTED, langbuf, 256), WASABI_API_LNGSTRINGW_BUF((frame.copyright ? IDS_YES : IDS_NO),tmp,16));
-		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_ORIGINAL, langbuf, 256), WASABI_API_LNGSTRINGW_BUF((frame.original ? IDS_YES : IDS_NO),tmp,16));
-		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_EMPHASIS, langbuf, 256), GetEmphasisString(frame.emphasis));
-
-		if (_file.m_vbr_frame_len && !_file.lengthVerified)
-			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_MP3_HAS_BEEN_MODIFIED_NOT_ALL_MAY_BE_CORRECT, langbuf, 256));
+		float fLen = (is_vbr_lens ? is_vbr_lens/1000.0f : ((flen * 8.0f) / frame.GetBitrate()));
+		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_LENGTH_X_PART_SECONDS, langbuf, 256), fLen);
 	}
+
+	StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_S_LAYER_X, langbuf, 256), GetMPEGVersionString(frame.mpegVersion), frame.GetLayer());
+
+	int frames = _file.m_vbr_frames;
+
+	int is_vbr = _file.m_vbr_flag || _file.m_vbr_hdr;
+	if (!is_vbr || _file.encodingMethod == ENCODING_METHOD_CBR)
+	{
+		if (frames)
+		{
+			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT, langbuf, 256), frame.GetBitrate() / 1000, frames);
+		}
+		else
+		{
+			StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT_APPROX, langbuf, 256), frame.GetBitrate() / 1000, MulDiv(flen, 8, framelen));
+		}
+	}
+	else if (is_vbr && _file.encodingMethod == ENCODING_METHOD_ABR)
+		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT_ABR, langbuf, 256), _file.GetAvgVBRBitrate(), frames);
+	else
+	{
+		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_KBIT_VBR, langbuf, 256), _file.GetAvgVBRBitrate(), _file.m_vbr_hdr?L"I":L"", frames);
+	}
+
+	StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_X_HZ_S, langbuf, 256), frame.GetSampleRate(), GetChannelModeString(frame.channelMode));
+	StringCchPrintfEx(mt, size, &mt, &size, 0, L"\r\nCRC: %s", WASABI_API_LNGSTRINGW_BUF((frame.CRC ? IDS_YES : IDS_NO), langbuf, 256));
+	wchar_t tmp[16] = {0};
+	StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_COPYRIGHTED, langbuf, 256), WASABI_API_LNGSTRINGW_BUF((frame.copyright ? IDS_YES : IDS_NO),tmp,16));
+	StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_ORIGINAL, langbuf, 256), WASABI_API_LNGSTRINGW_BUF((frame.original ? IDS_YES : IDS_NO),tmp,16));
+	StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_EMPHASIS, langbuf, 256), GetEmphasisString(frame.emphasis));
+
+	if (_file.m_vbr_frame_len && !_file.lengthVerified)
+		StringCchPrintfEx(mt, size, &mt, &size, 0, WASABI_API_LNGSTRINGW_BUF(IDS_MP3_HAS_BEEN_MODIFIED_NOT_ALL_MAY_BE_CORRECT, langbuf, 256));
 }
 
 void GetAudioInfo(const wchar_t *filename, CGioFile *file, int *len, int *channels, int *bitrate, int *vbr, int *sr)
@@ -526,88 +237,32 @@ void GetAudioInfo(const wchar_t *filename, CGioFile *file, int *len, int *channe
 	*channels=0;
 	if (file)
 	{
-		const wchar_t *ext = FilePath::FindExtension(filename);
-		if (!_wcsicmp(ext, L".aac") || !_wcsicmp(ext, L".vlb"))
+		if (*bitrate = file->GetAvgVBRBitrate()*1000)
 		{
-			unsigned char t[INFO_READ_SIZE*2] = {0};
-			unsigned char *a = t;
-			int n = 0;
-
-			if (file->Read(t, sizeof(t), &n) != NErr_Success)
-				return;
-
-			while (n-- >= 8)
-			{
-				AACFrame aacFrame;
-				aacFrame.ReadBuffer(a);
-
-				if (aacFrame.OK())
-				{
-					int aac_frame_length = aacFrame.frameLength;
-
-					int fc_tot = aac_frame_length;
-					int fc_cnt = aacFrame.numDataBlocks + 1;
-
-					unsigned char *aa = a + aac_frame_length;
-					int tt = n - aac_frame_length;
-					while (tt >= 8 && aac_frame_length)
-					{
-						AACFrame nextFrame;
-						nextFrame.ReadBuffer(aa);
-						if (!nextFrame.OK()) break; // error
-						int fcaac_frame_length = nextFrame.frameLength;
-						int fcno_rawdb = nextFrame.numDataBlocks;
-
-						fc_cnt += fcno_rawdb + 1;
-						fc_tot += fcaac_frame_length;
-
-						aa += fcaac_frame_length;
-						tt -= fcaac_frame_length;
-					}
-
-					int avg_framesize = fc_tot / (fc_cnt ? fc_cnt : 1);
-
-					int br = MulDiv(avg_framesize * 8, aacFrame.GetSampleRate(), 1024);
-					*len = MulDiv(file->GetContentLength(), 1024*8, br);
-					*bitrate = fixAACCBRbitrate(br/1000)*1000;
-					
-					*sr = aacFrame.GetSampleRate();
-					*channels = aacFrame.GetNumChannels();
-					
-					break;
-				}
-				a++;
-			}
+			*len = file->m_vbr_ms;
+			*vbr = file->m_vbr_flag || file->m_vbr_hdr;
 		}
-		else
+
+		if (!mp3sync(file))
+			return;
+
+		unsigned char t[4] = {0};
+		int n = 0;
+
+		if (file->Peek(t, sizeof(t), &n) != NErr_Success)
+			return;
+
+		MPEGFrame frame;
+		frame.ReadBuffer(t);
+		if (frame.IsSync())
 		{
-			if (*bitrate = file->GetAvgVBRBitrate()*1000)
+			if (!*bitrate)
 			{
-				*len = file->m_vbr_ms;
-				*vbr = file->m_vbr_flag || file->m_vbr_hdr;
+				*bitrate = frame.GetBitrate();
+				*len = MulDiv(file->GetContentLength(), 1000*8, *bitrate);
 			}
-
-			if (!mp3sync(file))
-				return;
-
-			unsigned char t[4] = {0};
-			int n = 0;
-
-			if (file->Peek(t, sizeof(t), &n) != NErr_Success)
-				return;
-
-			MPEGFrame frame;
-			frame.ReadBuffer(t);
-			if (frame.IsSync())
-			{
-				if (!*bitrate)
-				{
-					*bitrate = frame.GetBitrate();
-					*len = MulDiv(file->GetContentLength(), 1000*8, *bitrate);
-				}
-				*channels = frame.GetNumChannels();
-				*sr = frame.GetSampleRate();
-			}
+			*channels = frame.GetNumChannels();
+			*sr = frame.GetSampleRate();
 		}
 	}
 }
