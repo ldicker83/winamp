@@ -26,35 +26,30 @@
 #include "LAMEInfo.h"
 #include "../nu/RingBuffer.h"
 #include "../apev2/tag.h"
-#include "ifc_mpeg_stream_reader.h"
 
 /*-------------------------- defines --------------------------------------*/
 
 /*-------------------------------------------------------------------------*/
 
-class CGioFile : public ifc_mpeg_stream_reader
+// Reads an MPEG audio file's tags and header frames. Decoding is done by
+// libmpg123 (see MP3Decoder), which uses AudioStart() and AudioEnd() to skip
+// the tags this class finds.
+class CGioFile
 {
 public:
 	CGioFile();
-	virtual ~CGioFile();
+	~CGioFile();
 
 	int  Open(const wchar_t *pszName, int maxbufsizek);
 	int  Close();
 	int  Read(void *pBuffer, int cbToRead, int *pcbRead);
 	int  Peek(void *pBuffer, int cbToRead, int *pcbRead);
 
-	//dataiocontrol interface
-	int IO(void *buf, int size, int count)
-	{
-		int l=0;
-		Read(buf,count,&l);
-		return l;
-	}
-	int Seek(long offset, int origin)
-	{
-		return 0;
-	}
-	//int Close() { return 0; }
+	// byte range of the MPEG audio in the file: from the first frame (including a
+	// Xing/LAME/VBRI header frame) up to the first trailing tag
+	uint64_t AudioStart() const { return audio_start; }
+	uint64_t AudioEnd() const { return mpeg_position + mpeg_length; }
+
 	int EndOf(void)
 	{
 		return IsEof();
@@ -91,8 +86,6 @@ public:
 	int encodingMethod;
 	uint64_t m_vbr_samples;
 	int prepad, postpad;
-	void Seek(int posms, int br);
-	bool IsSeekable();
 
 	unsigned char id3v1_data[128];
 
@@ -146,6 +139,8 @@ public:
 protected:
 	void ReadiTunesGaps();
 private:
+	uint64_t audio_start;
+
 	/* ID3v2 */
 	int m_id3v1_len;
 
@@ -175,9 +170,6 @@ private:
 
 	mutable std::ifstream m_file;
 	bool   fEof;
-	
-
-	RECVS_DISPATCH;
 };
 
 /*-------------------------------------------------------------------------*/

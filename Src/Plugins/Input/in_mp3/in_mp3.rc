@@ -42,7 +42,7 @@ BEGIN
         LEFTMARGIN, 6
         RIGHTMARGIN, 220
         TOPMARGIN, 6
-        BOTTOMMARGIN, 156
+        BOTTOMMARGIN, 84
     END
 
 
@@ -106,14 +106,14 @@ BEGIN
     LTEXT           "Extension list (semicolon delimited):",IDC_STATIC,12,18,140,8
     EDITTEXT        IDC_EDIT1,12,31,201,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Set to default",IDC_BUTTON1,12,49,50,13
-    LTEXT           "Default: MP3;MP2;MP1;AAC;VLB",IDC_STATIC,68,51,144,8
+    LTEXT           "Default: MP3;MP2;MP1",IDC_STATIC,68,51,144,8
     GROUPBOX        "Full File Buffering",IDC_STATIC,6,71,214,32
     LTEXT           "Buffer the entire file from disk if the file is smaller than:",IDC_STATIC,13,81,115,16
     EDITTEXT        IDC_BUFMAX,141,83,24,12,ES_AUTOHSCROLL | ES_NUMBER
     LTEXT           "kilobytes",IDC_STATIC,169,85,28,8
 END
 
-IDD_OUTPUT DIALOGEX 0, 0, 226, 163
+IDD_OUTPUT DIALOGEX 0, 0, 226, 90
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Decoder"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
@@ -123,14 +123,8 @@ BEGIN
     CONTROL         "&Half",IDC_HALFRATE,"Button",BS_AUTORADIOBUTTON,12,24,30,10
     CONTROL         "&Quarter",IDC_QRATE,"Button",BS_AUTORADIOBUTTON,12,36,40,10
     LTEXT           "Selecting 'Half' or 'Quarter' quality will downsample the output, resulting in less processor usage.",IDC_STATIC,80,12,125,34
-    GROUPBOX        "Misc Options",IDC_STATIC,6,55,213,40
-    CONTROL         "CRC checking",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,67,105,10
-    CONTROL         "Show average bitrate on VBR files",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,12,80,180,10
-    GROUPBOX        "Equalizer",IDC_STATIC,6,98,213,61
-    CONTROL         "Logarithmic EQ (default)",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,110,128,10
-    CONTROL         "Linear EQ",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,12,120,72,10
-    CONTROL         "Fast Layer 3 EQ",IDC_FASTL3EQ,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,132,98,10
-    CONTROL         "Fast Layer 1/2 EQ",IDC_FASTL12EQ,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,144,106,10
+    GROUPBOX        "Misc Options",IDC_STATIC,6,55,213,28
+    CONTROL         "Show average bitrate on VBR files",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,12,67,180,10
 END
 
 IDD_TAGOPTS DIALOGEX 0, 0, 226, 168
@@ -314,17 +308,12 @@ BEGIN
     IDS_JOINT_STEREO        "Joint Stereo"
     IDS_2_CHANNEL           "2 Channel"
     IDS_PAYLOAD_SIZE        "Payload Size: %u bytes"
-    IDS_FORMAT_AAC          "\nFormat: AAC"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_MPEG2_HE_AAC_IS     "\nMPEG-2 HE-AAC (Implicitly Signalled)"
-    IDS_MPEG4_HE_AAC_IS     "\nMPEG-4 HE-AAC (Implicitly Signalled)"
     IDS_SAMPLE_RATE_OUTPUT  "\nSample Rate: %u (Output: %u)"
     IDS_SAMPLE_RATE         "\nSample Rate: %u "
-    IDS_SBR_PRESENT         "\nSBR: Present"
-    IDS_SBR_NOT_PRESENT     "\nSBR: Not Present"
     IDS_CHANNELS_OUTPUT     "\nChannels: %u (Output: %u)"
     IDS_CHANNELS            "\nChannels: %u"
     IDS_MODE_MONO           "     Mode: Mono"
@@ -404,8 +393,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_FAMILY_STRING_MPEG2_AAC "MPEG-2 Advanced Audio Coding File"
-    IDS_FAMILY_STRING_DOLBY "Dolby Very Low Bitrate AAC File"
     IDS_ABOUT_TEXT          "%s\n© 1998-2023 Winamp SA\n\nBuild date: %hs\n\nMPEG Audio Decoding provided by libmpg123"//MPEG Layer-3 audio compression technology\nlicensed by Fraunhofer IIS & THOMSON multimedia.\n\nMPEG-4 AAC decoding licensed by Fraunhofer IIS"
     IDS_LENGTH_X_PART_SECONDS "\nLength: %.2f seconds"
 END

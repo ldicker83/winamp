@@ -11,11 +11,9 @@
 
 int lastfn_data_ready;
 
-int config_fastvis=0;
 unsigned char config_miscopts=0;
-unsigned char config_eqmode=4;
 unsigned int winampVersion=0x00005010; // default version # to use if winamp version is 5.1 or less (and therefore doesn't have a valid HWND during Init)
-unsigned char config_downmix=0, config_downsample=0;
+unsigned char config_downsample=0;
 
 int config_max_bufsize_k=128;
 int config_gapless=1;
@@ -70,7 +68,6 @@ int init()
 	swprintf(szDescription, 256, WASABI_API_LNGSTRINGW(IDS_NULLSOFT_MPEG_AUDIO_DECODER), PLUGIN_VERSION);
 	mod.description = (char*)szDescription;
 
-	mod.UsesOutputPlug|=2;
 	config_read();
 	mod.FileExtensions=getfileextensions();
 	return IN_INIT_SUCCESS;
@@ -83,8 +80,6 @@ void quit()
 	ServiceRelease(mod.service, WASABI_API_MEMMGR, memMgrApiServiceGuid);
 	raw_factory.Deregister(mod.service);
 }
-
-int g_eq_ok;
 
 int isourfile(const wchar_t *fn)
 {
@@ -111,9 +106,6 @@ int play(const in_char *fn)
 	mod.is_seekable = 0;
 	mod.SetInfo(0,0,0,0);
 
-	g_ds=config_downsample;
-
-	g_eq_ok=1;
 	// launch decode thread
 	thread_handle = (HANDLE)CreateThread(NULL,0,(LPTHREAD_START_ROUTINE) DecodeThread,NULL,0,&thread_id);
 	SetThreadPriority(thread_handle, (int)AGAVE_API_CONFIG->GetInt(playbackConfigGroupGUID, L"priority", THREAD_PRIORITY_HIGHEST));
@@ -147,7 +139,6 @@ void stop()
 	killDecodeThread=1;
 	WaitForSingleObject(thread_handle,INFINITE);
 	CloseHandle(thread_handle);
-	g_eq_ok=0;
 	thread_handle = INVALID_HANDLE_VALUE;
 	g_length=-1000;
 	lastfn[0]=0;
@@ -208,45 +199,10 @@ void setpan(int pan)
 }
 
 
-// this is an odd function. it is used to get the title and/or
-// length of a track.
-// if filename is either NULL or of length 0, it means you should
-// return the info of lastfn. Otherwise, return the information
-// for the file in filename.
-// if title is NULL, no title is copied into it.
-// if length_in_ms is NULL, no length is copied into it.
-
-static int memcmpv(char *d, char v, int l)
-{
-	while (l--)
-		if (*d++ != v) return 1;
-	return 0;
-}
-
+// Winamp applies its equalizer to the decoded audio (IN_MODULE_FLAG_EQ is never set)
 void eq_set(int on, char data[10], int preamp)
 {
-	int x;
-	eq_preamp = preamp;
-	eq_enabled = on;
-	for (x = 0; x < 10; x ++)
-		eq_tab[x] = data[x];
-
-	// if eq zeroed out, dont use eq
-	if (eq_enabled && preamp==31 && !memcmpv(data,31,10))
-		eq_enabled=0;
 }
-
-
-
-// render 576 samples into buf.
-// this function is only used by DecodeThread.
-
-// note that if you adjust the size of sample_buffer, for say, 1024
-// sample blocks, it will still work, but some of the visualization
-// might not look as good as it could. Stick with 576 sample blocks
-// if you can, and have an additional auxiliary (overflow) buffer if
-// necessary..
-
 
 // module definition.
 

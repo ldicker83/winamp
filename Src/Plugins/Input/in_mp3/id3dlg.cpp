@@ -8,7 +8,6 @@
 #include "id3.h"
 #include "../nu/AutoWide.h"
 #include "../nu/AutoChar.h"
-#include "AACFrame.h"
 #include "LAMEinfo.h"
 #include <shlwapi.h>
 #include "../nu/ns_wc.h"
@@ -17,23 +16,6 @@
 #include "Stopper.h"
 #include "config.h"
 #include <strsafe.h>
-
-int fixAACCBRbitrate(int br)
-{
-	static short brs[] =
-	{
-		8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0
-	};
-	int x;
-	for (x = 0; x < sizeof(brs) / sizeof(brs[0]); x ++)
-	{
-		int delta = (brs[x] * 8) / 128;
-		if (delta < 2) delta = 2;
-		if (br < brs[x] - delta) break;
-		if (br < brs[x] + delta) return brs[x];
-	}
-	return br;
-}
 
 void ConvertTryUTF8(const char *in, wchar_t *out, size_t outlen)
 {

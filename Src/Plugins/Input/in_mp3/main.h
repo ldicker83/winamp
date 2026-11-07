@@ -4,7 +4,6 @@
 #endif
 #include <windows.h>
 #include "giofile.h"
-#include "dxhead.h"
 #include "CVbriHeader.h"
 #include "resource.h"
 #include "in2.h"
@@ -22,9 +21,8 @@ extern void getfileinfo(const wchar_t *filename, wchar_t *title, int *length_in_
 
 extern int config_max_bufsize_k;
 extern int config_gapless;
-extern int config_fastvis;
 extern unsigned char config_miscopts;
-extern unsigned char config_downmix, config_downsample;
+extern unsigned char config_downsample;
 
 extern wchar_t lastfn[8192];	// currently playing file (used for getting info on the current file)
 extern int paused;				// are we paused?
@@ -34,12 +32,7 @@ extern void about(HWND hwndParent);
 extern void config(HWND hwndParent);
 extern volatile int killDecodeThread;
 
-extern unsigned char eq_preamp;
-extern unsigned char eq_enabled;
-extern unsigned char eq_tab[10];
-extern unsigned char config_eqmode;
 extern unsigned int winampVersion;
-extern int g_eq_ok;
 
 #if !defined(__alpha) && !defined(_WIN64)
 static __inline long float_to_long(double t)
@@ -62,12 +55,7 @@ void get_extended_info(const wchar_t *fn, int *len);
 
 void ConvertTryUTF8(const char *in, wchar_t *out, size_t outlen);
 
-#ifdef AAC_SUPPORT
-extern char config_extlist_aac[129];
-#define config_extlist config_extlist_aac
-#else
 extern char config_extlist[129];
-#endif
 
 extern int m_force_seek;
 
